@@ -8,7 +8,7 @@ export const Home: React.FC = () => {
   const logos = ["/hm.png", "/obey.png", "/shopify.png", "/lacoste.png"];
 
   return (
-    <div className="font-sans">
+    <div>
       {/* Navbar */}
       <nav className="flex justify-between items-center px-6 py-4 shadow-sm bg-white relative">
         {/* Left side (desktop links) */}
@@ -24,7 +24,7 @@ export const Home: React.FC = () => {
         {/* Center Logo */}
         <div className="flex items-center space-x-2">
           <img src={logo} alt="Cribb.Africa Logo" className="h-8 w-auto" />
-          <h1 className="text-xl font-bold">Cribb.Africa</h1>
+          <h1 className="text-xl font-extrabold">Cribb.Africa</h1>
         </div>
 
         {/* Right (desktop links + login) */}
@@ -113,8 +113,8 @@ export const Home: React.FC = () => {
 
         {/* Text Content */}
         <div className="lg:mt-30 relative z-10 max-w-3xl px-4">
-          <h1 className="text-3xl lg:text-6xl font-extrabold mb-6">
-            <span className="text-[#C2C8DA]">RENTING </span>: MADE SOFT
+          <h1 className="text-3xl lg:text-5xl font-extrabold mb-6">
+            <span className="text-[#C2C8DA]">RENTING :</span> MADE SOFT
           </h1>
           <p className="mb-8 lg:px-25 text-[10px] lg:text-sm text-white">
             We are on a journey to make school life soft for Uni-students in
@@ -200,6 +200,9 @@ export const Home: React.FC = () => {
           ))}
         </div>
       </section>
+
+
+      
     </div>
   );
 };
