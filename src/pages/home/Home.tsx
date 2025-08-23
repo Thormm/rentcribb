@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import heroImg from "../../assets/hero.jpg";
-import logo from "../../assets/logo.png";
 import h1 from "../../assets/h1.png";
 import h2 from "../../assets/h2.png";
 import h3 from "../../assets/h3.png";
@@ -22,13 +21,10 @@ import spark3 from "../../assets/spark3.png";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 
-import {
-  FaWhatsapp,
-  FaInstagram,
-  FaTwitter,
-  FaFacebook,
-  FaLinkedin,
-} from "react-icons/fa";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+
+
 
 type Testimony = {
   text: string;
@@ -123,27 +119,9 @@ function FaqRow({ q, a }: FaqItem) {
   );
 }
 
-function IconBtn({
-  children,
-  label,
-}: {
-  children: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <a
-      href="#"
-      aria-label={label}
-      className="rounded-xl bg-[#CDBCEC] text-black  p-3 "
-    >
-      {children}
-    </a>
-  );
-}
+
 
 const Home = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const logos = ["/hm.png", "/obey.png", "/shopify.png", "/lacoste.png"];
 
   const [i, setI] = useState(0);
@@ -166,98 +144,7 @@ const Home = () => {
 
   return (
     <div>
-      {/* Navbar */}
-      <nav className="flex justify-between items-center px-6 py-4 shadow-sm bg-white relative">
-        {/* Left side (desktop links) */}
-        <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
-          <a href="/products" className="hover:text-black">
-            Products
-          </a>
-          <a href="/rent" className="hover:text-black">
-            /Rent
-          </a>
-        </div>
-
-        {/* Center Logo */}
-        <div className="flex items-center space-x-2">
-          <img src={logo} alt="Cribb.Africa Logo" className="h-8 w-auto" />
-          <h1 className="text-xl font-extrabold">Cribb.Africa</h1>
-        </div>
-
-        {/* Right (desktop links + login) */}
-        <div className="hidden md:flex space-x-6 items-center">
-          <a href="/about" className="hover:text-black">
-            About Us
-          </a>
-          <button className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-            LOGIN
-          </button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden flex items-center text-gray-800"
-          onClick={() => setIsMenuOpen(true)}
-        >
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-
-        {/* Mobile Overlay Menu */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-            <div className="absolute top-0 right-0 w-2/3 h-full bg-white p-6 flex flex-col">
-              {/* Close Button */}
-              <button
-                className="self-end mb-8"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <svg
-                  className="w-7 h-7 text-gray-700"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-
-              {/* Menu Items */}
-              <div className="flex flex-col items-center space-y-6 text-lg font-medium">
-                <a href="/products" onClick={() => setIsMenuOpen(false)}>
-                  Products
-                </a>
-                <a href="/rent" onClick={() => setIsMenuOpen(false)}>
-                  /Rent
-                </a>
-                <a href="/about" onClick={() => setIsMenuOpen(false)}>
-                  About Us
-                </a>
-                <button className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                  LOGIN
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
+      <Navbar />
       {/* Hero Section */}
       <section
         className="relative flex flex-col items-center justify-center text-center text-white h-[90vh] bg-cover bg-center"
@@ -717,10 +604,7 @@ const Home = () => {
                   </svg>
                 </button>
 
-                <p
-                  key={i}
-                  className="flex-1  text-violet-200 text-center "
-                >
+                <p key={i} className="flex-1  text-violet-200 text-center ">
                   {t.text}
                 </p>
 
@@ -789,73 +673,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
-      <footer className="bg-black text-white border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Brand */}
-          <div>
-            <div className="text-2xl font-extrabold">Cribb.Africa</div>
-            <p className="mt-2 text-sm text-white/70">School Life: Made Soft</p>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-semibold mb-3">Legal</h3>
-            <ul className="space-y-2 text-white/80">
-              <li>
-                <a href="#" className="hover:text-white text-sm">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white text-sm">
-                  Terms &amp; conditions
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-semibold mb-3">Company</h3>
-            <ul className="space-y-2 text-white/80">
-              <li>
-                <a href="#" className="hover:text-white text-sm">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white text-sm">
-                  About Us
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact / Socials */}
-          <div>
-            <h3 className="font-semibold mb-3">Contact us</h3>
-            <div className="flex items-center gap-3">
-              {/* Rounded square “icon” buttons (swap inner spans with your SVGs later) */}
-              <IconBtn label="WhatsApp">
-                <FaWhatsapp />
-              </IconBtn>
-              <IconBtn label="Instagram">
-                <FaInstagram />
-              </IconBtn>
-              <IconBtn label="Twitter / X">
-                <FaTwitter />
-              </IconBtn>
-              <IconBtn label="Facebook">
-                <FaFacebook />
-              </IconBtn>
-              <IconBtn label="LinkedIn">
-                <FaLinkedin />
-              </IconBtn>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
