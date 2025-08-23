@@ -75,19 +75,19 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               {/* Rounded square “icon” buttons (swap inner spans with your SVGs later) */}
               <IconBtn label="WhatsApp">
-                <FaWhatsapp className="w-6 w-6"/>
+                <FaWhatsapp className="w-6 h-6"/>
               </IconBtn>
               <IconBtn label="Instagram">
                 <FaInstagram className="w-6 h-6"/>
               </IconBtn>
               <IconBtn label="Twitter / X">
-                <FaTwitter className="w-6 w-6"/>
+                <FaTwitter className="w-6 h-6"/>
               </IconBtn>
               <IconBtn label="Facebook">
-                <FaFacebook className="w-6 w-6"/>
+                <FaFacebook className="w-6 h-6"/>
               </IconBtn>
               <IconBtn label="LinkedIn">
-                <FaLinkedin className="w-6 w-6"/>
+                <FaLinkedin className="w-6 h-6"/>
               </IconBtn>
             </div>
           </div>
