@@ -32,20 +32,20 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="text-4xl font-extrabold">Cribb.Africa</div>
-            <p className="mt-2 text-md text-white/70">School Life: Made Soft</p>
+            <p className="mt-6 text-md text-[#8E8E8E]">School Life: Made Soft</p>
           </div>
 
           {/* Legal */}
           <div>
             <h3 className="font-semibold text-md  mb-3">Legal</h3>
-            <ul className="space-y-2 text-white/80">
+            <ul className="space-y-6 text-[#8E8E8E]">
               <li>
-                <a href="#" className="hover:text-white text-md ">
+                <a href="#" className="hover:text-[#8E8E8E] text-md ">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white text-md ">
+                <a href="#" className="hover:text-[#8E8E8E] text-md ">
                   Terms &amp; conditions
                 </a>
               </li>
@@ -55,14 +55,14 @@ const Footer = () => {
           {/* Company */}
           <div>
             <h3 className="font-semibold mb-3 text-md " >Company</h3>
-            <ul className="space-y-2 text-white/80">
+            <ul className="space-y-6 text-[#8E8E8E]">
               <li>
-                <a href="#" className="hover:text-white text-md ">
+                <a href="#" className="hover:text-[#8E8E8E] text-md ">
                   Careers
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white text-md ">
+                <a href="#" className="hover:text-[#8E8E8E] text-md ">
                   About Us
                 </a>
               </li>

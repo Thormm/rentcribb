@@ -88,9 +88,9 @@ function Rating({ value, reviews }: { value: number; reviews: number }) {
   return (
     <div className="inline-flex items-center gap-2 text-md">
       <div className="inline-flex items-center gap-1">
-        <Star className="h-4 w-4 text-[orange]" />
-        <span className="font-semibold">{value}</span>
-        <span className="opacity-70">({reviews})</span>
+        <Star className="h-6 w-6 text-[orange]" />
+        <span className="font-semibold text-xl">{value}</span>
+        <span className="opacity-70 text-xl">({reviews})</span>
       </div>
     </div>
   );
@@ -99,16 +99,16 @@ function Rating({ value, reviews }: { value: number; reviews: number }) {
 function Card({ item }: { item: (typeof cards)[number] }) {
   return (
     <div
-      className={`w-80 rounded-2xl border-3 p-3 shadow-[0_4px_24px_rgba(0,0,0,0.08)] ${item.border}`}
+      className={`w-85 rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${item.border}`}
     >
       {/* image placeholder with shuttle buttons */}
-      <div className="relative h-70 border-3 w-full overflow-hidden rounded-xl bg-gray-100">
+      <div className="relative h-75 border-2 w-full overflow-hidden rounded-2xl bg-gray-100">
         <div className="absolute right-2 top-2 flex items-center gap-2">
-          <button className="grid h-7 w-7 place-items-center rounded-full bg-black/80 text-white ring-1 ring-black/60">
-            <ChevronLeft className="h-4 w-4" />
+          <button className="grid h-8 w-8 place-items-center rounded-full bg-black text-white ring-1 ring-black">
+            <ChevronLeft className="h-6 w-6" />
           </button>
-          <button className="grid h-7 w-7 place-items-center rounded-full bg-black/80 text-white ring-1 ring-black/60">
-            <ChevronRight className="h-4 w-4" />
+          <button className="grid h-8 w-8 place-items-center rounded-full bg-black text-white ring-1 ring-black">
+            <ChevronRight className="h-6 w-6" />
           </button>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function Listing() {
         <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
           <div className="mx-auto w-full max-w-6xl px-4">
             {/* small kicker */}
-            <div className="text-md font-semibold tracking-[0.2em] text-[#FFA1A1]">
+            <div className="text-md font-semibold text-[#FFA1A1]">
               LISTINGS
             </div>
 
