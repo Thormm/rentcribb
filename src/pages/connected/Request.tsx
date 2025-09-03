@@ -253,34 +253,35 @@ export default function Request() {
                   </InfoPill>
                 </div>
               </div>
-
-              <div className="space-y-1 mt-8">
-                <Label className="ml-8">Budget</Label>
-                <InfoPill className="bg-white">
-                  <div className="inline-flex items-center justify-between w-full">
-                    <select className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer">
-                      <option>Type</option>
-                    </select>
-                    {/* custom dropdown icon (optional, to far right) */}
-                    <svg
-                      className="w-5 h-5 text-gray-500  pointer-events-none"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </InfoPill>
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-1">
+                  <Label className="ml-8">Budget</Label>
+                  <InfoPill className="bg-white">
+                    <div className="inline-flex items-center justify-between w-full">
+                      <select className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer">
+                        <option>Type</option>
+                      </select>
+                      {/* custom dropdown icon (optional, to far right) */}
+                      <svg
+                        className="w-5 h-5 text-gray-500  pointer-events-none"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </InfoPill>
+                </div>
               </div>
 
               <div className="pt-2 w-full mt-2 flex items-center justify-center">
-                <DfButton >POST</DfButton>
+                <DfButton>POST</DfButton>
               </div>
             </div>
           </Maincard>
