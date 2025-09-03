@@ -1,20 +1,17 @@
 import logo from "../assets/logo.png";
 import { useState } from "react";
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div>
+    <>
       {/* Navbar */}
-      <nav className="flex justify-between items-center px-15 py-6 shadow-sm bg-white relative border-3">
+      <nav className="sticky top-0 flex w-full justify-between items-center px-15 py-6 shadow-sm bg-white z-50 border-b">
         {/* Left side (desktop links) */}
         <div className="hidden md:flex space-x-20 text-black font-medium text-xl">
-          <a href="/products">
-            Products
-          </a>
-          <a href="/rent" >
-            /Rent
-          </a>
+          <a href="/products">Products</a>
+          <a href="/rent">/Rent</a>
         </div>
 
         {/* Center Logo */}
@@ -24,7 +21,7 @@ const Navbar = () => {
         </div>
 
         {/* Right (desktop links + login) */}
-          <div className="hidden md:flex space-x-20 text-black items-center font-medium ">
+        <div className="hidden md:flex space-x-20 text-black items-center font-medium">
           <a href="/about" className="hover:text-black text-xl">
             About Us
           </a>
@@ -95,8 +92,7 @@ const Navbar = () => {
             </div>
           </div>
         )}
-      </nav>
-    </div>
+      </nav></>
   );
 };
 

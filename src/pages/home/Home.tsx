@@ -21,7 +21,6 @@ import spark3 from "../../assets/spark3.png";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 
@@ -144,7 +143,6 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar />
       {/* Hero Section */}
       <section
         className="relative flex flex-col items-center justify-center text-center text-white h-[90vh] bg-cover bg-center"
