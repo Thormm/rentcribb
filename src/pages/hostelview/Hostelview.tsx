@@ -82,7 +82,7 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-import InfoPill from "../../components/Pill";
+import InfoPill, { DfButton } from "../../components/Pill";
 
 import clsx from "clsx"; // optional, for cleaner class merging
 
@@ -115,9 +115,7 @@ function StarRow({ value = 4 }: { value?: number }) {
 import Footer from "../../components/Footer";
 import imgright from "../../assets/hero.jpg";
 
-
 export default function Hostelview() {
-
   return (
     <div className="bg-[#F3EDFE]">
       <section className=" w-full ">
@@ -550,15 +548,18 @@ export default function Hostelview() {
         </div>
       </section>
 
-      <section className="bg-[#CDBCEC] my-20 rounded-4xl border-3">
-       
+      <section className="bg-[#CDBCEC] my-20 rounded-4xl border-4">
         {/* SECTION 2: Cards (no overlap into header) */}
         <div className="w-full max-w-6xl px-4 pb-16 pt-6 mx-auto">
-           <h1 className="font-semibold text-lg">OTHER HOSTELS</h1>
+          <h1 className="font-semibold text-lg">OTHER HOSTELS</h1>
           <div className="flex flex-wrap justify-center gap-6 space-x-6">
             {cards.map((c, i) => (
               <Card key={i} item={c} />
             ))}
+          </div>
+
+          <div className="flex justify-center mt-15">
+            <DfButton className="font-[300px] py-3 px-7 text-[16px]">VIEW LISTING</DfButton>
           </div>
         </div>
       </section>

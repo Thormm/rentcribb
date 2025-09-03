@@ -1,5 +1,6 @@
 import imgright from "../../assets/request.png";
 import { Mars, Venus, Church, Moon, Ban } from "lucide-react";
+import { DfButton } from "../../components/Pill";
 function Maincard({
   className = "",
   children,
@@ -279,9 +280,7 @@ export default function Request() {
               </div>
 
               <div className="pt-2 w-full mt-2 flex items-center justify-center">
-                <button className="text-white flex items-center justify-center gap-2 rounded-lg bg-black px-10 py-2 text-xl font-medium drop-shadow-lg">
-                  <span>POST</span>
-                </button>
+                <DfButton >POST</DfButton>
               </div>
             </div>
           </Maincard>
