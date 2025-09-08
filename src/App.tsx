@@ -14,9 +14,9 @@ function Layout() {
   const location = useLocation();
 
   // Add all the routes where you DON'T want the navbar
-  const hideNavbarOn = ["/dash", "/login", "/register"];
 
-  const shouldHideNavbar = hideNavbarOn.includes(location.pathname);
+const hideNavbarOn = ["/dash", "/login", "/register"];
+const shouldHideNavbar = hideNavbarOn.some(path => location.pathname.startsWith(path));
 
   return (
     <>
