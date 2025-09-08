@@ -75,7 +75,7 @@ export default function Dashboard() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 h-full overflow-auto bg-neutral-950 p-4">
+        <main className="flex-1 min-w-0 h-full overflow-auto bg-[#FFFFFF]">
           {renderTab()}
         </main>
       </div>

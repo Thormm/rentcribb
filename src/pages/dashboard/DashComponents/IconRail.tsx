@@ -192,12 +192,8 @@ export default function IconRail({
             <div className="flex items-center gap-1">
               <button
                 onClick={() => toggleSection(section.title)}
-                className={`grid h-14 w-14 place-items-center rounded-xl transition border-l-[3px]
-                  ${
-                    openSection === section.title
-                      ? "text-[#FFA1A1] border-[#FFA1A1]"
-                      : "text-white border-transparent"
-                  }`}
+                className={`grid h-14 w-14 place-items-center rounded-xl transition text-gray-400
+                 `}
                 title={section.title}
               >
                 {section.icon}
