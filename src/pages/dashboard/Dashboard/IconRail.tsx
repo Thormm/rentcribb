@@ -122,7 +122,7 @@ export default function IconRail({
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {/* Logo */}
-      <div className="pt-4 pb-6 flex flex-col items-center gap-3">
+      <div className="pt-5 pb-6 flex flex-col items-center gap-3">
         <img src={logo} alt="Cribb.Africa Logo" className="h-9" />
 
         <button className="p-3 rounded-full bg-neutral-800 my-3">
@@ -143,7 +143,7 @@ export default function IconRail({
       <div className="flex flex-col items-center gap-3 mt-6">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`grid h-14 w-14 place-items-center rounded-xl transition border-l-[3px]
+          className={`grid h-12 w-12 place-items-center rounded-xl transition border-l-[3px]
             ${
               activeTab === "overview"
                 ? "text-[#FFA1A1] border-[#FFA1A1]"
@@ -151,12 +151,12 @@ export default function IconRail({
             }`}
           title="Overview"
         >
-          <FiGrid className="h-14 w-14 px-3" />
+          <FiGrid className="h-12 w-12 px-3" />
         </button>
 
         <button
           onClick={() => setActiveTab("payments")}
-          className={`grid h-14 w-14 place-items-center rounded-xl transition border-l-[3px]
+          className={`grid h-12 w-12 place-items-center rounded-xl transition border-l-[3px]
             ${
               activeTab === "payments"
                 ? "text-[#FFA1A1] border-[#FFA1A1]"
@@ -164,12 +164,12 @@ export default function IconRail({
             }`}
           title="Payments"
         >
-          <FiCreditCard className="h-14 w-14 px-3" />
+          <FiCreditCard className="h-12 w-12 px-3" />
         </button>
 
         <button
           onClick={() => setActiveTab("subscriptions")}
-          className={`grid h-14 w-14 place-items-center rounded-xl transition border-l-[3px]
+          className={`grid h-12 w-14 place-items-center rounded-xl transition border-l-[3px]
             ${
               activeTab === "subscriptions"
                 ? "text-[#FFA1A1] border-[#FFA1A1]"
@@ -177,7 +177,7 @@ export default function IconRail({
             }`}
           title="Subscriptions"
         >
-          <MdWallet className="h-14 w-14 px-3" />
+          <MdWallet className="h-12 w-12 px-3" />
         </button>
       </div>
 
@@ -263,7 +263,7 @@ export default function IconRail({
       {/* Settings at bottom */}
       <button
         onClick={() => setActiveTab("settings")}
-        className={`grid h-14 w-14 place-items-center rounded-xl mb-4 transition border-l-[3px]
+        className={`grid h-12 w-12 place-items-center rounded-xl mb-4 transition border-l-[3px]
           ${
             activeTab === "settings"
               ? "text-[#FFA1A1] border-[#FFA1A1]"
@@ -271,7 +271,7 @@ export default function IconRail({
           }`}
         title="Settings"
       >
-        <FiSettings className="h-14 w-14 px-3" />
+        <FiSettings className="h-12 w-12 px-3" />
       </button>
 
       {/* Spacer */}
