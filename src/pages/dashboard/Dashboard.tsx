@@ -4,8 +4,8 @@ import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
 import Bizoverview from "./bizoverview";
 import SettingsPage from "./Settings";
-import IconRail from "./Dashboard/IconRail";
-import SidebarInner from "./Dashboard/SidebarInner";
+import IconRail from "./DashComponents/IconRail";
+import SidebarInner from "./DashComponents/SidebarInner";
 
 export default function Dashboard() {
   const [open, setOpen] = useState(true);
