@@ -1,5 +1,3 @@
-import React from 'react'
-
 const bizoverview = () => {
   return (
     <div>bizoverview</div>
