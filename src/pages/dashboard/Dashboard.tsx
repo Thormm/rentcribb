@@ -1,0 +1,84 @@
+import { useEffect, useState } from "react";
+import Overview from "./Overview";
+import Payment from "./Payment";
+import Subscriptions from "./Subscriptions";
+import Bizoverview from "./bizoverview";
+import SettingsPage from "./Settings";
+import IconRail from "./Dashboard/IconRail";
+import SidebarInner from "./Dashboard/SidebarInner";
+
+export default function Dashboard() {
+  const [open, setOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  // Sidebar open/close persistence
+  useEffect(() => {
+    const v = localStorage.getItem("sidebar:open");
+    if (v !== null) setOpen(v === "1");
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("sidebar:open", open ? "1" : "0");
+  }, [open]);
+
+  // Persist last active tab
+  useEffect(() => {
+    const v = localStorage.getItem("dashboard:tab");
+    if (v) setActiveTab(v);
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("dashboard:tab", activeTab);
+  }, [activeTab]);
+
+  const toggleSection = (title: string) => {
+    setOpenSection(openSection === title ? null : title);
+  };
+
+  const renderTab = () => {
+    switch (activeTab) {
+      case "overview":
+        return <Overview />;
+      case "payments":
+        return <Payment />;
+      case "subscriptions":
+        return <Subscriptions />;
+      case "settings":
+        return <SettingsPage />;
+      case "bizoverview":
+        return <Bizoverview />;
+      default:
+        return <div className="text-neutral-400">Page not found</div>;
+    }
+  };
+
+  return (
+    <div className="h-screen w-screen overflow-hidden bg-neutral-950 text-neutral-100">
+      <div className="flex h-full relative">
+        {open ? (
+          <SidebarInner
+            onToggle={() => setOpen(false)}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            openSection={openSection}
+            toggleSection={toggleSection}
+          />
+        ) : (
+          // IMPORTANT: pass openSection & toggleSection so IconRail stays in sync
+          <IconRail
+            onToggle={() => setOpen(true)}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            openSection={openSection}
+            toggleSection={toggleSection}
+            referralCode="ZARK25"
+          />
+        )}
+
+        {/* Main Content */}
+        <main className="flex-1 min-w-0 h-full overflow-auto bg-neutral-950 p-4">
+          {renderTab()}
+        </main>
+      </div>
+    </div>
+  );
+}
