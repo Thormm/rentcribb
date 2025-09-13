@@ -10,6 +10,7 @@ import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
 import ReferralCard from "./ReferralCard";
 import { HiOutlineUserCircle } from "react-icons/hi";
+import {FiSettings} from "react-icons/fi"
 
 export default function SidebarInner({
   onToggle,
@@ -205,7 +206,7 @@ export default function SidebarInner({
               }`}
           >
             <span className="grid h-8 w-8 place-items-center rounded-lg">
-              <LuFileText className="h-8 w-8" />
+              <FiSettings className="h-8 w-8" />
             </span>
             <span className="truncate text-xl">Settings</span>
             <FaRegCircle className="h-3 w-3 ml-auto" />
