@@ -32,7 +32,7 @@ export default function SidebarInner({
       icon: <HiOutlineUserCircle className="h-8 w-8" />,
       items: [
         { label: "Business Overview", icon: <MdOutlineAddBusiness className="h-8 w-8" />, tab: "bizoverview" },
-        { label: "Listings", icon: <RiListView className="h-8 w-8" /> },
+        { label: "Listings", icon: <RiListView className="h-8 w-8" />, tab: "listings" },
         { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> },
         { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
         { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> },

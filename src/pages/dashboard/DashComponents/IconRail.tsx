@@ -50,7 +50,7 @@ export default function IconRail({
         },
         {
           label: "Listings",
-          tab: "agent_listings",
+          tab: "listings",
           icon: <RiListView className="h-14 w-14 px-3" />,
         },
         {

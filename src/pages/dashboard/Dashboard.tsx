@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
-import Bizoverview from "./bizoverview";
 import SettingsPage from "./Settings";
+import Listings from "./Listings";
 import IconRail from "./DashComponents/IconRail";
 import SidebarInner from "./DashComponents/SidebarInner";
 
@@ -42,10 +42,10 @@ export default function Dashboard() {
         return <Payment />;
       case "subscriptions":
         return <Subscriptions />;
+      case "listings":
+        return <Listings />;
       case "settings":
         return <SettingsPage />;
-      case "bizoverview":
-        return <Bizoverview />;
       default:
         return <div className="text-neutral-400">Page not found</div>;
     }

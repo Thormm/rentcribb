@@ -10,6 +10,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiArrowUpRight } from "react-icons/fi";
 import { FiMail } from "react-icons/fi";
 import { MdOutlinePending } from "react-icons/md";
+import { RiInformationLine } from "react-icons/ri";
 
 type Review = {
   id: number;
@@ -197,15 +198,11 @@ const Overview = () => {
                   {/* Row 2 */}
                   <div>
                     <Label>CALL NUMBER</Label>
-                    <InfoPill className="flex items-center justify-between">
-                      <input
-                        type="tel"
-                        value={callNumber}
-                        onChange={(e) => setCallNumber(e.target.value)}
-                        placeholder="08078436972"
-                        className="flex-1 outline-none py-1 rounded-md text-black"
-                      />
-                      <FiCheckCircle className="text-gray-400 ml-2" size={20} />
+                    <InfoPill>
+                      <div className="inline-flex items-center justify-between w-full">
+                        <span className="text-md py-1">26</span>
+                        <RiInformationLine size={14} className="ml-auto" />
+                      </div>
                     </InfoPill>
                   </div>
 
@@ -227,25 +224,22 @@ const Overview = () => {
                   <div className="md:col-span-2">
                     <Label>EMAIL</Label>
                     <InfoPill>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
+                                          <div className="inline-flex items-center justify-between w-full">
+                                            <span className="text-md py-1">26</span>
+                                            <RiInformationLine size={14} className="ml-auto" />
+                                          </div>
+                                        </InfoPill>
                   </div>
 
                   {/* Row 4 - Full Address */}
                   <div className="md:col-span-2">
                     <Label>FULL ADDRESS</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       <input
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House No, Street, Area, City, Postal"
+                        placeholder="Enter your Address"
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -254,7 +248,7 @@ const Overview = () => {
                   {/* Row 5 - State and Landmark */}
                   <div className="pl-1">
                     <Label>STATE</Label>
-                    <InfoPill className="relative flex items-center">
+                    <InfoPill className="relative flex items-center bg-white">
                       <select
                         value={stateValue}
                         onChange={(e) => setStateValue(e.target.value)}
@@ -269,13 +263,13 @@ const Overview = () => {
                             </option>
                           ))}
                       </select>
-                      <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
+                      <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
                     </InfoPill>
                   </div>
 
                   <div>
                     <Label>LANDMARK</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       <input
                         type="text"
                         value={landmark}
@@ -304,13 +298,13 @@ const Overview = () => {
               <div className="my-10 w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
                   {/* Coming Soon */}
-                  <button className="w-80 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-3 shadow-sm text-md text-black">
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
 
                   {/* Join Waitlist */}
-                 <button className="w-80 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-3 shadow-sm text-md text-white">
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
                   </button>
@@ -324,7 +318,7 @@ const Overview = () => {
                   {/* Row 1 */}
                   <div>
                     <Label>FIRST NAME</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       <input
                         type="text"
                         value={firstName}
@@ -337,12 +331,12 @@ const Overview = () => {
 
                   <div>
                     <Label>LAST NAME</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       <input
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Doe"
+                        placeholder="Enter Last Name"
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -351,7 +345,7 @@ const Overview = () => {
                   {/* Row 2 */}
                   <div>
                     <Label>CALL NUMBER</Label>
-                    <InfoPill className="flex items-center justify-between">
+                    <InfoPill className="flex items-center justify-between bg-white">
                       <input
                         type="tel"
                         value={callNumber}
@@ -359,13 +353,12 @@ const Overview = () => {
                         placeholder="08078436972"
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
-                      <FiCheckCircle className="text-gray-400 ml-2" size={20} />
                     </InfoPill>
                   </div>
 
                   <div>
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="flex items-center justify-between">
+                    <InfoPill className="flex items-center justify-between bg-white">
                       <input
                         type="tel"
                         value={whatsapp}
@@ -373,14 +366,13 @@ const Overview = () => {
                         placeholder="08078436972"
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
-                      <FiCheckCircle className="text-gray-400 ml-2" size={20} />
                     </InfoPill>
                   </div>
 
                   {/* Row 3 - Email full width */}
                   <div className="md:col-span-2">
                     <Label>EMAIL</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       <input
                         type="email"
                         value={email}
@@ -391,54 +383,7 @@ const Overview = () => {
                     </InfoPill>
                   </div>
 
-                  {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
-                    <Label>FULL ADDRESS</Label>
-                    <InfoPill>
-                      <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House No, Street, Area, City, Postal"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
-                  </div>
-
-                  {/* Row 5 - State and Landmark */}
-                  <div className="pl-1">
-                    <Label>STATE</Label>
-                    <InfoPill className="relative flex items-center">
-                      <select
-                        value={stateValue}
-                        onChange={(e) => setStateValue(e.target.value)}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      >
-                        <option value="">{states[0].label}</option>
-                        {states
-                          .filter((s) => s.value !== "")
-                          .map((s) => (
-                            <option key={s.value} value={s.value}>
-                              {s.label}
-                            </option>
-                          ))}
-                      </select>
-                      <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
-                    </InfoPill>
-                  </div>
-
-                  <div>
-                    <Label>LANDMARK</Label>
-                    <InfoPill>
-                      <input
-                        type="text"
-                        value={landmark}
-                        onChange={(e) => setLandmark(e.target.value)}
-                        placeholder="Around Where"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
-                  </div>
+                 
                 </div>
 
                 {/* Save Changes */}

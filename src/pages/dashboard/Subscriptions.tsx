@@ -161,14 +161,14 @@ const Subscriptions = () => {
     <div className="bg-white py-10">
       <section className="px-10 flex justify-center">
         <div className="w-full">
-          <SectionHeader title="Payments" />
+          <SectionHeader title="Subscriptions" />
 
           <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {/* Agent Tab */}
             {activeTab === "Agent" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-5  space-y-6">
                 <div className="grid my-10 w-2/3 grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label>VALID UNTIL</Label>
@@ -226,11 +226,11 @@ const Subscriptions = () => {
 
             {/* Landlord Tab */}
             {activeTab === "Landlord" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-5 mt-10 space-y-6">
                 <div className="flex flex-col gap-8 bg-transparent">
                   <button className="w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-3 shadow-sm text-md text-white">
                     <TbUserSquare className="w-8 h-8" />
-                    Become a Legend &gt;&gt;
+                    Become a Landlord &gt;&gt;
                   </button>
                 </div>
 
@@ -268,7 +268,6 @@ const Subscriptions = () => {
 
                   {/* Centered UPGRADE button spanning both cols */}
                   <div className="md:col-span-2 flex mt-4 justify-between px-8">
-
                     <button className="py-3 px-6 text-md font-medium bg-white text-black shadow-lg rounded-lg">
                       FREE TRIAL
                     </button>
@@ -291,11 +290,14 @@ const Subscriptions = () => {
             {activeTab === "Vendor" && (
               <div className="my-10 w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
-                  <button className="w-80 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-3 shadow-sm text-md text-black">
+                  {/* Coming Soon */}
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
-                  <button className="w-80 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-3 shadow-sm text-md text-white">
+
+                  {/* Join Waitlist */}
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
                   </button>

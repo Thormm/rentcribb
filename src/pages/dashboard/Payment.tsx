@@ -240,7 +240,7 @@ const Payment = () => {
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
                   <span className="text-md font-medium text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                    --- HISTORY --------------------------
                   </span>
                 </div>
                 <PaginatedList data={withdrawalsData} />
