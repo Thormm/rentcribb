@@ -299,7 +299,7 @@ function PaginatedDrafts() {
 
 
 // ----------------------- Page -----------------------
-const Listings: React.FC = () => {
+const Listingslandlord: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
 
   const [stateValue, setStateValue] = useState(""); // store state code/name
@@ -389,4 +389,4 @@ const Listings: React.FC = () => {
   );
 };
 
-export default Listings;
+export default Listingslandlord;

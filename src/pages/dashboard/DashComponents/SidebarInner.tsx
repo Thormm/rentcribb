@@ -3,9 +3,9 @@ import { FaRegBell, FaRegCircle } from "react-icons/fa";
 import { IoIosAddCircleOutline, IoIosArrowBack, IoIosArrowDown, IoIosArrowUp, IoIosStarOutline } from "react-icons/io";
 import { MdOutlineAccountBalanceWallet, MdOutlineDashboard, MdWallet, MdOutlineBookmarkAdded, MdOutlineBackpack, MdOutlineAddBusiness } from "react-icons/md";
 import { RiListView } from "react-icons/ri";
-import { BiWorld } from "react-icons/bi";
-import { BsShieldCheck } from "react-icons/bs";
-import { LuFileText, LuLogOut } from "react-icons/lu";
+//import { BiWorld } from "react-icons/bi";
+//import { BsShieldCheck } from "react-icons/bs";
+import { LuLogOut } from "react-icons/lu";
 import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
 import ReferralCard from "./ReferralCard";
@@ -33,10 +33,10 @@ export default function SidebarInner({
       items: [
         { label: "Business Overview", icon: <MdOutlineAddBusiness className="h-8 w-8" />, tab: "bizoverview" },
         { label: "Listings", icon: <RiListView className="h-8 w-8" />, tab: "listings" },
-        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> },
-        { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
+        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> , tab: "bookingsagent"},
+       /* { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
         { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> },
-        { label: "Website Page", icon: <BiWorld className="h-8 w-8" /> },
+        { label: "Website Page", icon: <BiWorld className="h-8 w-8" /> }, */
       ],
     },
     {
@@ -44,11 +44,11 @@ export default function SidebarInner({
       rating: "1.2 (85)",
       icon: <TbUserSquare className="h-8 w-8" />,
       items: [
-        { label: "Hostel Overview", icon: <PiHouse className="h-8 w-8" /> },
-        { label: "Listings", icon: <RiListView className="h-8 w-8" /> },
-        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> },
-        { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
-        { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> },
+        { label: "Hostel Overview", icon: <PiHouse className="h-8 w-8" />,  tab: "hosteloverview" },
+        { label: "Listings", icon: <RiListView className="h-8 w-8" />,  tab: "listingslandlord" },
+        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" />, tab: "bookingslandlord" },
+        /*{ label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
+        { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> }, */
       ],
     },
   ];

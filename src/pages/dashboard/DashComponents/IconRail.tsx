@@ -12,9 +12,9 @@ import {
   MdOutlineBackpack,
 } from "react-icons/md";
 import { RiListView } from "react-icons/ri";
-import { BsShieldCheck, BsQrCode } from "react-icons/bs";
-import { LuFileText } from "react-icons/lu";
-import { BiWorld } from "react-icons/bi";
+import { BsQrCode } from "react-icons/bs";
+//import { LuFileText } from "react-icons/lu";
+//import { BiWorld } from "react-icons/bi";
 import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
 import { IoCopyOutline } from "react-icons/io5";
@@ -55,10 +55,10 @@ export default function IconRail({
         },
         {
           label: "Bookings",
-          tab: "agent_bookings",
+          tab: "bookingsagent",
           icon: <MdOutlineBookmarkAdded className="h-14 w-14 px-3" />,
         },
-        {
+        /*{
           label: "Verify Tenants",
           tab: "agent_verify",
           icon: <BsShieldCheck className="h-14 w-14 px-3" />,
@@ -72,7 +72,7 @@ export default function IconRail({
           label: "Website Page",
           tab: "agent_website",
           icon: <BiWorld className="h-14 w-14 px-3" />,
-        },
+        },*/
       ],
     },
     {
@@ -81,20 +81,20 @@ export default function IconRail({
       items: [
         {
           label: "Hostel Overview",
-          tab: "landlord_overview",
+          tab: "hosteloverview",
           icon: <PiHouse className="h-14 w-14 px-3" />,
         },
         {
           label: "Listings",
-          tab: "landlord_listings",
+          tab: "listingslandlord",
           icon: <RiListView className="h-14 w-14 px-3" />,
         },
         {
           label: "Bookings",
-          tab: "landlord_bookings",
+          tab: "bookingslandlord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ",
           icon: <MdOutlineBookmarkAdded className="h-14 w-14 px-3" />,
         },
-        {
+       /* {
           label: "Verify Tenants",
           tab: "landlord_verify",
           icon: <BsShieldCheck className="h-14 w-14 px-3" />,
@@ -103,7 +103,7 @@ export default function IconRail({
           label: "Legal & Documents",
           tab: "landlord_legal",
           icon: <LuFileText className="h-14 w-14 px-3" />,
-        },
+        },*/
       ],
     },
   ];

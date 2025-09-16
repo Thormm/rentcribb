@@ -5,7 +5,7 @@ import Footer from "../../components/Footer";
 import Card from "../../components/Cards";
 
 type CardItemA = {
-  border: string;
+  background: string;
   tier: number;
   rating: number;
   reviews: number;
@@ -22,7 +22,7 @@ const cards: CardItemA[] = [
     title: "A room and parlor (New) is available",
     location: "Safari Agbeke",
     price: "₦800,000 per Session",
-    border: "bg-white",
+    background: "bg-white",
   },
   {
     tier: 2,
@@ -31,7 +31,7 @@ const cards: CardItemA[] = [
     title: "A Room Selfcontain (New) is available",
     location: "around PAYE for a Split Amount of",
     price: "200,000 per Year.",
-    border: "bg-[#CDBCEC]",
+    background: "bg-[#CDBCEC]",
   },
   {
     tier: 3,
@@ -40,7 +40,7 @@ const cards: CardItemA[] = [
     title: "3 units of ‘A room in a flat’ (Furnished)",
     location: "is available around PAYE for",
     price: "₦800,000 per 9months",
-    border: "bg-white",
+    background: "bg-white",
   },
 ];
 

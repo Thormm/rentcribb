@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
+import Bizoverview from "./Bizoverview";
 import SettingsPage from "./Settings";
 import Listings from "./Listings";
+import Bookingsagent from "./Bookingsagent";
+import Bookingslandlord from "./Bookingslandlord";
+import Hosteloverview from "./Hosteloverview";
+import Listingslandlord from "./Listingslandlord";
 import IconRail from "./DashComponents/IconRail";
 import SidebarInner from "./DashComponents/SidebarInner";
 
@@ -42,8 +47,18 @@ export default function Dashboard() {
         return <Payment />;
       case "subscriptions":
         return <Subscriptions />;
+      case "bizoverview":
+        return <Bizoverview />;
       case "listings":
         return <Listings />;
+      case "listingslandlord":
+        return <Listingslandlord />;
+      case "bookingsagent":
+        return <Bookingsagent />;
+      case "bookingslandlord":
+        return <Bookingslandlord />;
+      case "hosteloverview":
+        return <Hosteloverview />;
       case "settings":
         return <SettingsPage />;
       default:
