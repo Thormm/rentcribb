@@ -6,7 +6,9 @@ import { BsQuestionCircle } from "react-icons/bs";
 import { MdVerified } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
-
+import { AiOutlineStar } from "react-icons/ai";
+import { PiHouse } from "react-icons/pi";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -19,6 +21,31 @@ function Label({ children, className }: LabelProps) {
     </div>
   );
 }
+
+type Review = {
+  id: number;
+  date: string;
+  name: string;
+  type: "home" | "user";
+  rating?: number;
+  text?: string;
+};
+
+const reviews: Review[] = [
+  { id: 1,date: "6th Jan, 2025",
+    name: "Zarken Christian",
+    type: "user",
+    rating: 0,
+    text: "", },
+  {
+    id: 2,
+    date: "6th Jan, 2025",
+    name: "Zarken Christian",
+    type: "user",
+    rating: 5,
+    text: "This is a very good customer, pays well as speaks kindly.",
+  },
+];
 
 type Plan = {
   tag: string;
@@ -130,12 +157,14 @@ function Tabs({
 }
 
 const Bizoverview = () => {
+  const [expanded, setExpanded] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("Profile");
   const [activePlan, setActivePlan] = useState<keyof typeof plans>("TIER1");
   const current = plans[activePlan];
   const [whatsapp, setWhatsapp] = useState("08078436972");
   const [stateValue, setStateValue] = useState(""); // store state code/name
   const [address, setAddress] = useState("");
+  
 
   const states = [
     { value: "", label: "Select State" },
@@ -414,43 +443,46 @@ const Bizoverview = () => {
                   {/* --- STATS ROW (TOTAL + TOP BOOKINGS) --- */}
                   <div className="col-span-2">
                     {/* Row 1: Labels */}
-                    <div className="grid grid-cols-2 gap-4 mb-3">
-                      <Label>TOTAL</Label>
+                    <div className="grid grid-cols-2 gap-4 mb-2">
+                      <Label>RATINGS</Label>
                     </div>
 
                     {/* Row 2: Circle + Bars */}
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center ml-8">
                       {/* TOTAL Circle */}
                       <div className="flex-shrink-0">
                         <div className="w-28 h-28 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg">
                           <span className="text-3xl font-medium text-black">
-                            70
+                            4.8
                           </span>
                         </div>
                       </div>
-{/* TOP BOOKINGS */}
-<div className="flex-1 space-y-3">
-  {[5, 4, 3, 2, 1].map((count, i) => (
-    <div key={i} className="flex items-center gap-3">
-      {/* Stars right aligned */}
-      <div className="w-28 flex justify-end">
-        <div className="flex justify-end w-full">
-          {Array.from({ length: count }).map((_, j) => (
-            <AiFillStar key={j} className="text-yellow-500 text-lg" />
-          ))}
-        </div>
-      </div>
+                      {/* TOP BOOKINGS */}
+                      <div className="flex-1 space-y-1">
+                        {[5, 4, 3, 2, 1].map((count, i) => (
+                          <div key={i} className="flex items-center gap-3">
+                            {/* Stars right aligned */}
+                            <div className="w-28 flex justify-end">
+                              <div className="flex justify-end w-full">
+                                {Array.from({ length: count }).map((_, j) => (
+                                  <AiFillStar
+                                    key={j}
+                                    className="text-yellow-500 text-md"
+                                  />
+                                ))}
+                              </div>
+                            </div>
 
-      {/* Progress bar stays untouched */}
-      <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-black"
-          style={{ width: `${count * 20}%` }}
-        />
-      </div>
-    </div>
-  ))}
-</div>
+                            {/* Progress bar stays untouched */}
+                            <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-black"
+                                style={{ width: `${count * 20}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -485,6 +517,88 @@ const Bizoverview = () => {
                       ))}
                     </div>
                   </div>
+                </div>
+                {/* Header with dashed line */}
+                <div className="flex items-center gap-3 my-8 w-2/3">
+                  <span className="text-md font-medium text-black tracking-wide">
+                    ----- GIVE REVIEWS --------------------------
+                  </span>
+                </div>
+
+                {/* Reviews list */}
+                <div className="space-y-8 w-2/3">
+                  {reviews.map((r) => {
+                    const isExpanded = expanded === r.id;
+                    return (
+                      <div
+                        key={r.id}
+                        className="border-black rounded-4xl border px-6 py-4 shadow-sm bg-white"
+                      >
+                        {/* Row 1 */}
+                        <div className="flex items-center">
+                          {/* Left icon (PiHouse) */}
+                          <div className="w-6 h-6 flex items-center justify-center text-black">
+                            <PiHouse className="w-6 h-6" />
+                          </div>
+
+                          {/* Date + name */}
+                          <div className="flex flex-grow items-center gap-5 px-4">
+                            <span className="text-md font-normal text-black whitespace-nowrap">
+                              {r.date}
+                            </span>
+                            <span className="text-md text-black font-normal truncate">
+                              {r.name}
+                            </span>
+                          </div>
+
+                          {/* Right dropdown toggle */}
+                          <div
+                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                            onClick={() =>
+                              setExpanded(isExpanded ? null : r.id)
+                            }
+                          >
+                            {isExpanded ? (
+                              <IoIosArrowUp className="w-6 h-6 text-black" />
+                            ) : (
+                              <IoIosArrowDown className="w-6 h-6 text-black" />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Expanded content */}
+                        {isExpanded && (
+                          <div className="mt-3 px-10 space-y-3">
+                            {/* Stars (read-only) */}
+                            {r.rating !== undefined && (
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: 5 }).map((_, i) =>
+                                  i < (r.rating ?? 0) ? (
+                                    <AiFillStar
+                                      key={i}
+                                      className="w-7 h-7 text-yellow-400"
+                                    />
+                                  ) : (
+                                    <AiOutlineStar
+                                      key={i}
+                                      className="w-7 h-7 text-gray-300"
+                                    />
+                                  )
+                                )}
+                              </div>
+                            )}
+
+                            {/* Review text (if available) */}
+                            {r.text && (
+                              <p className="text-sm text-black leading-relaxed">
+                                {r.text}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
