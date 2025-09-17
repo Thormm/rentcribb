@@ -31,10 +31,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-sm pt-5">
-        Collect your rewards:{" "}
-        <span className="text-[#FFA1A1] font-semibold">
-          You have done the Most !!
-        </span>
+        Simple, Transparent Plan based on your need
       </p>
 
       <div
@@ -171,28 +168,28 @@ const Subscriptions = () => {
               <div className="p-5  space-y-6">
                 <div className="grid my-10 w-2/3 grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
+                    <Label>CURRENT PLAN</Label>
+                    <InfoPill>
+                      <div className="inline-flex items-center justify-between w-full">
+                        <span className="text-md py-1">Go Pro</span>
+                        <RiInformationLine size={14} className="ml-auto" />
+                      </div>
+                    </InfoPill>
+                  </div>
+                  <div>
                     <Label>VALID UNTIL</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
+                        <span className="text-md py-1">6th Feb, 2025</span>
                         <RiInformationLine size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
                   </div>
                   <div>
-                    <Label>LISTING PILL</Label>
+                    <Label>LISTING LIMIT</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <RiInformationLine size={14} className="ml-auto" />
-                      </div>
-                    </InfoPill>
-                  </div>
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
+                        <span className="text-md py-1">Unlimited</span>
                         <RiInformationLine size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -201,7 +198,7 @@ const Subscriptions = () => {
                     <Label>CONNECTION</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
+                        <span className="text-md py-1">Unlimited</span>
                         <RiInformationLine size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -239,7 +236,7 @@ const Subscriptions = () => {
                     <Label>CURRENT PLAN</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
+                        <span className="text-md py-1">None</span>
                         <RiInformationLine size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -248,7 +245,7 @@ const Subscriptions = () => {
                     <Label>VALID UNTIL</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
+                        <span className="text-md py-1">16-03-2024</span>
                         <RiInformationLine size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -256,19 +253,15 @@ const Subscriptions = () => {
 
                   {/* Connection pill spanning both columns without icon */}
                   <div className="md:col-span-2">
-                    <Label>CONNECTION</Label>
+                    <Label>CONNECT LIMIT</Label>
                     <InfoPill>
-                      <input
-                        type="text"
-                        placeholder="Doe"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
+                     <span className="text-md py-1">16-03-2024</span>
                     </InfoPill>
                   </div>
 
                   {/* Centered UPGRADE button spanning both cols */}
                   <div className="md:col-span-2 flex mt-4 justify-between px-8">
-                    <button className="py-3 px-6 text-md font-medium bg-white text-black shadow-lg rounded-lg">
+                    <button className="py-3 px-6 text-md font-medium border-2 text-black shadow-lg rounded-lg">
                       FREE TRIAL
                     </button>
                     <button className="py-3 px-6 text-md font-medium bg-black text-white shadow-lg rounded-lg">

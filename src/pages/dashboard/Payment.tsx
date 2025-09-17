@@ -34,10 +34,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-sm pt-5">
-        Collect your rewards:{" "}
-        <span className="text-[#FFA1A1] font-semibold">
-          You have done the Most !!
-        </span>
+        Collect your rewards: You have done the Most !!
       </p>
 
       <div
@@ -222,7 +219,9 @@ const Payment = () => {
                 <Label>BALANCE</Label>
                 <InfoPill className="flex items-center justify-between px-3 max-w-md">
                   <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-xl font-bold text-black">₦250,000</span>
+                    <span className="text-xl font-bold text-black">
+                      ₦250,000
+                    </span>
                     <button className="flex items-center gap-2 px-3 py-1 bg-black text-[#D6FFC3] text-sm rounded-md">
                       <MdOutlinePayments /> WITHDRAW
                     </button>
