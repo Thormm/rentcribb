@@ -33,7 +33,7 @@ export default function SidebarInner({
       items: [
         { label: "Business Overview", icon: <MdOutlineAddBusiness className="h-8 w-8" />, tab: "bizoverview" },
         { label: "Listings", icon: <RiListView className="h-8 w-8" />, tab: "listings" },
-        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> , tab: "bookingsagent"},
+        { label: "Bookings & Requests", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> , tab: "bookingsagent"},
        /* { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
         { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> },
         { label: "Website Page", icon: <BiWorld className="h-8 w-8" /> }, */

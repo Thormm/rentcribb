@@ -6,11 +6,10 @@ import Card from "../../components/Cards";
 import { PiHouse } from "react-icons/pi";
 import { HiOutlineUsers, HiOutlineMail } from "react-icons/hi";
 import {
-  MdOutlinePendingActions,
-  MdErrorOutline,
-  MdBlock,
   MdOutlineDeleteForever,
   MdOutlineCall,
+  MdOutlinePostAdd,
+  MdLightbulbOutline,
 } from "react-icons/md";
 import { FaToggleOn } from "react-icons/fa";
 import { FiChevronDown, FiCopy } from "react-icons/fi";
@@ -300,9 +299,7 @@ function PaginatedDrafts() {
                         key={idx}
                         className="flex items-center justify-between"
                       >
-                        <span className="text-sm">
-                          {field.label}
-                        </span>
+                        <span className="text-sm">{field.label}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm  truncate max-w-[180px]">
                             {field.value}
@@ -317,22 +314,15 @@ function PaginatedDrafts() {
             </div>
 
             {/* RIGHT STATUS */}
-            <div className="flex items-center justify-center gap-3 w-1/3 border-black rounded-4xl border py-4 shadow-sm">
-              <div className="flex items-center w-40 space-x-3">
-                {item.statusIcon === "processing" && (
-                  <MdOutlinePendingActions className="w-6 h-6 text-black" />
-                )}
-                {item.statusIcon === "incomplete" && (
-                  <MdErrorOutline className="w-6 h-6 text-black" />
-                )}
-                {item.statusIcon === "notapproved" && (
-                  <MdBlock className="w-6 h-6 text-black" />
-                )}
-                <span className="text-md text-black truncate">
-                  {item.status}
-                </span>
-              </div>
-            </div>
+            <div className="flex items-center justify-between w-1/3 border border-black rounded-4xl py-4 px-6 shadow-sm">
+  {/* Dynamic status text */}
+  <span className="text-md text-black truncate">
+    {item.status} {/* e.g. "Processing", "Pending", "Incomplete" */}
+  </span>
+
+  {/* Constant dropdown icon */}
+  <IoIosArrowDown className="w-6 h-6 text-black" />
+</div>
           </div>
         ))}
       </div>
@@ -457,7 +447,7 @@ const Bookingsagent: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3 my-8">
-                  <span className="text-md font-medium text-black tracking-wide mt-10">
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR BOOKINGS ------------------------------- STATUS
                     ----------
                   </span>
@@ -469,12 +459,28 @@ const Bookingsagent: React.FC = () => {
                   <BiComment className="w-8 h-8" />
                   View Sent Requests
                 </button>
+
+                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                  <MdOutlinePostAdd className="w-8 h-8" />
+                  Post New Listings
+                </button>
               </div>
             )}
 
             {activeTab === "Requests" && (
               <div className="p-5 mt-5 space-y-6">
                 <div className="col-span-2 grid grid-cols-2 gap-4 w-2/3">
+                
+                  <div>
+                    <Label>HOW IT WORKS</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <span className="py-1"
+                        
+                      >Info</span>
+                      <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
+                    </InfoPill>
+                  </div>
+                
                   <div>
                     <Label>FILTER</Label>
                     <InfoPill className="relative flex items-center bg-white">
@@ -492,20 +498,10 @@ const Bookingsagent: React.FC = () => {
                             </option>
                           ))}
                       </select>
-                      <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
+                      <FiChevronDown className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>
                   </div>
 
-                  <div>
-                    <Label>SEARCH BY NAME</Label>
-                    <InfoPill className="relative flex items-center bg-white">
-                      <input
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                        placeholder="Enter here"
-                      ></input>
-                      <IoIosArrowForward className="pointer-events-none absolute right-1  text-white w-13 h-13 p-3 rounded-full bg-black" />
-                    </InfoPill>
-                  </div>
                 </div>
                 <PaginatedCards />
 
@@ -515,7 +511,7 @@ const Bookingsagent: React.FC = () => {
                 </button>
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
-                  <BiComment className="w-8 h-8" />
+                  <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
                 </button>
               </div>

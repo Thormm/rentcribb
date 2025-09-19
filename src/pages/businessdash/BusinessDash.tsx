@@ -12,7 +12,7 @@ import Listingslandlord from "./Listingslandlord";
 import IconRail from "./DashComponents/IconRail";
 import SidebarInner from "./DashComponents/SidebarInner";
 
-export default function Dashboard() {
+export default function BusinessDash() {
   const [open, setOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [openSection, setOpenSection] = useState<string | null>(null);

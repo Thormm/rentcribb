@@ -11,13 +11,16 @@ import {
   MdBlock,
   MdOutlineBookmarkAdded,
   MdOutlineDeleteForever,
+  MdOutlineBed,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
 import { FaPlus, FaToggleOn } from "react-icons/fa";
 
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
+import { RiInformationLine } from "react-icons/ri";
+import { TbHomeSpark } from "react-icons/tb";
 
 const states = [
   { value: "", label: "Sort by" },
@@ -139,8 +142,8 @@ function PaginatedCards() {
         {currentData.map((card, idx) => (
           <div key={idx} className="flex items-center gap-6 w-full">
             <div className="w-1/3 flex flex-col gap-4">
-              <InfoPill>
-                <div className="inline-flex items-center justify-between w-full">
+              <InfoPill className="bg-white">
+                <div className="inline-flex items-center justify-between w-full ">
                   <span className="text-md py-1 text-black">Great deals</span>
                   <LuPencil size={25} className="ml-auto text-black" />
                 </div>
@@ -267,7 +270,9 @@ function PaginatedDrafts() {
                 {item.statusIcon === "notapproved" && (
                   <MdBlock className="w-6 h-6 text-black" />
                 )}
-                <span className="text-md text-black truncate">{item.status}</span>
+                <span className="text-md text-black truncate">
+                  {item.status}
+                </span>
               </div>
             </div>
           </div>
@@ -297,10 +302,10 @@ function PaginatedDrafts() {
   );
 }
 
-
 // ----------------------- Page -----------------------
 const Listings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
+  const [open, setOpen] = useState(false);
 
   const [stateValue, setStateValue] = useState(""); // store state code/name
 
@@ -315,7 +320,88 @@ const Listings: React.FC = () => {
 
             {activeTab === "Live" && (
               <div className="p-5 mt-5 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
+                  {/* Row 1 - First Name with FaPlus */}
+                  <div className="relative flex flex-col mb-10">
+                    <Label>NEW LISTING</Label>
+                    {/* Trigger Button */}
+                    <div
+                      onClick={() => setOpen(true)}
+                      className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                    >
+                      <FaPlus size={20} className="text-white" />
+                    </div>
+                  </div>
+
+                  {/* Row 2 - State + State side by side */}
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    {/* State 1 */}
+                    <div>
+                      <Label>TOTAL ACTIVE</Label>
+                      <InfoPill className="relative flex items-center">
+                        12
+                        <FiChevronDown className="pointer-events-none absolute right-5 text-[black]" />
+                      </InfoPill>
+                    </div>
+
+                    {/* State 2 */}
+                    <div>
+                      <Label>MAX ACTIVE</Label>
+                      <InfoPill className="relative flex items-center">
+                        TIER 2 &raquo; 15
+                        <RiInformationLine className="pointer-events-none absolute right-5  text-[black] " />
+                      </InfoPill>
+                    </div>
+                  </div>
+
+                  {/* Row 2 - State + State side by side */}
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    {/* State 1 */}
+                    <div>
+                      <Label>CATEGORY</Label>
+                      <InfoPill className="relative flex items-center bg-white">
+                        <select
+                          value={stateValue}
+                          onChange={(e) => setStateValue(e.target.value)}
+                          className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                        >
+                          <option value="">{states[0].label}</option>
+                          {states
+                            .filter((s) => s.value !== "")
+                            .map((s) => (
+                              <option key={s.value} value={s.value}>
+                                {s.label}
+                              </option>
+                            ))}
+                        </select>
+                        <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
+                      </InfoPill>
+                    </div>
+
+                    {/* State 2 */}
+                    <div>
+                      <Label>SEARCH NAME</Label>
+                      <InfoPill className="relative flex items-center bg-white">
+                        <input
+                          className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                          placeholder="Enter here"
+                        ></input>
+                        <IoIosArrowForward className="pointer-events-none absolute right-1  text-white w-13 h-13 p-3 rounded-full bg-black" />
+                      </InfoPill>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 mt-8">
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
+                    --- YOUR LISTINGS -------------------------------
+                  </span>
+                </div>
                 <PaginatedCards />
+                {/* Coming Soon */}
+                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                  <BiComment className="w-8 h-8" />
+                  View Sent Requests
+                </button>
               </div>
             )}
 
@@ -325,8 +411,12 @@ const Listings: React.FC = () => {
                   {/* Row 1 - First Name with FaPlus */}
                   <div className="relative flex flex-col mb-10">
                     <Label>NEW LISTING</Label>
-                    <div className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black">
-                      <FaPlus size={20} className="text-white text-sm" />
+                    {/* Trigger Button */}
+                    <div
+                      onClick={() => setOpen(true)}
+                      className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                    >
+                      <FaPlus size={20} className="text-white" />
                     </div>
                   </div>
 
@@ -369,22 +459,125 @@ const Listings: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3 my-8">
-                  <span className="text-md font-medium text-black tracking-wide mt-10">
-                    --- YOUR BOOKINGS ------------------------------- STATUS
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
+                    --- YOUR DRAFTS ------------------------------- STATUS
                     ----------
                   </span>
                 </div>
                 <PaginatedDrafts />
                 {/* Coming Soon */}
-                                  <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
-                                    <BiComment className="w-8 h-8" />
-                                    View Sent Requests
-                                  </button>
+                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                  <BiComment className="w-8 h-8" />
+                  View Sent Requests
+                </button>
               </div>
             )}
           </div>
         </div>
       </section>
+
+      {/* Modal Box */}
+      {open && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-[#F4F6F5] border-3 rounded-2xl border-[black] p-6 w-[500px] relative">
+            {/* Close */}
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute top-3 right-3 text-black"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <h2 className="text-3xl font-medium text-center text-black">
+              New Listing
+            </h2>
+            <p className="text-sm text-black text-center mt-5">
+              Hola, What type of space would you like to list
+            </p>
+
+            {/* Divider */}
+            <div className="my-4 border-t text-[black] border-dashed" />
+
+            {/* Pills */}
+            <div className="space-y-6">
+              {/* Entire Space */}
+              <div>
+                <div className="relative flex border-[1px]  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]">
+                  {/* Left icon */}
+                  <PiHouse className="text-black text-4xl ml-5" />
+                  {/* Center text */}
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Entire Space
+                  </span>
+                  {/* Right arrow in black circle */}
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+
+                {/* Centered text below */}
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                    List your entire space and connect to student renters.
+                  </span>
+                </div>
+              </div>
+
+              {/* Shared Space */}
+              <div>
+                <div className="relative flex border-1  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]">
+                  {/* Left icon */}
+                  <MdOutlineBed className="text-black text-3xl ml-5" />
+                  {/* Center text */}
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Shared Space
+                  </span>
+                  {/* Right arrow in black circle */}
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+
+                {/* Label below */}
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                    List shared spaces: Find roommates for your clients.
+                  </span>
+                </div>
+              </div>
+
+              {/* Coming Soon */}
+              <div className="text-md font-semibold text-black text-center">
+                --------------- COMING SOON ---------------
+              </div>
+
+              {/* Short-let Space */}
+              <div>
+                <div className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#1C0B3D]">
+                  {/* Left icon */}
+                  <TbHomeSpark className="text-white text-3xl ml-5" />
+                  {/* Center text */}
+                  <span className="flex-1 text-white text-lg text-center font-medium">
+                    Short-let Space
+                  </span>
+                  {/* Right arrow in black circle */}
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
+                    <FiArrowRight className="text-white text-2xl " />
+                  </div>
+                </div>
+
+                {/* Label below */}
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                    Short-term rentals (beta).
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
