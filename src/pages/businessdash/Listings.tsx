@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
@@ -306,6 +307,7 @@ function PaginatedDrafts() {
 const Listings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const [stateValue, setStateValue] = useState(""); // store state code/name
 
@@ -400,7 +402,7 @@ const Listings: React.FC = () => {
                 {/* Coming Soon */}
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
                 </button>
               </div>
             )}
@@ -468,7 +470,7 @@ const Listings: React.FC = () => {
                 {/* Coming Soon */}
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
                 </button>
               </div>
             )}
@@ -478,7 +480,7 @@ const Listings: React.FC = () => {
 
       {/* Modal Box */}
       {open && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-50">
           <div className="bg-[#F4F6F5] border-3 rounded-2xl border-[black] p-6 w-[500px] relative">
             {/* Close */}
             <button
@@ -503,7 +505,7 @@ const Listings: React.FC = () => {
             <div className="space-y-6">
               {/* Entire Space */}
               <div>
-                <div className="relative flex border-[1px]  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]">
+                <div onClick={() => navigate("/entirespace")} className="cursor-pointer relative flex border-[1px]  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]">
                   {/* Left icon */}
                   <PiHouse className="text-black text-4xl ml-5" />
                   {/* Center text */}
@@ -526,7 +528,7 @@ const Listings: React.FC = () => {
 
               {/* Shared Space */}
               <div>
-                <div className="relative flex border-1  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]">
+                <div onClick={() => navigate("/sharedspace")} className="cursor-pointer relative flex border-1  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]">
                   {/* Left icon */}
                   <MdOutlineBed className="text-black text-3xl ml-5" />
                   {/* Center text */}
@@ -567,12 +569,7 @@ const Listings: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Label below */}
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    Short-term rentals (beta).
-                  </span>
-                </div>
+                
               </div>
             </div>
           </div>

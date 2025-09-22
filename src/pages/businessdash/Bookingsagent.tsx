@@ -457,7 +457,7 @@ const Bookingsagent: React.FC = () => {
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
                 </button>
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
@@ -503,11 +503,16 @@ const Bookingsagent: React.FC = () => {
                   </div>
 
                 </div>
+                <div className="flex items-center">
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
+                    --- REPLIES ----------------------------------26
+                  </span>
+                </div>
                 <PaginatedCards />
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
                 </button>
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
