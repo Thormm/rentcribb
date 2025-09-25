@@ -1,4 +1,4 @@
-import imgright from "../../../../../src/assets/request.png";
+import imgright from "../../../../../src/assets/list3.png";
 import { DfButton } from "../../../../components/Pill";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
@@ -97,7 +97,7 @@ export default function Entirespace3({
           {/* Rounded arrow button at top-right */}
           <button
             onClick={onBack}
-            className="absolute top-4 right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="cursor pointer absolute top-4 right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
           </button>

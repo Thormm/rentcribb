@@ -1,5 +1,5 @@
 import logo from "../../../assets/logo2.png";
-import { FaRegBell, FaRegCircle, FaToggleOn, FaToggleOff } from "react-icons/fa";
+import { FaRegBell, FaRegCircle, FaToggleOff } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import {
   MdOutlineAccountBalanceWallet,
@@ -11,7 +11,6 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import ReferralCard from "./ReferralCard";
 import { FiHome, FiSettings } from "react-icons/fi";
-import { useState } from "react";
 import { HiOutlineUsers } from "react-icons/hi";
 
 export default function SidebarInner({
@@ -26,7 +25,6 @@ export default function SidebarInner({
   toggleSection: (title: string) => void;
 }) {
 
-  const [visible, setVisible] = useState(true); // local stat
   return (
     <aside className="w-[420px] max-w-[480px] h-full bg-black flex flex-col relative">
       <div
@@ -115,7 +113,6 @@ export default function SidebarInner({
       <button
         onClick={() => {
           setActiveTab("roommates");
-          setVisible(!visible); // toggle ON/OFF
         }}
         className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
           ${
@@ -127,18 +124,12 @@ export default function SidebarInner({
         <HiOutlineUsers className="h-8 w-8" />
         <span className="truncate text-xl">Roommates</span>
 
-        {/* Toggle + Label */}
-        {visible ? (
-          <>
-            <FaToggleOn className="w-6 ml-auto text-white" />
-            <span className="text-xs text-white">VISIBLE</span>
-          </>
-        ) : (
+        
           <>
             <FaToggleOff className="w-6 ml-auto text-white" />
             <span className="text-xs text-white">HIDDEN</span>
           </>
-        )}
+        
       </button>
 
 

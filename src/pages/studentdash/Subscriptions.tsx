@@ -5,7 +5,6 @@ import { GrStatusGood } from "react-icons/gr";
 import InfoPill from "../../components/Pill";
 import { MdOutlinePending } from "react-icons/md";
 import { FiMail } from "react-icons/fi";
-import { TbUserSquare } from "react-icons/tb";
 import { RiInformationLine } from "react-icons/ri";
 
 // Reusable Label
@@ -47,7 +46,7 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 // Tabs
-const tabs = ["Agent", "Landlord", "Vendor"];
+const tabs = ["Roommate", "Rent", "MarketPlace"];
 function Tabs({
   active,
   setActive,
@@ -80,19 +79,19 @@ function Tabs({
 
 // Mocked data
 const AgentData = [
-  { id: 1, date: "6th Jan, 2025", amount: "₦10,000", status: "done" },
-  { id: 2, date: "20th Dec, 2025", amount: "₦50,000", status: "pending" },
-  { id: 3, date: "2nd Dec, 2025", amount: "₦15,000", status: "done" },
-  { id: 4, date: "18th Nov, 2025", amount: "₦22,000", status: "pending" },
-  { id: 5, date: "10th Nov, 2025", amount: "₦18,000", status: "done" },
-  { id: 6, date: "1st Nov, 2025", amount: "₦30,000", status: "pending" },
+  { id: 1, date: "6th Jan, 2025", plan: "Go Pro", amount: "₦10,000", status: "done" },
+  { id: 2, date: "20th Dec, 2025",  plan: "Go Pro", amount: "₦50,000", status: "pending" },
+  { id: 3, date: "2nd Dec, 2025",  plan: "Go Pro", amount: "₦15,000", status: "done" },
+  { id: 4, date: "18th Nov, 2025",  plan: "Go Pro", amount: "₦22,000", status: "pending" },
+  { id: 5, date: "10th Nov, 2025",  plan: "Go Pro",amount: "₦18,000", status: "done" },
+  { id: 6, date: "1st Nov, 2025",  plan: "Go Pro", amount: "₦30,000", status: "pending" },
 ];
 
 // Paginated list
 function PaginatedList({
   data,
 }: {
-  data: { id: number; date: string; amount: string; status: string }[];
+  data: { id: number; date: string; plan: string; amount: string; status: string }[];
 }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -123,6 +122,7 @@ function PaginatedList({
                 <MdOutlinePending className="text-black w-7 h-7" />
               )}
               <span className="text-md text-black">{item.date}</span>
+               <span className="text-md text-black">{item.plan}</span>
             </div>
             <span className="font-bold text-black">{item.amount}</span>
           </div>
@@ -152,7 +152,7 @@ function PaginatedList({
 }
 
 const Subscriptions = () => {
-  const [activeTab, setActiveTab] = useState("Agent");
+  const [activeTab, setActiveTab] = useState("Roommate");
 
   return (
     <div className="bg-white py-10">
@@ -163,8 +163,8 @@ const Subscriptions = () => {
           <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
-            {/* Agent Tab */}
-            {activeTab === "Agent" && (
+            {/* Roommate Tab */}
+            {activeTab === "Roommate" && (
               <div className="p-5  space-y-6">
                 <div className="grid my-10 w-2/3 grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -185,22 +185,12 @@ const Subscriptions = () => {
                       </div>
                     </InfoPill>
                   </div>
-                  <div>
-                    <Label>LISTING LIMIT</Label>
+
+                  {/* Connection pill spanning both columns without icon */}
+                  <div className="md:col-span-2">
+                    <Label>CONNECT LIMIT</Label>
                     <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">Unlimited</span>
-                        <RiInformationLine size={14} className="ml-auto" />
-                      </div>
-                    </InfoPill>
-                  </div>
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">Unlimited</span>
-                        <RiInformationLine size={14} className="ml-auto" />
-                      </div>
+                     <span className="text-md py-1">16-03-2024</span>
                     </InfoPill>
                   </div>
 
@@ -221,15 +211,9 @@ const Subscriptions = () => {
               </div>
             )}
 
-            {/* Landlord Tab */}
-            {activeTab === "Landlord" && (
-              <div className="p-5 mt-10 space-y-6">
-                <div className="flex flex-col gap-8 bg-transparent">
-                  <button className="w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-3 shadow-sm text-md text-white">
-                    <TbUserSquare className="w-8 h-8" />
-                    Become a Landlord &gt;&gt;
-                  </button>
-                </div>
+            {/* Rent Tab */}
+            {activeTab === "Rent" && (
+              <div className="p-5 space-y-6">
 
                 <div className="grid my-10 w-2/3 grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -259,15 +243,13 @@ const Subscriptions = () => {
                     </InfoPill>
                   </div>
 
-                  {/* Centered UPGRADE button spanning both cols */}
-                  <div className="md:col-span-2 flex mt-4 justify-between px-8">
-                    <button className="py-3 px-6 text-md font-medium border-2 text-black shadow-lg rounded-lg">
-                      FREE TRIAL
-                    </button>
+ {/* Centered UPGRADE button spanning both cols */}
+                  <div className="md:col-span-2 flex justify-center mt-4">
                     <button className="py-3 px-6 text-md font-medium bg-black text-white shadow-lg rounded-lg">
                       UPGRADE
                     </button>
                   </div>
+                  
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
@@ -279,8 +261,8 @@ const Subscriptions = () => {
               </div>
             )}
 
-            {/* Vendor Tab */}
-            {activeTab === "Vendor" && (
+            {/* MarketPlace Tab */}
+            {activeTab === "MarketPlace" && (
               <div className="my-10 w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
                   {/* Coming Soon */}

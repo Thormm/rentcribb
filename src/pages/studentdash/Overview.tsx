@@ -106,9 +106,7 @@ const Overview = () => {
   // form state
   const [firstName, setFirstName] = useState("John");
   const [lastName, setLastName] = useState("Doe");
-  const [callNumber, setCallNumber] = useState("08078436972");
   const [whatsapp, setWhatsapp] = useState("08078436972");
-  const [email, setEmail] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [landmark, setLandmark] = useState("");
   const [address, setAddress] = useState("");
@@ -141,9 +139,7 @@ const Overview = () => {
     const payload = {
       firstName,
       lastName,
-      callNumber,
       whatsapp,
-      email,
       state: stateValue,
       landmark,
       address,
@@ -239,6 +235,27 @@ const Overview = () => {
                                                       </div>
                                                     </InfoPill>
                               </div>
+
+                              {/* Row 3 - Email full width */}
+                              <div className="md:col-span-2">
+                                <Label>UNIVERSITY</Label>
+                                <InfoPill>
+                                  <input
+                                    type="email"
+                                    value="tanin@gmail.com"
+                                    className="w-full outline-none py-1 rounded-md text-black"
+                                  />
+                                </InfoPill>
+                              </div>
+            
+            <div
+        className="mt-1 w-100 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
             
                               {/* Row 4 - Full Address */}
                               <div className="md:col-span-2">
@@ -253,7 +270,8 @@ const Overview = () => {
                                   />
                                 </InfoPill>
                               </div>
-            
+
+                              
                               {/* Row 5 - State and Landmark */}
                               <div className="pl-1">
                                 <Label>STATE</Label>
@@ -330,9 +348,7 @@ const Overview = () => {
                                 <InfoPill className="bg-white">
                                   <input
                                     type="text"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    placeholder="John"
+                                    placeholder="Entire First Name"
                                     className="w-full outline-none py-1 rounded-md text-black"
                                   />
                                 </InfoPill>
@@ -343,8 +359,6 @@ const Overview = () => {
                                 <InfoPill className="bg-white">
                                   <input
                                     type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
                                     placeholder="Enter Last Name"
                                     className="w-full outline-none py-1 rounded-md text-black"
                                   />
@@ -357,22 +371,18 @@ const Overview = () => {
                                 <InfoPill className="flex items-center justify-between bg-white">
                                   <input
                                     type="tel"
-                                    value={callNumber}
-                                    onChange={(e) => setCallNumber(e.target.value)}
-                                    placeholder="08078436972"
+                                    placeholder="Call Number"
                                     className="flex-1 outline-none py-1 rounded-md text-black"
                                   />
                                 </InfoPill>
                               </div>
             
                               <div>
-                                <Label>WHATSAPP NO</Label>
+                                <Label>WHATSAPP NO.</Label>
                                 <InfoPill className="flex items-center justify-between bg-white">
                                   <input
                                     type="tel"
-                                    value={whatsapp}
-                                    onChange={(e) => setWhatsapp(e.target.value)}
-                                    placeholder="08078436972"
+                                    placeholder="Whatsapp Number"
                                     className="flex-1 outline-none py-1 rounded-md text-black"
                                   />
                                 </InfoPill>
@@ -384,15 +394,12 @@ const Overview = () => {
                                 <InfoPill className="bg-white">
                                   <input
                                     type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@example.com"
+                                    placeholder="Enter Your Email"
                                     className="w-full outline-none py-1 rounded-md text-black"
                                   />
                                 </InfoPill>
                               </div>
             
-                             
                             </div>
             
                             {/* Save Changes */}
@@ -412,8 +419,8 @@ const Overview = () => {
   <div className="w-2/3 p-5">
     {/* Header with dashed line */}
     <div className="flex items-center gap-3 my-8">
-      <span className="text-md font-medium text-black tracking-wide">
-        ----- GIVE REVIEWS --------------------------
+      <span className="text-md font-semibold text-black tracking-wide">
+        --- GIVE REVIEWS --------------------------
       </span>
     </div>
 
@@ -424,7 +431,7 @@ const Overview = () => {
         return (
           <div
             key={r.id}
-            className="border-black rounded-4xl border px-6 py-4 shadow-sm bg-white"
+            className="border-black rounded-4xl border px-6 py-4 shadow-sm"
           >
             {/* Row 1 */}
             <div className="flex items-center">
@@ -489,7 +496,8 @@ const Overview = () => {
                   <textarea
                     value={feedbackTexts[r.id] || ""}
                     onChange={(e) => handleTextChange(r.id, e.target.value)}
-                    className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl border border-black bg-white focus:outline-none resize-none text-sm"
+                    placeholder = "Write your feedback here..."
+                    className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl  bg-white focus:outline-none resize-none text-sm"
                   />
                 </div>
               </div>

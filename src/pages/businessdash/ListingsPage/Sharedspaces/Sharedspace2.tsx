@@ -68,7 +68,7 @@ function StarRow({ value = 4 }: { value?: number }) {
   );
 }
 
-export default function Entirespace2({
+export default function Sharedspace2({
   onNext,
   onBack,
 }: {

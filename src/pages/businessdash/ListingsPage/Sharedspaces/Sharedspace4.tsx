@@ -53,7 +53,7 @@ function Label({ children, className }: LabelProps) {
     </div>
   );
 }
-export default function Entirespace4({
+export default function Sharedspace4({
   onBack,
 }: {
   onBack?: () => void;

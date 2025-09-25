@@ -1,14 +1,20 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FiCamera, FiCheckCircle, FiChevronDown } from "react-icons/fi";
+import { FiCamera, FiCheckCircle, FiChevronDown, FiMail } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
-import { MdVerified } from "react-icons/md";
-import { RiInformationLine } from "react-icons/ri";
+import {
+  MdOutlineBookmarkAdded,
+  MdOutlinePending,
+  MdOutlineSupervisedUserCircle,
+  MdVerified,
+} from "react-icons/md";
+import { RiInformationLine, RiListView } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { FaPlus } from "react-icons/fa";
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -32,26 +38,166 @@ type Review = {
 };
 
 const reviews: Review[] = [
-  { id: 1, date: "6th Jan, 2025", name: "Zarken Christian", type: "user", rating: 1, text: "" },
-  { id: 2, date: "6th Jan, 2025", name: "Zarken Christian", type: "user", rating: 5, text: "This is a very good customer, pays well and speaks kindly." },
-  { id: 3, date: "7th Jan, 2025", name: "Amelia Johnson", type: "home", rating: 4, text: "Polite and easy to communicate with." },
-  { id: 4, date: "7th Jan, 2025", name: "Brian Cole", type: "user", rating: 2, text: "A bit difficult to reach at times." },
-  { id: 5, date: "8th Jan, 2025", name: "Sophia Miller", type: "user", rating: 5, text: "Excellent experience, very professional." },
-  { id: 6, date: "8th Jan, 2025", name: "David Wilson", type: "home", rating: 3, text: "Average interaction, nothing special." },
-  { id: 7, date: "9th Jan, 2025", name: "Emily Davis", type: "user", rating: 5, text: "Always pays on time and very respectful." },
-  { id: 8, date: "9th Jan, 2025", name: "Michael Brown", type: "user", rating: 4, text: "Good overall, but can improve communication." },
-  { id: 9, date: "10th Jan, 2025", name: "Olivia Taylor", type: "home", rating: 2, text: "Not very responsive to messages." },
-  { id: 10, date: "10th Jan, 2025", name: "James Anderson", type: "user", rating: 5, text: "Reliable and cooperative." },
-  { id: 11, date: "11th Jan, 2025", name: "Grace Thompson", type: "user", rating: 3, text: "Neutral experience." },
-  { id: 12, date: "11th Jan, 2025", name: "Ethan Martinez", type: "home", rating: 4, text: "Helpful and friendly." },
-  { id: 13, date: "12th Jan, 2025", name: "Isabella Moore", type: "user", rating: 5, text: "Wonderful personality, very kind." },
-  { id: 14, date: "12th Jan, 2025", name: "William Lee", type: "user", rating: 1, text: "Poor behavior, not recommended." },
-  { id: 15, date: "13th Jan, 2025", name: "Charlotte Harris", type: "home", rating: 4, text: "Smooth transaction, pleasant to work with." },
-  { id: 16, date: "13th Jan, 2025", name: "Benjamin Clark", type: "user", rating: 5, text: "Always respectful and trustworthy." },
-  { id: 17, date: "14th Jan, 2025", name: "Mia Lewis", type: "user", rating: 2, text: "Had some issues with delays." },
-  { id: 18, date: "14th Jan, 2025", name: "Lucas Young", type: "home", rating: 3, text: "Interaction was fine but could improve punctuality." },
-  { id: 19, date: "15th Jan, 2025", name: "Harper Walker", type: "user", rating: 5, text: "Fantastic person, always cooperative." },
-  { id: 20, date: "15th Jan, 2025", name: "Daniel Hall", type: "user", rating: 4, text: "Good communication and reliable." },
+  {
+    id: 1,
+    date: "6th Jan, 2025",
+    name: "Zarken Christian",
+    type: "user",
+    rating: 1,
+    text: "",
+  },
+  {
+    id: 2,
+    date: "6th Jan, 2025",
+    name: "Zarken Christian",
+    type: "user",
+    rating: 5,
+    text: "This is a very good customer, pays well and speaks kindly.",
+  },
+  {
+    id: 3,
+    date: "7th Jan, 2025",
+    name: "Amelia Johnson",
+    type: "home",
+    rating: 4,
+    text: "Polite and easy to communicate with.",
+  },
+  {
+    id: 4,
+    date: "7th Jan, 2025",
+    name: "Brian Cole",
+    type: "user",
+    rating: 2,
+    text: "A bit difficult to reach at times.",
+  },
+  {
+    id: 5,
+    date: "8th Jan, 2025",
+    name: "Sophia Miller",
+    type: "user",
+    rating: 5,
+    text: "Excellent experience, very professional.",
+  },
+  {
+    id: 6,
+    date: "8th Jan, 2025",
+    name: "David Wilson",
+    type: "home",
+    rating: 3,
+    text: "Average interaction, nothing special.",
+  },
+  {
+    id: 7,
+    date: "9th Jan, 2025",
+    name: "Emily Davis",
+    type: "user",
+    rating: 5,
+    text: "Always pays on time and very respectful.",
+  },
+  {
+    id: 8,
+    date: "9th Jan, 2025",
+    name: "Michael Brown",
+    type: "user",
+    rating: 4,
+    text: "Good overall, but can improve communication.",
+  },
+  {
+    id: 9,
+    date: "10th Jan, 2025",
+    name: "Olivia Taylor",
+    type: "home",
+    rating: 2,
+    text: "Not very responsive to messages.",
+  },
+  {
+    id: 10,
+    date: "10th Jan, 2025",
+    name: "James Anderson",
+    type: "user",
+    rating: 5,
+    text: "Reliable and cooperative.",
+  },
+  {
+    id: 11,
+    date: "11th Jan, 2025",
+    name: "Grace Thompson",
+    type: "user",
+    rating: 3,
+    text: "Neutral experience.",
+  },
+  {
+    id: 12,
+    date: "11th Jan, 2025",
+    name: "Ethan Martinez",
+    type: "home",
+    rating: 4,
+    text: "Helpful and friendly.",
+  },
+  {
+    id: 13,
+    date: "12th Jan, 2025",
+    name: "Isabella Moore",
+    type: "user",
+    rating: 5,
+    text: "Wonderful personality, very kind.",
+  },
+  {
+    id: 14,
+    date: "12th Jan, 2025",
+    name: "William Lee",
+    type: "user",
+    rating: 1,
+    text: "Poor behavior, not recommended.",
+  },
+  {
+    id: 15,
+    date: "13th Jan, 2025",
+    name: "Charlotte Harris",
+    type: "home",
+    rating: 4,
+    text: "Smooth transaction, pleasant to work with.",
+  },
+  {
+    id: 16,
+    date: "13th Jan, 2025",
+    name: "Benjamin Clark",
+    type: "user",
+    rating: 5,
+    text: "Always respectful and trustworthy.",
+  },
+  {
+    id: 17,
+    date: "14th Jan, 2025",
+    name: "Mia Lewis",
+    type: "user",
+    rating: 2,
+    text: "Had some issues with delays.",
+  },
+  {
+    id: 18,
+    date: "14th Jan, 2025",
+    name: "Lucas Young",
+    type: "home",
+    rating: 3,
+    text: "Interaction was fine but could improve punctuality.",
+  },
+  {
+    id: 19,
+    date: "15th Jan, 2025",
+    name: "Harper Walker",
+    type: "user",
+    rating: 5,
+    text: "Fantastic person, always cooperative.",
+  },
+  {
+    id: 20,
+    date: "15th Jan, 2025",
+    name: "Daniel Hall",
+    type: "user",
+    rating: 4,
+    text: "Good communication and reliable.",
+  },
 ];
 
 type Plan = {
@@ -111,7 +257,8 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-sm pt-5">
-        Our goal is for your <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
+        Our goal is for your{" "}
+        <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
         <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
       </p>
 
@@ -198,7 +345,10 @@ const Bizoverview: React.FC = () => {
     return reviews.filter((r) => r.rating === selectedFilter);
   }, [selectedFilter]);
 
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(filtered.length / itemsPerPage)), [filtered.length]);
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(filtered.length / itemsPerPage)),
+    [filtered.length]
+  );
 
   const currentItems = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -394,26 +544,26 @@ const Bizoverview: React.FC = () => {
                         borderWidth: "1px",
                       }}
                     >
-                      {(["TIER1", "TIER2", "TIER3"] as (keyof typeof plans)[]).map(
-                        (tier, i) => {
-                          const isActive = activePlan === tier;
-                          return (
-                            <button
-                              key={tier}
-                              onClick={() => setActivePlan(tier)}
-                              className={clsx(
-                                "flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors duration-200 border",
-                                isActive
-                                  ? "bg-black text-[#D6FFC3] border-black shadow-md"
-                                  : "bg-white text-black border-gray-300 hover:bg-gray-100"
-                              )}
-                            >
-                              <MdVerified />
-                              <span className="text-lg">{`TIER ${i + 1}`}</span>
-                            </button>
-                          );
-                        }
-                      )}
+                      {(
+                        ["TIER1", "TIER2", "TIER3"] as (keyof typeof plans)[]
+                      ).map((tier, i) => {
+                        const isActive = activePlan === tier;
+                        return (
+                          <button
+                            key={tier}
+                            onClick={() => setActivePlan(tier)}
+                            className={clsx(
+                              "flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors duration-200 border",
+                              isActive
+                                ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                            )}
+                          >
+                            <MdVerified />
+                            <span className="text-lg">{`TIER ${i + 1}`}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -485,7 +635,99 @@ const Bizoverview: React.FC = () => {
               </div>
             )}
 
-            {activeTab === "Operations" && <div></div>}
+            {activeTab === "Operations" && (
+              <div className="p-5 w-2/3 mt-5">
+                {/* Inputs grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Row 4 - Full Address */}
+                  <div className="md:col-span-2">
+                    <Label>INSPECTION DAYS</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <select
+                        value={stateValue}
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                      >
+                      </select>
+                      <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
+                    </InfoPill>
+                  </div>
+                  {/* Row 2 */}
+                  <div>
+                    <Label>INSPECTION</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <select
+                        value={stateValue}
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                      >
+                      </select>
+                      <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
+                    </InfoPill>
+                  </div>
+                  <div>
+                    <Label>PRICE</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <input
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                      />
+                      <FaPlus className="pointer-events-none absolute right-5 text-black" />
+                    </InfoPill>
+                  </div>
+
+                  
+                </div>
+
+                {/* Save Changes */}
+                <div className="mt-10 flex justify-center">
+                  <button
+                    onClick={handleSave}
+                    className="py-3 text-md px-4 font-medium bg-black shadow-lg rounded-lg"
+                  >
+                    SAVE CHANGES
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 mt-10 mb-5">
+                    <span className="text-md font-semibold text-black tracking-wide">
+                      --- ANALYTICS ----------------------------
+                    </span>
+                  </div>
+
+                <div className="grid grid-cols-3 gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                  <button className="flex items-center border-2 justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
+                    <RiListView className="text-black" size={30} />
+                    <span className="text-lg font-semibold">LISTINGS</span>
+                  </button>
+                  <button className="flex items-center border-2 justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
+                    <MdOutlineBookmarkAdded className="text-black" size={30} />
+                    <span className="text-lg font-semibold">SORTED</span>
+                  </button>
+
+                  <button className="flex border-2 items-center justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
+                    <MdOutlineSupervisedUserCircle
+                      className="text-black"
+                      size={30}
+                    />
+                    <span className="text-lg font-semibold">SORTED</span>
+                  </button>
+                </div>
+
+<div className="my-10">
+                            <div className="flex flex-col p-5 gap-8 bg-transparent">
+                              {/* Coming Soon */}
+                              <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                                <MdOutlinePending className="w-8 h-8" />
+                                Coming Soon ...
+                              </button>
+            
+                              {/* Join Waitlist */}
+                              <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                                <FiMail className="w-8 h-8" />
+                                Join Waitlist &gt;&gt;
+                              </button>
+                            </div>
+                          </div>
+
+              </div>
+            )}
 
             {activeTab === "Reviews" && (
               <div className="p-5 mt-5 space-y-6">
@@ -502,7 +744,9 @@ const Bizoverview: React.FC = () => {
                       {/* TOTAL Circle */}
                       <div className="flex-shrink-0">
                         <div className="w-28 h-28 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg">
-                          <span className="text-3xl font-medium text-black">4.8</span>
+                          <span className="text-3xl font-medium text-black">
+                            4.8
+                          </span>
                         </div>
                       </div>
 
@@ -514,14 +758,20 @@ const Bizoverview: React.FC = () => {
                             <div className="w-28 flex justify-end">
                               <div className="flex justify-end w-full">
                                 {Array.from({ length: count }).map((_, j) => (
-                                  <AiFillStar key={j} className="text-yellow-500 text-md" />
+                                  <AiFillStar
+                                    key={j}
+                                    className="text-yellow-500 text-md"
+                                  />
                                 ))}
                               </div>
                             </div>
 
                             {/* Progress bar stays untouched */}
                             <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
-                              <div className="h-full bg-black" style={{ width: `${count * 20}%` }} />
+                              <div
+                                className="h-full bg-black"
+                                style={{ width: `${count * 20}%` }}
+                              />
                             </div>
                           </div>
                         ))}
@@ -557,12 +807,16 @@ const Bizoverview: React.FC = () => {
                           }}
                           className={clsx(
                             "flex items-center w-35 justify-center border-3 gap-2 rounded-lg px-4 py-2 font-semibold shadow-sm whitespace-nowrap",
-                            selectedFilter === f.value ? "bg-black text-white border-black" : "bg-white text-black border-black"
+                            selectedFilter === f.value
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-black border-black"
                           )}
                         >
                           <span className="text-lg">
                             {f.label} (
-                            {f.value === "all" ? filterCounts.total : filterCounts.byStar[f.value as number]}
+                            {f.value === "all"
+                              ? filterCounts.total
+                              : filterCounts.byStar[f.value as number]}
                             )
                           </span>
                         </button>
@@ -573,7 +827,9 @@ const Bizoverview: React.FC = () => {
 
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 my-8 w-2/3">
-                  <span className="text-md font-semibold text-black tracking-wide">--- REVIEWS --------------------------</span>
+                  <span className="text-md font-semibold text-black tracking-wide">
+                    --- REVIEWS --------------------------
+                  </span>
                 </div>
 
                 {/* --- REVIEWS LIST + PAGINATION --- */}
@@ -589,7 +845,10 @@ const Bizoverview: React.FC = () => {
                     {currentItems.map((r) => {
                       const isExpanded = expanded === r.id;
                       return (
-                        <div key={r.id} className="border-black w-2/3 rounded-4xl border px-6 py-4 shadow-sm bg-white">
+                        <div
+                          key={r.id}
+                          className="border-black w-2/3 rounded-4xl border px-6 py-4 shadow-sm bg-white"
+                        >
                           {/* Row 1 */}
                           <div className="flex items-center">
                             {/* Left icon */}
@@ -599,13 +858,26 @@ const Bizoverview: React.FC = () => {
 
                             {/* Date + name */}
                             <div className="flex flex-grow items-center gap-5 px-4">
-                              <span className="text-md font-normal text-black whitespace-nowrap">{r.date}</span>
-                              <span className="text-md text-black font-normal truncate">{r.name}</span>
+                              <span className="text-md font-normal text-black whitespace-nowrap">
+                                {r.date}
+                              </span>
+                              <span className="text-md text-black font-normal truncate">
+                                {r.name}
+                              </span>
                             </div>
 
                             {/* Dropdown toggle */}
-                            <div className="w-6 h-6 flex items-center justify-center cursor-pointer" onClick={() => setExpanded(isExpanded ? null : r.id)}>
-                              {isExpanded ? <IoIosArrowUp className="w-6 h-6 text-black" /> : <IoIosArrowDown className="w-6 h-6 text-black" />}
+                            <div
+                              className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                              onClick={() =>
+                                setExpanded(isExpanded ? null : r.id)
+                              }
+                            >
+                              {isExpanded ? (
+                                <IoIosArrowUp className="w-6 h-6 text-black" />
+                              ) : (
+                                <IoIosArrowDown className="w-6 h-6 text-black" />
+                              )}
                             </div>
                           </div>
 
@@ -617,15 +889,25 @@ const Bizoverview: React.FC = () => {
                                 <div className="flex items-center gap-1">
                                   {Array.from({ length: 5 }).map((_, i) =>
                                     i < (r.rating ?? 0) ? (
-                                      <AiFillStar key={i} className="w-7 h-7 text-yellow-400" />
+                                      <AiFillStar
+                                        key={i}
+                                        className="w-7 h-7 text-yellow-400"
+                                      />
                                     ) : (
-                                      <AiOutlineStar key={i} className="w-7 h-7 text-gray-300" />
+                                      <AiOutlineStar
+                                        key={i}
+                                        className="w-7 h-7 text-gray-300"
+                                      />
                                     )
                                   )}
                                 </div>
                               )}
                               {/* Review text */}
-                              {r.text && <p className="text-sm text-black leading-relaxed">{r.text}</p>}
+                              {r.text && (
+                                <p className="text-sm text-black leading-relaxed">
+                                  {r.text}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>
@@ -639,7 +921,11 @@ const Bizoverview: React.FC = () => {
                       <button
                         key={i + 1}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`px-4 py-2 rounded-lg border text-sm transition ${currentPage === i + 1 ? "bg-[#FFA1A1] text-white border-[#FFA1A1]" : "bg-white text-black border-black"}`}
+                        className={`px-4 py-2 rounded-lg border text-sm transition ${
+                          currentPage === i + 1
+                            ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
+                            : "bg-white text-black border-black"
+                        }`}
                       >
                         {i + 1}
                       </button>

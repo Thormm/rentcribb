@@ -50,7 +50,7 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 // Tabs
-const tabs = ["Withdrawals", "Top ups", "Refunds"];
+const tabs = ["Withdrawals", "Top ups", "Refunds Claims"];
 function Tabs({
   active,
   setActive,
@@ -238,8 +238,8 @@ const Payment = () => {
                 </InfoPill>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-medium text-black tracking-wide">
-                    --- HISTORY --------------------------
+                  <span className="text-md font-semibold text-black tracking-wide">
+                    -- HISTORY --------------------------
                   </span>
                 </div>
                 <PaginatedList data={withdrawalsData} />
@@ -250,8 +250,8 @@ const Payment = () => {
             {activeTab === "Top ups" && (
               <div className="p-5">
                 <div className="flex items-center gap-3 mt-5 mb-5">
-                  <span className="text-md font-medium text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                  <span className="text-md font-semibold text-black tracking-wide">
+                    --- HISTORY --------------------------
                   </span>
                 </div>
                 <PaginatedList data={topupsData} />
@@ -259,7 +259,7 @@ const Payment = () => {
             )}
 
             {/* Refunds Tab */}
-            {activeTab === "Refunds" && (
+            {activeTab === "Refunds Claims" && (
               <div>
                 <div className="p-5">
                   {/* Toggle Buttons */}
@@ -320,8 +320,8 @@ const Payment = () => {
                 <div className="p-5">
                   {/* History */}
                   <div className="flex items-center gap-3 mb-5">
-                    <span className="text-md font-medium text-black tracking-wide">
-                      ----- ENTRIES --------------------------
+                    <span className="text-md font-semibold text-black tracking-wide">
+                      --- ENTRIES --------------------------
                     </span>
                   </div>
                   <PaginatedList data={refundsData[activeRefund]} />
