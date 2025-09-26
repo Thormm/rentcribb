@@ -12,7 +12,7 @@ function Maincard({
   children,
 }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
+    <div className={["rounded-2xl md:rounded-4xl px-5 border-4 shadow", className].join(" ")}>
       {children}
     </div>
   );
@@ -26,9 +26,9 @@ function SectionHeader({
   caption?: string;
 }) {
   return (
-    <div className="px-5 pt-8">
-      <h3 className="text-2xl md:text-3xl font-medium text-center">{title}</h3>
-      <p className="text-center text-sm md:text-md pt-3">
+    <div className="md:px-5 pt-8">
+      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
       <div
@@ -49,7 +49,7 @@ type LabelProps = React.PropsWithChildren<{
 
 function Label({ children, className }: LabelProps) {
   return (
-    <div className={clsx("text-md my-3 font-semibold ml-0", className)}>
+    <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}>
       {children}
     </div>
   );
@@ -96,8 +96,8 @@ const Signup = () => {
     {/* Button */}
     <button className="px-3 md:px-4 py-2 md:py-3 bg-black flex items-center gap-2 text-xs md:text-sm text-white rounded-lg shadow-md whitespace-nowrap">
       {/* Show briefcase icon only on md+ */}
-      <span className="hidden md:inline"><BiSolidBriefcase /></span>
-      SWITCH TO BUSINESS
+      <span className=""><BiSolidBriefcase /></span>
+      Business &gt;
     </button>
   </div>
 </nav>
@@ -128,7 +128,7 @@ const Signup = () => {
         </div>
 
         {/* Main Form */}
-        <div className="grid grid-cols-1 items-center">
+        <div className="grid grid-cols-1 items-center w-full md:w-2/5">
           <div className="space-y-1">
             <Maincard className="bg-[#F4F6F5] pb-5">
               <SectionHeader
@@ -136,7 +136,7 @@ const Signup = () => {
                 caption="Let’s get you Set-Up, its super easy! "
               />
 
-              <div className="px-5 pb-4 pt-3 space-y-4">
+              <div className="md:px-5 pb-4 pt-3 space-y-4">
                 {/* Space Name */}
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-1">
@@ -183,7 +183,7 @@ const Signup = () => {
                 </div>
 
                 {/* Full Address */}
-                <div className="grid grid-cols-1 gap-6 mt-10">
+                <div className="grid grid-cols-1 gap-6 mt-5 md:mt-10">
                   <div className="space-y-1">
                     <InfoPill className="bg-black text-white">
                       <div className="inline-flex items-center justify-center w-full">
@@ -195,14 +195,14 @@ const Signup = () => {
                 </div>
 
                 <div
-                  className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  className="md:mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
                   style={{
                     borderStyle: "dashed",
                     borderImage:
                       "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                   }}
                 />
-                <div className="w-full flex text-sm pt-5 justify-center">
+                <div className="w-full flex text-sm md:pt-5 justify-center">
                   <span>
                     Have a Cribb.Africa account?{" "}
                     <span className="text-[#0556F8]">Log in</span>
