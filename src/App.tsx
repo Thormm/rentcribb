@@ -16,6 +16,7 @@ import BusinessDash from "./pages/businessdash/BusinessDash";
 import StudentDash from "./pages/studentdash/StudentDash";
 import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
 import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
+import Signup from "./pages/signup_login/Signup";
 
 // Layout with conditional Navbar
 function Layout() {
@@ -23,7 +24,7 @@ function Layout() {
 
   // Add all the routes where you DON'T want the navbar
 
-  const hideNavbarOn = ["/businessdash","/studentdash", "/login", "/register"];
+  const hideNavbarOn = ["/businessdash", "/studentdash", "/login", "/signup"];
   const shouldHideNavbar = hideNavbarOn.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -49,8 +50,9 @@ const router = createBrowserRouter([
       { path: "/plan", element: <Plan /> },
       { path: "/businessdash", element: <BusinessDash /> },
       { path: "/studentdash", element: <StudentDash /> },
-      {path:"/entirespace", element:<Entirespace /> },
-      {path:"/sharedspace", element:<Sharedspace /> }
+      { path: "/entirespace", element: <Entirespace /> },
+      { path: "/sharedspace", element: <Sharedspace /> },
+      { path: "/signup", element: <Signup /> },
     ],
   },
 ]);
