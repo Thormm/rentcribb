@@ -48,7 +48,7 @@ function InputField({ label, placeholder, type = "text" }: { label: string; plac
           <input
             type={type}
             placeholder={placeholder}
-            className="w-full appearance-none bg-transparent text-xs outline-none"
+            className="w-full appearance-none bg-transparent text-[10px] md:text-xs outline-none"
           />
         </div>
       </InfoPill>
@@ -70,11 +70,11 @@ const Signup = () => {
         </div>
 
         {/* Center: Logo + Text */}
-        <div className="flex justify-start md:justify-center items-center gap-2 md:gap-3 col-span-1">
+        <div className="flex justify-start md:justify-center items-center gap-1 col-span-1">
           <img src={logo} alt="Cribb.Africa Logo" className="h-8 md:h-14" />
           <div className="flex flex-col">
             <h1 className="text-md md:text-2xl font-extrabold">Cribb</h1>
-            <span className="text-xs md:text-sm text-black">for Students</span>
+            <span className="text-[10px] md:text-sm text-black">for Students</span>
           </div>
         </div>
 
@@ -85,18 +85,18 @@ const Signup = () => {
             <img src={nigeriaflag} alt="Nigeria Flag" className="h-4 md:h-8 object-contain" />
           </div>
 
-          <button className="px-3 md:px-4 py-2 md:py-3 bg-black flex items-center gap-2 text-[15px] text-white rounded-lg shadow-md whitespace-nowrap">
-            <span className="hidden md:inline">
+          <button className="px-3 md:px-4 py-2 md:py-3 bg-black flex items-center gap-2 text-[10px] text-white rounded-lg shadow-md whitespace-nowrap">
+            <span className="sm:text-xs">
               <BiSolidBriefcase />
             </span>
-            Business &gt;
+            Business &gt; &gt;
           </button>
         </div>
       </nav>
 
       {/* ---------- Section with Background ---------- */}
       <section
-        className="px-2 pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
+        className="px-2 pt-5 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
         style={{
           backgroundImage: `url(${signbg})`,
           backgroundSize: "cover",
@@ -145,9 +145,9 @@ const Signup = () => {
               />
 
               {/* Footer link */}
-              <div className="w-full flex text-sm md:pt-5 justify-center">
+              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                 <span>
-                  Have a Cribb.Africa account? <span className="text-[#0556F8]">Log in</span>
+                  Have a Cribb.Africa account? <span className="text-[#0556F8] cursor-pointer">Log in</span>
                 </span>
               </div>
             </div>

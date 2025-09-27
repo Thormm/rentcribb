@@ -8,7 +8,7 @@ export default function InfoPill({
   return (
     <div
       className={[
-        "w-full rounded-full border-[1.5px] px-8 py-4",
+        "w-full rounded-full border-[1.5px] px-8 py-3 md:py-4",
         "text-[15px] text-[#222] shadow-sm",
         className,
       ].join(" ")}
