@@ -17,6 +17,7 @@ import StudentDash from "./pages/studentdash/StudentDash";
 import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
 import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
+import Loginpage from "./pages/signup_login/Loginpage";
 
 // Layout with conditional Navbar
 function Layout() {
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
       { path: "/entirespace", element: <Entirespace /> },
       { path: "/sharedspace", element: <Sharedspace /> },
       { path: "/signup", element: <Signup /> },
+      { path: "/login", element: <Loginpage /> },
     ],
   },
 ]);
