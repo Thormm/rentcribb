@@ -65,8 +65,12 @@ function Label({
   );
 }
 
-/* ---------- Main Component ---------- */
-const Signup4: React.FC = () => {
+/* ---------- Main Signup1 Page ---------- */
+interface Signup4Props {
+  mode: "student" | "merchant";
+}
+
+export default function Signup4({ mode }: Signup4Props) {
   const [institution, setInstitution] = useState("");
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
@@ -99,6 +103,7 @@ const Signup4: React.FC = () => {
           institution, // selected dropdown
           fourthpage: true,
           signup_key, // session key
+          mode: mode
         }),
         credentials: "include",
       });
@@ -139,7 +144,7 @@ const Signup4: React.FC = () => {
       </div>
 
       {/* Main Form */}
-      <div className="grid grid-cols-1 items-center w-full md:w-2/4 px-12">
+      <div className="grid grid-cols-1 items-center w-full md:w-2/5">
         <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
           <SectionHeader
             title="Terms & Policy"
@@ -152,7 +157,7 @@ const Signup4: React.FC = () => {
               <Label>INSTITUTION</Label>
               <InfoPill>
                 <select
-                  className="w-full outline-none py-1 rounded-md text-black"
+                  className="w-full  bg-transparent text-[10px] md:text-xs"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                 >
@@ -164,8 +169,8 @@ const Signup4: React.FC = () => {
                   ))}
                 </select>
               </InfoPill>
-              <div className="w-full flex justify-end">
-                <span className="text-xs rounded-lg bg-white p-2 mr-6 text-[#5B5B5B]">
+              <div className="w-full flex justify-center md:justify-end">
+                <span className="text-xs rounded-lg bg-white p-2 md:mr-6 text-[#5B5B5B]">
                   Your Institution determines your <br /> Terms of Service.
                 </span>
               </div>
@@ -173,32 +178,33 @@ const Signup4: React.FC = () => {
 
             <InfoPill className="bg-white cursor-pointer">
               <button
-                className="w-full flex items-center justify-between text-sm md:text-base h-8 px-3"
+                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3"
                 onClick={openTerms}
               >
-                <RiListView className="text-4xl -ml-2" />
-                <span className="flex-1 text-center md:text-xl">
+                <RiListView className="text-lg md:text-4xl -ml-2" />
+                <span className="flex-1 text-center text-md md:text-xl">
                   Terms of Use
                 </span>
-                <FaArrowRight className="text-white h-12 w-12 p-3 rounded-full bg-black shrink-0 ml-auto -mr-8" />
+                <FaArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
               </button>
             </InfoPill>
 
             <InfoPill className="bg-white cursor-pointer my-3">
               <button
-                className="w-full flex items-center justify-between text-sm md:text-base h-8 px-3"
+                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3"
                 onClick={openPrivacy}
               >
-                <RiListView className="text-4xl -ml-2" />
-                <span className="flex-1 text-center md:text-xl">
+                <RiListView className="text-lg md:text-4xl -ml-2" />
+                <span className="flex-1 text-center text-md md:text-xl">
                   Privacy Policy
                 </span>
-                <FaArrowRight className="text-white h-12 w-12 p-3 rounded-full bg-black shrink-0 ml-auto -mr-8" />
+                <FaArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
               </button>
             </InfoPill>
 
+
             <div className="w-full flex justify-center">
-              <span className="text-xs p-2 rounded-lg bg-white text-[#5B5B5B]">
+              <span className="text-xs justify-center p-2 rounded-lg bg-white text-[#5B5B5B]">
                 By selecting “I Agree” below, you have reviewed and agreed
                 <br />
                 to the Terms of Use and acknowledged the Privacy Policy notice.
@@ -226,8 +232,8 @@ const Signup4: React.FC = () => {
                 onClick={handleSubmit}
                 disabled={!agreed || !institution}
               >
-                <span className="text-xl">Proceed</span>
-                <MdDoubleArrow className="ml-2 text-4xl" />
+                <span className="text-md md:text-xl">Proceed</span>
+                <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
               </button>
             </InfoPill>
           </div>
@@ -237,4 +243,3 @@ const Signup4: React.FC = () => {
   );
 };
 
-export default Signup4;

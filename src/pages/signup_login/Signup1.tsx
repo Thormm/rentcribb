@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
+import { useNavigate } from "react-router-dom";
 
 /* ---------- Helpers ---------- */
 function debounce(fn: (...args: any[]) => void, delay = 2000) {
@@ -116,10 +116,16 @@ function InputField({
 }
 
 /* ---------- Main Signup1 Page ---------- */
-export default function Signup1({ onNext }: { onNext?: () => void }) {
+interface Signup1Props {
+  mode: "student" | "merchant";
+  onNext?: () => void;
+}
+
+export default function Signup1({ mode, onNext }: Signup1Props) {
   const [email, setEmail] = useState("");
   const [callNo, setCallNo] = useState("");
   const [whats, setWhats] = useState("");
+  const navigate = useNavigate();
 
   const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">(
     "idle"
@@ -135,8 +141,6 @@ export default function Signup1({ onNext }: { onNext?: () => void }) {
   const [callError, setCallError] = useState("");
   const [whatsError, setWhatsError] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [verified, setVerified] = useState(false);
 
   // ---------- server validation ----------
   const validateField = async (field: string) => {
@@ -144,7 +148,13 @@ export default function Signup1({ onNext }: { onNext?: () => void }) {
       const res = await fetch("https://www.cribb.africa/apiverifysign.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, call_no: callNo, whats, check: field }),
+        body: JSON.stringify({
+          email,
+          call_no: callNo,
+          whats,
+          check: field,
+          mode: mode,
+        }),
       });
       const data = await res.json();
 
@@ -210,48 +220,26 @@ export default function Signup1({ onNext }: { onNext?: () => void }) {
     callStatus === "valid" &&
     whatsStatus === "valid";
 
-  const handleVerify = async () => {
+  const handleVerify = () => {
   if (!allValid) return;
-  setLoading(true);
 
-  try {
-    const res = await fetch("https://www.cribb.africa/apiverifysign.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        call_no: callNo,
-        whats,
-        firstpage: true,
-      }),
-      credentials: "include",
-    });
+  // ✅ Save inputs into sessionStorage
+  sessionStorage.setItem(
+    "signup_data",
+    JSON.stringify({
+      email,
+      callNo,
+      whats,
+    })
+  );
 
-    const data = await res.json();
-
-    if (data.success) {
-      setVerified(true);
-
-      // Store the signup key from PHP in sessionStorage
-      if (data.signup_key) {
-        sessionStorage.setItem("signup_key", data.signup_key);
-      }
-
-      if (onNext) onNext();
-    } else {
-      setVerified(false);
-    }
-  } catch (err) {
-    setVerified(false);
-  }
-
-  setLoading(false);
+  // Go to next page
+  if (onNext) onNext();
 };
 
 
   return (
     <>
-
       {/* Section */}
       <section
         className="px-2 pt-5 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
@@ -316,18 +304,14 @@ export default function Signup1({ onNext }: { onNext?: () => void }) {
                 <button
                   className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
                   onClick={handleVerify}
-                  disabled={loading || !allValid}
+                  disabled={!allValid}
                 >
-                  <span className="text-xl">{loading ? "Verifying..." : "Verify"}</span>
-                  <MdDoubleArrow className="ml-2 text-4xl" />
+                  <span className="text-xl">
+                    Continue
+                  </span>
+                  <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
                 </button>
               </InfoPill>
-
-              {verified && (
-                <p className="text-center text-green-600 text-xs mt-2">
-                  ✅ Verified successfully!
-                </p>
-              )}
 
               {/* Divider */}
               <div
@@ -343,7 +327,7 @@ export default function Signup1({ onNext }: { onNext?: () => void }) {
               <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                 <span>
                   Have a Cribb.Africa account?{" "}
-                  <span className="text-[#0556F8] cursor-pointer">Log in</span>
+                  <span className="text-[#0556F8] cursor-pointer"  onClick={() => navigate("/login")}>Log in</span>
                 </span>
               </div>
             </div>

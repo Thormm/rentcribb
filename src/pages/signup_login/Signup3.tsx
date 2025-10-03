@@ -103,7 +103,12 @@ function InputField({
 }
 
 /* ---------- Main Signup1 Page ---------- */
-export default function Signup3({ onNext }: { onNext?: () => void }) {
+interface Signup3Props {
+  mode: "student" | "merchant";
+  onNext?: () => void;
+}
+
+export default function Signup3({ mode, onNext }: Signup3Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -133,6 +138,7 @@ export default function Signup3({ onNext }: { onNext?: () => void }) {
         referral,
         thirdpage: true,
         signup_key, // send the key to PHP
+        mode: mode
       }),
       credentials: "include",
     });
@@ -225,7 +231,7 @@ export default function Signup3({ onNext }: { onNext?: () => void }) {
                   disabled={!canContinue}
                 >
                   <span className="text-xl">Continue</span>
-                  <MdDoubleArrow className="ml-2 text-4xl" />
+                  <MdDoubleArrow className="ml-2 text-2xl text-4xl" />
                 </button>
               </InfoPill>
             </div>

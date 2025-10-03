@@ -13,6 +13,7 @@ import {
   MdOutlineBookmarkAdded,
   MdOutlineDeleteForever,
   MdOutlineBed,
+  MdCancel,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
 import { FaPlus, FaToggleOn } from "react-icons/fa";
@@ -480,101 +481,108 @@ const Listings: React.FC = () => {
 
       {/* Modal Box */}
       {open && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-50">
-          <div className="bg-[#F4F6F5] border-3 rounded-2xl border-[black] p-6 w-[500px] relative">
-            {/* Close */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-black"
-            >
-              ✕
-            </button>
-
-            {/* Header */}
-            <h2 className="text-3xl font-medium text-center text-black">
-              New Listing
-            </h2>
-            <p className="text-sm text-black text-center mt-5">
-              Hola, What type of space would you like to list
-            </p>
-
-            {/* Divider */}
-            <div className="my-4 border-t text-[black] border-dashed" />
-
-            {/* Pills */}
-            <div className="space-y-6">
-              {/* Entire Space */}
-              <div>
-                <div onClick={() => navigate("/entirespace")} className="cursor-pointer relative flex border-[1px]  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]">
-                  {/* Left icon */}
-                  <PiHouse className="text-black text-4xl ml-5" />
-                  {/* Center text */}
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Entire Space
-                  </span>
-                  {/* Right arrow in black circle */}
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-2xl" />
+              <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+                {/* Modal Box */}
+                <div className="relative mx-auto my-10 w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+                  {/* Close */}
+                  <div
+                    className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+                    onClick={() => setOpen(false)}
+                  >
+                    <MdCancel className="text-white text-2xl" />
                   </div>
-                </div>
-
-                {/* Centered text below */}
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    List your entire space and connect to student renters.
-                  </span>
-                </div>
-              </div>
-
-              {/* Shared Space */}
-              <div>
-                <div onClick={() => navigate("/sharedspace")} className="cursor-pointer relative flex border-1  pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]">
-                  {/* Left icon */}
-                  <MdOutlineBed className="text-black text-3xl ml-5" />
-                  {/* Center text */}
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Shared Space
-                  </span>
-                  {/* Right arrow in black circle */}
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-2xl" />
+      
+                  {/* Header */}
+                  <h2 className="text-3xl mt-5 font-medium text-center text-black">
+                    New Listing
+                  </h2>
+                  <p className="text-sm text-black text-center mt-5">
+                    Hola, What type of space would you like to list
+                  </p>
+      
+                  <div
+                    className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                    style={{
+                      borderStyle: "dashed",
+                      borderImage:
+                        "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                    }}
+                  />
+      
+                  {/* Pills */}
+                  <div className="space-y-6">
+                    {/* Entire Space */}
+                    <div>
+                      <div
+                        onClick={() => navigate("/entirespace")}
+                        className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
+                      >
+                        <PiHouse className="text-black text-4xl ml-5" />
+                        <span className="flex-1 text-black text-lg text-center font-medium">
+                          Entire Space
+                        </span>
+                        <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                          <FiArrowRight className="text-white text-2xl" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center mt-1">
+                        <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                          List your entire space and connect to student renters.
+                        </span>
+                      </div>
+                    </div>
+      
+                    {/* Shared Space */}
+                    <div>
+                      <div
+                        onClick={() => navigate("/sharedspace")}
+                        className="cursor-pointer relative flex border-1 pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
+                      >
+                        <MdOutlineBed className="text-black text-3xl ml-5" />
+                        <span className="flex-1 text-black text-lg text-center font-medium">
+                          Shared Space
+                        </span>
+                        <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                          <FiArrowRight className="text-white text-2xl" />
+                        </div>
+                      </div>
+                      <div className="flex justify-center mt-1">
+                        <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                          List shared spaces: Find roommates for your clients.
+                        </span>
+                      </div>
+                    </div>
+      
+                    {/* Coming Soon */}
+                    <div className="text-md font-semibold text-black text-center">
+                      --------------- COMING SOON ---------------
+                    </div>
+      
+                    {/* Short-let Space */}
+                    <div>
+                      <div className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#1C0B3D]">
+                        <TbHomeSpark className="text-white text-3xl ml-5" />
+                        <span className="flex-1 text-white text-lg text-center font-medium">
+                          Short-let Space
+                        </span>
+                        <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
+                          <FiArrowRight className="text-white text-2xl" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-
-                {/* Label below */}
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    List shared spaces: Find roommates for your clients.
-                  </span>
+      
+                  <div
+                    className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                    style={{
+                      borderStyle: "dashed",
+                      borderImage:
+                        "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                    }}
+                  />
                 </div>
               </div>
-
-              {/* Coming Soon */}
-              <div className="text-md font-semibold text-black text-center">
-                --------------- COMING SOON ---------------
-              </div>
-
-              {/* Short-let Space */}
-              <div>
-                <div className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#1C0B3D]">
-                  {/* Left icon */}
-                  <TbHomeSpark className="text-white text-3xl ml-5" />
-                  {/* Center text */}
-                  <span className="flex-1 text-white text-lg text-center font-medium">
-                    Short-let Space
-                  </span>
-                  {/* Right arrow in black circle */}
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
-                    <FiArrowRight className="text-white text-2xl " />
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
     </div>
   );
 };
