@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Signup1 from "./Signup1";
 import Signup2 from "./Signup2";
 import Signup3 from "./Signup3";
@@ -7,6 +7,7 @@ import { BiSolidBriefcase } from "react-icons/bi";
 import logo from "../../assets/logo.png";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
+
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -18,6 +19,19 @@ const Signup = () => {
   const toggleMode = () => {
     setMode((prev) => (prev === "student" ? "merchant" : "student"));
   };
+
+   useEffect(() => {
+    // read from sessionStorage if present
+    const savedStep = sessionStorage.getItem("signupStep");
+    const savedMode = sessionStorage.getItem("signupMode");
+
+    if (savedStep) setStep(Number(savedStep));
+    if (savedMode === "merchant" || savedMode === "student") setMode(savedMode);
+
+    // optional: clear after use so it doesn’t persist
+    sessionStorage.removeItem("signupStep");
+    sessionStorage.removeItem("signupMode");
+  }, []);
 
   return (
     <>
