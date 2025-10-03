@@ -231,7 +231,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
                   disabled={!canContinue}
                 >
                   <span className="text-xl">Continue</span>
-                  <MdDoubleArrow className="ml-2 text-2xl text-4xl" />
+                  <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
                 </button>
               </InfoPill>
             </div>

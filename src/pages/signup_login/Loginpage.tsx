@@ -299,7 +299,7 @@ export default function Loginpage({
                       {loading
                         ? "Logging in..."
                         : `Login as ${
-                            mode === "student" ? "Student" : "Merchant"
+                            mode === "student" ? "Student" : "Business"
                           }`}
                     </span>
                   </button>
