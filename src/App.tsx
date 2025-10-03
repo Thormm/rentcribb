@@ -54,7 +54,7 @@ const router = createBrowserRouter([
       { path: "/entirespace", element: <Entirespace /> },
       { path: "/sharedspace", element: <Sharedspace /> },
       { path: "/signup", element: <Signup /> },
-      { path: "/login", element: <Loginpage /> },
+      { path: "/login", element: <Loginpage mode="student" /> },
     ],
   },
 ]);
