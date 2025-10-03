@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,6 @@ import InfoPill from "../../components/Pill";
 import { FaArrowRight } from "react-icons/fa";
 import { RiListView } from "react-icons/ri";
 
-/* ---------- Reusable Components ---------- */
 function Maincard({
   className,
   children,
@@ -65,17 +64,49 @@ function Label({
   );
 }
 
-/* ---------- Main Signup1 Page ---------- */
 interface Signup4Props {
   mode: "student" | "merchant";
 }
 
+interface Institute {
+  id: number;
+  institution: string;
+}
+
 export default function Signup4({ mode }: Signup4Props) {
-  const [institution, setInstitution] = useState("");
+  const [institution, setInstitution] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
+  const [institutes, setInstitutes] = useState<Institute[]>([]);
   const navigate = useNavigate();
 
-  const institutions = ["University A", "University B", "University C"]; // Replace with real list
+
+
+  // Static list of Nigerian states (you can expand this list)
+  const states = [
+    "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
+    "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","Gombe","Imo","Jigawa",
+    "Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger",
+    "Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara",
+    "FCT"
+  ];
+
+  useEffect(() => {
+  fetch("https://www.cribb.africa/apigets.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "getInstitutes" }),
+    credentials: "include"
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // data is an array of JSON strings → parse each one
+      const parsed = data.map((item: string) => JSON.parse(item));
+      setInstitutes(parsed);
+    })
+    .catch((err) => console.error("Failed to load institutions:", err));
+}, []);
+
+
 
   const openTerms = () => {
     window.open("/terms", "_blank");
@@ -85,7 +116,6 @@ export default function Signup4({ mode }: Signup4Props) {
     window.open("/privacy", "_blank");
   };
 
-  // ✅ Submit to API and then go to /login
   const handleSubmit = async () => {
     if (!institution || !agreed) return;
 
@@ -100,10 +130,10 @@ export default function Signup4({ mode }: Signup4Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          institution, // selected dropdown
+          institution, // this may be institute id or state string
           fourthpage: true,
-          signup_key, // session key
-          mode: mode
+          signup_key,
+          mode: mode,
         }),
         credentials: "include",
       });
@@ -111,7 +141,7 @@ export default function Signup4({ mode }: Signup4Props) {
       const data = await res.json();
 
       if (data.success) {
-        navigate("/login"); // ✅ redirect straight to /login
+        navigate("/login");
       } else {
         alert(data.message || "Something went wrong");
       }
@@ -131,7 +161,6 @@ export default function Signup4({ mode }: Signup4Props) {
         backgroundPosition: "center",
       }}
     >
-      {/* Progress Dots */}
       <div className="grid grid-cols-1 mb-5">
         <div className="flex items-center justify-center">
           <div className="flex gap-2 flex-wrap justify-center">
@@ -143,7 +172,6 @@ export default function Signup4({ mode }: Signup4Props) {
         </div>
       </div>
 
-      {/* Main Form */}
       <div className="grid grid-cols-1 items-center w-full md:w-2/5">
         <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
           <SectionHeader
@@ -152,26 +180,41 @@ export default function Signup4({ mode }: Signup4Props) {
           />
 
           <div className="space-y-5 md:space-y-6 pt-3 md:pt-5">
-            {/* Institution Select */}
-            <div className="space-y-1 ">
-              <Label>INSTITUTION</Label>
+            <div className="space-y-1">
+              <Label>
+                {mode === "student"
+                  ? "INSTITUTION"
+                  : "PRINCIPAL PLACE OF BUSINESS"}
+              </Label>
               <InfoPill>
                 <select
-                  className="w-full  bg-transparent text-[10px] md:text-xs"
+                  className="w-full focus:outline-none  bg-transparent text-[10px] md:text-xs"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                 >
-                  <option value="">Select your Institution</option>
-                  {institutions.map((inst) => (
-                    <option key={inst} value={inst}>
-                      {inst}
-                    </option>
-                  ))}
+                  <option value="">
+                    {mode === "student"
+                      ? "Select your Institution"
+                      : "Select your State"}
+                  </option>
+                  {mode === "student"
+                    ? institutes.map((inst) => (
+                        <option key={inst.id} value={inst.id}>
+                          {inst.institution}
+                        </option>
+                      ))
+                    : states.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
                 </select>
               </InfoPill>
               <div className="w-full flex justify-center md:justify-end">
                 <span className="text-xs rounded-lg bg-white p-2 md:mr-6 text-[#5B5B5B]">
-                  Your Institution determines your <br /> Terms of Service.
+                  {mode === "student"
+                    ? "Your Institution determines your"
+                    : "Your State determines your"} <br/>Terms of Service.
                 </span>
               </div>
             </div>
@@ -202,7 +245,6 @@ export default function Signup4({ mode }: Signup4Props) {
               </button>
             </InfoPill>
 
-
             <div className="w-full flex justify-center">
               <span className="text-xs justify-center p-2 rounded-lg bg-white text-[#5B5B5B]">
                 By selecting “I Agree” below, you have reviewed and agreed
@@ -211,7 +253,6 @@ export default function Signup4({ mode }: Signup4Props) {
               </span>
             </div>
 
-            {/* Checkbox */}
             <div className="flex items-center gap-2 mt-2 ml-5">
               <input
                 type="checkbox"
@@ -225,7 +266,6 @@ export default function Signup4({ mode }: Signup4Props) {
               </label>
             </div>
 
-            {/* Continue Button */}
             <InfoPill className="mt-5 md:mt-10 bg-black text-white">
               <button
                 className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
@@ -241,5 +281,4 @@ export default function Signup4({ mode }: Signup4Props) {
       </div>
     </section>
   );
-};
-
+}

@@ -83,6 +83,8 @@ const Signup = () => {
       </nav>
 
       {/* Steps */}
+      
+      
       {step === 1 && <Signup1 mode={mode} onNext={goNext} />}
       {step === 2 && <Signup2 mode={mode} onNext={goNext} onBack = {goBack} />}
       {step === 3 && <Signup3 mode={mode} onNext={goNext} />}

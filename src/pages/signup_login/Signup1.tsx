@@ -242,7 +242,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
     <>
       {/* Section */}
       <section
-        className="px-2 pt-5 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
+        className="px-2 pt-1 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
         style={{
           backgroundImage: `url(${signbg})`,
           backgroundSize: "cover",
