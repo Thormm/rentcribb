@@ -94,7 +94,7 @@ function InputField({
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full appearance-none bg-transparent text-[10px] md:text-xs outline-none"
+            className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
         </div>
       </InfoPill>
@@ -120,7 +120,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
     confirm === "" ? "idle" : confirm === password ? "valid" : "invalid";
 
   // check if all fields except referral are filled
-  const canContinue = firstName && lastName && password && confirm;
+  const canContinue = firstName && lastName && password && confirm && password === confirm;;
 
   const handleSubmit = async () => {
     if (!canContinue) return;

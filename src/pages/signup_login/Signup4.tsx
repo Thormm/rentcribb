@@ -188,7 +188,7 @@ export default function Signup4({ mode }: Signup4Props) {
               </Label>
               <InfoPill>
                 <select
-                  className="w-full focus:outline-none  bg-transparent text-[10px] md:text-xs"
+                  className="w-full focus:outline-none  bg-transparent text-xs md:text-sm"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                 >

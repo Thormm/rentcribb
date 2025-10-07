@@ -96,7 +96,7 @@ function InputField({
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full appearance-none bg-transparent text-[10px] md:text-xs outline-none"
+            className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
         </div>
       </InfoPill>
@@ -116,11 +116,26 @@ export default function Loginpage({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // existing "what next" modal open
   const [open, setOpen] = useState(false);
+
+  // NEW: forgot password modal states
+  const [showForgotPrompt, setShowForgotPrompt] = useState(false); // shows modal asking for email/phone if username empty
+  
+
   const navigate = useNavigate();
 
   const toggleMode = () => {
     setMode((prev) => (prev === "student" ? "merchant" : "student"));
+  };
+
+  const isEmail = (val: string) => {
+    return /\S+@\S+\.\S+/.test(val);
+  };
+
+  const normalizePhone = (val: string) => {
+    // Very small normalization: remove spaces, parentheses, dashes.
+    return val.replace(/[^\d+]/g, "");
   };
 
   const handleContinue = async () => {
@@ -145,7 +160,7 @@ export default function Loginpage({
         if (data.verification !== "otp") {
           setOpen(true);
         } else {
-          sessionStorage.setItem("signupStep", "3");     // open step 3
+          sessionStorage.setItem("signupStep", "3"); // open step 3
           sessionStorage.setItem("signupMode", mode); // open as merchant
           sessionStorage.removeItem("signup_data");
           sessionStorage.setItem(
@@ -169,6 +184,37 @@ export default function Loginpage({
       setLoading(false);
     }
   };
+
+  // NEW: perform navigation to forgotpassword page with appropriate session storage
+  const goToForgotPassword = (identifier: string, type: "email" | "phone") => {
+    // store signup_data expected by forgotpassword page
+    // keep shape consistent with forgotpassword: { email, callNo, whats } where applicable
+    const signupData: any = { mode };
+    if (type === "email") signupData.email = identifier;
+    else signupData.callNo = identifier;
+
+    sessionStorage.setItem("signup_data", JSON.stringify(signupData));
+    // Also store a small indicator to make it explicit
+    sessionStorage.setItem("forgot_via", type);
+    // navigate
+    navigate("/forgotpassword");
+  };
+
+ 
+const handleForgotClick = () => {
+  const trimmed = username.trim();
+  if (trimmed.length > 0) {
+    if (isEmail(trimmed)) {
+      goToForgotPassword(trimmed, "email");
+    } else {
+      const phone = normalizePhone(trimmed);
+      goToForgotPassword(phone, "phone");
+    }
+  } else {
+    // just show a modal telling user to enter email/phone
+    setShowForgotPrompt(true);
+  }
+};
 
   return (
     <>
@@ -281,7 +327,10 @@ export default function Loginpage({
                 />
 
                 <div className="w-full flex pr-5 justify-end">
-                  <span className="text-xs rounded bg-white p-1 text-[#EC0000] cursor-pointer">
+                  <span
+                    className="text-xs rounded bg-white p-1 text-[#EC0000] cursor-pointer"
+                    onClick={handleForgotClick}
+                  >
                     Forgot Password?
                   </span>
                 </div>
@@ -584,6 +633,38 @@ export default function Loginpage({
           </div>
         </div>
       )}
+
+      {/* ==== FORGOT PROMPT MODAL ==== */}
+{showForgotPrompt && (
+  <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
+    <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
+      <div
+        className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
+        onClick={() => setShowForgotPrompt(false)}
+      >
+        <FaTimes className="text-white" />
+      </div>
+
+      <h3 className="text-xl font-semibold text-center mb-2">
+        Reset Password
+      </h3>
+      <p className="text-sm text-center text-gray-600 mb-4">
+        Please enter your email or phone number in the login field 
+        above before requesting a password reset.
+      </p>
+
+      <div className="flex justify-center">
+        <button
+          className="px-4 py-2 bg-black text-white rounded-lg"
+          onClick={() => setShowForgotPrompt(false)}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 }

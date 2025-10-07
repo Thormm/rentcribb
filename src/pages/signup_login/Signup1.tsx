@@ -106,7 +106,7 @@ function InputField({
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full appearance-none bg-transparent text-[10px] md:text-xs outline-none"
+            className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
         </div>
       </InfoPill>
