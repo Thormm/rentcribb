@@ -121,7 +121,6 @@ export default function Loginpage({
 
   // NEW: forgot password modal states
   const [showForgotPrompt, setShowForgotPrompt] = useState(false); // shows modal asking for email/phone if username empty
-  
 
   const navigate = useNavigate();
 
@@ -159,6 +158,19 @@ export default function Loginpage({
         sessionStorage.setItem("signup_key", data.signup_key);
         if (data.verification !== "otp") {
           setOpen(true);
+          // Clear all previous sessionStorage items
+          sessionStorage.clear();
+
+          // Create new login_data object
+          const login_data = {
+            signup_key: data.signup_key,
+            mode: mode,
+            user: data.user,
+            verification : data.verification
+          };
+
+          // Save to sessionStorage as JSON string
+          sessionStorage.setItem("login_data", JSON.stringify(login_data));
         } else {
           sessionStorage.setItem("signupStep", "3"); // open step 3
           sessionStorage.setItem("signupMode", mode); // open as merchant
@@ -200,21 +212,20 @@ export default function Loginpage({
     navigate("/forgotpassword");
   };
 
- 
-const handleForgotClick = () => {
-  const trimmed = username.trim();
-  if (trimmed.length > 0) {
-    if (isEmail(trimmed)) {
-      goToForgotPassword(trimmed, "email");
+  const handleForgotClick = () => {
+    const trimmed = username.trim();
+    if (trimmed.length > 0) {
+      if (isEmail(trimmed)) {
+        goToForgotPassword(trimmed, "email");
+      } else {
+        const phone = normalizePhone(trimmed);
+        goToForgotPassword(phone, "phone");
+      }
     } else {
-      const phone = normalizePhone(trimmed);
-      goToForgotPassword(phone, "phone");
+      // just show a modal telling user to enter email/phone
+      setShowForgotPrompt(true);
     }
-  } else {
-    // just show a modal telling user to enter email/phone
-    setShowForgotPrompt(true);
-  }
-};
+  };
 
   return (
     <>
@@ -556,12 +567,12 @@ const handleForgotClick = () => {
               {/* listing */}
               <div>
                 <div
-                  onClick={() => navigate("/listing")}
+                  onClick={() => navigate("/businessonboarding")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-5" />
                   <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    Rent A Space
+                    List Your Space
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
@@ -635,36 +646,35 @@ const handleForgotClick = () => {
       )}
 
       {/* ==== FORGOT PROMPT MODAL ==== */}
-{showForgotPrompt && (
-  <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
-    <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
-      <div
-        className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
-        onClick={() => setShowForgotPrompt(false)}
-      >
-        <FaTimes className="text-white" />
-      </div>
+      {showForgotPrompt && (
+        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
+            <div
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => setShowForgotPrompt(false)}
+            >
+              <FaTimes className="text-white" />
+            </div>
 
-      <h3 className="text-xl font-semibold text-center mb-2">
-        Reset Password
-      </h3>
-      <p className="text-sm text-center text-gray-600 mb-4">
-        Please enter your email or phone number in the login field 
-        above before requesting a password reset.
-      </p>
+            <h3 className="text-xl font-semibold text-center mb-2">
+              Reset Password
+            </h3>
+            <p className="text-sm text-center text-gray-600 mb-4">
+              Please enter your email or phone number in the login field above
+              before requesting a password reset.
+            </p>
 
-      <div className="flex justify-center">
-        <button
-          className="px-4 py-2 bg-black text-white rounded-lg"
-          onClick={() => setShowForgotPrompt(false)}
-        >
-          OK
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 bg-black text-white rounded-lg"
+                onClick={() => setShowForgotPrompt(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -19,6 +19,7 @@ import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
 import Loginpage from "./pages/signup_login/Loginpage";
 import Forgotpassword from "./pages/signup_login/forgotpassword";
+import Board from "./pages/business_onboarding.tsx/board";
 
 // Layout with conditional Navbar
 function Layout() {
@@ -26,7 +27,7 @@ function Layout() {
 
   // Add all the routes where you DON'T want the navbar
 
-  const hideNavbarOn = ["/businessdash", "/studentdash", "/login", "/signup", "/forgotpassword"];
+  const hideNavbarOn = ["/businessdash", "/studentdash", "/login", "/signup", "/forgotpassword", "/businessonboarding"];
   const shouldHideNavbar = hideNavbarOn.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       { path: "/signup", element: <Signup /> },
       { path: "/login", element: <Loginpage mode="student" /> },
       { path: "/forgotpassword", element: <Forgotpassword/> },
+      { path: "/businessonboarding", element: <Board/> },
     ],
   },
 ]);
