@@ -19,7 +19,7 @@ import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
 import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
 import Loginpage from "./pages/signup_login/Loginpage";
-import Forgotpassword from "./pages/signup_login/Forgotpassword";
+import ForgotPassword from "./pages/signup_login/ForgotPassword";
 import Board from "./pages/business_onboarding/Board";
 
 // Layout with conditional Navbar
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
       { path: "/sharedspace", element: <Sharedspace /> },
       { path: "/signup", element: <Signup /> },
       { path: "/login", element: <Loginpage mode="student" /> },
-      { path: "/forgotpassword", element: <Forgotpassword /> },
+      { path: "/forgotpassword", element: <ForgotPassword /> },
       { path: "/businessonboarding", element: <Board /> },
     ],
   },
