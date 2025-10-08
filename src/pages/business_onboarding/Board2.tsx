@@ -2,14 +2,13 @@ import { useState } from "react";
 import imgright from "../../assets/board2.png";
 import InfoPill from "../../components/Pill";
 import { IoIosArrowBack, IoIosStarOutline } from "react-icons/io";
-import { MdOutlineDashboard, MdOutlinePostAdd } from "react-icons/md";
+import { MdOutlineCreditCardOff, MdWallet, MdOutlineDashboard, MdOutlinePostAdd } from "react-icons/md";
 import { FiArrowRight } from "react-icons/fi";
 import clsx from "clsx";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { TbUserSquare } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
-import { CgSandClock } from "react-icons/cg";
 
 function Maincard({
   className = "",
@@ -72,7 +71,12 @@ export default function Board2({
   const [bAddress, setWhatsapp] = useState("");
   const [loading, setLoading] = useState(false);
   const [openmodal, setOpen] = useState(false);
+  const [showCongrats, setCongrats] = useState(false);
   const navigate = useNavigate();
+  const attest = async () => {
+    setOpen(false);
+    setCongrats(true);
+  }
 
   const canContinue = bname && bAbout && bAddress;
 
@@ -125,8 +129,9 @@ export default function Board2({
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
           <div className="flex gap-2 flex-wrap justify-center max-w-full">
-            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
+            
             <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
+            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
           </div>
         </div>
       </div>
@@ -261,10 +266,10 @@ export default function Board2({
 
             {/* Header */}
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
-              What Next
+              Plan
             </h2>
             <p className="text-xs md:text-sm text-black text-center mt-5">
-              Hola, What would you like to do on Cribb
+              Simple, Transparent Plan based on your need
             </p>
 
             <div
@@ -281,36 +286,28 @@ export default function Board2({
               {/* listing */}
               <div>
                 <div
-                  onClick={() => navigate("/businessonboarding")}
+                  onClick={() => navigate("/businessplan")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
-                  <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-5" />
+                  <MdWallet className="text-black text-2xl md:text-4xl ml-5" />
                   <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    List Your Space
+                Choose a Paid Plan
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
                   </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
-                    List your entire or shared space and connect to students.
-                    Explore rent requests and reply with your available spaces.
-                  </span>
                 </div>
               </div>
 
               {/* Waitlist */}
               <div>
                 <div
-                  onClick={() => {
-                    window.location.href = "https://www.cribb.africa/waitlist";
-                  }}
+                  onClick={attest}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
                 >
-                  <CgSandClock className="text-black text-2xl md:text-4xl ml-5" />
+                  <MdOutlineCreditCardOff className="text-black text-2xl md:text-4xl ml-5" />
                   <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    Joint Waitlist
+                    Start 14-days Free Trial
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
@@ -318,9 +315,7 @@ export default function Board2({
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
-                    Join the wait list to be among the first to experience
-                    Cribb/Rent Share your pain points to help us build a softer
-                    life for Uni-student{" "}
+                    Up to 1 listing : Unlimited bookings : Reply requests for free
                   </span>
                 </div>
               </div>
@@ -358,7 +353,26 @@ export default function Board2({
           </div>
         </div>
       )}
+{/* ==== FORGOT PROMPT MODAL ==== */}
+      {showCongrats && (
+        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
+           
+            <p className="text-sm text-center text-gray-600 mb-4">
+             Your 14-day free trial has started. You have access to all features for the next 14 days. Enjoy exploring!
+            </p>
 
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 bg-black text-white rounded-lg"
+                onClick={() => navigate("/businessexplore")}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </>
   );
 }
