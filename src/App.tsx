@@ -20,7 +20,7 @@ import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
 import Loginpage from "./pages/signup_login/Loginpage";
 import Forgotpassword from "./pages/signup_login/forgotpassword";
-import Board from "./pages/business_onboarding.tsx/board";
+import Board from "./pages/business_onboarding/board";
 
 // Layout with conditional Navbar
 function Layout() {

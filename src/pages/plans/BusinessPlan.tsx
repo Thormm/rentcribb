@@ -61,69 +61,69 @@ function Label({ children, className }: LabelProps) {
 
 // Mock pricing data
 const agentPlans = {
-  INSTANT: {
-    price: "₦10,000",
-    tag: "For Listing a Single Space : Pay-As-You-Go",
-    features: [
-      ["Max No. Listing", "1"],
-      ["Duration", "3 Months"],
-      ["Duration", "No limit"],
-      ["Posting Listings", "Free"],
-    ],
-  },
-  EXPLORE: {
-    price: "₦20,000",
-    tag: "Agent: For Expanding Reach",
-    features: [
-      ["No. of Listings", "<< Up to 3 Properties"],
-      ["No. of Leads", "<< Up to 10 Clients"],
-      ["Duration", "30 Days"],
-      ["Posting Listings", "Free"],
-    ],
-  },
-  "GO PRO": {
-    price: "₦50,000",
-    tag: "Agent: Unlimited Access",
-    features: [
-      ["No. of Listings", "Unlimited"],
-      ["No. of Leads", "Unlimited"],
-      ["Duration", "No Limit"],
-      ["Priority Visibility", "Included"],
-    ],
-  },
+INSTANT: {
+price: "₦10,000",
+tag: "For Listing a Single Space : Pay-As-You-Go",
+features: [
+["Max No. Listing", "1"],
+["Duration", "3 Months"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
+EXPLORE: {
+price: "₦20,000",
+tag: "Monthly Plan for Full Access : Subscription",
+features: [
+["Max No. Listing", "Unlimited"],
+["Duration", "30 Days"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
+"GO PRO": {
+price: "₦50,000",
+tag: "Quarterly Plan for Full Access : Subscription",
+features: [
+["Max No. Listing", "Unlimited"],
+["Duration", "3 Months"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
 };
 
 const landlordPlans = {
-  INSTANT: {
-    price: "₦5,000",
-    tag: "Landlord: For One Property Listing",
-    features: [
-      ["No. of Properties", "<< 1 Property"],
-      ["Promotion", "Basic"],
-      ["Duration", "No Limit"],
-      ["Posting", "Free"],
-    ],
-  },
-  EXPLORE: {
-    price: "₦15,000",
-    tag: "Landlord: For More Exposure",
-    features: [
-      ["No. of Properties", "<< Up to 5"],
-      ["Promotion", "Standard"],
-      ["Duration", "No Limit"],
-      ["Posting", "Free"],
-    ],
-  },
-  "GO PRO": {
-    price: "₦40,000",
-    tag: "Landlord: Full Marketing Support",
-    features: [
-      ["No. of Properties", "Unlimited"],
-      ["Promotion", "Premium"],
-      ["Duration", "No Limit"],
-      ["Featured Listing", "Included"],
-    ],
-  },
+INSTANT: {
+price: "₦10,000",
+tag: "For Listing a Single Space : Pay-As-You-Go",
+features: [
+["Max No. Listing", "1"],
+["Duration", "3 Months"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
+EXPLORE: {
+price: "₦20,000",
+tag: "Monthly Plan for Full Access : Subscription",
+features: [
+["Max No. Listing", "Unlimited"],
+["Duration", "30 Days"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
+"GO PRO": {
+price: "₦50,000",
+tag: "Quarterly Plan for Full Access : Subscription",
+features: [
+["Max No. Listing", "Unlimited"],
+["Duration", "3 Months"],
+["Replying Requests", "Free"],
+["Max No. Connection", "Unlimited"],
+],
+},
 };
 
 const BusinessPlan = () => {
