@@ -16,7 +16,6 @@ const Board = () => {
   return (
     <>
 
-    {/* Navbar */}
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
@@ -58,7 +57,7 @@ const Board = () => {
         )}
       </nav>
       {step === 1 && <Board1 mode={mode} onNext={goNext} />}
-      {step === 2 && <Board2 category={category} mode={mode} onNext={goNext} onBack={goBack} />}
+      {step === 2 && <Board2 category={category} mode={mode} onBack={goBack} />}
     </>
   );
 };

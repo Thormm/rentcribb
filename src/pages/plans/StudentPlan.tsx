@@ -89,7 +89,7 @@ const plans = {
   },
 };
 
-const Plan = () => {
+const StudentPlan = () => {
   const [activePlan, setActivePlan] = useState<keyof typeof plans>("INSTANT");
 
   const current = plans[activePlan];
@@ -221,4 +221,4 @@ const Plan = () => {
   );
 };
 
-export default Plan;
+export default StudentPlan;

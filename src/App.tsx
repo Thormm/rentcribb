@@ -11,7 +11,8 @@ import Hostelview from "./pages/hostelview/Hostelview";
 import Connected from "./pages/connected/Connected";
 import Request from "./pages/connected/Request";
 import Hostpage from "./pages/hostpage/Hostpage";
-import Plan from "./pages/plans/Plan";
+import StudentPlan from "./pages/plans/StudentPlan";
+import BusinessPlan from "./pages/plans/BusinessPlan";
 import BusinessDash from "./pages/businessdash/BusinessDash";
 import StudentDash from "./pages/studentdash/StudentDash";
 import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
@@ -25,20 +26,20 @@ import Board from "./pages/business_onboarding.tsx/board";
 function Layout() {
   const location = useLocation();
 
-  // Add all the routes where you DON'T want the navbar
+  // Explicitly list only pages where you WANT the navbar
+  const showNavbarOn = ["/", "/listing"];
 
-  const hideNavbarOn = ["/businessdash", "/studentdash", "/login", "/signup", "/forgotpassword", "/businessonboarding"];
-  const shouldHideNavbar = hideNavbarOn.some((path) =>
-    location.pathname.startsWith(path)
-  );
+  // Check for exact matches, not just prefix matches
+  const shouldShowNavbar = showNavbarOn.includes(location.pathname);
 
   return (
     <>
-      {!shouldHideNavbar && <Navbar />}
+      {shouldShowNavbar && <Navbar />}
       <Outlet />
     </>
   );
 }
+
 
 const router = createBrowserRouter([
   {
@@ -50,15 +51,16 @@ const router = createBrowserRouter([
       { path: "/connected", element: <Connected /> },
       { path: "/request", element: <Request /> },
       { path: "/hostpage", element: <Hostpage /> },
-      { path: "/plan", element: <Plan /> },
+      { path: "/studentplan", element: <StudentPlan /> },
+      { path: "/businessplan", element: <BusinessPlan /> },
       { path: "/businessdash", element: <BusinessDash /> },
       { path: "/studentdash", element: <StudentDash /> },
       { path: "/entirespace", element: <Entirespace /> },
       { path: "/sharedspace", element: <Sharedspace /> },
       { path: "/signup", element: <Signup /> },
       { path: "/login", element: <Loginpage mode="student" /> },
-      { path: "/forgotpassword", element: <Forgotpassword/> },
-      { path: "/businessonboarding", element: <Board/> },
+      { path: "/forgotpassword", element: <Forgotpassword /> },
+      { path: "/businessonboarding", element: <Board /> },
     ],
   },
 ]);
