@@ -19,8 +19,8 @@ import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
 import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
 import Loginpage from "./pages/signup_login/Loginpage";
-import Forgotpassword from "./pages/signup_login/forgotpassword";
-import Board from "./pages/business_onboarding/board";
+import Forgotpassword from "./pages/signup_login/Forgotpassword";
+import Board from "./pages/business_onboarding/Board";
 
 // Layout with conditional Navbar
 function Layout() {
