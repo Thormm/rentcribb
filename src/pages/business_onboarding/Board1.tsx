@@ -25,13 +25,13 @@ function SectionHeader({
   caption?: string;
 }) {
   return (
-    <div className="px-5 pt-8">
-      <h3 className="text-3xl font-medium text-center">{title}</h3>
-      <p className="text-center text-md pt-3">
+    <div className="pt-8 md:px-5">
+      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
       <div
-        className="mt-1 w-95 border-t-4 mx-auto text-[#0000004D]"
+        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
         style={{
           borderStyle: "dashed",
           borderImage:
@@ -44,7 +44,7 @@ function SectionHeader({
 
 function Label({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={clsx("text-md my-3 font-semibold ml-0", className)}>
+    <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}>
       {children}
     </div>
   );
@@ -110,8 +110,8 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
   };
 
   return (
-    <section className="flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
-      <div className="grid grid-cols-[45%_55%] w-full">
+    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+      <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
           <div className="flex gap-2 flex-wrap justify-center max-w-full">
@@ -121,9 +121,9 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
         </div>
       </div>
 
-      <div className="grid grid-cols-[55%_45%] items-center">
+      <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
         {/* LEFT SIDE: IMAGE */}
-        <div className="ml-20 -mr-10 relative z-0">
+        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10">
           <img
             src={imgright}
             alt="Traveler with suitcase"
@@ -138,14 +138,14 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
         </div>
 
         {/* RIGHT SIDE: FORM */}
-        <div className="space-y-1 mr-20 -ml-10 z-2">
-          <Maincard className="bg-[#F4F6F5] pb-5">
+        <div className="space-y-1 md:mr-20 md:-ml-10">
+           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
               title="Know Your Business"
               caption="Few Details to help us Tailor your Experience"
             />
 
-            <div className="px-5 pb-4 pt-3 space-y-4">
+            <div className="md:px-5 pb-4 pt-3 space-y-4">
 
               {/* Category */}
               <div>

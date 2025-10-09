@@ -10,15 +10,17 @@ import InfoPill from "../../components/Pill";
 import logo from "../../assets/logo.png";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineTag } from "react-icons/ai";
 
 declare const PaystackPop: any;
-const navigate = useNavigate();
 function Maincard({
   className = "",
   children,
 }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
+    <div
+      className={["rounded-4xl md:px-5 border-4 shadow", className].join(" ")}
+    >
       {children}
     </div>
   );
@@ -32,13 +34,13 @@ function SectionHeader({
   caption?: string;
 }) {
   return (
-    <div className="px-5 pt-10">
-      <h3 className="text-4xl font-medium text-center">{title}</h3>
-      <p className="text-center text-md pt-3">
+    <div className="px-5 pt-10 pb-5">
+      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
       <div
-        className="mt-1 w-95 border-t-4 mx-auto text-[#0000004D]"
+        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
         style={{
           borderStyle: "dashed",
           borderImage:
@@ -52,7 +54,12 @@ function SectionHeader({
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
-    <div className={clsx("text-md my-5 font-semibold ml-0", className)}>
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -62,6 +69,7 @@ const agentPlans = {
   INSTANT: {
     price: "₦10,000",
     tag: "For Listing a Single Space : Pay-As-You-Go",
+    discount: 0, // No discount
     features: [
       ["Max No. Listing", "1"],
       ["Duration", "3 Months"],
@@ -72,6 +80,7 @@ const agentPlans = {
   EXPLORE: {
     price: "₦20,000",
     tag: "Monthly Plan for Full Access : Subscription",
+    discount: 0, // No discount
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "30 Days"],
@@ -82,6 +91,7 @@ const agentPlans = {
   "GO PRO": {
     price: "₦50,000",
     tag: "Quarterly Plan for Full Access : Subscription",
+    discount: 16, // No discount
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "3 Months"],
@@ -91,9 +101,44 @@ const agentPlans = {
   },
 };
 
-const landlordPlans = { ...agentPlans };
+const landlordPlans = {
+  INSTANT: {
+    price: "₦10,000",
+    tag: "For Listing a Single Space : Pay-As-You-Go",
+    discount: 0, // No discount
+    features: [
+      ["Max No. Listing", "1"],
+      ["Duration", "3 Months"],
+      ["Replying Requests", "Free"],
+      ["Max No. Connection", "Unlimited"],
+    ],
+  },
+  EXPLORE: {
+    price: "₦20,000",
+    tag: "Monthly Plan for Full Access : Subscription",
+    discount: 0, // No discount
+    features: [
+      ["Max No. Listing", "Unlimited"],
+      ["Duration", "30 Days"],
+      ["Replying Requests", "Free"],
+      ["Max No. Connection", "Unlimited"],
+    ],
+  },
+  "GO PRO": {
+    price: "₦50,000",
+    tag: "Quarterly Plan for Full Access : Subscription",
+    discount: 16, // No discount
+    features: [
+      ["Max No. Listing", "Unlimited"],
+      ["Duration", "3 Months"],
+      ["Replying Requests", "Free"],
+      ["Max No. Connection", "Unlimited"],
+    ],
+  },
+};
 
 const BusinessPlan = () => {
+  const navigate = useNavigate();
   const [category, setCategory] = useState<"agent" | "landlord">("agent");
   const [activePlan, setActivePlan] =
     useState<keyof typeof agentPlans>("INSTANT");
@@ -136,7 +181,7 @@ const BusinessPlan = () => {
     parseInt(price.replace(/[^\d]/g, ""), 10);
 
   const handlePaystack = () => {
-    const amount = (extractAmount(current.price) * 100) + 200;
+    const amount = extractAmount(current.price) * 100 + 200;
     const userEmail = email || loginEmail;
     if (!userEmail) {
       alert("Please provide your email address before proceeding.");
@@ -164,7 +209,7 @@ const BusinessPlan = () => {
   };
 
   return (
-    <div className="bg-[#F3EDFE] min-h-screen">
+    <div className="bg-[#F3EDFE] pb-10 min-h-screen">
       {/* Navbar */}
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         <div className="hidden md:flex justify-center">
@@ -218,11 +263,11 @@ const BusinessPlan = () => {
       </nav>
 
       {/* Header Section */}
-      <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+      <div className="w-full bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
         <div className="mx-auto w-full max-w-6xl px-4">
-          <div className="text-md font-semibold text-[#FFA1A1]">PRICING</div>
+          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">PRICING</div>
           <div className="mt-1 flex items-center justify-between gap-4">
-            <h1 className="text-4xl my-4 font-extrabold ">
+            <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
               {category === "agent"
                 ? "Become an Agent on"
                 : "Become a Landlord on"}{" "}
@@ -230,13 +275,13 @@ const BusinessPlan = () => {
             </h1>
 
             {category === "agent" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <HiOutlineUserCircle className="h-10 w-10" /> AGENT
+              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" /> AGENT
               </span>
             )}
             {category === "landlord" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <TbUserSquare className="h-10 w-10" /> LANDLORD
+              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
               </span>
             )}
           </div>
@@ -244,115 +289,133 @@ const BusinessPlan = () => {
       </div>
 
       {/* Pricing Section */}
-      <section className="justify-center my-10 flex">
-        <div className="mx-30 w-1/2 grid grid-cols-1 gap-14">
-          <div className="space-y-1">
-            <Maincard className="bg-[#F4F6F5] pb-5">
-              <SectionHeader
-                title="Plan"
-                caption="Simple, Transparent Plans based on your need"
-              />
+      <section className="justify-center my-10 md:my-20 flex">
+        <div className=" mx-2 md:mx-30 justify-center w-full md:w-1/2 grid grid-cols-1">
+          <Maincard className="bg-[#F4F6F5] pb-5">
+            <SectionHeader
+              title="Plan"
+              caption="Simple, Transparent Plans based on your need"
+            />
 
-              {/* Plan Selection */}
-              <div>
-                <div className="grid grid-cols-3 gap-4 mt-10 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
-                  {Object.keys(currentPlans).map((plan) => (
-                    <button
-                      key={plan}
-                      onClick={() =>
-                        setActivePlan(plan as keyof typeof currentPlans)
-                      }
-                      className={clsx(
-                        "w-full flex items-center justify-center gap-2 p-3 rounded-lg",
-                        activePlan === plan
-                          ? "bg-black text-white"
-                          : "bg-transparent text-black"
-                      )}
+            {/* Plan Selection */}
+            <div>
+              <div className="grid m-2 md:m-0 grid-cols-3 gap-4  border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                {Object.keys(currentPlans).map((plan) => (
+                  <button
+                    key={plan}
+                    onClick={() =>
+                      setActivePlan(plan as keyof typeof currentPlans)
+                    }
+                    className={clsx(
+                      "w-full flex items-center justify-center gap-1 md:gap-2 p-1 md:p-3 rounded-lg",
+                      activePlan === plan
+                        ? "bg-black text-white"
+                        : "bg-transparent text-black"
+                    )}
+                  >
+                    {plan === "INSTANT" && (
+                      <MdOutlineFlashOn className="text-md md:text-4xl" />
+                    )}
+                    {plan === "EXPLORE" && (
+                      <BiWorld className="text-md md:text-4xl" />
+                    )}
+                    {plan === "GO PRO" && (
+                      <MdDoubleArrow className="text-md md:text-4xl" />
+                    )}
+                    <span className="text-xs md:text-2xl">{plan}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Plan Details */}
+            <div className="px-5 pt-5 pb-4 space-y-4">
+              <div className="space-y-1">
+                <Label className="ml-8">Service Amount</Label>
+                <InfoPill>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="font-bold text-lg py-1">
+                      {current.price}
+                    </span>
+                    {current.discount > 0 && (
+                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-2xl">
+                        <AiOutlineTag className="text-2xl" />
+                        <span className="text-sm">
+                          {current.discount}% - OFF
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                </InfoPill>
+
+                <div className="w-full flex justify-end mr-5 mt-2">
+                  <small className="bg-white p-2 rounded-lg text-xs md:text-base">
+                    {current.tag}
+                  </small>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <Label className="ml-8">Features</Label>
+                <div className="rounded-2xl bg-white mx-1 border-1 p-3">
+                  {current.features.map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="flex items-center text-xs justify-between py-2 px-4 md:text-base"
                     >
-                      {plan === "INSTANT" && <MdOutlineFlashOn size={40} />}
-                      {plan === "EXPLORE" && <BiWorld size={40} />}
-                      {plan === "GO PRO" && <MdDoubleArrow size={40} />}
-                      <span className="text-2xl">{plan}</span>
-                    </button>
+                      <span>{label}</span>
+                      <span className="inline-flex text-xs md:text-base items-center gap-2">
+                        {value} <Info size={20} />
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              {/* Plan Details */}
-              <div className="px-5 pb-4 pt-3 space-y-4">
-                <div className="space-y-1">
-                  <Label className="ml-8">Service Amount</Label>
-                  <InfoPill>
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="font-bold text-lg py-1">
-                        {current.price}
-                      </span>
-                    </div>
-                  </InfoPill>
-                  <div className="w-full flex justify-end mr-5 mt-2">
-                    <small className="bg-white p-2 rounded-lg">
-                      {current.tag}
-                    </small>
-                  </div>
-                </div>
+              <div
+                className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                style={{
+                  borderStyle: "dashed",
+                  borderImage:
+                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                }}
+              />
 
-                <div className="space-y-1">
-                  <Label className="ml-8">Features</Label>
-                  <div className="rounded-2xl bg-white mx-1 border-1 p-3">
-                    {current.features.map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="flex items-center justify-between py-2 px-4 text-md"
-                      >
-                        <span>{label}</span>
-                        <span className="inline-flex items-center gap-2">
-                          {value} <Info size={20} />
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="mt-1 w-95 border-t-4 mx-auto text-[#0000004D]"
-                  style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                  }}
-                />
-
-                <div className="space-y-1">
-                  <Label className="ml-8">Email</Label>
-                  <InfoPill className="bg-white">
-                    <input
-                      type="email"
-                      placeholder={loginEmail || "Enter your email"}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full outline-none text-md py-1"
-                    />
-                  </InfoPill>
-                </div>
-
-                <div className="pt-2 w-full flex justify-center mt-10">
-                  <DfButton onClick={handlePaystack}>NEXT</DfButton>
-                </div>
+              <div className="space-y-1">
+                <Label className="ml-8">Email</Label>
+                <InfoPill className="bg-white">
+                  <input
+                    type="email"
+                    placeholder={loginEmail || "Enter your email"}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full outline-none text-md py-1"
+                  />
+                </InfoPill>
               </div>
 
+              <div className="pt-2 w-full flex justify-center mt-10">
+                <DfButton onClick={handlePaystack}>NEXT</DfButton>
+              </div>
+            </div>
 
-              <div
-              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+            <div
+              className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",
                 borderImage:
                   "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
               }}
             />
-
-           <div className="w-full flex items-end"><button onClick={() => navigate("/businessdash")}>Go to Dashboard</button>
-            </div> </Maincard>
-          </div>
+            <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
+              <span
+                className="text-[#0556F8] cursor-pointer"
+                onClick={() => navigate("/businessdash")}
+              >
+                Continue to Dashboard{" "}
+              </span>
+            </div>
+          </Maincard>
         </div>
       </section>
     </div>
