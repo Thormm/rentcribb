@@ -104,7 +104,7 @@ function SectionHeader({
   );
 }
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const [otp, setOtp] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [card2, setcard2] = useState(false);

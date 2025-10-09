@@ -19,7 +19,7 @@ import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
 import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
 import Signup from "./pages/signup_login/Signup";
 import Loginpage from "./pages/signup_login/Loginpage";
-import ForgotPassword from "./pages/signup_login/ForgotPassword";
+import ForgotPassword from "./pages/signup_login/ResetPassword";
 import Board from "./pages/business_onboarding/Board";
 
 // Layout with conditional Navbar
