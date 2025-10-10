@@ -13,8 +13,6 @@ import {
 } from "react-icons/md";
 import { RiListView } from "react-icons/ri";
 import { BsQrCode } from "react-icons/bs";
-//import { LuFileText } from "react-icons/lu";
-//import { BiWorld } from "react-icons/bi";
 import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
 import { IoCopyOutline } from "react-icons/io5";
@@ -38,72 +36,73 @@ export default function IconRail({
   toggleSection: (title: string) => void;
   referralCode: string;
 }) {
+  // 🔹 Shared classes to avoid repetition
+  const baseBtn =
+    "grid h-10 w-10 md:h-12 md:w-12 place-items-center rounded-xl transition ";
+  const activeClass = "text-[#FFA1A1] border-[#FFA1A1] border-l-[3px]";
+  const inactiveClass = "text-white border-transparent";
+  const sectionIcon =
+    "grid h-14 w-14 place-items-center rounded-xl transition text-gray-400";
+
+  const coreTabs = [
+    {
+      tab: "overview",
+      icon: <FiGrid className="md:h-12 md:w-12 md:px-3" />,
+      title: "Overview",
+    },
+    {
+      tab: "payments",
+      icon: <FiCreditCard className="md:h-12 md:w-12 md:px-3" />,
+      title: "Payments",
+    },
+    {
+      tab: "subscriptions",
+      icon: <MdWallet className="md:h-12 md:w-12 md:px-3" />,
+      title: "Subscriptions",
+    },
+  ];
+
   const sections = [
     {
       title: "AGENT",
-      icon: <HiOutlineUserCircle className="h-14 w-14 px-3" />,
+      icon: <HiOutlineUserCircle className="h-8 w-8 md:h-14 md:w-14 md:px-3" />,
       items: [
         {
           label: "Business Overview",
           tab: "bizoverview",
-          icon: <MdOutlineAddBusiness className="h-14 w-14 px-3" />,
+          icon: <MdOutlineAddBusiness className="md:h-14 md:w-14 md:px-3" />,
         },
         {
           label: "Listings",
           tab: "listings",
-          icon: <RiListView className="h-14 w-14 px-3" />,
+          icon: <RiListView className="md:h-14 md:w-14 md:px-3" />,
         },
         {
           label: "Bookings",
           tab: "bookingsagent",
-          icon: <MdOutlineBookmarkAdded className="h-14 w-14 px-3" />,
+          icon: <MdOutlineBookmarkAdded className="md:h-14 md:w-14 md:px-3" />,
         },
-        /*{
-          label: "Verify Tenants",
-          tab: "agent_verify",
-          icon: <BsShieldCheck className="h-14 w-14 px-3" />,
-        },
-        {
-          label: "Legal & Documents",
-          tab: "agent_legal",
-          icon: <LuFileText className="h-14 w-14 px-3" />,
-        },
-        {
-          label: "Website Page",
-          tab: "agent_website",
-          icon: <BiWorld className="h-14 w-14 px-3" />,
-        },*/
       ],
     },
     {
       title: "LANDLORD",
-      icon: <TbUserSquare className="h-14 w-14 px-3" />,
+      icon: <TbUserSquare className="h-8 w-8 md:h-14 md:w-14 md:px-3" />,
       items: [
         {
           label: "Hostel Overview",
           tab: "hosteloverview",
-          icon: <PiHouse className="h-14 w-14 px-3" />,
+          icon: <PiHouse className="md:h-14 md:w-14 md:px-3" />,
         },
         {
           label: "Listings",
           tab: "listingslandlord",
-          icon: <RiListView className="h-14 w-14 px-3" />,
+          icon: <RiListView className="md:h-14 md:w-14 md:px-3" />,
         },
         {
           label: "Bookings",
-          tab: "bookingslandlord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ",
-          icon: <MdOutlineBookmarkAdded className="h-14 w-14 px-3" />,
+          tab: "bookingslandlord",
+          icon: <MdOutlineBookmarkAdded className="md:h-14 md:w-14 md:px-3" />,
         },
-       /* {
-          label: "Verify Tenants",
-          tab: "landlord_verify",
-          icon: <BsShieldCheck className="h-14 w-14 px-3" />,
-        },
-        {
-          label: "Legal & Documents",
-          tab: "landlord_legal",
-          icon: <LuFileText className="h-14 w-14 px-3" />,
-        },*/
       ],
     },
   ];
@@ -116,84 +115,56 @@ export default function IconRail({
     }
   };
 
+  const Spacer = () => <div className="flex-1 my-3 md:my-6">---</div>;
+
   return (
     <div
-      className="flex h-full w-[120px] flex-col items-center bg-black/95 border-r border-neutral-800 relative overflow-y-auto scrollbar-hide"
+      className="flex h-full w-15 md:w-[120px] flex-col items-center bg-black/95 border-r border-neutral-800 relative overflow-y-auto scrollbar-hide"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
-      {/* Logo */}
-      <div className="pt-5 pb-6 flex flex-col items-center gap-3">
+      {/* Logo + Controls */}
+      <div className="pt-5 pb-6 flex flex-col items-center gap-5 md:gap-6">
         <img src={logo} alt="Cribb.Africa Logo" className="h-9" />
-
-        <button className="p-3 rounded-full bg-neutral-800 my-3">
-          <FaRegBell className="h-6 w-6 text-white" />
+        <button className="p-2 md:p-3 rounded-full bg-neutral-800 ">
+          <FaRegBell className="md:h-6 md:w-6 text-white" />
         </button>
-
-        {/* Expand handle */}
         <button
           onClick={onToggle}
-          className="p-3 rounded-full bg-neutral-800"
+          className="p-2 md:p-3 rounded-full bg-neutral-800"
           title="Expand sidebar"
         >
-          <FiChevronRight className="h-6 w-6" />
+          <FiChevronRight className="md:h-6 md:w-6" />
         </button>
       </div>
 
-      {/* Core Pages */}
-      <div className="flex flex-col items-center gap-3 mt-6">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`grid h-12 w-12 place-items-center rounded-xl transition border-l-[3px]
-            ${
-              activeTab === "overview"
-                ? "text-[#FFA1A1] border-[#FFA1A1]"
-                : "text-white border-transparent"
-            }`}
-          title="Overview"
-        >
-          <FiGrid className="h-12 w-12 px-3" />
-        </button>
+      <Spacer />
 
-        <button
-          onClick={() => setActiveTab("payments")}
-          className={`grid h-12 w-12 place-items-center rounded-xl transition border-l-[3px]
-            ${
-              activeTab === "payments"
-                ? "text-[#FFA1A1] border-[#FFA1A1]"
-                : "text-white border-transparent"
+      {/* Core Tabs */}
+      <div className="flex flex-col items-center md:gap-3 md:mt-6">
+        {coreTabs.map(({ tab, icon, title }) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            title={title}
+            className={`${baseBtn} ${
+              activeTab === tab ? activeClass : inactiveClass
             }`}
-          title="Payments"
-        >
-          <FiCreditCard className="h-12 w-12 px-3" />
-        </button>
-
-        <button
-          onClick={() => setActiveTab("subscriptions")}
-          className={`grid h-12 w-14 place-items-center rounded-xl transition border-l-[3px]
-            ${
-              activeTab === "subscriptions"
-                ? "text-[#FFA1A1] border-[#FFA1A1]"
-                : "text-white border-transparent"
-            }`}
-          title="Subscriptions"
-        >
-          <MdWallet className="h-12 w-12 px-3" />
-        </button>
+          >
+            {icon}
+          </button>
+        ))}
       </div>
 
-      {/* Spacer */}
-      <div className="flex-1 my-6">---</div>
+      <Spacer />
 
-      {/* Sections (Agent + Landlord) */}
-      <div className="flex flex-col items-center gap-4">
+      {/* AGENT + LANDLORD Sections */}
+      <div className="flex  flex-col items-center md:gap-4">
         {sections.map((section) => (
-          <div key={section.title} className="flex flex-col items-center gap-1">
-            {/* Icon + Arrow side by side */}
-            <div className="flex items-center gap-1">
+          <div key={section.title} className="flex flex-col items-center md:gap-1">
+            <div className="flex justify-center items-center w-[30px] md:gap-1">
               <button
                 onClick={() => toggleSection(section.title)}
-                className={`grid h-14 w-14 place-items-center rounded-xl transition text-gray-400
-                 `}
+                className={sectionIcon}
                 title={section.title}
               >
                 {section.icon}
@@ -210,19 +181,15 @@ export default function IconRail({
               </button>
             </div>
 
-            {/* Sub-items */}
             {openSection === section.title && (
-              <div className="flex flex-col items-center gap-2 mt-2">
+              <div className="flex flex-col items-center md:gap-2 mt-2">
                 {section.items.map((item) => (
                   <button
                     key={item.tab}
                     onClick={() => setActiveTab(item.tab)}
-                    className={`grid h-14 w-14 place-items-center rounded-lg transition border-l-[3px]
-                      ${
-                        activeTab === item.tab
-                          ? "text-[#FFA1A1] border-[#FFA1A1]"
-                          : "text-white border-transparent"
-                      }`}
+                    className={`${baseBtn} ${
+                      activeTab === item.tab ? activeClass : inactiveClass
+                    }`}
                     title={item.label}
                   >
                     {item.icon}
@@ -234,62 +201,50 @@ export default function IconRail({
         ))}
       </div>
 
-      {/* Spacer */}
-      <div className="flex-1 my-6">---</div>
+      <Spacer />
 
-      {/* QR / Copy block */}
-      <div className="flex flex-col items-center">
+      {/* QR / Copy */}
+      <div className="flex flex-col items-center justify-center">
         <span className="text-white text-[10px] font-bold">COPY</span>
         <button
           type="button"
           onClick={handleCopy}
-          className="w-14 h-14 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg"
+          className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg"
         >
-          <BsQrCode className="text-white text-2xl" />
+          <BsQrCode className="text-white text-xl md:text-2xl" />
         </button>
-        <div className="flex items-center gap-1 text-white text-[10px] font-semibold mt-1">
+        <div className="flex items-center gap-1 text-white text-[8px] md:text-[10px] font-semibold mt-1">
           <span>{referralCode}</span>
-          <IoCopyOutline className="text-white text-sm" />
+          <IoCopyOutline className="text-white" />
         </div>
       </div>
 
-      {/* Spacer */}
-      <div className="flex-1 my-6">---</div>
+      <Spacer />
 
-      {/* Settings at bottom */}
+      {/* Settings */}
+      <div className="flex flex-col items-center ">
       <button
         onClick={() => setActiveTab("settings")}
-        className={`grid h-12 w-12 place-items-center rounded-xl mb-4 transition border-l-[3px]
-          ${
-            activeTab === "settings"
-              ? "text-[#FFA1A1] border-[#FFA1A1]"
-              : "text-white border-transparent"
-          }`}
+        className={`${baseBtn}  ${
+          activeTab === "settings" ? activeClass : inactiveClass
+        }`}
         title="Settings"
       >
-        <FiSettings className="h-12 w-12 px-3" />
+        <FiSettings className="md:h-12 md:w-12 md:px-3" />
       </button>
+      </div>
 
-      {/* Spacer */}
-      <div className="flex-1 my-6">---</div>
+      <Spacer />
 
       {/* Profile */}
       <div className="flex flex-col items-center mb-4">
-        <div className="w-14 h-14 bg-gray-400 rounded-full mb-5 shrink-0" />
+        <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-400 rounded-full mb-5 shrink-0" />
         <div className="flex flex-col items-center gap-3">
-          <button
-            type="button"
-            className=""
-            title="Log out"
-          >
-            <LuLogOut className="h-8 w-8 text-white my-2" />
+          <button type="button" title="Log out">
+            <LuLogOut className="md:h-8 md:w-8 text-white my-2" />
           </button>
-          <button
-            type="button"
-            className=""
-            title="Switch"
-          >
-            <MdOutlineBackpack className="h-8 w-8 text-white my-2" />
+          <button type="button" title="Switch">
+            <MdOutlineBackpack className="md:h-8 md:w-8 text-white my-2" />
           </button>
         </div>
       </div>

@@ -338,9 +338,9 @@ const BusinessPlan = () => {
                       {current.price}
                     </span>
                     {current.discount > 0 && (
-                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-2xl">
-                        <AiOutlineTag className="text-2xl" />
-                        <span className="text-sm">
+                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
+                        <AiOutlineTag className="text-lg md:text-2xl" />
+                        <span className="text-xs md:text-sm">
                           {current.discount}% - OFF
                         </span>
                       </span>
