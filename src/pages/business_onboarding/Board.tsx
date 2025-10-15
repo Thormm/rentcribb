@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Board1 from "./Board1";
 import Board2 from "./Board2";
 import nigeriaflag from "../../assets/nigeriaflag.png";
@@ -6,16 +7,25 @@ import logo from "../../assets/logo.png";
 
 const Board = () => {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+
   const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-  const mode =  login_data.mode;
-  //const verification = login_data.verification;
+  const mode = login_data.mode;
+  const verification = login_data.verification;
   const category = login_data.category;
+
   const goNext = () => setStep((prev) => prev + 1);
   const goBack = () => setStep((prev) => Math.max(1, prev - 1));
 
+  // ✅ Redirect if verification is 4
+  useEffect(() => {
+    if (verification === "4" || verification === 4) {
+      navigate("/businessrequests");
+    }
+  }, [verification, navigate]);
+
   return (
     <>
-
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
@@ -41,7 +51,7 @@ const Board = () => {
           </div>
         </div>
 
-        {/* Right: Button (only on Signup1) */}
+        {/* Right: Button (only on step 1) */}
         {step === 1 && (
           <div className="flex justify-end md:justify-center items-center gap-2">
             <div className="md:hidden rounded-full bg-black p-2 shrink-0">
@@ -51,11 +61,11 @@ const Board = () => {
                 className="h-4 md:h-8 object-contain"
               />
             </div>
-
-            
           </div>
         )}
       </nav>
+
+      {/* Steps */}
       {step === 1 && <Board1 mode={mode} onNext={goNext} />}
       {step === 2 && <Board2 category={category} mode={mode} onBack={goBack} />}
     </>

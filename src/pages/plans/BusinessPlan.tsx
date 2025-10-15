@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineTag } from "react-icons/ai";
 
 declare const PaystackPop: any;
+
 function Maincard({
   className = "",
   children,
@@ -65,11 +66,12 @@ function Label({ children, className }: LabelProps) {
   );
 }
 
-const agentPlans = {
+// ✅ Pricing tables
+const AgentPlans = {
   INSTANT: {
     price: "₦10,000",
     tag: "For Listing a Single Space : Pay-As-You-Go",
-    discount: 0, // No discount
+    discount: 0,
     features: [
       ["Max No. Listing", "1"],
       ["Duration", "3 Months"],
@@ -80,7 +82,7 @@ const agentPlans = {
   EXPLORE: {
     price: "₦20,000",
     tag: "Monthly Plan for Full Access : Subscription",
-    discount: 0, // No discount
+    discount: 0,
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "30 Days"],
@@ -91,7 +93,7 @@ const agentPlans = {
   "GO PRO": {
     price: "₦50,000",
     tag: "Quarterly Plan for Full Access : Subscription",
-    discount: 16, // No discount
+    discount: 16,
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "3 Months"],
@@ -101,11 +103,11 @@ const agentPlans = {
   },
 };
 
-const landlordPlans = {
+const LandlordPlans = {
   INSTANT: {
     price: "₦10,000",
+    discount: 0,
     tag: "For Listing a Single Space : Pay-As-You-Go",
-    discount: 0, // No discount
     features: [
       ["Max No. Listing", "1"],
       ["Duration", "3 Months"],
@@ -115,8 +117,8 @@ const landlordPlans = {
   },
   EXPLORE: {
     price: "₦20,000",
+    discount: 0,
     tag: "Monthly Plan for Full Access : Subscription",
-    discount: 0, // No discount
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "30 Days"],
@@ -126,8 +128,8 @@ const landlordPlans = {
   },
   "GO PRO": {
     price: "₦50,000",
+    discount: 16,
     tag: "Quarterly Plan for Full Access : Subscription",
-    discount: 16, // No discount
     features: [
       ["Max No. Listing", "Unlimited"],
       ["Duration", "3 Months"],
@@ -139,13 +141,14 @@ const landlordPlans = {
 
 const BusinessPlan = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<"agent" | "landlord">("agent");
+  const [category, setCategory] = useState<"Agent" | "Landlord">("Agent");
   const [activePlan, setActivePlan] =
-    useState<keyof typeof agentPlans>("INSTANT");
+    useState<keyof typeof AgentPlans>("INSTANT");
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
+  const [user, setUser] = useState("");
 
-  // ✅ Load Paystack only on this page
+  // ✅ Load Paystack once
   useEffect(() => {
     const src = "https://js.paystack.co/v1/inline.js";
     if (!document.querySelector(`script[src="${src}"]`)) {
@@ -156,25 +159,15 @@ const BusinessPlan = () => {
     }
   }, []);
 
-  // ✅ Load user login data
+  // ✅ Fetch session data and set category/email/user
   useEffect(() => {
-    const loginData = sessionStorage.getItem("login_data");
-    if (loginData) {
-      try {
-        const parsed = JSON.parse(loginData);
-        if (parsed.category === "landlord" || parsed.category === "agent")
-          setCategory(parsed.category);
-        if (parsed.email) setLoginEmail(parsed.email);
-      } catch (err) {
-        console.error("Invalid login_data format", err);
-      }
-    }
+    const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    if (data?.category) setCategory(data.category);
+    if (data?.email) setLoginEmail(data.email);
+    if (data?.user) setUser(data.user);
   }, []);
 
-  const toggleCategory = () =>
-    setCategory((prev) => (prev === "agent" ? "landlord" : "agent"));
-
-  const currentPlans = category === "agent" ? agentPlans : landlordPlans;
+  const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
   const current = currentPlans[activePlan];
 
   const extractAmount = (price: string) =>
@@ -183,25 +176,28 @@ const BusinessPlan = () => {
   const handlePaystack = () => {
     const amount = extractAmount(current.price) * 100 + 200;
     const userEmail = email || loginEmail;
+
     if (!userEmail) {
       alert("Please provide your email address before proceeding.");
       return;
     }
-
     if (typeof PaystackPop === "undefined") {
-      alert("Payment gateway not loaded yet. Please wait a second and retry.");
+      alert("Payment gateway not loaded yet. Please wait a moment.");
       return;
     }
+
+    // ✅ Use new reference format
+    const ref = `cribb_${category}_${extractAmount(current.price)}_${user}`;
 
     const handler = PaystackPop.setup({
       key: "pk_live_e7e226db6e7b774d5fc940646959c622a606e546",
       email: userEmail,
       amount,
-      ref: "CRIBB_" + Math.floor(Math.random() * 1000000000 + 1),
+      ref,
       onClose: () => alert("Payment window closed."),
       callback: (response: any) => {
         alert("Payment successful! Reference: " + response.reference);
-        // TODO: Send to backend or Supabase for logging
+        navigate("/businessrequests");
       },
     });
 
@@ -238,48 +234,31 @@ const BusinessPlan = () => {
           </div>
         </div>
 
-        <div className="flex justify-end md:justify-center items-center gap-2">
-          <button
-            onClick={toggleCategory}
-            className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
-          >
-            {category === "agent" ? (
-              <>
-                <TbUserSquare className="text-xs md:text-2xl" />
-                <span className="text-[8px] md:text-[15px] underline">
-                  PRICING FOR LANDLORD &gt;&gt;
-                </span>
-              </>
-            ) : (
-              <>
-                <HiOutlineUserCircle className="text-xs md:text-2xl" />
-                <span className="text-[8px] md:text-[15px] underline">
-                  PRICING FOR AGENT &gt;&gt;
-                </span>
-              </>
-            )}
-          </button>
-        </div>
+        {/* Removed toggle button */}
+        <div></div>
       </nav>
 
       {/* Header Section */}
       <div className="w-full bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
         <div className="mx-auto w-full max-w-6xl px-4">
-          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">PRICING</div>
+          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
+            PRICING
+          </div>
           <div className="mt-1 flex items-center justify-between gap-4">
             <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
-              {category === "agent"
+              {category === "Agent"
                 ? "Become an Agent on"
                 : "Become a Landlord on"}{" "}
               <span className="text-[#C2C8DA]">Cribb</span>
             </h1>
 
-            {category === "agent" && (
+            {category === "Agent" && (
               <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" /> AGENT
+                <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" />{" "}
+                AGENT
               </span>
             )}
-            {category === "landlord" && (
+            {category === "Landlord" && (
               <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
                 <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
               </span>
@@ -290,16 +269,15 @@ const BusinessPlan = () => {
 
       {/* Pricing Section */}
       <section className="justify-center my-10 md:my-20 flex">
-        <div className=" mx-2 md:mx-30 justify-center w-full md:w-1/2 grid grid-cols-1">
+        <div className="mx-2 md:mx-30 justify-center w-full md:w-1/2 grid grid-cols-1">
           <Maincard className="bg-[#F4F6F5] pb-5">
             <SectionHeader
               title="Plan"
               caption="Simple, Transparent Plans based on your need"
             />
 
-            {/* Plan Selection */}
             <div>
-              <div className="grid m-2 md:m-0 grid-cols-3 gap-4  border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+              <div className="grid m-2 md:m-0 grid-cols-3 gap-4 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
                 {Object.keys(currentPlans).map((plan) => (
                   <button
                     key={plan}
@@ -394,7 +372,7 @@ const BusinessPlan = () => {
                 </InfoPill>
               </div>
 
-              <div className="pt-2 w-full flex justify-center mt-10">
+              <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
                 <DfButton onClick={handlePaystack}>NEXT</DfButton>
               </div>
             </div>

@@ -79,34 +79,61 @@ export default function Signup4({ mode }: Signup4Props) {
   const [institutes, setInstitutes] = useState<Institute[]>([]);
   const navigate = useNavigate();
 
-
-
   // Static list of Nigerian states (you can expand this list)
   const states = [
-    "Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno",
-    "Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","Gombe","Imo","Jigawa",
-    "Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger",
-    "Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara",
-    "FCT"
+    "Abia",
+    "Adamawa",
+    "Akwa Ibom",
+    "Anambra",
+    "Bauchi",
+    "Bayelsa",
+    "Benue",
+    "Borno",
+    "Cross River",
+    "Delta",
+    "Ebonyi",
+    "Edo",
+    "Ekiti",
+    "Enugu",
+    "Gombe",
+    "Imo",
+    "Jigawa",
+    "Kaduna",
+    "Kano",
+    "Katsina",
+    "Kebbi",
+    "Kogi",
+    "Kwara",
+    "Lagos",
+    "Nasarawa",
+    "Niger",
+    "Ogun",
+    "Ondo",
+    "Osun",
+    "Oyo",
+    "Plateau",
+    "Rivers",
+    "Sokoto",
+    "Taraba",
+    "Yobe",
+    "Zamfara",
+    "FCT",
   ];
 
   useEffect(() => {
-  fetch("https://www.cribb.africa/apigets.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "getInstitutes" }),
-    credentials: "include"
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      // data is an array of JSON strings → parse each one
-      const parsed = data.map((item: string) => JSON.parse(item));
-      setInstitutes(parsed);
+    fetch("https://www.cribb.africa/apigets.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "getInstitutes" }),
+      credentials: "include",
     })
-    .catch((err) => console.error("Failed to load institutions:", err));
-}, []);
-
-
+      .then((res) => res.json())
+      .then((data) => {
+        const parsed = data.map((item: string) => JSON.parse(item));
+        setInstitutes(parsed);
+      })
+      .catch((err) => console.error("Failed to load institutions:", err));
+  }, []);
 
   const openTerms = () => {
     window.open("/terms", "_blank");
@@ -214,7 +241,9 @@ export default function Signup4({ mode }: Signup4Props) {
                 <span className="text-xs rounded-lg bg-white p-2 md:mr-6 text-[#5B5B5B]">
                   {mode === "student"
                     ? "Your Institution determines your"
-                    : "Your State determines your"} <br/>Terms of Service.
+                    : "Your State determines your"}{" "}
+                  <br />
+                  Terms of Service.
                 </span>
               </div>
             </div>

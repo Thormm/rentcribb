@@ -42,15 +42,26 @@ function SectionHeader({
   );
 }
 
-function Label({ children, className }: React.PropsWithChildren<{ className?: string }>) {
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}>
+    <div
+      className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}
+    >
       {children}
     </div>
   );
 }
 
-export default function Board1({ mode, onNext }: { mode: "student" | "merchant", onNext?: () => void }) {
+export default function Board1({
+  mode,
+  onNext,
+}: {
+  mode: "student" | "merchant";
+  onNext?: () => void;
+}) {
   const navigate = useNavigate();
 
   // === State for input fields ===
@@ -63,20 +74,44 @@ export default function Board1({ mode, onNext }: { mode: "student" | "merchant",
   // === Validate required fields ===
   const canContinue = category && bemail && bNo && whatsapp;
 
+  // === Validation helpers ===
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const isValidPhone = (phone: string) =>
+    /^\+?[0-9]{8,15}$/.test(phone);
+
   // === Handle Save to API ===
   const handleSave = async () => {
     if (!canContinue) {
       alert("All fields are required.");
       return;
     }
-    
-  const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-  const signup_key = login_data.signup_key;
-  const user = login_data.user;
-  login_data.category = category; // or any new value
 
-// Save it back to sessionStorage
-sessionStorage.setItem("login_data", JSON.stringify(login_data));
+    if (!isValidEmail(bemail)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (!isValidPhone(bNo)) {
+      alert("Please enter a valid business call number (only digits, optional +, 8–15 digits).");
+      return;
+    }
+
+    if (!isValidPhone(whatsapp)) {
+      alert("Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits).");
+      return;
+    }
+
+    const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    const signup_key = login_data.signup_key;
+    const user = login_data.user;
+    login_data.category = category;
+    login_data.email = bemail;
+
+    // Save to sessionStorage
+    sessionStorage.setItem("login_data", JSON.stringify(login_data));
+
     setLoading(true);
     try {
       const response = await fetch("https://www.cribb.africa/api_save.php", {
@@ -123,7 +158,7 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
         {/* LEFT SIDE: IMAGE */}
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10">
+        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler with suitcase"
@@ -131,22 +166,21 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
           />
           <button
             onClick={() => navigate("/login")}
-            className="cursor-pointer absolute top-4 right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="cursor-pointer absolute top-5 right-5 md:right-15 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
           </button>
         </div>
 
         {/* RIGHT SIDE: FORM */}
-        <div className="space-y-1 md:mr-20 md:-ml-10">
-           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+        <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
               title="Know Your Business"
               caption="Few Details to help us Tailor your Experience"
             />
 
             <div className="md:px-5 pb-4 pt-3 space-y-4">
-
               {/* Category */}
               <div>
                 <Label className="ml-8">Business Category</Label>
@@ -155,7 +189,7 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-transparent text-xs text-gray-500 outline-none "
+                      className="w-full bg-transparent text-xs text-gray-500 outline-none"
                     >
                       <option value="">Select your Business Category</option>
                       <option value="Agent">Agent</option>
@@ -175,6 +209,7 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter your business email"
                     type="email"
+                    inputMode="email"
                   />
                 </InfoPill>
               </div>
@@ -185,9 +220,14 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
                 <InfoPill className="bg-white">
                   <input
                     value={bNo}
-                    onChange={(e) => setCallNo(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9+]/g, "");
+                      setCallNo(val);
+                    }}
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business call number"
+                    type="tel"
+                    inputMode="tel"
                   />
                 </InfoPill>
               </div>
@@ -198,9 +238,14 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
                 <InfoPill className="bg-white">
                   <input
                     value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9+]/g, "");
+                      setWhatsapp(val);
+                    }}
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business whatsapp number"
+                    type="tel"
+                    inputMode="tel"
                   />
                 </InfoPill>
               </div>
@@ -220,7 +265,6 @@ sessionStorage.setItem("login_data", JSON.stringify(login_data));
                   </button>
                 </InfoPill>
               </div>
-
             </div>
           </Maincard>
         </div>

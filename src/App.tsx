@@ -6,7 +6,8 @@ import {
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/home/Home";
-import Listing from "./pages/listingpage/Listing";
+import StudentListing from "./pages/listingpage/StudentListing";
+import BusinessRequests from "./pages/listingpage/BusinessRequestListing";
 import Hostelview from "./pages/hostelview/Hostelview";
 import Connected from "./pages/connected/Connected";
 import Request from "./pages/connected/Request";
@@ -27,7 +28,7 @@ function Layout() {
   const location = useLocation();
 
   // Explicitly list only pages where you WANT the navbar
-  const showNavbarOn = ["/", "/listing"];
+  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests"];
 
   // Check for exact matches, not just prefix matches
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/listing", element: <Listing /> },
+      { path: "/studentlisting", element: <StudentListing /> },
+      { path: "/businessrequests", element: <BusinessRequests /> },
       { path: "/hostelview", element: <Hostelview /> },
       { path: "/connected", element: <Connected /> },
       { path: "/request", element: <Request /> },

@@ -70,7 +70,7 @@ function Pill({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function Listing() {
+export default function StudentListing() {
   const [showAllFilters, setShowAllFilters] = useState(false);
 
   return (
