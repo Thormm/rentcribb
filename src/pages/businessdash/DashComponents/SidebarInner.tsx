@@ -1,6 +1,4 @@
-import logo from "../../../assets/logo2.png";
-import { FaRegBell, FaRegCircle } from "react-icons/fa";
-import { IoIosAddCircleOutline, IoIosArrowBack, IoIosArrowDown, IoIosArrowUp, IoIosStarOutline } from "react-icons/io";
+import { IoIosAddCircleOutline, IoIosArrowDown, IoIosArrowUp, IoIosStarOutline } from "react-icons/io";
 import { MdOutlineAccountBalanceWallet, MdOutlineDashboard, MdWallet, MdOutlineBookmarkAdded, MdOutlineBackpack, MdOutlineAddBusiness } from "react-icons/md";
 import { RiListView } from "react-icons/ri";
 //import { BiWorld } from "react-icons/bi";
@@ -11,9 +9,9 @@ import { TbUserSquare } from "react-icons/tb";
 import ReferralCard from "./ReferralCard";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import {FiSettings} from "react-icons/fi"
+import { FaRegCircle } from "react-icons/fa";
 
 export default function SidebarInner({
-  onToggle,
   activeTab,
   setActiveTab,
   openSection,
@@ -59,28 +57,9 @@ export default function SidebarInner({
         className="flex-1 overflow-y-auto h-full scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {/* Header */}
-        <div className="grid grid-cols-2 p-8 items-baseline">
-          <div className="flex items-center space-x-3">
-            <img src={logo} alt="Cribb.Africa Logo" className="h-14" />
-            <div className="flex flex-col items-end">
-              <h1 className="text-3xl font-extrabold">Cribb</h1>
-              <span className="text-sm text-[#FFFFFF]">for Business</span>
-            </div>
-          </div>
-
-          <div className="flex justify-end items-center space-x-3">
-            <button className="p-3 rounded-full bg-neutral-800">
-              <FaRegBell className="h-6 w-6 text-white" />
-            </button>
-            <button onClick={onToggle} className="p-3 rounded-full bg-neutral-800">
-              <IoIosArrowBack className="h-6 w-6 text-white" />
-            </button>
-          </div>
-        </div>
 
         {/* Main Menu */}
-        <div className="pl-8 py-4 pr-4 space-y-2">
+        <div className="pl-8 py-4 pr-4 space-y-2 mt-10">
           {/* Overview */}
           <button
             onClick={() => setActiveTab("overview")}
