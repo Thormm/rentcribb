@@ -26,49 +26,87 @@ const ReferralCard: React.FC<ReferralCardProps> = ({
   };
 
   return (
-    <div className="flex items-center relative text-black w-full">
-      {/* Pink card */}
-      <div className="bg-[#FFA1A1] pl-6 w-full py-6 rounded-[2rem] shadow-lg z-10">
-        <div className="flex justify-start items-center gap-8">
-          {/* Left: Balance */}
-          <div className="flex items-center text-left">
-            <div className="flex items-center text-xl">
-              <HiMiniUserGroup className="w-10 h-10 mr-3" />
-            </div>
-            <div>
-              <div className="text-md">Balance</div>
-              <div className="text-xl font-semibold">
-                {Number(balance).toLocaleString()}
+    <div className="w-full relative">
+      {/* ====== DESKTOP VIEW ====== */}
+      <div className="hidden md:flex items-center text-black w-full">
+        {/* Pink card */}
+        <div className="bg-[#FFA1A1] pl-6 w-full py-6 rounded-[2rem] shadow-lg z-10">
+          <div className="flex justify-start items-center gap-8">
+            {/* Left: Balance */}
+            <div className="flex items-center text-left">
+              <div className="flex items-center text-xl">
+                <HiMiniUserGroup className="w-10 h-10 mr-3" />
               </div>
+              <div>
+                <div className="text-md">Balance</div>
+                <div className="text-xl font-semibold">
+                  {Number(balance).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Referral */}
+            <div>
+              <div className="text-md">Referral</div>
+              <div className="text-xl font-semibold">{referral}</div>
             </div>
           </div>
 
-          {/* Right: Referral */}
-          <div>
-            <div className="text-md">Referral</div>
-            <div className="text-xl font-semibold">{referral}</div>
+          <div className="text-sm font-bold mt-5">
+            Total: {Number(total).toLocaleString()}
           </div>
         </div>
 
-        <div className="text-sm text-black/50 mt-3">
-          Total: {Number(total).toLocaleString()}
+        {/* Copy / QR block */}
+        <div className="flex flex-col items-center -ml-3 relative z-20">
+          <span className="text-white text-xs font-bold mb-2">COPY</span>
+
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="w-22 h-22 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg"
+          >
+            <BsQrCode className="text-white text-4xl" />
+          </button>
+
+          <div className="flex items-center gap-1 text-white text-xs font-semibold mt-2">
+            <span>{code}</span> <IoCopyOutline className="text-white text-xl" />
+          </div>
         </div>
       </div>
 
-      {/* Copy / QR block */}
-      <div className="flex flex-col items-center -ml-3 relative z-20">
-        <span className="text-white text-xs font-bold mb-2">COPY</span>
+      {/* ====== MOBILE VIEW ====== */}
+      <div className="md:hidden flex justify-between items-center bg-[#FFA1A1] p-5 rounded-2xl shadow-lg text-black">
+        {/* Left Section */}
+        <div className="flex flex-col items-start justify-center text-left">
+          <HiMiniUserGroup className="w-10 h-10 mb-2 text-black" />
 
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="w-22 h-22 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg"
-        >
-          <BsQrCode className="text-white text-4xl" />
-        </button>
+          <div className="font-normal text-xs">Referral Balance</div>
+          <div className="text-xs font-bold mb-3">
+            ₦{Number(balance).toLocaleString()}
+          </div>
 
-        <div className="flex items-center gap-1 text-white text-xs font-semibold mt-2">
-          <span>{code}</span> <IoCopyOutline className="text-white text-xl" />
+         <div className="font-normal text-xs">Referrals</div>
+          <div className="text-xs font-bold">{referral}</div>
+
+          <div className="font-bold mt-5 text-sm">
+            Total: {Number(total).toLocaleString()}
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex flex-col items-center justify-right">
+          <button
+            onClick={handleCopy}
+            className="bg-[#C2C8DA4D] p-5 rounded-full shadow-lg flex items-center justify-center"
+          >
+            <BsQrCode className="text-white text-5xl" />
+          </button>
+
+          <div className="flex items-center gap-1 mt-2 text-white text-xs font-semibold">
+            <span>{code}</span>
+            <IoCopyOutline className="text-white text-lg" />
+          </div>
         </div>
       </div>
     </div>

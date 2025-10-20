@@ -1,15 +1,32 @@
-import { IoIosAddCircleOutline, IoIosArrowDown, IoIosArrowUp, IoIosStarOutline } from "react-icons/io";
-import { MdOutlineAccountBalanceWallet, MdOutlineDashboard, MdWallet, MdOutlineBookmarkAdded, MdOutlineBackpack, MdOutlineAddBusiness } from "react-icons/md";
+import {
+  IoIosAddCircleOutline,
+  IoIosArrowDown,
+  IoIosArrowUp,
+  IoIosStarOutline,
+} from "react-icons/io";
+import {
+  MdOutlineAccountBalanceWallet,
+  MdOutlineDashboard,
+  MdWallet,
+  MdOutlineBookmarkAdded,
+  MdOutlineBackpack,
+  MdOutlineAddBusiness,
+} from "react-icons/md";
 import { RiListView } from "react-icons/ri";
-//import { BiWorld } from "react-icons/bi";
-//import { BsShieldCheck } from "react-icons/bs";
 import { LuLogOut } from "react-icons/lu";
 import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
 import ReferralCard from "./ReferralCard";
 import { HiOutlineUserCircle } from "react-icons/hi";
-import {FiSettings} from "react-icons/fi"
+import { FiSettings } from "react-icons/fi";
 import { FaRegCircle } from "react-icons/fa";
+
+// ✅ Base styles
+const baseBtn =
+  "flex items-center rounded px-3 py-2 md:px-8 md:py-2 gap-2 md:gap-3 transition w-full text-left border-l-[3px]";
+const baseIcon = "h-4 w-4 md:h-8 md:w-8";
+const activeClass = "text-[#FFA1A1] border-[#FFA1A1]";
+const inactiveClass = "text-white border-black";
 
 export default function SidebarInner({
   activeTab,
@@ -17,209 +34,233 @@ export default function SidebarInner({
   openSection,
   toggleSection,
 }: {
-  onToggle: () => void;
+  onToggle?: () => void;
   activeTab: string;
   setActiveTab: (tab: string) => void;
   openSection: string | null;
   toggleSection: (title: string) => void;
 }) {
+  const mainMenu = [
+    {
+      label: "Overview",
+      icon: <MdOutlineDashboard className={baseIcon} />,
+      tab: "overview",
+    },
+    {
+      label: "Payments",
+      icon: <MdOutlineAccountBalanceWallet className={baseIcon} />,
+      tab: "payments",
+    },
+    {
+      label: "Subscriptions",
+      icon: <MdWallet className={baseIcon} />,
+      tab: "subscriptions",
+    },
+  ];
+
   const sections = [
     {
       title: "AGENT",
       rating: "1.2 (85)",
-      icon: <HiOutlineUserCircle className="h-8 w-8" />,
+      icon: <HiOutlineUserCircle className={baseIcon} />,
       items: [
-        { label: "Business Overview", icon: <MdOutlineAddBusiness className="h-8 w-8" />, tab: "bizoverview" },
-        { label: "Listings", icon: <RiListView className="h-8 w-8" />, tab: "listings" },
-        { label: "Bookings & Requests", icon: <MdOutlineBookmarkAdded className="h-8 w-8" /> , tab: "bookingsagent"},
-       /* { label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
-        { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> },
-        { label: "Website Page", icon: <BiWorld className="h-8 w-8" /> }, */
+        {
+          label: "Business Overview",
+          icon: <MdOutlineAddBusiness className={baseIcon} />,
+          tab: "bizoverview",
+        },
+        {
+          label: "Listings",
+          icon: <RiListView className={baseIcon} />,
+          tab: "listings",
+        },
+        {
+          label: "Bookings & Requests",
+          icon: <MdOutlineBookmarkAdded className={baseIcon} />,
+          tab: "bookingsagent",
+        },
       ],
     },
     {
       title: "LANDLORD",
       rating: "1.2 (85)",
-      icon: <TbUserSquare className="h-8 w-8" />,
+      icon: <TbUserSquare className={baseIcon} />,
       items: [
-        { label: "Hostel Overview", icon: <PiHouse className="h-8 w-8" />,  tab: "hosteloverview" },
-        { label: "Listings", icon: <RiListView className="h-8 w-8" />,  tab: "listingslandlord" },
-        { label: "Bookings", icon: <MdOutlineBookmarkAdded className="h-8 w-8" />, tab: "bookingslandlord" },
-        /*{ label: "Verify Tenants", icon: <BsShieldCheck className="h-8 w-8" /> },
-        { label: "Legal & Documents", icon: <LuFileText className="h-8 w-8" /> }, */
+        {
+          label: "Hostel Overview",
+          icon: <PiHouse className={baseIcon} />,
+          tab: "hosteloverview",
+        },
+        {
+          label: "Listings",
+          icon: <RiListView className={baseIcon} />,
+          tab: "listingslandlord",
+        },
+        {
+          label: "Bookings",
+          icon: <MdOutlineBookmarkAdded className={baseIcon} />,
+          tab: "bookingslandlord",
+        },
       ],
     },
   ];
 
+  const divider = (title: string) => (
+    <div className="flex items-center my-2 md:my-4 rounded pl-2 pr-2 md:pl-5 md:pr-4 py-1 md:py-2 gap-1 w-full text-left">
+      <span className="flex items-center text-[10px] md:text-sm whitespace-nowrap">
+        --<small className="mx-1 md:mx-2 text-[#FFA1A1]">{title}</small>
+        -------------------
+      </span>
+    </div>
+  );
+
   return (
-    <aside className="w-[420px] max-w-[480px] h-full bg-black flex flex-col relative">
-      <div
-        className="flex-1 overflow-y-auto h-full scrollbar-hide"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-
-        {/* Main Menu */}
-        <div className="pl-8 py-4 pr-4 space-y-2 mt-10">
-          {/* Overview */}
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-              ${activeTab === "overview"
-                ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                : "text-[white] border-l-[3px] border-[black]"
-              }`}
-          >
-            <MdOutlineDashboard className="h-8 w-8" />
-            <span className="truncate text-xl">Overview</span>
-            <FaRegCircle className="h-3 w-3 ml-auto" />
-          </button>
-
-          {/* Payments */}
-          <button
-            onClick={() => setActiveTab("payments")}
-            className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-              ${activeTab === "payments"
-                ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                : "text-[white] border-l-[3px] border-[black]"
-              }`}
-          >
-            <MdOutlineAccountBalanceWallet className="h-8 w-8" />
-            <span className="truncate text-xl">Payments</span>
-            <FaRegCircle className="h-3 w-3 ml-auto" />
-          </button>
-
-          {/* Subscriptions */}
-          <button
-            onClick={() => setActiveTab("subscriptions")}
-            className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-              ${activeTab === "subscriptions"
-                ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                : "text-[white] border-l-[3px] border-[black]"
-              }`}
-          >
-            <MdWallet className="h-8 w-8" />
-            <span className="truncate text-xl">Subscriptions</span>
-            <FaRegCircle className="h-3 w-3 ml-auto" />
-          </button>
-
-          {/* Divider */}
-          <div className="flex items-center my-4 rounded pl-5 pr-4 py-2 gap-3 w-full text-left">
-            <span className="flex items-center text-sm">
-              --<small className="mx-2 text-[#FFA1A1]">FOR BUSINESS</small>----------
-            </span>
-            <button className="ml-auto flex items-center font-semibold gap-1 rounded-lg bg-white px-3 py-2 text-xs text-black shadow">
-              ADD <IoIosAddCircleOutline className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Sections */}
-          <div className="flex flex-col gap-4 w-full">
-            {sections.map((section) => (
-              <div key={section.title} className="w-full">
-                <div className="flex items-center rounded gap-1 pr-4 w-full">
-                  <button
-                    className="flex items-center border-3 p-3 rounded-xl gap-3 transition flex-grow text-left"
-                    onClick={() => toggleSection(section.title)}
-                  >
-                    {section.icon}
-                    <span className="truncate text-xl">{section.title}</span>
-                    {openSection === section.title ? (
-                      <IoIosArrowUp className="h-4 w-4 ml-auto" />
-                    ) : (
-                      <IoIosArrowDown className="h-4 w-4 ml-auto" />
-                    )}
-                  </button>
-                  <IoIosStarOutline className="h-6 w-6 text-amber-300" />
-                  <span className="flex items-center font-semibold gap-1 rounded-lg bg-white px-2 py-1 text-sm text-black shadow whitespace-nowrap">
-                    {section.rating}
-                  </span>
-                </div>
-
-                {openSection === section.title && (
-                  <div className="flex flex-col rounded my-5 gap-1 pr-8 w-full">
-                    {section.items.map((item, idx) => (
-                      <button
-                        onClick={() => item.tab && setActiveTab(item.tab)}
-                        key={idx}
-                        className={`flex items-center rounded mx-5 px-5 py-2 gap-3 transition w-full text-left 
-                          ${activeTab === item.tab
-                            ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                            : "text-[white] border-l-[3px] border-[black]"
-                          }`}
-                      >
-                        {item.icon}
-                        <span className="truncate text-xl">{item.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+    <aside
+      className="md:w-[420px] h-full bg-black flex flex-col relative overflow-hidden"
+      style={{ WebkitOverflowScrolling: "touch" }}
+    >
+      {/* ✅ Wrapper ensures no content spills out */}
+      <div className="flex flex-col h-full w-full overflow-hidden">
+        <div
+          className="flex-1 overflow-y-auto scrollbar-hide pb-40 md:pb-28"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {/* ✅ Reduced side paddings to prevent overflow */}
+          <div className="px-3 md:px-6 py-2 md:py-4 space-y-3 mt-4 md:mt-10">
+            {/* === MAIN MENU === */}
+            {mainMenu.map((item) => (
+              <button
+                key={item.tab}
+                onClick={() => setActiveTab(item.tab)}
+                className={`${baseBtn} ${
+                  activeTab === item.tab ? activeClass : inactiveClass
+                }`}
+              >
+                {item.icon}
+                <span className="truncate text-[11px] md:text-xl">
+                  {item.label}
+                </span>
+                <FaRegCircle className="h-2 w-2 md:h-3 md:w-3 ml-auto" />
+              </button>
             ))}
-          </div>
 
-          {/* Influencers Divider */}
-          <div className="flex items-center my-4 rounded pl-5 pr-4 py-2 gap-3 w-full text-left">
-            <span className="flex items-center text-sm">
-              --<small className="mx-2 text-[#FFA1A1]">CRIBB INFLUENCERS</small>-----------------------
-            </span>
-          </div>
+            {/* === FOR BUSINESS DIVIDER === */}
+            <div className="flex items-center justify-between my-3 md:my-4 rounded px-2 md:px-4 py-1 md:py-2 w-full">
+              <span className="text-[10px] md:text-sm text-white">
+                --
+                <small className="mx-1 md:mx-2 text-[#FFA1A1]">
+                  FOR BUSINESS
+                </small>
+                --
+              </span>
+              <button className="flex items-center font-semibold gap-1 rounded-lg bg-white px-2 md:px-3 py-[3px] md:py-2 text-[9px] md:text-xs text-black shadow">
+                ADD <IoIosAddCircleOutline className="h-4 w-4 md:h-5 md:w-5" />
+              </button>
+            </div>
 
-          <div className="flex items-center justify-center">
-            <ReferralCard balance={100000} referral={245} total={250000} code="ZARK25" />
-          </div>
+            {/* === BUSINESS SECTIONS === */}
+            <div className="flex flex-col gap-2 md:gap-4 w-full">
+              {sections.map((section) => (
+                <div key={section.title} className="w-full">
+                  {/* SECTION HEADER */}
+                  <div className="flex items-center rounded gap-1 pr-2 md:pr-4 w-full">
+                    <button
+                      className="flex items-center flex-grow border p-2 md:p-3 rounded-lg md:rounded-xl gap-2 md:gap-3 transition text-left"
+                      onClick={() => toggleSection(section.title)}
+                    >
+                      {section.icon}
+                      <span className="truncate text-[12px] md:text-xl">
+                        {section.title}
+                      </span>
+                      {openSection === section.title ? (
+                        <IoIosArrowUp className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
+                      ) : (
+                        <IoIosArrowDown className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
+                      )}
+                    </button>
+                    <IoIosStarOutline className="h-4 w-4 md:h-6 md:w-6 text-amber-300" />
+                    <span className="font-semibold rounded-lg bg-white px-2 py-[2px] text-[9px] md:text-sm text-black shadow whitespace-nowrap">
+                      {section.rating}
+                    </span>
+                  </div>
 
-          {/* Account Divider */}
-          <div className="flex items-center my-4 rounded pl-5 pr-4 py-2 gap-3 w-full text-left">
-            <span className="flex items-center text-sm">
-              --<small className="mx-2 text-[#FFA1A1]">ACCOUNT MANAGEMENT</small>-------------------
-            </span>
-          </div>
+                  {/* SECTION ITEMS */}
+                  {openSection === section.title && (
+                    <div className="flex flex-col rounded my-2 md:my-5 gap-1 md:gap-2 pl-3 md:pl-6">
+                      {section.items.map((item, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => item.tab && setActiveTab(item.tab)}
+                          className={`${baseBtn} ${
+                            activeTab === item.tab ? activeClass : inactiveClass
+                          } !px-2 md:!px-6`}
+                        >
+                          {item.icon}
+                          <span className="truncate text-[11px] md:text-xl">
+                            {item.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-          {/* Settings */}
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-              ${activeTab === "settings"
-                ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                : "text-[white] border-l-[3px] border-[black]"
-              }`}
-          >
-            <span className="grid h-8 w-8 place-items-center rounded-lg">
-              <FiSettings className="h-8 w-8" />
-            </span>
-            <span className="truncate text-xl">Settings</span>
-            <FaRegCircle className="h-3 w-3 ml-auto" />
-          </button>
-
-          {/* Profile */}
-          <div className="flex items-center my-4 rounded pl-5 pr-4 py-2 gap-3 w-full text-left">
-            <span className="flex items-center text-sm">
-              --<small className="mx-2 text-[#FFA1A1]">PROFILE</small>-------------------------------
-            </span>
-          </div>
-
-          <div className="bg-black text-white p-4 rounded-md w-full max-w-md">
-            {/* Profile Info */}
-            <div className="flex items-start gap-3">
-              <div className="w-16 h-16 bg-gray-400 rounded-sm shrink-0"></div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg">Kenneth Uche</span>
-                <span className="text-sm">iamzarken14@gmail.com</span>
-                <span className="text-sm">08156165537</span>
+            {/* === INFLUENCERS === */}
+            {divider("CRIBB INFLUENCERS")}
+            <div className="flex justify-center">
+              <div className="w-full max-w-[280px] md:max-w-sm">
+                <ReferralCard
+                  balance={100000}
+                  referral={245}
+                  total={250000}
+                  code="ZARK25"
+                />
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex justify-between items-center mt-4 w-full">
-              <button className="flex items-center gap-1 text-red-600 font-semibold text-md">
-                <LuLogOut className="text-3xl" /> LOG OUT
-              </button>
+            {/* === ACCOUNT === */}
+            {divider("ACCOUNT MANAGEMENT")}
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`${baseBtn} ${
+                activeTab === "settings" ? activeClass : inactiveClass
+              }`}
+            >
+              <FiSettings className={baseIcon} />
+              <span className="truncate text-[12px] md:text-xl">Settings</span>
+              <FaRegCircle className="h-2 w-2 md:h-3 md:w-3 ml-auto" />
+            </button>
 
-              <button className="flex items-center gap-1 text-md text-white hover:text-gray-300">
-                <MdOutlineBackpack className="text-3xl" />
-                <span className="underline">SWITCH TO STUDENTS</span>
-                <span className="ml-1">&gt;&gt;</span>
-              </button>
+            {/* === PROFILE === */}
+            {divider("PROFILE")}
+            <div className="bg-black text-white p-3 md:p-4 rounded-md w-full mb-8 md:mb-12 border border-white/10">
+              <div className="flex items-start gap-2 md:gap-3">
+                <div className="w-9 h-9 md:w-16 md:h-16 bg-gray-400 rounded-sm shrink-0"></div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-[12px] md:text-lg">
+                    Kenneth Uche
+                  </span>
+                  <span className="text-[9px] md:text-sm opacity-80">
+                    iamzarken14@gmail.com
+                  </span>
+                  <span className="text-[9px] md:text-sm opacity-80">
+                    08156165537
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
+                <button className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
+                  <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
+                </button>
+                <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
+                  <MdOutlineBackpack className="text-lg md:text-3xl" />
+                  <span className="underline">SWITCH TO STUDENTS</span>
+                  <span className="ml-1">&gt;&gt;</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

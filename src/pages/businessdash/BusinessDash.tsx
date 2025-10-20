@@ -117,24 +117,24 @@ export default function BusinessDash() {
           </button>
 
           {/* Desktop Logo */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex justify-start items-center gap-3 my-3">
             <img src={logo} alt="Cribb logo" className="h-10 w-10 object-contain" />
             <div className="flex flex-col">
-              <span className="text-lg font-extrabold text-white leading-none">
+              <span className="text-3xl font-extrabold text-white leading-none">
                 Cribb
               </span>
-              <span className="text-xs text-neutral-400">for Business</span>
+              <span className="text-md text-neutral-400">for Business</span>
             </div>
           </div>
         </div>
 
         {/* Mobile Center Logo (hidden on lg) */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 lg:hidden">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="Cribb logo" className="h-8 w-8 object-contain" />
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-white leading-none">Cribb</span>
-              <span className="text-[11px] text-neutral-400">for Business</span>
+        <div className="absolute left-1/2 transform -translate-x-1/2 lg:hidden my-3">
+          <div className="flex justify-start items-start gap-2">
+            <img src={logo} alt="Cribb logo" className="h-6 w-6 object-contain" />
+            <div className="flex flex-col items-end">
+              <span className="text-xl font-semibold text-white leading-none">Cribb</span>
+              <span className="text-[8px] text-neutral-400">for Business</span>
             </div>
           </div>
         </div>
@@ -174,7 +174,10 @@ export default function BusinessDash() {
           <div className="flex items-center justify-between px-3 h-14 border-b border-neutral-800">
             <div className="flex items-center gap-2">
               <img src={logo} alt="Cribb logo" className="h-7 w-7 object-contain" />
-              <span className="text-sm font-semibold text-white">Cribb</span>
+              <div className="flex flex-col">
+              <span className="text-lg font-semibold text-white leading-none">Cribb</span>
+              <span className="text-[11px] text-neutral-400">for Business</span>
+            </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-2 rounded hover:bg-white/5">
               <FiX className="w-5 h-5 text-white" />
