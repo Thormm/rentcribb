@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   IoIosAddCircleOutline,
   IoIosArrowDown,
@@ -16,12 +18,11 @@ import { RiListView } from "react-icons/ri";
 import { LuLogOut } from "react-icons/lu";
 import { PiHouse } from "react-icons/pi";
 import { TbUserSquare } from "react-icons/tb";
-import ReferralCard from "./ReferralCard";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { FiSettings } from "react-icons/fi";
 import { FaRegCircle } from "react-icons/fa";
+import ReferralCard from "./ReferralCard";
 
-// ✅ Base styles
 const baseBtn =
   "flex items-center rounded px-3 py-2 md:px-8 md:py-2 gap-2 md:gap-3 transition w-full text-left border-l-[3px]";
 const baseIcon = "h-4 w-4 md:h-8 md:w-8";
@@ -40,6 +41,63 @@ export default function SidebarInner({
   openSection: string | null;
   toggleSection: (title: string) => void;
 }) {
+  const [sidebarData, setSidebarData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // ✅ initialize router navigation
+  const handleAddBusiness = () => {
+    // Get the current session data
+    const loginData = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+
+    // Update verification to 0
+    const updatedData = { ...loginData, verification: 0 };
+
+    // Save it back to sessionStorage
+    sessionStorage.setItem("login_data", JSON.stringify(updatedData));
+
+    // Navigate to onboarding page
+    navigate("/businessonboarding");
+  };
+
+  // ✅ Fetch sidebar data
+  useEffect(() => {
+    const fetchSidebarData = async () => {
+      try {
+        const session = JSON.parse(
+          sessionStorage.getItem("login_data") || "{}"
+        );
+        if (!session?.user) return;
+        const res = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "getSidebarData",
+            whats: session.user,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) setSidebarData(data);
+      } catch (err) {
+        console.error("Sidebar data error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSidebarData();
+  }, []);
+
+  const showAgentSection = !!sidebarData?.agent_email;
+  const showLandlordSection = !!sidebarData?.landlord_email;
+  const showAddButton = !showAgentSection || !showLandlordSection;
+
+  const divider = (title: string) => (
+    <div className="flex items-center my-2 md:my-4 rounded pl-2 pr-2 md:pl-5 md:pr-4 py-1 md:py-2 gap-1 w-full text-left">
+      <span className="flex items-center text-[10px] md:text-sm whitespace-nowrap">
+        --<small className="mx-1 md:mx-2 text-[#FFA1A1]">{title}</small>
+        -------------------
+      </span>
+    </div>
+  );
+
   const mainMenu = [
     {
       label: "Overview",
@@ -58,74 +116,56 @@ export default function SidebarInner({
     },
   ];
 
-  const sections = [
-    {
-      title: "AGENT",
-      rating: "1.2 (85)",
-      icon: <HiOutlineUserCircle className={baseIcon} />,
-      items: [
-        {
-          label: "Business Overview",
-          icon: <MdOutlineAddBusiness className={baseIcon} />,
-          tab: "bizoverview",
-        },
-        {
-          label: "Listings",
-          icon: <RiListView className={baseIcon} />,
-          tab: "listings",
-        },
-        {
-          label: "Bookings & Requests",
-          icon: <MdOutlineBookmarkAdded className={baseIcon} />,
-          tab: "bookingsagent",
-        },
-      ],
-    },
-    {
-      title: "LANDLORD",
-      rating: "1.2 (85)",
-      icon: <TbUserSquare className={baseIcon} />,
-      items: [
-        {
-          label: "Hostel Overview",
-          icon: <PiHouse className={baseIcon} />,
-          tab: "hosteloverview",
-        },
-        {
-          label: "Listings",
-          icon: <RiListView className={baseIcon} />,
-          tab: "listingslandlord",
-        },
-        {
-          label: "Bookings",
-          icon: <MdOutlineBookmarkAdded className={baseIcon} />,
-          tab: "bookingslandlord",
-        },
-      ],
-    },
-  ];
+  const agentSection = {
+    title: "AGENT",
+    rating: "5.0 (0)",
+    icon: <HiOutlineUserCircle className={baseIcon} />,
+    items: [
+      {
+        label: "Business Overview",
+        icon: <MdOutlineAddBusiness className={baseIcon} />,
+        tab: "bizoverview",
+      },
+      {
+        label: "Listings",
+        icon: <RiListView className={baseIcon} />,
+        tab: "listings",
+      },
+      {
+        label: "Bookings & Requests",
+        icon: <MdOutlineBookmarkAdded className={baseIcon} />,
+        tab: "bookingsagent",
+      },
+    ],
+  };
 
-  const divider = (title: string) => (
-    <div className="flex items-center my-2 md:my-4 rounded pl-2 pr-2 md:pl-5 md:pr-4 py-1 md:py-2 gap-1 w-full text-left">
-      <span className="flex items-center text-[10px] md:text-sm whitespace-nowrap">
-        --<small className="mx-1 md:mx-2 text-[#FFA1A1]">{title}</small>
-        -------------------
-      </span>
-    </div>
-  );
+  const landlordSection = {
+    title: "LANDLORD",
+    rating: "5.0 (0)",
+    icon: <TbUserSquare className={baseIcon} />,
+    items: [
+      {
+        label: "Hostel Overview",
+        icon: <PiHouse className={baseIcon} />,
+        tab: "hosteloverview",
+      },
+      {
+        label: "Listings",
+        icon: <RiListView className={baseIcon} />,
+        tab: "listingslandlord",
+      },
+      {
+        label: "Bookings",
+        icon: <MdOutlineBookmarkAdded className={baseIcon} />,
+        tab: "bookingslandlord",
+      },
+    ],
+  };
 
   return (
-    <aside
-      className="md:w-[420px] h-full bg-black flex flex-col relative overflow-hidden"
-      style={{ WebkitOverflowScrolling: "touch" }}
-    >
-      {/* ✅ Wrapper ensures no content spills out */}
+    <aside className="md:w-[420px] h-full bg-black flex flex-col relative overflow-hidden">
       <div className="flex flex-col h-full w-full overflow-hidden">
-        <div
-          className="flex-1 overflow-y-auto scrollbar-hide pb-40 md:pb-28"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {/* ✅ Reduced side paddings to prevent overflow */}
+        <div className="flex-1 overflow-y-auto scrollbar-hide">
           <div className="px-3 md:px-6 py-2 md:py-4 space-y-3 mt-4 md:mt-10">
             {/* === MAIN MENU === */}
             {mainMenu.map((item) => (
@@ -153,70 +193,55 @@ export default function SidebarInner({
                 </small>
                 --
               </span>
-              <button className="flex items-center font-semibold gap-1 rounded-lg bg-white px-2 md:px-3 py-[3px] md:py-2 text-[9px] md:text-xs text-black shadow">
-                ADD <IoIosAddCircleOutline className="h-4 w-4 md:h-5 md:w-5" />
-              </button>
+              {showAddButton && (
+                <button
+                  onClick={handleAddBusiness}
+                  className="flex items-center font-semibold gap-1 rounded-lg bg-white px-2 md:px-3 py-[3px] md:py-2 text-[9px] md:text-xs text-black shadow"
+                >
+                  ADD{" "}
+                  <IoIosAddCircleOutline className="h-4 w-4 md:h-5 md:w-5" />
+                </button>
+              )}
             </div>
 
             {/* === BUSINESS SECTIONS === */}
             <div className="flex flex-col gap-2 md:gap-4 w-full">
-              {sections.map((section) => (
-                <div key={section.title} className="w-full">
-                  {/* SECTION HEADER */}
-                  <div className="flex items-center rounded gap-1 pr-2 md:pr-4 w-full">
-                    <button
-                      className="flex items-center flex-grow border p-2 md:p-3 rounded-lg md:rounded-xl gap-2 md:gap-3 transition text-left"
-                      onClick={() => toggleSection(section.title)}
-                    >
-                      {section.icon}
-                      <span className="truncate text-[12px] md:text-xl">
-                        {section.title}
-                      </span>
-                      {openSection === section.title ? (
-                        <IoIosArrowUp className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
-                      ) : (
-                        <IoIosArrowDown className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
-                      )}
-                    </button>
-                    <IoIosStarOutline className="h-4 w-4 md:h-6 md:w-6 text-amber-300" />
-                    <span className="font-semibold rounded-lg bg-white px-2 py-[2px] text-[9px] md:text-sm text-black shadow whitespace-nowrap">
-                      {section.rating}
-                    </span>
-                  </div>
-
-                  {/* SECTION ITEMS */}
-                  {openSection === section.title && (
-                    <div className="flex flex-col rounded my-2 md:my-5 gap-1 md:gap-2 pl-3 md:pl-6">
-                      {section.items.map((item, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => item.tab && setActiveTab(item.tab)}
-                          className={`${baseBtn} ${
-                            activeTab === item.tab ? activeClass : inactiveClass
-                          } !px-2 md:!px-6`}
-                        >
-                          {item.icon}
-                          <span className="truncate text-[11px] md:text-xl">
-                            {item.label}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+              {showAgentSection && (
+                <Section
+                  section={agentSection}
+                  openSection={openSection}
+                  toggleSection={toggleSection}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              )}
+              {showLandlordSection && (
+                <Section
+                  section={landlordSection}
+                  openSection={openSection}
+                  toggleSection={toggleSection}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              )}
             </div>
 
-            {/* === INFLUENCERS === */}
+            {/* === REFERRAL CARD === */}
             {divider("CRIBB INFLUENCERS")}
             <div className="flex justify-center">
               <div className="w-full max-w-[280px] md:max-w-sm">
-                <ReferralCard
-                  balance={100000}
-                  referral={245}
-                  total={250000}
-                  code="ZARK25"
-                />
+                {loading ? (
+                  <div className="text-center text-white text-sm">
+                    Loading...
+                  </div>
+                ) : (
+                  <ReferralCard
+                    balance={sidebarData?.ref_balance}
+                    referral={sidebarData?.ref_user}
+                    total={sidebarData?.ref_balance}
+                    code={sidebarData?.ref_name}
+                  />
+                )}
               </div>
             </div>
 
@@ -235,36 +260,94 @@ export default function SidebarInner({
 
             {/* === PROFILE === */}
             {divider("PROFILE")}
-            <div className="bg-black text-white p-3 md:p-4 rounded-md w-full mb-8 md:mb-12 border border-white/10">
-              <div className="flex items-start gap-2 md:gap-3">
-                <div className="w-9 h-9 md:w-16 md:h-16 bg-gray-400 rounded-sm shrink-0"></div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-[12px] md:text-lg">
-                    Kenneth Uche
-                  </span>
-                  <span className="text-[9px] md:text-sm opacity-80">
-                    iamzarken14@gmail.com
-                  </span>
-                  <span className="text-[9px] md:text-sm opacity-80">
-                    08156165537
-                  </span>
+            {sidebarData ? (
+              <div className="bg-black text-white p-3 md:p-4 rounded-md w-full mb-20 border border-white/10">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <div className="w-9 h-9 md:w-16 md:h-16 bg-gray-400 rounded-sm shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-[12px] md:text-lg">
+                      {sidebarData.name}
+                    </span>
+                    <span className="text-[9px] md:text-sm opacity-80">
+                      {sidebarData.email}
+                    </span>
+                    <span className="text-[9px] md:text-sm opacity-80">
+                      {sidebarData.whats}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
+                  <button className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
+                    <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
+                  </button>
+                  <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
+                    <MdOutlineBackpack className="text-lg md:text-3xl" />
+                    <span className="underline">SWITCH TO STUDENTS</span>
+                    <span className="ml-1">&gt;&gt;</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
-                <button className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
-                  <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
-                </button>
-                <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
-                  <MdOutlineBackpack className="text-lg md:text-3xl" />
-                  <span className="underline">SWITCH TO STUDENTS</span>
-                  <span className="ml-1">&gt;&gt;</span>
-                </button>
+            ) : (
+              <div className="text-gray-400 text-xs text-center mb-20">
+                No profile data
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
     </aside>
+  );
+}
+
+function Section({
+  section,
+  openSection,
+  toggleSection,
+  activeTab,
+  setActiveTab,
+}: any) {
+  return (
+    <div className="w-full">
+      <div className="flex items-center rounded gap-1 pr-2 md:pr-4 w-full">
+        <button
+          className="flex items-center flex-grow border p-2 md:p-3 rounded-lg md:rounded-xl gap-2 md:gap-3 transition text-left"
+          onClick={() => toggleSection(section.title)}
+        >
+          {section.icon}
+          <span className="truncate text-[12px] md:text-xl">
+            {section.title}
+          </span>
+          {openSection === section.title ? (
+            <IoIosArrowUp className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
+          ) : (
+            <IoIosArrowDown className="h-3 w-3 md:h-4 md:w-4 ml-auto" />
+          )}
+        </button>
+        <IoIosStarOutline className="h-4 w-4 md:h-6 md:w-6 text-amber-300" />
+        <span className="font-semibold rounded-lg bg-white px-2 py-[2px] text-[9px] md:text-sm text-black shadow whitespace-nowrap">
+          {section.rating}
+        </span>
+      </div>
+
+      {openSection === section.title && (
+        <div className="flex flex-col rounded my-2 md:my-5 gap-1 md:gap-2 pl-3 md:pl-6">
+          {section.items.map((item: any, idx: number) => (
+            <button
+              key={idx}
+              onClick={() => setActiveTab(item.tab)}
+              className={`${baseBtn} ${
+                activeTab === item.tab ? activeClass : inactiveClass
+              } !px-2 md:!px-6`}
+            >
+              {item.icon}
+              <span className="truncate text-[11px] md:text-xl">
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

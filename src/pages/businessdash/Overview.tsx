@@ -162,7 +162,7 @@ const Overview = () => {
   };
 
   return (
-    <div className="bg-white md:py-10">
+    <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           {/* Header */}
@@ -302,7 +302,7 @@ const Overview = () => {
                 <div className="mt-10 flex justify-center">
                   <button
                     onClick={handleSave}
-                    className="py-3 text-md px-4 font-medium bg-black shadow-lg rounded-lg"
+                    className="py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
                   >
                     SAVE CHANGES
                   </button>

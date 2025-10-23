@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo2.png";
 import Overview from "./Overview";
 import Payment from "./Payment";
@@ -15,6 +16,30 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 
 export default function BusinessDash() {
+  const navigate = useNavigate(); // ✅ initialize router navigation
+
+  useEffect(() => {
+    const loginData = sessionStorage.getItem("login_data");
+
+    if (!loginData) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(loginData);
+
+      // ✅ Allow only merchant mode
+      if (!parsed.mode || parsed.mode !== "merchant") {
+        sessionStorage.removeItem("login_data");
+        navigate("/login", { replace: true });
+      }
+    } catch (error) {
+      sessionStorage.removeItem("login_data");
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
   const [open, setOpen] = useState<boolean>(() =>
     typeof window !== "undefined" ? window.innerWidth >= 1024 : true
   );
@@ -118,7 +143,11 @@ export default function BusinessDash() {
 
           {/* Desktop Logo */}
           <div className="hidden lg:flex justify-start items-center gap-3 my-3">
-            <img src={logo} alt="Cribb logo" className="h-10 w-10 object-contain" />
+            <img
+              src={logo}
+              alt="Cribb logo"
+              className="h-10 w-10 object-contain"
+            />
             <div className="flex flex-col">
               <span className="text-3xl font-extrabold text-white leading-none">
                 Cribb
@@ -131,9 +160,15 @@ export default function BusinessDash() {
         {/* Mobile Center Logo (hidden on lg) */}
         <div className="absolute left-1/2 transform -translate-x-1/2 lg:hidden my-3">
           <div className="flex justify-start items-start gap-2">
-            <img src={logo} alt="Cribb logo" className="h-6 w-6 object-contain" />
+            <img
+              src={logo}
+              alt="Cribb logo"
+              className="h-6 w-6 object-contain"
+            />
             <div className="flex flex-col items-end">
-              <span className="text-xl font-semibold text-white leading-none">Cribb</span>
+              <span className="text-xl font-semibold text-white leading-none">
+                Cribb
+              </span>
               <span className="text-[8px] text-neutral-400">for Business</span>
             </div>
           </div>
@@ -173,13 +208,24 @@ export default function BusinessDash() {
         >
           <div className="flex items-center justify-between px-3 h-14 border-b border-neutral-800">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Cribb logo" className="h-7 w-7 object-contain" />
+              <img
+                src={logo}
+                alt="Cribb logo"
+                className="h-7 w-7 object-contain"
+              />
               <div className="flex flex-col">
-              <span className="text-lg font-semibold text-white leading-none">Cribb</span>
-              <span className="text-[11px] text-neutral-400">for Business</span>
+                <span className="text-lg font-semibold text-white leading-none">
+                  Cribb
+                </span>
+                <span className="text-[11px] text-neutral-400">
+                  for Business
+                </span>
+              </div>
             </div>
-            </div>
-            <button onClick={() => setOpen(false)} className="p-2 rounded hover:bg-white/5">
+            <button
+              onClick={() => setOpen(false)}
+              className="p-2 rounded hover:bg-white/5"
+            >
               <FiX className="w-5 h-5 text-white" />
             </button>
           </div>
@@ -208,7 +254,7 @@ export default function BusinessDash() {
         )}
 
         {/* Main content */}
-        <main className="flex-1 min-w-0 h-full overflow-auto bg-white text-black lg:ml-56 transition-all duration-300">
+        <main className="flex-1 pb-20 min-w-0 h-full overflow-auto bg-white text-black lg:ml-56 transition-all duration-300">
           {renderTab()}
         </main>
       </div>
