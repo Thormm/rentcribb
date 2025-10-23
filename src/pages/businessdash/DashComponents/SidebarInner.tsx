@@ -43,6 +43,14 @@ export default function SidebarInner({
 }) {
   const [sidebarData, setSidebarData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+   const handleLogout = () => {
+    // ✅ Clear all saved user session data
+    sessionStorage.clear();
+    localStorage.clear();
+
+    // ✅ Redirect to login
+    navigate("/login", { replace: true });
+  };
   const navigate = useNavigate(); // ✅ initialize router navigation
   const handleAddBusiness = () => {
     // Get the current session data
@@ -278,7 +286,7 @@ export default function SidebarInner({
                 </div>
 
                 <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
-                  <button className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
+                  <button onClick={handleLogout} className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
                     <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
                   </button>
                   <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
@@ -287,6 +295,7 @@ export default function SidebarInner({
                     <span className="ml-1">&gt;&gt;</span>
                   </button>
                 </div>
+
               </div>
             ) : (
               <div className="text-gray-400 text-xs text-center mb-20">
