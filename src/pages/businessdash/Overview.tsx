@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FiCamera,
-  FiCheckCircle,
   FiChevronDown,
   FiArrowUpRight,
 } from "react-icons/fi";
@@ -12,8 +11,17 @@ import { PiHouse } from "react-icons/pi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiMail } from "react-icons/fi";
 import { MdOutlinePending } from "react-icons/md";
-import { RiInformationLine } from "react-icons/ri";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+
+// === Helper to get login info from sessionStorage ===
+const getLoginData = () => {
+  try {
+    const raw = sessionStorage.getItem("login_data") || "{}";
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+};
 
 type Review = {
   id: number;
@@ -61,8 +69,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        Our goal is for your{" "}
-        <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
+        Our goal is for your <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
         <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
       </p>
 
@@ -113,18 +120,72 @@ function Tabs({
   );
 }
 
+// Full list of Nigerian states + FCT
+const NIGERIA_STATES = [
+  { value: "", label: "Select State" },
+  { value: "abia", label: "Abia" },
+  { value: "adamawa", label: "Adamawa" },
+  { value: "akwa_ibom", label: "Akwa Ibom" },
+  { value: "anambra", label: "Anambra" },
+  { value: "bauchi", label: "Bauchi" },
+  { value: "benue", label: "Benue" },
+  { value: "borno", label: "Borno" },
+  { value: "cross_river", label: "Cross River" },
+  { value: "delta", label: "Delta" },
+  { value: "ebonyi", label: "Ebonyi" },
+  { value: "edo", label: "Edo" },
+  { value: "ekiti", label: "Ekiti" },
+  { value: "enugu", label: "Enugu" },
+  { value: "gombe", label: "Gombe" },
+  { value: "imo", label: "Imo" },
+  { value: "jigawa", label: "Jigawa" },
+  { value: "kaduna", label: "Kaduna" },
+  { value: "kano", label: "Kano" },
+  { value: "katsina", label: "Katsina" },
+  { value: "kebbi", label: "Kebbi" },
+  { value: "kogi", label: "Kogi" },
+  { value: "kwara", label: "Kwara" },
+  { value: "lagos", label: "Lagos" },
+  { value: "nasarawa", label: "Nasarawa" },
+  { value: "niger", label: "Niger" },
+  { value: "ogun", label: "Ogun" },
+  { value: "ondo", label: "Ondo" },
+  { value: "oshun", label: "Oshun" },
+  { value: "oyo", label: "Oyo" },
+  { value: "plateau", label: "Plateau" },
+  { value: "rivers", label: "Rivers" },
+  { value: "sokoto", label: "Sokoto" },
+  { value: "taraba", label: "Taraba" },
+  { value: "yobe", label: "Yobe" },
+  { value: "zamfara", label: "Zamfara" },
+  { value: "fct", label: "FCT (Abuja)" },
+];
+
+const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
+const SAVE_URL = "https://www.cribb.africa/api_save.php";
 const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
 
-  // form state
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [whatsapp, setWhatsapp] = useState("08078436972");
+  // profile states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [landmark, setLandmark] = useState("");
   const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [callNo, setCallNo] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [localImageFile, setLocalImageFile] = useState<File | null>(null);
 
-  // Feedback states
+  // next of kin
+  const [kinFirst, setKinFirst] = useState("");
+  const [kinLast, setKinLast] = useState("");
+  const [kinCall, setKinCall] = useState("");
+  const [kinWhats, setKinWhats] = useState("");
+  const [kinEmail, setKinEmail] = useState("");
+
+  // feedback / UI
   const [expanded, setExpanded] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [key: number]: number }>(
     reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.rating || 0 }), {})
@@ -133,32 +194,207 @@ const Overview = () => {
     reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.text || "" }), {})
   );
 
+  // refs
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // fetch data on mount
+  useEffect(() => {
+    const login = getLoginData();
+    const whats = login?.user || "";
+    if (!whats) return;
+
+    fetch(PROFILE_FETCH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "overviewfetch", whats }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data || !data.success) return;
+        const p = data.profile || {};
+        const k = data.next_kin || {};
+
+        setFirstName(p.first || "");
+        setLastName(p.last || "");
+        setWhatsapp(p.whats || "");
+        setAddress(p.address || "");
+        setStateValue(p.state || "");
+        setLandmark(p.landmark || "");
+        setEmail(p.email || "");
+        setCallNo(p.call_no || "");
+        // profile_image from backend is expected to be a full URL (as per your PHP case)
+        setProfileImage(p.profile_image || null);
+
+        setKinFirst(k.kin_first || "");
+        setKinLast(k.kin_last || "");
+        setKinCall(k.kin_call || "");
+        setKinWhats(k.kin_whats || "");
+        setKinEmail(k.kin_email || "");
+      })
+      .catch((err) => {
+        console.error("Overview fetch error:", err);
+      });
+  }, []);
+
+  // image select / preview
+  const onAvatarClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    setLocalImageFile(f);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setProfileImage(reader.result as string);
+    };
+    reader.readAsDataURL(f);
+  };
+
+  // feedback handlers
   const handleStarClick = (reviewId: number, starIndex: number) => {
     setRatings((prev) => ({ ...prev, [reviewId]: starIndex + 1 }));
   };
-
   const handleTextChange = (reviewId: number, value: string) => {
     setFeedbackTexts((prev) => ({ ...prev, [reviewId]: value }));
   };
 
-  const states = [
-    { value: "", label: "Select State" },
-    { value: "lagos", label: "Lagos" },
-    { value: "abuja", label: "Abuja" },
-    { value: "rivers", label: "Rivers" },
-  ];
+  // validation helpers
+  const validateProfile = () => {
+    if (!address || address.trim().length === 0) {
+      alert("Please enter your full address.");
+      return false;
+    }
+    if (!stateValue || stateValue.trim().length === 0) {
+      alert("Please select your state.");
+      return false;
+    }
+    if (!landmark || landmark.trim().length === 0) {
+      alert("Please enter a landmark.");
+      return false;
+    }
+    return true;
+  };
 
-  const handleSave = () => {
+  const validateKin = () => {
+    if (!kinFirst.trim()) {
+      alert("Please enter next of kin first name.");
+      return false;
+    }
+    if (!kinLast.trim()) {
+      alert("Please enter next of kin last name.");
+      return false;
+    }
+    if (!kinCall.trim()) {
+      alert("Please enter next of kin call number.");
+      return false;
+    }
+    if (!kinWhats.trim()) {
+      alert("Please enter next of kin WhatsApp number.");
+      return false;
+    }
+    if (!kinEmail.trim()) {
+      alert("Please enter next of kin email.");
+      return false;
+    }
+    return true;
+  };
+
+  // Save profile (including optional image)
+  const saveProfile = async () => {
+    if (!validateProfile()) return;
+
+    const login = getLoginData();
+    const user = login?.user || "";
+    const signup_key = login?.signup_key || "";
+
+    // Use FormData if image present (multipart)
+    const form = new FormData();
+    form.append("action", "overviewupdate_profile");
+    form.append("user", user);
+    form.append("signup_key", signup_key);
+    form.append("address", address);
+    form.append("state", stateValue);
+    form.append("landmark", landmark);
+
+    if (localImageFile) {
+      form.append("profile_image", localImageFile);
+    }
+
+    try {
+      const res = await fetch(SAVE_URL, {
+        method: "POST",
+        // NO content-type header with FormData
+        body: form,
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || "Profile saved successfully.");
+        // optionally update profileImage with returned url
+        if (data.profile_image) {
+          setProfileImage(data.profile_image);
+        }
+        // clear localImageFile since saved
+        setLocalImageFile(null);
+      } else {
+        alert(data.message || "Failed to save profile. Try again.");
+      }
+      console.log("Profile save response:", data);
+    } catch (err) {
+      console.error("Save profile error:", err);
+      alert("Network error while saving profile.");
+    }
+  };
+
+  // Save next of kin (separate action)
+  const saveNextOfKin = async () => {
+    if (!validateKin()) return;
+
+    const login = getLoginData();
+    const user = login?.user || "";
+    const signup_key = login?.signup_key || "";
+
     const payload = {
-      firstName,
-      lastName,
-      whatsapp,
-      state: stateValue,
-      landmark,
-      address,
-      feedback: { ratings, feedbackTexts },
+      action: "overviewupdate_kin",
+      user,
+      signup_key,
+      kin_first: kinFirst,
+      kin_last: kinLast,
+      kin_call: kinCall,
+      kin_whats: kinWhats,
+      kin_email: kinEmail,
     };
-    console.log("Save profile:", payload);
+
+    try {
+      const res = await fetch(SAVE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || "Next of kin saved.");
+      } else {
+        alert(data.message || "Failed to save next of kin.");
+      }
+      console.log("Next of kin save response:", data);
+    } catch (err) {
+      console.error("Save kin error:", err);
+      alert("Network error while saving next of kin.");
+    }
+  };
+
+  // single handleSave that dispatches based on active tab
+  const handleSave = () => {
+    if (activeTab === "Profile") saveProfile();
+    else if (activeTab === "Next of Kin") saveNextOfKin();
+    else {
+      // Keep Feedback and Verify ID unchanged behaviour - fallback
+      console.log("Save requested on tab:", activeTab);
+    }
   };
 
   return (
@@ -166,7 +402,7 @@ const Overview = () => {
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           {/* Header */}
-          <SectionHeader title="Zarken" />
+          <SectionHeader title={firstName || "User"} />
 
           {/* Card */}
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
@@ -178,8 +414,28 @@ const Overview = () => {
               <div className="p-2 md:p-5 md:w-2/3">
                 {/* Avatar Upload - left aligned */}
                 <div className="flex justify-start my-5 md:my-10 pl-5">
-                  <div className="h-20 w-20 md:h-24 md:w-24 rounded-full border border-black bg-white flex items-center justify-center">
-                    <FiCamera className="text-black" size={35} />
+                  <div
+                    onClick={onAvatarClick}
+                    style={{ cursor: "pointer" }}
+                    className="h-20 w-20 md:h-24 md:w-24 rounded-full border border-black bg-white flex items-center justify-center overflow-hidden"
+                  >
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <FiCamera className="text-black" size={35} />
+                    )}
+                    {/* hidden file input */}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={onFileSelected}
+                      className="hidden"
+                    />
                   </div>
                 </div>
 
@@ -191,9 +447,9 @@ const Overview = () => {
                     <InfoPill>
                       <input
                         type="text"
+                        readOnly
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="John"
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -204,9 +460,9 @@ const Overview = () => {
                     <InfoPill>
                       <input
                         type="text"
+                        readOnly
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Doe"
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -217,8 +473,7 @@ const Overview = () => {
                     <Label>CALL NUMBER</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                        <span className="text-md py-1">{callNo}</span>
                       </div>
                     </InfoPill>
                   </div>
@@ -229,11 +484,10 @@ const Overview = () => {
                       <input
                         type="tel"
                         value={whatsapp}
+                        readOnly
                         onChange={(e) => setWhatsapp(e.target.value)}
-                        placeholder="08078436972"
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
-                      <FiCheckCircle className="text-gray-400 ml-2" size={20} />
                     </InfoPill>
                   </div>
 
@@ -242,8 +496,7 @@ const Overview = () => {
                     <Label>EMAIL</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                        <span className="text-md py-1">{email}</span>
                       </div>
                     </InfoPill>
                   </div>
@@ -271,14 +524,11 @@ const Overview = () => {
                         onChange={(e) => setStateValue(e.target.value)}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-black"
                       >
-                        <option value="">{states[0].label}</option>
-                        {states
-                          .filter((s) => s.value !== "")
-                          .map((s) => (
-                            <option key={s.value} value={s.value}>
-                              {s.label}
-                            </option>
-                          ))}
+                        {NIGERIA_STATES.map((s) => (
+                          <option key={s.value} value={s.value}>
+                            {s.label}
+                          </option>
+                        ))}
                       </select>
                       <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
                     </InfoPill>
@@ -310,7 +560,7 @@ const Overview = () => {
               </div>
             )}
 
-            {/* Other tabs */}
+            {/* Verify ID */}
             {activeTab === "Verify ID" && (
               <div className="my-10 w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
@@ -328,6 +578,8 @@ const Overview = () => {
                 </div>
               </div>
             )}
+
+            {/* Next of Kin */}
             {activeTab === "Next of Kin" && (
               <div className="p-5 w-full md:w-2/3">
                 {/* Inputs grid */}
@@ -338,6 +590,8 @@ const Overview = () => {
                     <InfoPill className="bg-white">
                       <input
                         type="text"
+                        value={kinFirst}
+                        onChange={(e) => setKinFirst(e.target.value)}
                         placeholder={"Enter First name"}
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
@@ -349,6 +603,8 @@ const Overview = () => {
                     <InfoPill className="bg-white">
                       <input
                         type="text"
+                        value={kinLast}
+                        onChange={(e) => setKinLast(e.target.value)}
                         placeholder={"Enter Last name"}
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
@@ -361,6 +617,8 @@ const Overview = () => {
                     <InfoPill className="flex items-center justify-between bg-white">
                       <input
                         type="tel"
+                        value={kinCall}
+                        onChange={(e) => setKinCall(e.target.value)}
                         placeholder="Call No."
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
@@ -372,6 +630,8 @@ const Overview = () => {
                     <InfoPill className="flex items-center justify-between bg-white">
                       <input
                         type="tel"
+                        value={kinWhats}
+                        onChange={(e) => setKinWhats(e.target.value)}
                         placeholder="Whatsapp No."
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
@@ -384,6 +644,8 @@ const Overview = () => {
                     <InfoPill className="bg-white">
                       <input
                         type="email"
+                        value={kinEmail}
+                        onChange={(e) => setKinEmail(e.target.value)}
                         placeholder="Enter your email"
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
@@ -395,7 +657,7 @@ const Overview = () => {
                 <div className="mt-10 flex justify-center">
                   <button
                     onClick={handleSave}
-                    className="py-3 text-md px-4 font-medium bg-black shadow-lg rounded-lg"
+                    className="py-3 text-md px-4 font-medium bg-black text-white shadow-lg rounded-lg"
                   >
                     SAVE CHANGES
                   </button>
@@ -403,7 +665,7 @@ const Overview = () => {
               </div>
             )}
 
-            {/* Feedback tab (adjusted) */}
+            {/* Feedback tab (unchanged) */}
             {activeTab === "Feedback" && (
               <div className="w-2/3 p-5">
                 {/* Header with dashed line */}
@@ -442,9 +704,7 @@ const Overview = () => {
                           {/* Right dropdown toggle */}
                           <div
                             className="w-6 h-6 flex items-center justify-center cursor-pointer"
-                            onClick={() =>
-                              setExpanded(isExpanded ? null : r.id)
-                            }
+                            onClick={() => setExpanded(isExpanded ? null : r.id)}
                           >
                             {isExpanded ? (
                               <IoIosArrowUp className="w-6 h-6 text-black" />
