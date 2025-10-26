@@ -43,7 +43,7 @@ export default function SidebarInner({
 }) {
   const [sidebarData, setSidebarData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-   const handleLogout = () => {
+  const handleLogout = () => {
     // ✅ Clear all saved user session data
     sessionStorage.clear();
     localStorage.clear();
@@ -78,7 +78,7 @@ export default function SidebarInner({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            action: "getSidebarData",
+            action: "getSidebarDataMerchant",
             whats: session.user,
           }),
         });
@@ -271,7 +271,20 @@ export default function SidebarInner({
             {sidebarData ? (
               <div className="bg-black text-white p-3 md:p-4 rounded-md w-full mb-20 border border-white/10">
                 <div className="flex items-start gap-2 md:gap-3">
-                  <div className="w-9 h-9 md:w-16 md:h-16 bg-gray-400 rounded-sm shrink-0"></div>
+                  <div className="w-9 h-9 md:w-16 md:h-16 rounded-sm shrink-0 overflow-hidden bg-gray-400">
+                    {sidebarData?.profile_image ? (
+                      <img
+                        src={sidebarData.profile_image}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[8px] md:text-sm text-gray-700 bg-gray-200">
+                        No Img
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex flex-col">
                     <span className="font-semibold text-[12px] md:text-lg">
                       {sidebarData.name}
@@ -286,7 +299,10 @@ export default function SidebarInner({
                 </div>
 
                 <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
-                  <button onClick={handleLogout} className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md"
+                  >
                     <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
                   </button>
                   <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
@@ -295,7 +311,6 @@ export default function SidebarInner({
                     <span className="ml-1">&gt;&gt;</span>
                   </button>
                 </div>
-
               </div>
             ) : (
               <div className="text-gray-400 text-xs text-center mb-20">

@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  FiCamera,
-  FiChevronDown,
-  FiArrowUpRight,
-} from "react-icons/fi";
+import { FiCamera, FiChevronDown, FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
@@ -69,7 +65,8 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        Our goal is for your <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
+        Our goal is for your{" "}
+        <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
         <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
       </p>
 
@@ -165,6 +162,9 @@ const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
 const SAVE_URL = "https://www.cribb.africa/api_save.php";
 const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
+  // Controls read-only + save button visibility
+  const [isProfileLocked, setIsProfileLocked] = useState(false);
+  const [isKinLocked, setIsKinLocked] = useState(false);
 
   // profile states
   const [firstName, setFirstName] = useState("");
@@ -206,7 +206,7 @@ const Overview = () => {
     fetch(PROFILE_FETCH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "overviewfetch", whats }),
+      body: JSON.stringify({ action: "overviewfetchMerchant", whats }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -230,6 +230,21 @@ const Overview = () => {
         setKinCall(k.kin_call || "");
         setKinWhats(k.kin_whats || "");
         setKinEmail(k.kin_email || "");
+        // === LOCK PROFILE IF FIELDS ARE ALREADY FILLED ===
+        if (p.address && p.state && p.landmark && p.profile_image) {
+          setIsProfileLocked(true);
+        }
+
+        // === LOCK NEXT OF KIN IF ALREADY FILLED ===
+        if (
+          k.kin_first &&
+          k.kin_last &&
+          k.kin_call &&
+          k.kin_whats &&
+          k.kin_email
+        ) {
+          setIsKinLocked(true);
+        }
       })
       .catch((err) => {
         console.error("Overview fetch error:", err);
@@ -305,13 +320,19 @@ const Overview = () => {
   const saveProfile = async () => {
     if (!validateProfile()) return;
 
+    // ✅ Block saving if no profile image
+    if (!localImageFile && !profileImage) {
+      alert("Please upload a profile image before saving.");
+      return;
+    }
+
     const login = getLoginData();
     const user = login?.user || "";
     const signup_key = login?.signup_key || "";
 
     // Use FormData if image present (multipart)
     const form = new FormData();
-    form.append("action", "overviewupdate_profile");
+    form.append("action", "overviewupdate_profile_merchant");
     form.append("user", user);
     form.append("signup_key", signup_key);
     form.append("address", address);
@@ -331,12 +352,11 @@ const Overview = () => {
       const data = await res.json();
       if (data.success) {
         alert(data.message || "Profile saved successfully.");
-        // optionally update profileImage with returned url
         if (data.profile_image) {
           setProfileImage(data.profile_image);
         }
-        // clear localImageFile since saved
         setLocalImageFile(null);
+        setIsProfileLocked(true); // 🔒 lock fields after saving
       } else {
         alert(data.message || "Failed to save profile. Try again.");
       }
@@ -356,7 +376,7 @@ const Overview = () => {
     const signup_key = login?.signup_key || "";
 
     const payload = {
-      action: "overviewupdate_kin",
+      action: "overviewupdate_kin_merchant",
       user,
       signup_key,
       kin_first: kinFirst,
@@ -377,6 +397,7 @@ const Overview = () => {
       const data = await res.json();
       if (data.success) {
         alert(data.message || "Next of kin saved.");
+        setIsKinLocked(true); // 🔒 lock kin fields after saving
       } else {
         alert(data.message || "Failed to save next of kin.");
       }
@@ -414,9 +435,10 @@ const Overview = () => {
               <div className="p-2 md:p-5 md:w-2/3">
                 {/* Avatar Upload - left aligned */}
                 <div className="flex justify-start my-5 md:my-10 pl-5">
+                  {/* Image upload */}
                   <div
-                    onClick={onAvatarClick}
-                    style={{ cursor: "pointer" }}
+                    onClick={!isProfileLocked ? onAvatarClick : undefined}
+                    style={{ cursor: isProfileLocked ? "default" : "pointer" }}
                     className="h-20 w-20 md:h-24 md:w-24 rounded-full border border-black bg-white flex items-center justify-center overflow-hidden"
                   >
                     {profileImage ? (
@@ -440,7 +462,7 @@ const Overview = () => {
                 </div>
 
                 {/* Inputs grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                   {/* Row 1 */}
                   <div>
                     <Label>FIRST NAME</Label>
@@ -504,12 +526,17 @@ const Overview = () => {
                   {/* Row 4 - Full Address */}
                   <div className="md:col-span-2">
                     <Label>FULL ADDRESS</Label>
-                    <InfoPill className="bg-white">
+                    <InfoPill
+                      className={`${
+                        isProfileLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Enter your Address"
+                        readOnly={isProfileLocked} // 🔒
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -518,10 +545,15 @@ const Overview = () => {
                   {/* Row 5 - State and Landmark */}
                   <div className="pl-1">
                     <Label>STATE</Label>
-                    <InfoPill className="relative flex items-center bg-white">
+                    <InfoPill
+                      className={`relative flex items-center ${
+                        isProfileLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <select
                         value={stateValue}
                         onChange={(e) => setStateValue(e.target.value)}
+                        disabled={isProfileLocked} // 🔒
                         className="appearance-none w-full bg-transparent outline-none py-1 text-black"
                       >
                         {NIGERIA_STATES.map((s) => (
@@ -536,12 +568,17 @@ const Overview = () => {
 
                   <div>
                     <Label>LANDMARK</Label>
-                    <InfoPill className="bg-white">
+                    <InfoPill
+                      className={`${
+                        isProfileLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="text"
                         value={landmark}
                         onChange={(e) => setLandmark(e.target.value)}
                         placeholder="Around Where"
+                        readOnly={isProfileLocked} // 🔒
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -549,14 +586,16 @@ const Overview = () => {
                 </div>
 
                 {/* Save Changes */}
-                <div className="mt-10 flex justify-center">
-                  <button
-                    onClick={handleSave}
-                    className="py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
-                  >
-                    SAVE CHANGES
-                  </button>
-                </div>
+                {!isProfileLocked && (
+                  <div className="flex justify-center">
+                    <button
+                      onClick={handleSave}
+                      className="py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
+                    >
+                      SAVE CHANGES
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -587,12 +626,17 @@ const Overview = () => {
                   {/* Row 1 */}
                   <div>
                     <Label>FIRST NAME</Label>
-                    <InfoPill className="bg-white">
+                    <InfoPill
+                      className={`${
+                        isKinLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="text"
                         value={kinFirst}
                         onChange={(e) => setKinFirst(e.target.value)}
-                        placeholder={"Enter First name"}
+                        placeholder="Enter First name"
+                        readOnly={isKinLocked}
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -600,12 +644,17 @@ const Overview = () => {
 
                   <div>
                     <Label>LAST NAME</Label>
-                    <InfoPill className="bg-white">
+                    <InfoPill
+                      className={`${
+                        isKinLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="text"
                         value={kinLast}
                         onChange={(e) => setKinLast(e.target.value)}
-                        placeholder={"Enter Last name"}
+                        placeholder="Enter Last name"
+                        readOnly={isKinLocked}
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -614,12 +663,17 @@ const Overview = () => {
                   {/* Row 2 */}
                   <div>
                     <Label>CALL NO.</Label>
-                    <InfoPill className="flex items-center justify-between bg-white">
+                    <InfoPill
+                      className={`flex items-center justify-between ${
+                        isKinLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="tel"
                         value={kinCall}
                         onChange={(e) => setKinCall(e.target.value)}
                         placeholder="Call No."
+                        readOnly={isKinLocked}
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -627,12 +681,17 @@ const Overview = () => {
 
                   <div>
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="flex items-center justify-between bg-white">
+                    <InfoPill
+                      className={`flex items-center justify-between ${
+                        isKinLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="tel"
                         value={kinWhats}
                         onChange={(e) => setKinWhats(e.target.value)}
                         placeholder="Whatsapp No."
+                        readOnly={isKinLocked}
                         className="flex-1 outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -641,12 +700,17 @@ const Overview = () => {
                   {/* Row 3 - Email full width */}
                   <div className="md:col-span-2">
                     <Label>EMAIL</Label>
-                    <InfoPill className="bg-white">
+                    <InfoPill
+                      className={`${
+                        isKinLocked ? "bg-transparent" : "bg-white"
+                      }`}
+                    >
                       <input
                         type="email"
                         value={kinEmail}
                         onChange={(e) => setKinEmail(e.target.value)}
                         placeholder="Enter your email"
+                        readOnly={isKinLocked}
                         className="w-full outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
@@ -654,18 +718,20 @@ const Overview = () => {
                 </div>
 
                 {/* Save Changes */}
-                <div className="mt-10 flex justify-center">
-                  <button
-                    onClick={handleSave}
-                    className="py-3 text-md px-4 font-medium bg-black text-white shadow-lg rounded-lg"
-                  >
-                    SAVE CHANGES
-                  </button>
-                </div>
+                {!isKinLocked && (
+                  <div className="mt-10 flex justify-center">
+                    <button
+                      onClick={handleSave}
+                      className="py-3 text-md px-4 font-medium bg-black text-white shadow-lg rounded-lg"
+                    >
+                      SAVE CHANGES
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Feedback tab (unchanged) */}
+            {/* Feedback tab (un changed) */}
             {activeTab === "Feedback" && (
               <div className="w-2/3 p-5">
                 {/* Header with dashed line */}
@@ -704,7 +770,9 @@ const Overview = () => {
                           {/* Right dropdown toggle */}
                           <div
                             className="w-6 h-6 flex items-center justify-center cursor-pointer"
-                            onClick={() => setExpanded(isExpanded ? null : r.id)}
+                            onClick={() =>
+                              setExpanded(isExpanded ? null : r.id)
+                            }
                           >
                             {isExpanded ? (
                               <IoIosArrowUp className="w-6 h-6 text-black" />
