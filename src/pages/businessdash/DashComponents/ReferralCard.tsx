@@ -32,7 +32,7 @@ const ReferralCard: React.FC<ReferralCardProps> = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // referral url
-  const referralURL = `https://www.cribb.africa/signup?ref=${encodeURIComponent(code || "")}`;
+  const referralURL = `https://www.student.cribb.africa/signup?ref=${encodeURIComponent(code || "")}`;
 
   useEffect(() => {
     if (!showModal) {

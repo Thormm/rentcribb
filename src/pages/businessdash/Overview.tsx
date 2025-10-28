@@ -29,17 +29,7 @@ type Review = {
 };
 
 const reviews: Review[] = [
-  { id: 1, date: "6th Jan, 2025", name: "Zarken Christian", type: "home" },
-  {
-    id: 2,
-    date: "6th Jan, 2025",
-    name: "Zarken Christian",
-    type: "user",
-    rating: 5,
-    text: "This is a very good customer, pays well as speaks kindly.",
-  },
-  { id: 3, date: "1st Jan, 2025", name: "Tessie Ahaiwe", type: "home" },
-  { id: 4, date: "16th Dec, 2025", name: "Habib Saliu", type: "user" },
+  //{ id: 1, date: "6th Jan, 2025", name: "Zarken Christian", type: "home" },
 ];
 
 // Reusable Label
@@ -47,7 +37,10 @@ type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        className
+      )}
     >
       {children}
     </div>
@@ -162,6 +155,9 @@ const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
 const SAVE_URL = "https://www.cribb.africa/api_save.php";
 const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
+  const [feedback, setFeedback] = useState("");
+  const [isSending, setIsSending] = useState(false);
+
   // Controls read-only + save button visibility
   const [isProfileLocked, setIsProfileLocked] = useState(false);
   const [isKinLocked, setIsKinLocked] = useState(false);
@@ -418,6 +414,45 @@ const Overview = () => {
     }
   };
 
+  const handleSendFeedback = async () => {
+    if (!feedback.trim()) {
+      alert("Please type your feedback before sending.");
+      return;
+    }
+
+    const login = getLoginData();
+    const user = login?.user || "";
+    if (!user) {
+      alert("Session expired, please log in again.");
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const res = await fetch(SAVE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "overview_feedback_send",
+          user,
+          feedback,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || "Feedback sent successfully!");
+        setFeedback("");
+      } else {
+        alert(data.message || "Failed to send feedback, please try again.");
+      }
+    } catch (err) {
+      console.error("Feedback send error:", err);
+      alert("Network error while sending feedback.");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
@@ -462,72 +497,76 @@ const Overview = () => {
                 </div>
 
                 {/* Inputs grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                  {/* Row 1 */}
-                  <div>
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 mb-10">
+                  {/* Row 1 – First & Last Name */}
+                  <div className="space-y-1">
                     <Label>FIRST NAME</Label>
-                    <InfoPill>
+                    <InfoPill className="px-5 md:px-8">
                       <input
                         type="text"
                         readOnly
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <Label>LAST NAME</Label>
-                    <InfoPill>
+                    <InfoPill className="px-5 md:px-8">
                       <input
                         type="text"
                         readOnly
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  {/* Row 2 */}
-                  <div>
+                  {/* Row 2 – Call Number & WhatsApp */}
+                  <div className="space-y-1">
                     <Label>CALL NUMBER</Label>
-                    <InfoPill>
+                    <InfoPill className="px-5 md:px-8">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">{callNo}</span>
+                        <span className="text-xs md:text-sm py-1 text-black">
+                          {callNo}
+                        </span>
                       </div>
                     </InfoPill>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="flex items-center justify-between">
+                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
                       <input
                         type="tel"
                         value={whatsapp}
                         readOnly
                         onChange={(e) => setWhatsapp(e.target.value)}
-                        className="flex-1 outline-none py-1 rounded-md text-black"
+                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  {/* Row 3 - Email full width */}
-                  <div className="md:col-span-2">
+                  {/* Row 3 – Email (Full Width) */}
+                  <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
-                    <InfoPill>
+                    <InfoPill className="px-5 md:px-8">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">{email}</span>
+                        <span className="text-xs md:text-sm py-1 text-black">
+                          {email}
+                        </span>
                       </div>
                     </InfoPill>
                   </div>
 
-                  {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
+                  {/* Row 4 – Full Address (Full Width) */}
+                  <div className="col-span-2 space-y-1">
                     <Label>FULL ADDRESS</Label>
                     <InfoPill
-                      className={`${
+                      className={`px-5 md:px-8 ${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -536,25 +575,25 @@ const Overview = () => {
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Enter your Address"
-                        readOnly={isProfileLocked} // 🔒
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        readOnly={isProfileLocked}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  {/* Row 5 - State and Landmark */}
-                  <div className="pl-1">
+                  {/* Row 5 – State & Landmark */}
+                  <div className="space-y-1">
                     <Label>STATE</Label>
                     <InfoPill
-                      className={`relative flex items-center ${
+                      className={`px-5 md:px-8 relative flex items-center ${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
                       <select
                         value={stateValue}
                         onChange={(e) => setStateValue(e.target.value)}
-                        disabled={isProfileLocked} // 🔒
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                        disabled={isProfileLocked}
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                       >
                         {NIGERIA_STATES.map((s) => (
                           <option key={s.value} value={s.value}>
@@ -566,10 +605,10 @@ const Overview = () => {
                     </InfoPill>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <Label>LANDMARK</Label>
                     <InfoPill
-                      className={`${
+                      className={`px-5 md:px-8 ${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -578,8 +617,8 @@ const Overview = () => {
                         value={landmark}
                         onChange={(e) => setLandmark(e.target.value)}
                         placeholder="Around Where"
-                        readOnly={isProfileLocked} // 🔒
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        readOnly={isProfileLocked}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -601,7 +640,7 @@ const Overview = () => {
 
             {/* Verify ID */}
             {activeTab === "Verify ID" && (
-              <div className="my-10 w-2/3">
+              <div className="my-10 md:w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
                   {/* Coming Soon */}
                   <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
@@ -620,14 +659,14 @@ const Overview = () => {
 
             {/* Next of Kin */}
             {activeTab === "Next of Kin" && (
-              <div className="p-5 w-full md:w-2/3">
+              <div className="p-2 md:p-5 w-full md:w-2/3">
                 {/* Inputs grid */}
-                <div className="grid my-10 grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Row 1 */}
-                  <div>
+                <div className="grid mt-5 mb-10 grid-cols-2 md:grid-cols-2 gap-6">
+                  {/* Row 1 — First & Last Name */}
+                  <div className="space-y-1">
                     <Label>FIRST NAME</Label>
                     <InfoPill
-                      className={`${
+                      className={`px-5 md:px-8 ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -637,15 +676,15 @@ const Overview = () => {
                         onChange={(e) => setKinFirst(e.target.value)}
                         placeholder="Enter First name"
                         readOnly={isKinLocked}
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <Label>LAST NAME</Label>
                     <InfoPill
-                      className={`${
+                      className={`px-5 md:px-8 ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -655,16 +694,16 @@ const Overview = () => {
                         onChange={(e) => setKinLast(e.target.value)}
                         placeholder="Enter Last name"
                         readOnly={isKinLocked}
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  {/* Row 2 */}
-                  <div>
+                  {/* Row 2 — Call No. & WhatsApp No. */}
+                  <div className="space-y-1">
                     <Label>CALL NO.</Label>
                     <InfoPill
-                      className={`flex items-center justify-between ${
+                      className={`px-5 md:px-8 flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -674,15 +713,15 @@ const Overview = () => {
                         onChange={(e) => setKinCall(e.target.value)}
                         placeholder="Call No."
                         readOnly={isKinLocked}
-                        className="flex-1 outline-none py-1 rounded-md text-black"
+                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
                     <InfoPill
-                      className={`flex items-center justify-between ${
+                      className={`px-5 md:px-8 flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -692,16 +731,16 @@ const Overview = () => {
                         onChange={(e) => setKinWhats(e.target.value)}
                         placeholder="Whatsapp No."
                         readOnly={isKinLocked}
-                        className="flex-1 outline-none py-1 rounded-md text-black"
+                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
 
-                  {/* Row 3 - Email full width */}
-                  <div className="md:col-span-2">
+                  {/* Row 3 — Email (Full Width) */}
+                  <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
                     <InfoPill
-                      className={`${
+                      className={`px-5 md:px-8 ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -711,7 +750,7 @@ const Overview = () => {
                         onChange={(e) => setKinEmail(e.target.value)}
                         placeholder="Enter your email"
                         readOnly={isKinLocked}
-                        className="w-full outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -733,51 +772,51 @@ const Overview = () => {
 
             {/* Feedback tab (un changed) */}
             {activeTab === "Feedback" && (
-              <div className="w-2/3 p-5">
+              <div className="md:w-2/3 p-5">
                 {/* Header with dashed line */}
-                <div className="flex items-center gap-3 my-8">
+                <div className="flex items-center gap-3 my-4 md:my-8">
                   <span className="text-md font-semibold text-black tracking-wide">
-                    -- GIVE REVIEWS --------------------------
+                    -- GIVE REVIEWS -------------
                   </span>
                 </div>
 
                 {/* Reviews list */}
-                <div className="space-y-8">
+                <div className="space-y-3 md:space-y-6">
                   {reviews.map((r) => {
                     const isExpanded = expanded === r.id;
                     return (
                       <div
                         key={r.id}
-                        className="border-black rounded-4xl border px-6 py-4 shadow-sm "
+                        className="border-black rounded-4xl border px-3 md:px-6 py-3 md:py-4 shadow-sm flex flex-col"
                       >
                         {/* Row 1 */}
-                        <div className="flex items-center">
-                          {/* Left icon (PiHouse) */}
-                          <div className="w-6 h-6 flex items-center justify-center text-black">
-                            <PiHouse className="w-6 h-6" />
+                        <div className="flex items-center w-full gap-2 md:gap-4">
+                          {/* Icon */}
+                          <div className="flex-shrink-0 w-5 md:w-6 flex justify-center">
+                            <PiHouse className="w-4 h-4 md:w-6 md:h-6 text-black" />
                           </div>
 
-                          {/* Date + name */}
-                          <div className="flex flex-grow items-center gap-5 px-4">
-                            <span className="text-md font-normal text-black whitespace-nowrap">
-                              {r.date}
-                            </span>
-                            <span className="text-md text-black font-normal truncate">
-                              {r.name}
-                            </span>
+                          {/* Date */}
+                          <div className="flex-shrink-0 w-[90px] md:w-[120px] text-xs md:text-sm font-normal text-black text-left">
+                            {r.date}
                           </div>
 
-                          {/* Right dropdown toggle */}
+                          {/* Name */}
+                          <div className="flex-grow min-w-0 text-xs md:text-sm text-black font-normal text-left break-words">
+                            {r.name}
+                          </div>
+
+                          {/* Dropdown icon */}
                           <div
-                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                            className="flex-shrink-0 w-5 md:w-6 flex justify-center cursor-pointer"
                             onClick={() =>
                               setExpanded(isExpanded ? null : r.id)
                             }
                           >
                             {isExpanded ? (
-                              <IoIosArrowUp className="w-6 h-6 text-black" />
+                              <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
                             ) : (
-                              <IoIosArrowDown className="w-6 h-6 text-black" />
+                              <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
                             )}
                           </div>
                         </div>
@@ -786,39 +825,45 @@ const Overview = () => {
                         {isExpanded && (
                           <div className="mt-3 px-10">
                             {/* Stars + POST */}
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: 5 }).map((_, i) =>
-                                  i < (ratings[r.id] || 0) ? (
-                                    <AiFillStar
-                                      key={i}
-                                      className="w-7 h-7 text-yellow-400 cursor-pointer"
-                                      onClick={() => handleStarClick(r.id, i)}
-                                    />
-                                  ) : (
-                                    <AiOutlineStar
-                                      key={i}
-                                      className="w-7 h-7 text-gray-300 cursor-pointer"
-                                      onClick={() => handleStarClick(r.id, i)}
-                                    />
-                                  )
-                                )}
+                            <div className="flex flex-col items-center w-full gap-3">
+                              {/* Stars + POST in same row, centered */}
+                              <div className="flex items-center justify-center gap-3">
+                                {/* Stars */}
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: 5 }).map((_, i) =>
+                                    i < (ratings[r.id] || 0) ? (
+                                      <AiFillStar
+                                        key={i}
+                                        className="w-7 h-7 text-yellow-400 cursor-pointer"
+                                        onClick={() => handleStarClick(r.id, i)}
+                                      />
+                                    ) : (
+                                      <AiOutlineStar
+                                        key={i}
+                                        className="w-7 h-7 text-gray-300 cursor-pointer"
+                                        onClick={() => handleStarClick(r.id, i)}
+                                      />
+                                    )
+                                  )}
+                                </div>
+
+                                {/* POST button */}
+                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-black text-[#D6FFC3] text-sm font-medium cursor-pointer">
+                                  <FiArrowUpRight className="w-4 h-4" />
+                                  POST
+                                </span>
                               </div>
 
-                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-black text-[#D6FFC3] text-sm font-medium cursor-pointer">
-                                <FiArrowUpRight className="w-4 h-4" />
-                                POST
-                              </span>
-                            </div>
-
-                            <div className="mt-3">
-                              <textarea
-                                value={feedbackTexts[r.id] || ""}
-                                onChange={(e) =>
-                                  handleTextChange(r.id, e.target.value)
-                                }
-                                className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl border border-black bg-white focus:outline-none resize-none text-sm"
-                              />
+                              {/* Feedback textarea */}
+                              <div className="w-full">
+                                <textarea
+                                  value={feedbackTexts[r.id] || ""}
+                                  onChange={(e) =>
+                                    handleTextChange(r.id, e.target.value)
+                                  }
+                                  className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl border border-black bg-white focus:outline-none resize-none text-sm"
+                                />
+                              </div>
                             </div>
                           </div>
                         )}
@@ -831,18 +876,21 @@ const Overview = () => {
                 <div className="mt-10">
                   <Label>FEEDBACK</Label>
                   <textarea
-                    defaultValue="Hola, Cribb ..."
-                    className="w-full min-h-[110px] py-3 px-10 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    placeholder="Hola, Cribb ..."
+                    className="w-full min-h-[110px] py-3 px-5 md:px-10 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
                   />
                 </div>
 
                 {/* Send button */}
-                <div className="mt-10 flex justify-center">
+                <div className="mt-5 md:mt-10 flex justify-center">
                   <button
-                    onClick={handleSave}
-                    className="py-3 text-md px-8 font-medium bg-black shadow-lg rounded-lg"
+                    onClick={handleSendFeedback}
+                    disabled={isSending}
+                    className="py-3 text-md px-8 font-medium bg-black shadow-lg rounded-lg text-white"
                   >
-                    SEND
+                    {isSending ? "SENDING..." : "SEND"}
                   </button>
                 </div>
               </div>

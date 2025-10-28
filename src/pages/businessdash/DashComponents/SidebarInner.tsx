@@ -11,7 +11,7 @@ import {
   MdOutlineDashboard,
   MdWallet,
   MdOutlineBookmarkAdded,
-  MdOutlineBackpack,
+  //MdOutlineBackpack,
   MdOutlineAddBusiness,
 } from "react-icons/md";
 import { RiListView } from "react-icons/ri";
@@ -24,7 +24,7 @@ import { FaRegCircle } from "react-icons/fa";
 import ReferralCard from "./ReferralCard";
 
 const baseBtn =
-  "flex items-center rounded px-3 py-2 md:px-8 md:py-2 gap-2 md:gap-3 transition w-full text-left border-l-[3px]";
+  "flex items-center rounded px-3 py-1 md:py-2 md:px-8 md:py-2 gap-2 md:gap-3 transition w-full text-left border-l-[3px]";
 const baseIcon = "h-4 w-4 md:h-8 md:w-8";
 const activeClass = "text-[#FFA1A1] border-[#FFA1A1]";
 const inactiveClass = "text-white border-black";
@@ -271,7 +271,7 @@ export default function SidebarInner({
             {sidebarData ? (
               <div className="bg-black text-white p-3 md:p-4 rounded-md w-full mb-20 border border-white/10">
                 <div className="flex items-start gap-2 md:gap-3">
-                  <div className="w-9 h-9 md:w-16 md:h-16 rounded-sm shrink-0 overflow-hidden bg-gray-400">
+                  <div className="w-11 h-11 md:w-16 md:h-16 rounded-sm shrink-0 overflow-hidden bg-gray-400">
                     {sidebarData?.profile_image ? (
                       <img
                         src={sidebarData.profile_image}
@@ -305,11 +305,11 @@ export default function SidebarInner({
                   >
                     <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
                   </button>
-                  <button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
+                  {/*<button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
                     <MdOutlineBackpack className="text-lg md:text-3xl" />
                     <span className="underline">SWITCH TO STUDENTS</span>
                     <span className="ml-1">&gt;&gt;</span>
-                  </button>
+                  </button>*/}
                 </div>
               </div>
             ) : (
