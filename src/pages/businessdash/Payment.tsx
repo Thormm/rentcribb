@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import { BiRotateRight } from "react-icons/bi";
@@ -11,7 +11,7 @@ import {
 } from "react-icons/md";
 import { RiStickyNoteAddLine } from "react-icons/ri";
 
-// Reusable Label
+// ✅ Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
@@ -26,7 +26,7 @@ function Label({ children, className }: LabelProps) {
   );
 }
 
-// Header with help icon
+// ✅ Header
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
@@ -52,7 +52,7 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-// Tabs
+// ✅ Tabs
 const tabs = ["Withdrawals", "Top ups", "Refunds"];
 function Tabs({
   active,
@@ -87,53 +87,11 @@ function Tabs({
   );
 }
 
-// Mocked data
-const withdrawalsData = [
-  { id: 1, date: "6th Jan, 2025", amount: "₦10,000", status: "done" },
-  { id: 2, date: "20th Dec, 2025", amount: "₦50,000", status: "pending" }
-];
-
-const topupsData = [
-  { id: 1, date: "15th Feb, 2025", amount: "₦20,000", status: "done" },
-  { id: 2, date: "22nd Dec, 2025", amount: "₦70,000", status: "pending" },
-  { id: 3, date: "12th Dec, 2025", amount: "₦15,000", status: "done" },
-  { id: 4, date: "8th Dec, 2025", amount: "₦10,000", status: "pending" },
-  { id: 5, date: "1st Dec, 2025", amount: "₦45,000", status: "done" },
-  { id: 6, date: "25th Nov, 2025", amount: "₦12,000", status: "pending" },
-];
-
-const refundsData = {
-  NEW: [
-    { id: 1, date: "1st Jan, 2025", amount: "₦5,000", status: "pending" },
-    { id: 2, date: "3rd Jan, 2025", amount: "₦8,000", status: "done" },
-    { id: 3, date: "5th Jan, 2025", amount: "₦12,000", status: "done" },
-    { id: 4, date: "7th Jan, 2025", amount: "₦18,000", status: "pending" },
-    { id: 5, date: "9th Jan, 2025", amount: "₦20,000", status: "done" },
-    { id: 6, date: "12th Jan, 2025", amount: "₦25,000", status: "pending" },
-  ],
-  "ON-GOING": [
-    { id: 7, date: "10th Jan, 2025", amount: "₦15,000", status: "pending" },
-    { id: 8, date: "7th Jan, 2025", amount: "₦18,000", status: "pending" },
-    { id: 9, date: "9th Jan, 2025", amount: "₦20,000", status: "done" },
-    { id: 10, date: "12th Jan, 2025", amount: "₦25,000", status: "pending" },
-    { id: 11, date: "20th Dec, 2024", amount: "₦25,000", status: "done" },
-    { id: 12, date: "20th Dec, 2024", amount: "₦25,000", status: "done" },
-  ],
-  SORTED: [
-    { id: 13, date: "20th Dec, 2024", amount: "₦25,000", status: "done" },
-    { id: 14, date: "7th Jan, 2025", amount: "₦18,000", status: "pending" },
-    { id: 15, date: "9th Jan, 2025", amount: "₦20,000", status: "done" },
-    { id: 16, date: "12th Jan, 2025", amount: "₦25,000", status: "pending" },
-    { id: 17, date: "20th Dec, 2024", amount: "₦25,000", status: "done" },
-    { id: 18, date: "20th Dec, 2024", amount: "₦25,000", status: "done" },
-  ],
-};
-
-// Pagination helper
+// ✅ Pagination Helper
 function PaginatedList({
   data,
 }: {
-  data: { id: number; date: string; amount: string; status: string }[];
+  data: { id: number; date: string; amount: string; status: string; details: string }[];
 }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -156,25 +114,27 @@ function PaginatedList({
         {currentData.map((item) => (
           <div
             key={item.id}
-            className="flex md:w-2/3 justify-between items-center px-4 md:px-8 py-5 rounded-4xl border border-black"
+            className="flex md:w-2/3 justify-between items-center px-4 md:px-8 py-3 md:py-5 rounded-4xl border border-black"
           >
             <div className="flex items-center gap-3">
-              {item.status === "done" ? (
+              {item.status === "done" ||
+              item.status === "sent" ||
+              item.status === "received" ||
+              item.status === "sorted" ? (
                 <GrStatusGood className="text-black w-4 h-4 md:w-7 md:h-7" />
               ) : (
                 <MdOutlinePending className="text-black w-4 h-4 md:w-7 md:h-7" />
               )}
             </div>
-
-            <span className="text-xs md:text-md text-black">{item.date}</span>
-            <span className="font-bold text-sm md:text-base text-black">
+            <span className="text-[9px] md:text-md text-black">{item.date}</span>
+          <span className="text-[9px] text-black">{item.details}</span>
+            <span className="font-semibold text-xs md:text-base text-black">
               {item.amount}
             </span>
           </div>
         ))}
       </div>
 
-      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
@@ -197,25 +157,66 @@ function PaginatedList({
   );
 }
 
+// ✅ MAIN COMPONENT
 const Payment = () => {
   const [activeTab, setActiveTab] = useState("Withdrawals");
   const [activeRefund, setActiveRefund] = useState<
     "NEW" | "ON-GOING" | "SORTED"
   >("NEW");
 
+  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [topups, setTopups] = useState<any[]>([]);
+  const [refunds, setRefunds] = useState<any>({
+    NEW: [],
+    "ON-GOING": [],
+    SORTED: [],
+  });
+
+  // ✅ Fetch from backend
+  useEffect(() => {
+    const loginData = sessionStorage.getItem("login_data");
+    if (!loginData) return;
+
+    const user = JSON.parse(loginData)?.user;
+    if (!user) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch("https://cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "gettransactionmerchant",
+            user,
+          }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          setWithdrawals(data.withdrawals || []);
+          setTopups(data.topups || []);
+          setRefunds(data.refunds || { NEW: [], "ON-GOING": [], SORTED: [] });
+        } else {
+          console.error("Error:", data.message);
+        }
+      } catch (err) {
+        console.error("Network Error:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
-          {/* Header */}
           <SectionHeader title="Payments" />
 
-          {/* Card */}
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
-            {/* Tabs */}
             <Tabs active={activeTab} setActive={setActiveTab} />
 
-            {/* Withdrawals Tab */}
+            {/* Withdrawals */}
             {activeTab === "Withdrawals" && (
               <div className="p-5 md:mt-5">
                 <div className="grid mb-10 grid-cols-1 gap-6">
@@ -250,11 +251,11 @@ const Payment = () => {
                     --- HISTORY --------------------------
                   </span>
                 </div>
-                <PaginatedList data={withdrawalsData} />
+                <PaginatedList data={withdrawals} />
               </div>
             )}
 
-            {/* Top ups Tab */}
+            {/* Top ups */}
             {activeTab === "Top ups" && (
               <div className="p-5">
                 <div className="flex items-center gap-3 mt-5 mb-5">
@@ -262,11 +263,11 @@ const Payment = () => {
                     ----- HISTORY --------------------------
                   </span>
                 </div>
-                <PaginatedList data={topupsData} />
+                <PaginatedList data={topups} />
               </div>
             )}
 
-            {/* Refunds Tab */}
+            {/* Refunds */}
             {activeTab === "Refunds" && (
               <div>
                 <div className="md:p-5">
@@ -310,7 +311,7 @@ const Payment = () => {
                           "w-5 h-5 md:w-6 md:h-6"
                         )}
                       />
-                      <span className="text-[10px] md:text-lg font-semibold tracking-tight">
+                      <span className="text-[10px] md:text-lg font-semibold tracking-tight whitespace-nowrap">
                         ON-GOING
                       </span>
                     </button>
@@ -339,14 +340,14 @@ const Payment = () => {
                     </button>
                   </div>
                 </div>
+
                 <div className="p-5">
-                  {/* History */}
                   <div className="flex items-center gap-3 mb-5">
                     <span className="text-md font-medium text-black tracking-wide">
                       ----- ENTRIES --------------------------
                     </span>
                   </div>
-                  <PaginatedList data={refundsData[activeRefund]} />
+                  <PaginatedList data={refunds[activeRefund]} />
                 </div>
               </div>
             )}
