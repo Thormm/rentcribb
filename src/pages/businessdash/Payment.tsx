@@ -126,8 +126,8 @@ function PaginatedList({
                 <MdOutlinePending className="text-black w-4 h-4 md:w-7 md:h-7" />
               )}
             </div>
-            <span className="text-[9px] md:text-md text-black">{item.date}</span>
-          <span className="text-[9px] text-black">{item.details}</span>
+            <span className="text-[9px] md:text-sm text-black">{item.date}</span>
+          <span className="text-[9px] md:text-base text-black">{item.details}</span>
             <span className="font-semibold text-xs md:text-base text-black">
               {item.amount}
             </span>
@@ -163,7 +163,7 @@ const Payment = () => {
   const [activeRefund, setActiveRefund] = useState<
     "NEW" | "ON-GOING" | "SORTED"
   >("NEW");
-
+  const [earned, setEarned] = useState<string>("0");
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [topups, setTopups] = useState<any[]>([]);
   const [refunds, setRefunds] = useState<any>({
@@ -193,6 +193,7 @@ const Payment = () => {
         const data = await res.json();
 
         if (data.success) {
+          setEarned(data.earned)
           setWithdrawals(data.withdrawals || []);
           setTopups(data.topups || []);
           setRefunds(data.refunds || { NEW: [], "ON-GOING": [], SORTED: [] });
@@ -225,7 +226,7 @@ const Payment = () => {
                     <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-md md:text-xl font-bold text-black">
-                          ₦250,000
+                          {earned}
                         </span>
                         <button className="flex items-center gap-2 px-3 py-1 bg-black text-[#D6FFC3] text-xs md:text-sm rounded-md">
                           <MdOutlinePayments /> WITHDRAW
@@ -239,7 +240,7 @@ const Payment = () => {
                     <InfoPill className="max-w-md px-5 md:px-8">
                       <div className="w-full">
                         <span className="text-xs md:text-sm font-medium text-black">
-                          ₦500,000
+                          ......
                         </span>
                       </div>
                     </InfoPill>

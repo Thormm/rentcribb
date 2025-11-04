@@ -162,10 +162,23 @@ const BusinessPlan = () => {
   // ✅ Fetch session data and set category/email/user
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    if (data?.category) setCategory(data.category);
+
+    // ✅ Get role from URL
+    const params = new URLSearchParams(location.search);
+    const role = params.get("role"); // e.g. ?role=agent or ?role=landlord
+
+    if (role === "agent") {
+      setCategory("Agent");
+    } else if (role === "landlord") {
+      setCategory("Landlord");
+    } else if (data?.category) {
+      // fallback to session data if no URL param
+      setCategory(data.category);
+    }
+
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
-  }, []);
+  }, [location.search]);
 
   const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
   const current = currentPlans[activePlan];
