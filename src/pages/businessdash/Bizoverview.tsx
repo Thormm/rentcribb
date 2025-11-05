@@ -21,7 +21,7 @@ type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx("text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black", className)}
     >
       {children}
     </div>
@@ -251,12 +251,12 @@ function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
-        <h2 className="text-4xl font-extrabold">Hola, {title}</h2>
+        <h2 className="text-2xl md:text-4xl font-extrabold">Hola, {title}</h2>
         <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
           <BsQuestionCircle className="text-white" size={40} />
         </div>
       </div>
-      <p className="text-sm pt-5">
+      <p className="text-xs md:text-sm pt-5">
         Our goal is for your{" "}
         <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
         <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
@@ -296,11 +296,11 @@ function Tabs({
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-            "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
-            active === tab
-              ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
-          )}
+                      "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
+                      active === tab
+                        ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
+                        : ""
+                    )}
         >
           {tab}
         </button>
@@ -380,143 +380,121 @@ const Bizoverview: React.FC = () => {
   };
 
   return (
-    <div className="bg-white py-10">
-      <section className="px-10 flex justify-center">
+    <div className="bg-white md:py-10 mb-20">
+      <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           {/* Header */}
           <SectionHeader title="Zarken" />
 
           {/* Card */}
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             {/* Tabs */}
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {/* Content */}
             {activeTab === "Profile" && (
-              <div className="p-5 w-2/3 mt-5">
-                {/* Avatar Upload - left aligned */}
-                <div>
-                  <Label>LOGO</Label>
-                </div>
-                <div className="flex justify-start mb-10 pl-5">
-                  <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
-                    <FiCamera className="text-black" size={35} />
-                  </div>
-                </div>
+  <div className="p-5 md:p-5 md:w-2/3 mt-5">
+    {/* Avatar Upload - left aligned */}
+    <div>
+      <Label>LOGO</Label>
+    </div>
+    <div className="flex justify-start mb-10 pl-5">
+      <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
+        <FiCamera className="text-black" size={35} />
+      </div>
+    </div>
 
-                {/* Inputs grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
-                    <Label>BUSINESS NAME</Label>
-                    <InfoPill>
-                      <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House No, Street, Area, City, Postal"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
-                  </div>
+    {/* Info grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Row - Business Name */}
+      <div className="md:col-span-2">
+        <Label>BUSINESS NAME</Label>
+        <InfoPill className="px-5 md:px-8">
+          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+            {address || "—"}
+          </span>
+        </InfoPill>
+      </div>
 
-                  {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
-                    <Label>ABOUT</Label>
-                    <InfoPill className="bg-white">
-                      <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House No, Street, Area, City, Postal"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
-                  </div>
-                  {/* Row 2 */}
-                  <div>
-                    <Label>CALL NUMBER</Label>
-                    <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <RiInformationLine size={14} className="ml-auto" />
-                      </div>
-                    </InfoPill>
-                  </div>
+      {/* Row - About */}
+      <div className="md:col-span-2">
+        <Label>ABOUT</Label>
+        <InfoPill className="px-5 md:px-8 bg-white">
+          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+            
+          </span>
+        </InfoPill>
+      </div>
 
-                  <div>
-                    <Label>WHATSAPP NO</Label>
-                    <InfoPill className="flex items-center justify-between">
-                      <input
-                        type="tel"
-                        value={whatsapp}
-                        onChange={(e) => setWhatsapp(e.target.value)}
-                        placeholder="08078436972"
-                        className="flex-1 outline-none py-1 rounded-md text-black"
-                      />
-                      <FiCheckCircle className="text-gray-400 ml-2" size={20} />
-                    </InfoPill>
-                  </div>
+      {/* Row - Call Number */}
+      <div>
+        <Label>CALL NUMBER</Label>
+        <InfoPill className="px-5 md:px-8">
+          <div className="inline-flex items-center justify-between w-full">
+            <span className="text-xs md:text-sm py-1"></span>
+            <RiInformationLine size={14} className="ml-auto" />
+          </div>
+        </InfoPill>
+      </div>
 
-                  {/* Row 3 - Email full width */}
-                  <div className="md:col-span-2">
-                    <Label>BUSINESS EMAIL</Label>
-                    <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <RiInformationLine size={14} className="ml-auto" />
-                      </div>
-                    </InfoPill>
-                  </div>
+      {/* Row - WhatsApp Number */}
+      <div>
+        <Label>WHATSAPP NO</Label>
+        <InfoPill className="px-5 md:px-8 flex items-center justify-between">
+          <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
+            {whatsapp || "—"}
+          </span>
+          <FiCheckCircle className="text-gray-400 ml-2" size={20} />
+        </InfoPill>
+      </div>
 
-                  {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
-                    <Label>BUSINESS ADDRESS</Label>
-                    <InfoPill className="bg-white">
-                      <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House No, Street, Area, City, Postal"
-                        className="w-full outline-none py-1 rounded-md text-black"
-                      />
-                    </InfoPill>
-                  </div>
+      {/* Row - Email */}
+      <div className="md:col-span-2">
+        <Label>BUSINESS EMAIL</Label>
+        <InfoPill className="px-5 md:px-8">
+          <div className="inline-flex items-center justify-between w-full">
+            <span className="text-xs md:text-sm py-1">
+              
+            </span>
+            <RiInformationLine size={14} className="ml-auto" />
+          </div>
+        </InfoPill>
+      </div>
 
-                  {/* Row 5 - State and Landmark */}
-                  <div className="md:col-span-2">
-                    <Label>STATE</Label>
-                    <InfoPill className="relative flex items-center bg-white">
-                      <select
-                        value={stateValue}
-                        onChange={(e) => setStateValue(e.target.value)}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      >
-                        <option value="">{states[0].label}</option>
-                        {states
-                          .filter((s) => s.value !== "")
-                          .map((s) => (
-                            <option key={s.value} value={s.value}>
-                              {s.label}
-                            </option>
-                          ))}
-                      </select>
-                      <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
-                    </InfoPill>
-                  </div>
-                </div>
+      {/* Row - Address */}
+      <div className="md:col-span-2">
+        <Label>BUSINESS ADDRESS</Label>
+        <InfoPill className="px-5 md:px-8 bg-white">
+          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+            {address || "—"}
+          </span>
+        </InfoPill>
+      </div>
 
-                {/* Save Changes */}
-                <div className="mt-10 flex justify-center">
-                  <button
-                    onClick={handleSave}
-                    className="py-3 text-md px-4 font-medium bg-black shadow-lg rounded-lg"
-                  >
-                    SAVE CHANGES
-                  </button>
-                </div>
-              </div>
-            )}
+      {/* Row - State */}
+      <div className="md:col-span-2">
+        <Label>STATE</Label>
+        <InfoPill className="px-5 md:px-8 relative flex items-center bg-white">
+          <span className="w-full text-xs md:text-sm py-1 text-black">
+            {states.find((s) => s.value === stateValue)?.label || "—"}
+          </span>
+          <FiChevronDown className="text-xs md:text-sm pointer-events-none absolute right-5 text-gray-500" />
+        </InfoPill>
+      </div>
+    </div>
+
+    {/* Save Button */}
+    <div className="mt-10 flex justify-center">
+      <button
+        onClick={handleSave}
+        className="py-3 text-white text-md px-4 font-medium bg-black shadow-lg rounded-lg"
+      >
+        SAVE CHANGES
+      </button>
+    </div>
+  </div>
+)}
+
 
             {/* Verify Business Tab */}
             {activeTab === "Verify Business" && (
@@ -646,8 +624,7 @@ const Bizoverview: React.FC = () => {
                       <select
                         value={stateValue}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      >
-                      </select>
+                      ></select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -658,22 +635,17 @@ const Bizoverview: React.FC = () => {
                       <select
                         value={stateValue}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      >
-                      </select>
+                      ></select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
                   <div>
                     <Label>PRICE</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <input
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      />
+                      <input className="appearance-none w-full bg-transparent outline-none py-1 text-black" />
                       <FaPlus className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>
                   </div>
-
-                  
                 </div>
 
                 {/* Save Changes */}
@@ -686,10 +658,10 @@ const Bizoverview: React.FC = () => {
                   </button>
                 </div>
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                    <span className="text-md font-semibold text-black tracking-wide">
-                      --- ANALYTICS ----------------------------
-                    </span>
-                  </div>
+                  <span className="text-md font-semibold text-black tracking-wide">
+                    --- ANALYTICS ----------------------------
+                  </span>
+                </div>
 
                 <div className="grid grid-cols-3 gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
                   <button className="flex items-center border-2 justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
@@ -710,22 +682,21 @@ const Bizoverview: React.FC = () => {
                   </button>
                 </div>
 
-<div className="my-10">
-                            <div className="flex flex-col p-5 gap-8 bg-transparent">
-                              {/* Coming Soon */}
-                              <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
-                                <MdOutlinePending className="w-8 h-8" />
-                                Coming Soon ...
-                              </button>
-            
-                              {/* Join Waitlist */}
-                              <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
-                                <FiMail className="w-8 h-8" />
-                                Join Waitlist &gt;&gt;
-                              </button>
-                            </div>
-                          </div>
+                <div className="my-10">
+                  <div className="flex flex-col p-5 gap-8 bg-transparent">
+                    {/* Coming Soon */}
+                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                      <MdOutlinePending className="w-8 h-8" />
+                      Coming Soon ...
+                    </button>
 
+                    {/* Join Waitlist */}
+                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                      <FiMail className="w-8 h-8" />
+                      Join Waitlist &gt;&gt;
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
