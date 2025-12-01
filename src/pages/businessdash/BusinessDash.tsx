@@ -12,6 +12,7 @@ import Bookingslandlord from "./Bookingslandlord";
 import Hosteloverview from "./Hosteloverview";
 import Listingslandlord from "./Listingslandlord";
 import SidebarInner from "./DashComponents/SidebarInner";
+import { DashboardTabContext } from "./DashComponents/DashboardTabContext";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 
@@ -123,6 +124,7 @@ export default function BusinessDash() {
   };
 
   return (
+    <DashboardTabContext.Provider value={{ activeTab, setActiveTab }}>
     <div className="h-screen w-screen overflow-hidden bg-neutral-950 text-neutral-100">
       {/* NAVBAR */}
       <nav className="flex items-center justify-between px-4 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
@@ -259,5 +261,6 @@ export default function BusinessDash() {
         </main>
       </div>
     </div>
+    </DashboardTabContext.Provider>
   );
 }

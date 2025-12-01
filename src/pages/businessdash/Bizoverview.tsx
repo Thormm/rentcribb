@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FiCamera, FiCheckCircle, FiChevronDown, FiMail } from "react-icons/fi";
+import { FiCamera, FiChevronDown, FiMail } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
@@ -15,13 +15,17 @@ import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
+import { useDashboardTab } from "./DashComponents/DashboardTabContext";
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        className
+      )}
     >
       {children}
     </div>
@@ -32,218 +36,14 @@ type Review = {
   id: number;
   date: string;
   name: string;
-  type: "home" | "user";
   rating?: number;
   text?: string;
 };
-
-const reviews: Review[] = [
-  {
-    id: 1,
-    date: "6th Jan, 2025",
-    name: "Zarken Christian",
-    type: "user",
-    rating: 1,
-    text: "",
-  },
-  {
-    id: 2,
-    date: "6th Jan, 2025",
-    name: "Zarken Christian",
-    type: "user",
-    rating: 5,
-    text: "This is a very good customer, pays well and speaks kindly.",
-  },
-  {
-    id: 3,
-    date: "7th Jan, 2025",
-    name: "Amelia Johnson",
-    type: "home",
-    rating: 4,
-    text: "Polite and easy to communicate with.",
-  },
-  {
-    id: 4,
-    date: "7th Jan, 2025",
-    name: "Brian Cole",
-    type: "user",
-    rating: 2,
-    text: "A bit difficult to reach at times.",
-  },
-  {
-    id: 5,
-    date: "8th Jan, 2025",
-    name: "Sophia Miller",
-    type: "user",
-    rating: 5,
-    text: "Excellent experience, very professional.",
-  },
-  {
-    id: 6,
-    date: "8th Jan, 2025",
-    name: "David Wilson",
-    type: "home",
-    rating: 3,
-    text: "Average interaction, nothing special.",
-  },
-  {
-    id: 7,
-    date: "9th Jan, 2025",
-    name: "Emily Davis",
-    type: "user",
-    rating: 5,
-    text: "Always pays on time and very respectful.",
-  },
-  {
-    id: 8,
-    date: "9th Jan, 2025",
-    name: "Michael Brown",
-    type: "user",
-    rating: 4,
-    text: "Good overall, but can improve communication.",
-  },
-  {
-    id: 9,
-    date: "10th Jan, 2025",
-    name: "Olivia Taylor",
-    type: "home",
-    rating: 2,
-    text: "Not very responsive to messages.",
-  },
-  {
-    id: 10,
-    date: "10th Jan, 2025",
-    name: "James Anderson",
-    type: "user",
-    rating: 5,
-    text: "Reliable and cooperative.",
-  },
-  {
-    id: 11,
-    date: "11th Jan, 2025",
-    name: "Grace Thompson",
-    type: "user",
-    rating: 3,
-    text: "Neutral experience.",
-  },
-  {
-    id: 12,
-    date: "11th Jan, 2025",
-    name: "Ethan Martinez",
-    type: "home",
-    rating: 4,
-    text: "Helpful and friendly.",
-  },
-  {
-    id: 13,
-    date: "12th Jan, 2025",
-    name: "Isabella Moore",
-    type: "user",
-    rating: 5,
-    text: "Wonderful personality, very kind.",
-  },
-  {
-    id: 14,
-    date: "12th Jan, 2025",
-    name: "William Lee",
-    type: "user",
-    rating: 1,
-    text: "Poor behavior, not recommended.",
-  },
-  {
-    id: 15,
-    date: "13th Jan, 2025",
-    name: "Charlotte Harris",
-    type: "home",
-    rating: 4,
-    text: "Smooth transaction, pleasant to work with.",
-  },
-  {
-    id: 16,
-    date: "13th Jan, 2025",
-    name: "Benjamin Clark",
-    type: "user",
-    rating: 5,
-    text: "Always respectful and trustworthy.",
-  },
-  {
-    id: 17,
-    date: "14th Jan, 2025",
-    name: "Mia Lewis",
-    type: "user",
-    rating: 2,
-    text: "Had some issues with delays.",
-  },
-  {
-    id: 18,
-    date: "14th Jan, 2025",
-    name: "Lucas Young",
-    type: "home",
-    rating: 3,
-    text: "Interaction was fine but could improve punctuality.",
-  },
-  {
-    id: 19,
-    date: "15th Jan, 2025",
-    name: "Harper Walker",
-    type: "user",
-    rating: 5,
-    text: "Fantastic person, always cooperative.",
-  },
-  {
-    id: 20,
-    date: "15th Jan, 2025",
-    name: "Daniel Hall",
-    type: "user",
-    rating: 4,
-    text: "Good communication and reliable.",
-  },
-];
 
 type Plan = {
   tag: string;
   features1: string[][];
   features2?: string[][];
-};
-
-// Mock plan data
-const plans: Record<string, Plan> = {
-  TIER1: {
-    tag: "TIER1 : Post Up to 3 Listings",
-    features1: [
-      ["Verify Business Email", ""],
-      ["Verify Business Phone", "Pending"],
-      ["Business Address", "Pending"],
-      ["Business Description", "Pending"],
-      ["Attestation", "Pending"],
-    ],
-    features2: [
-      ["Email Verification", ""],
-      ["Call no. Verification", "Pending"],
-      ["Next of Kin", "Pending"],
-      ["Residential Address", "Pending"],
-      ["Attestation", "Pending"],
-    ],
-  },
-  TIER2: {
-    tag: "TIER2 : Post Up to 15 Listings",
-    features1: [
-      ["ID Verificaiton", "Pending"],
-      ["Face Verificaiton", "Pending"],
-      ["Address Verificaiton", "Pending"],
-      ["Attestation", "Pending"],
-    ],
-  },
-  TIER3: {
-    tag: "TIER3 : Post Unlimited Listings",
-    features1: [
-      ["CAC Verification", "Pending"],
-      ["Supporting Doc.", "Pending"],
-      ["Review Name", "Pending"],
-      ["Posting Request", "Pending"],
-      ["Attestation", "Pending"],
-    ],
-  },
 };
 
 // Header with help icon
@@ -296,11 +96,11 @@ function Tabs({
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-                      "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
-                      active === tab
-                        ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-                        : ""
-                    )}
+            "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
+            active === tab
+              ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
+              : ""
+          )}
         >
           {tab}
         </button>
@@ -311,39 +111,72 @@ function Tabs({
 
 type FilterValue = "all" | 1 | 2 | 3 | 4 | 5;
 
+interface AgentDetails {
+  agent_callno: string;
+  agent_email: string;
+  agent_whats: string;
+  bname_agent: string;
+  babout_agent: string;
+  baddress_agent: string;
+  kin: string;
+  address: string;
+  call_no: string;
+}
+
 const Bizoverview: React.FC = () => {
+  const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("Profile");
-  const [activePlan, setActivePlan] = useState<keyof typeof plans>("TIER1");
-  const current = plans[activePlan];
-  const [whatsapp, setWhatsapp] = useState<string>("08078436972");
-  const [stateValue, setStateValue] = useState<string>(""); // store state code/name
-  const [address, setAddress] = useState<string>("");
+  const [activeTab, setActiveTabPage] = useState<string>("Profile");
+  // Note: original code referenced `plans` in the useState initializer.
+  // To keep identical behavior to your original file, we keep this line as-is.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [activePlan, setActivePlan] = useState<any>("TIER1");
+
+  const [agentDetails, setAgentDetails] = useState<AgentDetails>({
+    agent_callno: "",
+    agent_email: "",
+    agent_whats: "",
+    bname_agent: "",
+    babout_agent: "",
+    baddress_agent: "",
+    kin: "",
+    address: "",
+    call_no: "",
+  });
+
+  // Reviews state (loaded from backend)
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   // Filters + pagination
   const [selectedFilter, setSelectedFilter] = useState<FilterValue>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4; // per your instruction
 
-  // derived values
+  // derived values (computed from reviews)
   const filterCounts = useMemo(() => {
     const byStar: Record<number, number> = {
-      5: reviews.filter((r) => r.rating === 5).length,
-      4: reviews.filter((r) => r.rating === 4).length,
-      3: reviews.filter((r) => r.rating === 3).length,
-      2: reviews.filter((r) => r.rating === 2).length,
-      1: reviews.filter((r) => r.rating === 1).length,
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0,
     };
+    reviews.forEach((r) => {
+      const val = r.rating ?? 0;
+      if (val >= 1 && val <= 5) {
+        byStar[val] = (byStar[val] || 0) + 1;
+      }
+    });
     return {
       total: reviews.length,
       byStar,
     };
-  }, []);
+  }, [reviews]);
 
   const filtered = useMemo<Review[]>(() => {
     if (selectedFilter === "all") return reviews;
     return reviews.filter((r) => r.rating === selectedFilter);
-  }, [selectedFilter]);
+  }, [selectedFilter, reviews]);
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filtered.length / itemsPerPage)),
@@ -362,22 +195,160 @@ const Bizoverview: React.FC = () => {
     }
   }, [currentPage, totalPages]);
 
-  const states = [
-    { value: "", label: "Select State" },
-    { value: "lagos", label: "Lagos" },
-    { value: "abuja", label: "Abuja" },
-    { value: "rivers", label: "Rivers" },
-    // add more as needed
-  ];
+  useEffect(() => {
+    const fetchAgentDetails = async () => {
+      const login_data = JSON.parse(
+        sessionStorage.getItem("login_data") || "{}"
+      );
+      const user = login_data?.user || "";
 
-  const handleSave = () => {
-    const payload = {
-      whatsapp,
-      state: stateValue,
-      address,
+      console.log("Fetching agent details for user:", user);
+
+      try {
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "getAgentDetails",
+            user: user,
+          }),
+        });
+
+        // ✅ Read only once, sanitize it, then parse
+        const text = await response.text();
+        const cleanText = text.trim().replace(/\[\]$/, ""); // remove trailing []
+        console.log("Clean raw response:", cleanText);
+
+        const data = JSON.parse(cleanText || "{}");
+
+        if (data.success && data.agent_details) {
+          setAgentDetails(data.agent_details);
+        } else {
+          console.error("Unexpected data:", data);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
     };
-    console.log("Save profile:", payload);
-  };
+
+    fetchAgentDetails();
+  }, []);
+
+  // Fetch reviews from backend (get_REVIEWS)
+  useEffect(() => {
+    const loadReviews = async () => {
+      const login_data = JSON.parse(
+        sessionStorage.getItem("login_data") || "{}"
+      );
+      const user = login_data?.user || "";
+
+      try {
+        const resp = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_reviews",
+            user: user,
+          }),
+        });
+
+        const text = await resp.text();
+        const clean = text.trim().replace(/\[\]$/, "");
+        let data;
+        try {
+          data = JSON.parse(clean || "{}");
+        } catch (parseErr) {
+          console.error(
+            "Failed to parse reviews JSON:",
+            parseErr,
+            "raw:",
+            clean
+          );
+          data = null;
+        }
+
+        if (data && data.success && Array.isArray(data.reviews)) {
+          // Map/normalize incoming reviews to expected shape if necessary
+          const normalized: Review[] = data.reviews.map((r: any) => ({
+            id: Number(r.id),
+            date: r.date ?? "",
+            name: r.name ?? "",
+            rating: r.rating !== undefined ? Number(r.rating) : undefined,
+            text: r.text ?? "",
+          }));
+          setReviews(normalized);
+        } else {
+          // If API responded but no reviews, set empty
+          setReviews([]);
+        }
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+        setReviews([]);
+      }
+    };
+
+    loadReviews();
+  }, []);
+
+  // ✅ Build the plans reactively with useMemo
+  const plans: Record<string, Plan> = useMemo(
+    () => ({
+      TIER1: {
+        tag: "TIER1 : Post Up to 3 Listings",
+        features1: [
+          [
+            "Verify Business Email",
+            agentDetails.agent_email ? "Good" : "Pending",
+          ],
+          [
+            "Verify Business Phone",
+            agentDetails.agent_callno ? "Good" : "Pending",
+          ],
+          [
+            "Business Address",
+            agentDetails.baddress_agent ? "Good" : "Pending",
+          ],
+          [
+            "Business Description",
+            agentDetails.babout_agent ? "Good" : "Pending",
+          ],
+        ],
+        features2: [
+          ["Email Verification", agentDetails.agent_email ? "Good" : "Pending"],
+          ["Call no. Verification", agentDetails.call_no ? "Good" : "Pending"],
+          ["Next of Kin", agentDetails.kin ? "Good" : "Pending"],
+          ["Residential Address", agentDetails.address ? "Good" : "Pending"],
+        ],
+      },
+      TIER2: {
+        tag: "TIER2 : Post Up to 15 Listings",
+        features1: [
+          ["ID Verification", "Pending"],
+          ["Face Verification", "Pending"],
+          ["Address Verification", "Pending"],
+        ],
+      },
+      TIER3: {
+        tag: "TIER3 : Post Unlimited Listings",
+        features1: [
+          ["CAC Verification", "Pending"],
+          ["Supporting Doc.", "Pending"],
+          ["Review Name", "Pending"],
+          ["Posting Request", "Pending"],
+        ],
+      },
+    }),
+    [agentDetails]
+  ); // 👈 updates only when agentDetails changes
+  const current = plans[activePlan];
+
+  // compute average rating (1 decimal) — safe guard against division by zero
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return "0.0";
+    const sum = reviews.reduce((acc, r) => acc + (r.rating ?? 0), 0);
+    const avg = sum / reviews.length;
+    return avg.toFixed(1);
+  }, [reviews]);
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -389,123 +360,98 @@ const Bizoverview: React.FC = () => {
           {/* Card */}
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             {/* Tabs */}
-            <Tabs active={activeTab} setActive={setActiveTab} />
+            <Tabs active={activeTab} setActive={setActiveTabPage} />
 
             {/* Content */}
             {activeTab === "Profile" && (
-  <div className="p-5 md:p-5 md:w-2/3 mt-5">
-    {/* Avatar Upload - left aligned */}
-    <div>
-      <Label>LOGO</Label>
-    </div>
-    <div className="flex justify-start mb-10 pl-5">
-      <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
-        <FiCamera className="text-black" size={35} />
-      </div>
-    </div>
+              <div className="p-5 md:p-5 md:w-2/3 mt-5">
+                <div className="flex justify-start mb-10 pl-5">
+                  <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
+                    <FiCamera className="text-black" size={35} />
+                  </div>
+                </div>
 
-    {/* Info grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Row - Business Name */}
-      <div className="md:col-span-2">
-        <Label>BUSINESS NAME</Label>
-        <InfoPill className="px-5 md:px-8">
-          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-            {address || "—"}
-          </span>
-        </InfoPill>
-      </div>
+                {/* Info grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Row - Business Name */}
+                  <div className="md:col-span-2">
+                    <Label>BUSINESS NAME</Label>
+                    <InfoPill className="px-5 md:px-8">
+                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+                        {agentDetails.bname_agent || "-"}
+                      </span>
+                    </InfoPill>
+                  </div>
 
-      {/* Row - About */}
-      <div className="md:col-span-2">
-        <Label>ABOUT</Label>
-        <InfoPill className="px-5 md:px-8 bg-white">
-          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-            
-          </span>
-        </InfoPill>
-      </div>
+                  {/* Row - About */}
+                  <div className="md:col-span-2">
+                    <Label>ABOUT</Label>
+                    <InfoPill className="px-5 md:px-8">
+                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+                        {agentDetails.babout_agent || "—"}
+                      </span>
+                    </InfoPill>
+                  </div>
 
-      {/* Row - Call Number */}
-      <div>
-        <Label>CALL NUMBER</Label>
-        <InfoPill className="px-5 md:px-8">
-          <div className="inline-flex items-center justify-between w-full">
-            <span className="text-xs md:text-sm py-1"></span>
-            <RiInformationLine size={14} className="ml-auto" />
-          </div>
-        </InfoPill>
-      </div>
+                  {/* Row - Call Number */}
+                  <div>
+                    <Label>CALL NUMBER</Label>
+                    <InfoPill className="px-5 md:px-8">
+                      <div className="inline-flex items-center justify-between w-full">
+                        <span className="text-xs md:text-sm py-1">
+                          {agentDetails.agent_callno || "—"}
+                        </span>
+                      </div>
+                    </InfoPill>
+                  </div>
 
-      {/* Row - WhatsApp Number */}
-      <div>
-        <Label>WHATSAPP NO</Label>
-        <InfoPill className="px-5 md:px-8 flex items-center justify-between">
-          <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
-            {whatsapp || "—"}
-          </span>
-          <FiCheckCircle className="text-gray-400 ml-2" size={20} />
-        </InfoPill>
-      </div>
+                  {/* Row - WhatsApp Number */}
+                  <div>
+                    <Label>WHATSAPP NO</Label>
+                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
+                      <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
+                        {agentDetails.agent_whats || "—"}
+                      </span>
+                    </InfoPill>
+                  </div>
 
-      {/* Row - Email */}
-      <div className="md:col-span-2">
-        <Label>BUSINESS EMAIL</Label>
-        <InfoPill className="px-5 md:px-8">
-          <div className="inline-flex items-center justify-between w-full">
-            <span className="text-xs md:text-sm py-1">
-              
-            </span>
-            <RiInformationLine size={14} className="ml-auto" />
-          </div>
-        </InfoPill>
-      </div>
+                  {/* Row - Email */}
+                  <div className="md:col-span-2">
+                    <Label>BUSINESS EMAIL</Label>
+                    <InfoPill className="px-5 md:px-8">
+                      <div className="inline-flex items-center justify-between w-full">
+                        <span className="text-xs md:text-sm py-1">
+                          {agentDetails.agent_email || "—"}
+                        </span>
+                      </div>
+                    </InfoPill>
+                  </div>
 
-      {/* Row - Address */}
-      <div className="md:col-span-2">
-        <Label>BUSINESS ADDRESS</Label>
-        <InfoPill className="px-5 md:px-8 bg-white">
-          <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-            {address || "—"}
-          </span>
-        </InfoPill>
-      </div>
-
-      {/* Row - State */}
-      <div className="md:col-span-2">
-        <Label>STATE</Label>
-        <InfoPill className="px-5 md:px-8 relative flex items-center bg-white">
-          <span className="w-full text-xs md:text-sm py-1 text-black">
-            {states.find((s) => s.value === stateValue)?.label || "—"}
-          </span>
-          <FiChevronDown className="text-xs md:text-sm pointer-events-none absolute right-5 text-gray-500" />
-        </InfoPill>
-      </div>
-    </div>
-
-    {/* Save Button */}
-    <div className="mt-10 flex justify-center">
-      <button
-        onClick={handleSave}
-        className="py-3 text-white text-md px-4 font-medium bg-black shadow-lg rounded-lg"
-      >
-        SAVE CHANGES
-      </button>
-    </div>
-  </div>
-)}
-
+                  {/* Row - Address */}
+                  <div className="md:col-span-2">
+                    <Label>BUSINESS ADDRESS</Label>
+                    <InfoPill className="px-5 md:px-8">
+                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
+                        {agentDetails.baddress_agent || "—"}
+                      </span>
+                    </InfoPill>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Verify Business Tab */}
             {activeTab === "Verify Business" && (
-              <div className="p-5 w-2/3">
+              <div className="p-2 md:p-5 md:w-2/3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                   {/* Current Verification Level */}
                   <div className="md:col-span-2">
                     <Label>CURRENT VERIFICATION LEVEL</Label>
-                    <InfoPill>
+                    <InfoPill className="px-5 md:px-8">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">{current.tag}</span>
+                        <span className="text-xs md:text-sm py-1">
+                          {current.tag}
+                        </span>
                         <RiInformationLine size={25} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -515,7 +461,7 @@ const Bizoverview: React.FC = () => {
                   <div className="md:col-span-2">
                     <Label>KYC TIERS</Label>
                     <div
-                      className="grid grid-cols-3 gap-4 mt-5 bg-white p-3 rounded-lg"
+                      className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
                       style={{
                         borderStyle: "dashed",
                         borderColor: "#0000004D",
@@ -531,14 +477,16 @@ const Bizoverview: React.FC = () => {
                             key={tier}
                             onClick={() => setActivePlan(tier)}
                             className={clsx(
-                              "flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors duration-200 border",
+                              "flex items-center justify-center gap-2 rounded-lg md:px-4 py-2 font-semibold transition-colors duration-200 border",
                               isActive
                                 ? "bg-black text-[#D6FFC3] border-black shadow-md"
                                 : "bg-white text-black border-gray-300 hover:bg-gray-100"
                             )}
                           >
                             <MdVerified />
-                            <span className="text-lg">{`TIER ${i + 1}`}</span>
+                            <span className="text-xs md:text-lg">{`TIER ${
+                              i + 1
+                            }`}</span>
                           </button>
                         );
                       })}
@@ -560,71 +508,94 @@ const Bizoverview: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                         <div className="md:col-span-2">
                           <div className="rounded-2xl bg-white text-black mx-1 border p-3 shadow-sm">
-                            {current.features2.map(([label2, value2]) => (
-                              <div
-                                key={label2}
-                                className="flex items-center justify-between py-2 px-4 text-md"
-                              >
-                                <span>{label2}</span>
-                                <span className="inline-flex items-center gap-2">
-                                  {value2} <RiInformationLine size={20} />
-                                </span>
-                              </div>
-                            ))}
+                            {current.features2.map(([label2, value2]) => {
+                              let IconComponent;
+
+                              // Define which icon to show based on value2
+                              if (value2.toLowerCase() === "good") {
+                                IconComponent = MdVerified;
+                              } else {
+                                IconComponent = MdOutlinePending; // default icon
+                              }
+
+                              return (
+                                <div
+                                  key={label2}
+                                  className="flex items-center justify-between py-2 px-4 text-xs md:text-sm"
+                                >
+                                  <span>{label2}</span>
+                                  <span className="inline-flex items-center gap-2 text-xs md:text-md">
+                                    <IconComponent size={20} />
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-10 flex justify-center">
-                        <button
-                          onClick={handleSave}
-                          className="py-3 text-md px-6 font-medium bg-black text-white shadow-lg rounded-lg hover:bg-gray-900"
-                        >
-                          UPDATE
-                        </button>
-                      </div>
+                      {(!agentDetails.agent_email ||
+                        !agentDetails.call_no ||
+                        !agentDetails.kin ||
+                        !agentDetails.address) && (
+                        <div className="mt-10 flex justify-center">
+                          <button
+                            onClick={() => setActiveTab("overview")}
+                            className="py-3 text-md px-6 font-medium bg-black text-white shadow-lg rounded-lg hover:bg-gray-900"
+                          >
+                            UPDATE
+                          </button>
+                        </div>
+                      )}
                     </>
                   )}
 
                   <div className="rounded-2xl bg-white text-black mx-1 mt-10 border p-3 shadow-sm">
-                    {current.features1.map(([label1, value1]) => (
-                      <div
-                        key={label1}
-                        className="flex items-center justify-between py-2 px-4 text-md"
-                      >
-                        <span>{label1}</span>
-                        <span className="inline-flex items-center gap-2">
-                          {value1} <RiInformationLine size={20} />
-                        </span>
-                      </div>
-                    ))}
+                    {current.features1.map(([label1, value1]) => {
+                      let IconComponent;
+
+                      // Define which icon to show based on value2
+                      if (value1.toLowerCase() === "good") {
+                        IconComponent = MdVerified;
+                      } else {
+                        IconComponent = MdOutlinePending; // default icon
+                      }
+
+                      return (
+                        <div
+                          key={label1}
+                          className="flex items-center justify-between py-2 px-4 text-xs md:text-sm"
+                        >
+                          <span>{label1}</span>
+                          <span className="inline-flex items-center gap-2 text-xs md:text-md">
+                            <IconComponent size={20} />
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Update button */}
+                {/* Update button
                 <div className="mt-10 flex justify-center">
                   <button
-                    onClick={handleSave}
                     className="py-3 text-md px-6 font-medium bg-black text-white shadow-lg rounded-lg hover:bg-gray-900"
                   >
                     UPGRADE
                   </button>
-                </div>
+                </div> */}
               </div>
             )}
 
             {activeTab === "Operations" && (
-              <div className="p-5 w-2/3 mt-5">
+              <div className="md:p-5 md:w-2/3 mt-5">
                 {/* Inputs grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
                   <div className="md:col-span-2">
                     <Label>INSPECTION DAYS</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select
-                        value={stateValue}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      ></select>
+                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -632,10 +603,7 @@ const Bizoverview: React.FC = () => {
                   <div>
                     <Label>INSPECTION</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select
-                        value={stateValue}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                      ></select>
+                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -650,35 +618,38 @@ const Bizoverview: React.FC = () => {
 
                 {/* Save Changes */}
                 <div className="mt-10 flex justify-center">
-                  <button
-                    onClick={handleSave}
-                    className="py-3 text-md px-4 font-medium bg-black shadow-lg rounded-lg"
-                  >
+                  <button className="py-3 text-md px-4 font-medium text-white bg-black shadow-lg rounded-lg">
                     SAVE CHANGES
                   </button>
                 </div>
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-semibold text-black tracking-wide">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- ANALYTICS ----------------------------
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
-                  <button className="flex items-center border-2 justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
-                    <RiListView className="text-black" size={30} />
-                    <span className="text-lg font-semibold">LISTINGS</span>
+                <div className="grid grid-cols-3 gap-2 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-1 md:p-3 rounded-lg">
+                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                    <RiListView className="text-black" size={20} />
+                    <span className="text-xs md:text-md font-semibold">
+                      LISTINGS
+                    </span>
                   </button>
-                  <button className="flex items-center border-2 justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
-                    <MdOutlineBookmarkAdded className="text-black" size={30} />
-                    <span className="text-lg font-semibold">SORTED</span>
+                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                    <MdOutlineBookmarkAdded className="text-black" size={20} />
+                    <span className="text-xs md:text-md font-semibold">
+                      BOOKINGS
+                    </span>
                   </button>
 
-                  <button className="flex border-2 items-center justify-center gap-2 p-3 rounded-lg bg-transparent text-black">
+                  <button className="flex border-2 items-center justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
                     <MdOutlineSupervisedUserCircle
                       className="text-black"
-                      size={30}
+                      size={20}
                     />
-                    <span className="text-lg font-semibold">SORTED</span>
+                    <span className="text-xs md:text-md font-semibold">
+                      STUDENTS
+                    </span>
                   </button>
                 </div>
 
@@ -702,7 +673,7 @@ const Bizoverview: React.FC = () => {
 
             {activeTab === "Reviews" && (
               <div className="p-5 mt-5 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* --- STATS ROW (TOTAL + TOP BOOKINGS) --- */}
                   <div className="col-span-2">
                     {/* Row 1: Labels */}
@@ -711,41 +682,48 @@ const Bizoverview: React.FC = () => {
                     </div>
 
                     {/* Row 2: Circle + Bars */}
-                    <div className="flex items-center ml-8">
+                    <div className="flex grid-cols-1 md:grid-cols-2 items-center md:ml-8">
                       {/* TOTAL Circle */}
                       <div className="flex-shrink-0">
                         <div className="w-28 h-28 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg">
                           <span className="text-3xl font-medium text-black">
-                            4.8
+                            {averageRating}
                           </span>
                         </div>
                       </div>
 
                       {/* TOP BOOKINGS */}
                       <div className="flex-1 space-y-1">
-                        {[5, 4, 3, 2, 1].map((count, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            {/* Stars right aligned */}
-                            <div className="w-28 flex justify-end">
-                              <div className="flex justify-end w-full">
-                                {Array.from({ length: count }).map((_, j) => (
-                                  <AiFillStar
-                                    key={j}
-                                    className="text-yellow-500 text-md"
-                                  />
-                                ))}
+                        {[5, 4, 3, 2, 1].map((star, i) => {
+                          const count = filterCounts.byStar[star] || 0;
+                          const width =
+                            filterCounts.total > 0
+                              ? (count / filterCounts.total) * 100
+                              : 0;
+                          return (
+                            <div key={i} className="flex items-center gap-3">
+                              {/* Stars right aligned */}
+                              <div className="w-28 flex justify-end">
+                                <div className="flex justify-end w-full">
+                                  {Array.from({ length: star }).map((_, j) => (
+                                    <AiFillStar
+                                      key={j}
+                                      className="text-yellow-500 text-md"
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Progress bar */}
+                              <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-black"
+                                  style={{ width: `${width}%` }}
+                                />
                               </div>
                             </div>
-
-                            {/* Progress bar stays untouched */}
-                            <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-black"
-                                style={{ width: `${count * 20}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -777,13 +755,13 @@ const Bizoverview: React.FC = () => {
                             setCurrentPage(1); // reset page when filter changes
                           }}
                           className={clsx(
-                            "flex items-center w-35 justify-center border-3 gap-2 rounded-lg px-4 py-2 font-semibold shadow-sm whitespace-nowrap",
+                            "flex items-center w-25 md:w-35 justify-center border-3 gap-2 rounded-lg px-4 py-2 font-semibold shadow-sm whitespace-nowrap",
                             selectedFilter === f.value
                               ? "bg-black text-white border-black"
                               : "bg-white text-black border-black"
                           )}
                         >
-                          <span className="text-lg">
+                          <span className="text-xs md:text-lg">
                             {f.label} (
                             {f.value === "all"
                               ? filterCounts.total
@@ -797,8 +775,8 @@ const Bizoverview: React.FC = () => {
                 </div>
 
                 {/* Header with dashed line */}
-                <div className="flex items-center gap-3 my-8 w-2/3">
-                  <span className="text-md font-semibold text-black tracking-wide">
+                <div className="flex items-center gap-3 my-8 md:w-2/3">
+                  <span className="text-xs md:text-md font-semibold text-black tracking-wide">
                     --- REVIEWS --------------------------
                   </span>
                 </div>
@@ -818,22 +796,25 @@ const Bizoverview: React.FC = () => {
                       return (
                         <div
                           key={r.id}
-                          className="border-black w-2/3 rounded-4xl border px-6 py-4 shadow-sm bg-white"
+                          className="border-black md:w-2/3 rounded-4xl border px-2 md:px-6 py-2 md:py-4 shadow-sm bg-white"
                         >
                           {/* Row 1 */}
                           <div className="flex items-center">
                             {/* Left icon */}
-                            <div className="w-6 h-6 flex items-center justify-center text-black">
-                              <PiHouse className="w-6 h-6" />
+                            <div className="w-6 h-6 md:w-6 md:h-6 flex items-center justify-center text-black">
+                              <PiHouse className="w-4 h-4 md:w-6 md:h-6" />
                             </div>
 
-                            {/* Date + name */}
-                            <div className="flex flex-grow items-center gap-5 px-4">
-                              <span className="text-md font-normal text-black whitespace-nowrap">
+                            {/* Date + Name (SAME LINE) */}
+                            <div className="flex flex-grow min-w-0 items-center gap-2 px-2 md:px-4">
+                              <span className="text-[10px] md:text-md font-normal text-black whitespace-nowrap">
                                 {r.date}
                               </span>
-                              <span className="text-md text-black font-normal truncate">
-                                {r.name}
+
+                              <span className="text-xs md:text-md font-normal text-black truncate max-w-[180px]">
+                                {r.name.length > 14
+                                  ? r.name.substring(0, 14) + "..."
+                                  : r.name}
                               </span>
                             </div>
 
@@ -845,16 +826,16 @@ const Bizoverview: React.FC = () => {
                               }
                             >
                               {isExpanded ? (
-                                <IoIosArrowUp className="w-6 h-6 text-black" />
+                                <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
                               ) : (
-                                <IoIosArrowDown className="w-6 h-6 text-black" />
+                                <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
                               )}
                             </div>
                           </div>
 
                           {/* Expanded section */}
                           {isExpanded && (
-                            <div className="mt-3 px-10 space-y-3">
+                            <div className="mt-3 px-5 md:px-10 space-y-3">
                               {/* Stars */}
                               {r.rating !== undefined && (
                                 <div className="flex items-center gap-1">
@@ -862,12 +843,12 @@ const Bizoverview: React.FC = () => {
                                     i < (r.rating ?? 0) ? (
                                       <AiFillStar
                                         key={i}
-                                        className="w-7 h-7 text-yellow-400"
+                                        className="w-4 h-4 md:w-7 md:h-7 text-yellow-400"
                                       />
                                     ) : (
                                       <AiOutlineStar
                                         key={i}
-                                        className="w-7 h-7 text-gray-300"
+                                        className="w-4 h-4 md:w-7 md:h-7 text-gray-300"
                                       />
                                     )
                                   )}
@@ -875,7 +856,7 @@ const Bizoverview: React.FC = () => {
                               )}
                               {/* Review text */}
                               {r.text && (
-                                <p className="text-sm text-black leading-relaxed">
+                                <p className="text-xs md:text-sm text-black leading-relaxed">
                                   {r.text}
                                 </p>
                               )}

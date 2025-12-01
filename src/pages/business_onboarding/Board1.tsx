@@ -48,7 +48,10 @@ function Label({
 }: React.PropsWithChildren<{ className?: string }>) {
   return (
     <div
-      className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        className
+      )}
     >
       {children}
     </div>
@@ -78,8 +81,7 @@ export default function Board1({
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const isValidPhone = (phone: string) =>
-    /^\+?[0-9]{8,15}$/.test(phone);
+  const isValidPhone = (phone: string) => /^\+?[0-9]{8,15}$/.test(phone);
 
   // === Handle Save to API ===
   const handleSave = async () => {
@@ -94,12 +96,16 @@ export default function Board1({
     }
 
     if (!isValidPhone(bNo)) {
-      alert("Please enter a valid business call number (only digits, optional +, 8–15 digits).");
+      alert(
+        "Please enter a valid business call number (only digits, optional +, 8–15 digits)."
+      );
       return;
     }
 
     if (!isValidPhone(whatsapp)) {
-      alert("Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits).");
+      alert(
+        "Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits)."
+      );
       return;
     }
 
