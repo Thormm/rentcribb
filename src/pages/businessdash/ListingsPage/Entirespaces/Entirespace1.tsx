@@ -234,7 +234,7 @@ export default function Entirespace1({
         </div>
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
-          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 md:px-10">
             <SectionHeader
               title="Space Details"
               caption="Help Guest Imagine their Stay in your Space"

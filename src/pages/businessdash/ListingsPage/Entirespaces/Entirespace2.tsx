@@ -209,7 +209,7 @@ export default function Entirespace2({
         </div>
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
-          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 md:px-10">
             <SectionHeader
               title="Space Details"
               caption="Help Guest Imagine their Stay in your Space"
@@ -218,27 +218,27 @@ export default function Entirespace2({
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 md:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">No. of Bedroom</Label>
+                  <Label className="ml-2 md:ml-8">No. of Bedroom</Label>
                   {counter("bedrooms", formData.bedrooms ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">No. of Ensuite</Label>
+                  <Label className="ml-2 md:ml-8">No. of Ensuite</Label>
                   {counter("ensuite", formData.ensuite ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">No. of Bathroom</Label>
+                  <Label className="ml-2 md:ml-8">No. of Bathroom</Label>
                   {counter("bathrooms", formData.bathrooms ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">No. of Toilets</Label>
+                  <Label className="ml-2 md:ml-8">No. of Toilets</Label>
                   {counter("toilets", formData.toilets ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Security</Label>
+                  <Label className="ml-2 md:ml-8">Security</Label>
                   <InfoPill className="bg-white">
                     <div className="inline-flex items-center justify-between w-full">
                       <select
@@ -259,7 +259,7 @@ export default function Entirespace2({
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Water</Label>
+                  <Label className="ml-2 md:ml-8">Water</Label>
                   <InfoPill className="bg-white">
                     <div className="inline-flex items-center justify-between w-full">
                       <select
@@ -282,18 +282,18 @@ export default function Entirespace2({
               <div className="grid grid-cols-1 gap-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <Label className="space-y-1 pl-5 md:pl-6">
+                    <Label className="space-y-1 pl-2 md:pl-6">
                       Power Supply
                     </Label>
                     <StarRow
-                      className="space-y-1 md:pl-2 text-sm"
+                      className="space-y-1 md:pl-2"
                       value={formData.power_supply ?? 0}
                       onChange={(v) => updateField("power_supply", v)}
                     />
                   </div>
 
                   <div>
-                    <Label className="space-y-1 pl-5 md:pl-6">
+                    <Label className="space-y-1 pl-2 md:pl-6">
                       Network Strength
                     </Label>
                     <StarRow
@@ -306,7 +306,7 @@ export default function Entirespace2({
 
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <Label className="space-y-1 pl-5 md:pl-6">Compound</Label>
+                    <Label className="space-y-1 pl-2 md:pl-6">Compound</Label>
                     <StarRow
                       className="space-y-1 md:pl-2"
                       value={formData.compound ?? 0}
@@ -315,7 +315,7 @@ export default function Entirespace2({
                   </div>
 
                   <div>
-                    <Label className="space-y-1 pl-5 md:pl-6">
+                    <Label className="space-y-1 pl-2 md:pl-6">
                       Access Road
                     </Label>
                     <StarRow

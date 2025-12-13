@@ -367,7 +367,7 @@ export default function Entirespace3({
 
         {/* Right Stack */}
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
-          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 md:px-10">
             <SectionHeader
               title="Space Details"
               caption="Help Guest Imagine their Stay in your Space"
@@ -377,7 +377,7 @@ export default function Entirespace3({
               <div className="grid grid-cols-2 gap-6">
                 {/* All Features */}
                 <div className="space-y-1">
-                  <Label className="ml-8">All Feature</Label>
+                  <Label className="ml-2 md:ml-8">All Feature</Label>
                   <InfoPill
                     className="bg-white cursor-pointer"
                     onClick={() => setShowAllFeaturesModal(true)}
@@ -395,7 +395,7 @@ export default function Entirespace3({
 
                 {/* Special Feature */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Special Feature</Label>
+                  <Label className="ml-2 md:ml-8">Special Feature</Label>
                   <InfoPill
                     className="bg-white cursor-pointer"
                     onClick={() => setShowSpecialFeatureModal(true)}
@@ -414,7 +414,7 @@ export default function Entirespace3({
                 {/* Photo */}
                 <div className="space-y-1">
                   <Label className="ml-5 md:ml-8">Hostel Photo</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] px-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
@@ -459,7 +459,7 @@ export default function Entirespace3({
                 {/* Video */}
                 <div className="space-y-1">
                   <Label className="ml-5 md:ml-8">Hostel Video</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] px-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
@@ -673,7 +673,7 @@ export default function Entirespace3({
       {/* PREVIEW MODAL */}
       {showPreviewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-2xl w-3/5 max-h-[90vh] overflow-y-auto p-6">
+          <div className="bg-white rounded-2xl md:w-3/5 max-h-[90vh] overflow-y-auto p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold">Preview Space</h3>
               <button
@@ -731,9 +731,9 @@ export default function Entirespace3({
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="mt-4">
               <button
-                className="px-4 py-2 bg-black text-white rounded-full"
+                className="w-full py-2 rounded-lg bg-black text-white"
                 onClick={() => setShowPreviewModal(false)}
               >
                 Close

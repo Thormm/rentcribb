@@ -86,7 +86,7 @@ export default function Entirespace4({ onBack, formData, setFormData }: Entiresp
         setTimeout(() => {
           setStatusMessage(null);
         }, 1000);
-        navigate("/login");
+        navigate("/businessdash?goto=listings");
       } 
       else {setStatusMessage("Error: " + (data.message || "Unknown"));
         setTimeout(() => setStatusMessage(null), 2000);} 
@@ -128,7 +128,7 @@ export default function Entirespace4({ onBack, formData, setFormData }: Entiresp
         </div>
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
-          <Maincard className="bg-[#CDBCEC] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#CDBCEC] pb-5 md:pb-8 md:px-10">
             <SectionHeader title="Booking & Rent" caption="Help Guest Imagine their Stay in your Space" />
 
             <div className="md:px-5 pb-4 pt-3 space-y-4">
@@ -150,7 +150,7 @@ export default function Entirespace4({ onBack, formData, setFormData }: Entiresp
 
                   return (
                     <div key={field} className="space-y-1">
-                      <Label className="ml-8">{label}</Label>
+                      <Label className="ml-5">{label}</Label>
                       <InfoPill className="bg-white">
                         <div className="inline-flex items-center justify-between w-full">
                           {isSelectField(field) ? (
