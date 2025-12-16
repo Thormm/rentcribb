@@ -121,6 +121,7 @@ interface AgentDetails {
   kin: string;
   address: string;
   call_no: string;
+  first: string;
 }
 
 const Bizoverview: React.FC = () => {
@@ -142,6 +143,7 @@ const Bizoverview: React.FC = () => {
     kin: "",
     address: "",
     call_no: "",
+    first: "",
   });
 
   // Reviews state (loaded from backend)
@@ -355,7 +357,7 @@ const Bizoverview: React.FC = () => {
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           {/* Header */}
-          <SectionHeader title="Zarken" />
+          <SectionHeader title={agentDetails.first || "user"} />
 
           {/* Card */}
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">

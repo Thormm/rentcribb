@@ -44,12 +44,14 @@ const draftItems = Array.from({ length: 20 }, (_, i) => ({
     i % 3 === 0 ? "Processing" : i % 3 === 1 ? "Incomplete" : "Not Approved",
 }));
 
-// ----------------------- Reusable small helpers -----------------------
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        className
+      )}
     >
       {children}
     </div>
@@ -60,7 +62,7 @@ function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
-        <h2 className="text-4xl font-extrabold">{title}</h2>
+        <h2 className="text-2xl md:text-4xl font-extrabold">{title}</h2>
         <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
           <BsQuestionCircle className="text-white" size={40} />
         </div>
@@ -143,7 +145,7 @@ function PaginatedCards() {
       >
         {currentData.map((card, idx) => (
           <div key={idx} className="flex items-center gap-6 w-full">
-            <div className="w-1/3 flex flex-col gap-4">
+            <div className="md:w-1/3 flex flex-col gap-4">
               <InfoPill className="bg-white">
                 <div className="inline-flex items-center justify-between w-full ">
                   <span className="text-md py-1 text-black">Great deals</span>
@@ -181,7 +183,7 @@ function PaginatedCards() {
               </div>
             </div>
 
-            <div className="w-2/3 flex justify-center">
+            <div className="md:w-2/3 flex justify-center">
               <Card item={card} />
             </div>
           </div>
@@ -313,31 +315,32 @@ const Listings: React.FC = () => {
   const [stateValue, setStateValue] = useState(""); // store state code/name
 
   return (
-    <div className="bg-white py-10">
-      <section className="px-10 flex justify-center">
-        <div className="w-full max-w-6xl">
+    <div className="bg-white md:py-10 mb-20">
+      <section className="px-3 md:px-10 flex justify-center">
+        <div className="w-full">
+          {/* Header */}
           <SectionHeader title="Listings" />
 
           <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Live" && (
-              <div className="p-5 mt-5 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
+              <div className="md:p-5 mt-5 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* Row 1 - First Name with FaPlus */}
                   <div className="relative flex flex-col mb-10">
                     <Label>NEW LISTING</Label>
                     {/* Trigger Button */}
                     <div
                       onClick={() => setOpen(true)}
-                      className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                      className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
                     >
                       <FaPlus size={20} className="text-white" />
                     </div>
                   </div>
 
-                  {/* Row 2 - State + State side by side */}
-                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                 {/* Row 2 - State + State side by side */}
+                  <div className="mt-5 col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* State 1 */}
                     <div>
                       <Label>TOTAL ACTIVE</Label>
@@ -358,7 +361,7 @@ const Listings: React.FC = () => {
                   </div>
 
                   {/* Row 2 - State + State side by side */}
-                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                  <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* State 1 */}
                     <div>
                       <Label>CATEGORY</Label>
@@ -401,7 +404,7 @@ const Listings: React.FC = () => {
                 </div>
                 <PaginatedCards />
                 {/* Coming Soon */}
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
@@ -483,7 +486,7 @@ const Listings: React.FC = () => {
       {open && (
               <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
                 {/* Modal Box */}
-                <div className="relative mx-auto my-10 w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+                <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
                   {/* Close */}
                   <div
                     className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
@@ -555,7 +558,7 @@ const Listings: React.FC = () => {
       
                     {/* Coming Soon */}
                     <div className="text-md font-semibold text-black text-center">
-                      --------------- COMING SOON ---------------
+                      -------- COMING SOON --------
                     </div>
       
                     {/* Short-let Space */}
