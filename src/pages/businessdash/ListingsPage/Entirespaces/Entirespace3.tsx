@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import imgright from "../../../../../src/assets/list3.png";
 import { DfButton } from "../../../../components/Pill";
@@ -66,7 +66,7 @@ interface Institute {
   institution: string;
 }
 
-/* ---------- removed "None" from ALL_FEATURES; special feature gets "None" option ---------- */
+/* ---------- features list ---------- */
 const ALL_FEATURES = [
   "Parking Space",
   "Fenced",
@@ -127,13 +127,13 @@ export default function Entirespace3({
   const [showSpecialFeatureModal, setShowSpecialFeatureModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  // New states for upload progress & preview modal
-  const [photoUploadProgress, setPhotoUploadProgress] = useState<number>(0); // simulated on select
-  const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0); // simulated on select
-  const [uploadProgress, setUploadProgress] = useState<number>(0); // real progress during submit (XHR)
+  // upload progress states
+  const [photoUploadProgress, setPhotoUploadProgress] = useState<number>(0);
+  const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
-  // Fetch universities correctly via GET request
+  // fetch institutes
   useEffect(() => {
     fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
@@ -143,31 +143,52 @@ export default function Entirespace3({
     })
       .then((res) => res.json())
       .then((data) => {
-        const parsed = data.map((item: string) => JSON.parse(item));
-        setInstitutes(parsed);
+        try {
+          const parsed = (data || []).map((item: string) => JSON.parse(item));
+          setInstitutes(parsed);
+        } catch {
+          setInstitutes([]);
+        }
       })
       .catch((err) => console.error("Failed to load institutions:", err));
   }, []);
 
-  /* ----------------- FILE HANDLER (ENFORCEMENTS + SIMULATED PROGRESS) ----------------- */
+  /* ----------------- Helpers ----------------- */
+
+  // get preview src for File or URL string
+  const getSrc = (p: any) => {
+    if (!p) return null;
+    return p instanceof File ? URL.createObjectURL(p) : p;
+  };
+
+  // truncate helper
+  const truncateText = (text: string, maxLength: number = 20) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
+  const selectedFeatures = (formData.all_feature || "")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  /* ----------------- File select handler ----------------- */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (!files) return;
 
     if (name === "photos") {
-      // Convert FileList to array
       const selected = Array.from(files);
 
-      // ensure maximum of 5 photos total
       if (selected.length > 5) {
         alert("You can upload a maximum of 5 photos. Please select up to 5.");
         return;
       }
 
-      // set files
+      // Replace photos with newly selected File objects
       setFormData((prev: any) => ({ ...prev, photos: selected }));
 
-      // Simulate per-file upload progress quickly (selection-time feedback)
+      // Simulated quick progress for selection feedback
       setPhotoUploadProgress(0);
       let p = 0;
       const t = setInterval(() => {
@@ -175,7 +196,6 @@ export default function Entirespace3({
         setPhotoUploadProgress(Math.min(100, p));
         if (p >= 100) {
           clearInterval(t);
-          // keep it visible briefly then clear
           setTimeout(() => setPhotoUploadProgress(0), 700);
         }
       }, 120);
@@ -185,9 +205,6 @@ export default function Entirespace3({
       const file = files[0];
       if (!file) return;
 
-      // Only one video allowed
-      // (input type file won't provide more than one here, but keep check for safety)
-      // Check duration: create temporary video element
       const url = URL.createObjectURL(file);
       const videoEl = document.createElement("video");
       videoEl.preload = "metadata";
@@ -202,10 +219,8 @@ export default function Entirespace3({
           return;
         }
 
-        // Accept video
         setFormData((prev: any) => ({ ...prev, video: file }));
 
-        // Simulate upload progress for the video selection
         setVideoUploadProgress(0);
         let p = 0;
         const t = setInterval(() => {
@@ -224,8 +239,15 @@ export default function Entirespace3({
     }
   };
 
-  /* ----------------- SUBMIT HANDLER with XHR to show real upload % ----------------- */
+  /* ----------------- Submit (XHR for progress) ----------------- */
   const handleSubmit = async () => {
+    // target_university is required per previous logic
+    if (!formData.target_university) {
+      setStatusMessage("Please complete all required fields");
+      setTimeout(() => setStatusMessage(null), 2000);
+      return;
+    }
+
     setLoading(true);
     setStatusMessage("Saving...");
     setUploadProgress(0);
@@ -244,11 +266,18 @@ export default function Entirespace3({
       data.append("special_feature", formData.special_feature || "");
       data.append("target_university", formData.target_university || "");
 
-      // Append photos and video
-      formData.photos?.forEach((file: File) => data.append("photos[]", file));
-      if (formData.video) data.append("video", formData.video);
+      // Append only File objects (do not append URL strings)
+      (formData.photos || []).forEach((p: any) => {
+        if (p instanceof File) {
+          data.append("photos[]", p);
+        }
+      });
 
-      // Use XHR to track upload progress
+      if (formData.video instanceof File) {
+        data.append("video", formData.video);
+      }
+
+      // XHR for upload progress
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "https://www.cribb.africa/api_save.php");
@@ -266,19 +295,44 @@ export default function Entirespace3({
               const resp = JSON.parse(xhr.responseText || "{}");
 
               if (xhr.status >= 200 && xhr.status < 300 && resp.success) {
-                // Success: show message and move next after 1 second
                 setStatusMessage("Saved successfully!");
                 setUploadProgress(100);
 
+                // If backend returned final filenames, convert to URLs and store
+                // backend response keys used by the patched PHP:
+                // resp.photos_final (array of filenames) and resp.video_final (filename)
+                if (resp.photos_final && Array.isArray(resp.photos_final)) {
+                  const base = `https://www.cribb.africa/uploads/entire_spaces/${user}`;
+                  const urls = resp.photos_final.map((fn: string) =>
+                    fn &&
+                    (fn.startsWith("http://") || fn.startsWith("https://"))
+                      ? fn
+                      : `${base}/${fn}`
+                  );
+                  setFormData((prev: any) => ({ ...prev, photos: urls }));
+                }
+
+                if (resp.video_final) {
+                  const base = `https://www.cribb.africa/uploads/entire_spaces/${user}`;
+                  const vUrl =
+                    resp.video_final &&
+                    (resp.video_final.startsWith("http://") ||
+                      resp.video_final.startsWith("https://"))
+                      ? resp.video_final
+                      : resp.video_final
+                      ? `${base}/${resp.video_final}`
+                      : null;
+                  setFormData((prev: any) => ({ ...prev, video: vUrl }));
+                }
+
                 setTimeout(() => {
                   setStatusMessage(null);
-                  if (onNext) onNext(); // ONLY call onNext here
-                }, 1000);
+                  if (onNext) onNext();
+                }, 900);
 
                 resolve();
               } else {
                 reject(resp?.message || "Upload failed");
-                setStatusMessage(null);
               }
             } catch (err) {
               reject("Invalid server response");
@@ -291,7 +345,6 @@ export default function Entirespace3({
         xhr.send(data);
       });
 
-      // Only clear loading and progress here, do NOT call onNext again
       setLoading(false);
       setUploadProgress(0);
     } catch (err: any) {
@@ -302,7 +355,7 @@ export default function Entirespace3({
     }
   };
 
-  /* ----------------- FEATURES TOGGLING ----------------- */
+  /* ----------------- Features toggling ----------------- */
   const toggleFeature = (feature: string) => {
     const features = formData.all_feature
       ? formData.all_feature.split(",")
@@ -322,18 +375,6 @@ export default function Entirespace3({
       });
     }
   };
-
-  // Helper to truncate long strings
-  const truncateText = (text: string, maxLength: number = 20) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
-  /* ----------------- Helpers for special features list ----------------- */
-  const selectedFeatures = (formData.all_feature || "")
-    .split(",")
-    .map((s: string) => s.trim())
-    .filter(Boolean);
 
   return (
     <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
@@ -423,7 +464,6 @@ export default function Entirespace3({
                           : "Add Photo"}
                       </span>
 
-                      {/* show selection-simulated progress or overall upload progress */}
                       <div className="ml-auto flex items-center gap-2">
                         {photoUploadProgress > 0 &&
                           photoUploadProgress < 100 && (
@@ -448,12 +488,15 @@ export default function Entirespace3({
                       />
                     </div>
                   </div>
+
                   <div className="flex justify-center mt-1 mx-2 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
                       add a sum of 5 photos that shows overall view of the space
                       features.
                     </span>
                   </div>
+
+                 
                 </div>
 
                 {/* Video */}
@@ -466,7 +509,6 @@ export default function Entirespace3({
                         {formData.video ? "Video (1/1)" : "Add Video"}
                       </span>
 
-                      {/* show selection-simulated progress or overall upload progress */}
                       <div className="ml-auto flex items-center gap-2">
                         {videoUploadProgress > 0 &&
                           videoUploadProgress < 100 && (
@@ -490,12 +532,15 @@ export default function Entirespace3({
                       />
                     </div>
                   </div>
+
                   <div className="flex justify-center mt-1 mx-2 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
                       add a 2mins videos that shows detailed & quick overall
                       view of the space.
                     </span>
                   </div>
+
+                  
                 </div>
               </div>
 
@@ -538,7 +583,7 @@ export default function Entirespace3({
                 }}
               />
 
-              {/* PREVIEW BUTTON: clickable, opens modal */}
+              {/* PREVIEW BUTTON */}
               <button
                 onClick={() => setShowPreviewModal(true)}
                 className="w-full my-8 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
@@ -560,7 +605,6 @@ export default function Entirespace3({
         </div>
       </div>
 
-      {/* MODALS */}
       {/* ALL FEATURES MODAL */}
       {showAllFeaturesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -621,7 +665,6 @@ export default function Entirespace3({
             </div>
 
             <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
-              {/* None Option */}
               <label className="flex items-center gap-3 text-sm cursor-pointer">
                 <input
                   type="radio"
@@ -638,7 +681,6 @@ export default function Entirespace3({
                 <span>None</span>
               </label>
 
-              {/* Only show features the user selected */}
               {selectedFeatures.map((feat: string) => (
                 <label
                   key={feat}
@@ -702,14 +744,17 @@ export default function Entirespace3({
               <h4 className="font-semibold">Photos</h4>
               <div className="grid grid-cols-3 gap-3 mt-2">
                 {formData.photos && formData.photos.length > 0 ? (
-                  formData.photos.map((p: File, i: number) => (
-                    <img
-                      key={i}
-                      src={URL.createObjectURL(p)}
-                      alt={`preview-${i}`}
-                      className="rounded-xl h-28 w-full object-cover"
-                    />
-                  ))
+                  formData.photos.map((p: any, i: number) => {
+                    const src = getSrc(p);
+                    return src ? (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`preview-${i}`}
+                        className="rounded-xl h-28 w-full object-cover"
+                      />
+                    ) : null;
+                  })
                 ) : (
                   <p className="text-sm text-gray-500">No photos uploaded</p>
                 )}
@@ -722,7 +767,7 @@ export default function Entirespace3({
                 {formData.video ? (
                   <video
                     controls
-                    src={URL.createObjectURL(formData.video)}
+                    src={getSrc(formData.video)}
                     className="w-full rounded-xl"
                   />
                 ) : (

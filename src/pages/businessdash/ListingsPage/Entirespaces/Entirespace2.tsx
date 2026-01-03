@@ -109,6 +109,19 @@ export default function Entirespace2({
   };
 
   const saveAndContinue = async () => {
+    if (
+      !formData.security ||
+      !formData.water ||
+      !formData.power_supply ||
+      !formData.network_strength ||
+      !formData.compound ||
+      !formData.access_road
+    ) {
+      setStatusMessage("Please complete all required fields");
+      setTimeout(() => setStatusMessage(null), 2000);
+      return;
+    }
+
     if (loading) return;
     setLoading(true);
     setStatusMessage("Saving...");
@@ -120,7 +133,7 @@ export default function Entirespace2({
     const payload = {
       action: "entire_space2",
       user: user,
-      signup_key:signup_key,
+      signup_key: signup_key,
       space_id: formData.space_id ?? 0,
       bedrooms: formData.bedrooms ?? 0,
       ensuite: formData.ensuite ?? 0,

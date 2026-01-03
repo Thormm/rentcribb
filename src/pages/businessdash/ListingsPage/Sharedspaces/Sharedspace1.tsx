@@ -101,7 +101,6 @@ export default function Sharedspace1({
   ];
 
   const houseRuleOptions = [
-    "None",
     "No smoking",
     "No pets",
     "No Inflammables",
@@ -153,7 +152,20 @@ export default function Sharedspace1({
       : formData.selectedRules.join(", ");
 
   const handleNext = async () => {
+    if (
+      !formData.spaceName ||
+      !formData.fullAddress ||
+      !formData.selectedType ||
+      !formData.selectedLocation ||
+      !formData.selectedMonth
+    ) {
+      setStatusMessage("Please fill all required fields");
+      setTimeout(() => setStatusMessage(null), 2000);
+      return;
+    }
+
     if (loading) return;
+
     setLoading(true);
     setStatusMessage("Saving...");
 
@@ -181,21 +193,25 @@ export default function Sharedspace1({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       const data = await response.json();
+
       if (data.success) {
         setStatusMessage("Saved successfully!");
+
         if (!formData.space_id && data.space_id) {
           setFormData({ ...formData, space_id: data.space_id });
         }
+
         setTimeout(() => {
           setStatusMessage(null);
-          if (onNext) onNext();
+          onNext?.();
         }, 1000);
       } else {
         setStatusMessage(`Error: ${data.message}`);
         setTimeout(() => setStatusMessage(null), 2000);
       }
-    } catch (err) {
+    } catch {
       setStatusMessage("Network error occurred");
       setTimeout(() => setStatusMessage(null), 2000);
     } finally {

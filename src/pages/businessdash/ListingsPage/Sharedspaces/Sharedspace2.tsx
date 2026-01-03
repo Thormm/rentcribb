@@ -170,6 +170,23 @@ export default function Sharedspace2({
   };
 
   const saveAndContinue = async () => {
+    if (
+      !formData.pref_gender ||
+      !formData.pref_religion ||
+      !formData.pref_year ||
+      !formData.pref_faculty ||
+      !formData.security ||
+      !formData.water ||
+      !formData.power_supply ||
+      !formData.network_strength ||
+      !formData.compound ||
+      !formData.access_road
+    ) {
+      setStatusMessage("Please complete all required fields");
+      setTimeout(() => setStatusMessage(null), 2000);
+      return;
+    }
+
     if (loading) return;
     setLoading(true);
     setStatusMessage("Saving...");
