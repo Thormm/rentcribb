@@ -113,8 +113,12 @@ const cards = Array.from({ length: 12 }, (_, i) => ({
   reviews: 100 + i * 10,
   title: `Listing ${i + 1} - Room type available`,
   location: `Location ${i + 1}`,
-  price: `₦${(i + 1) * 100000} per Year`,
+  price: (i + 1) * 100000,
   background: "bg-white",
+  name: "",
+  space: "",
+  duration: "",
+  type: "",
 }));
 
 // ----------------------- Live: existing paginated cards (5 per page) -----------------------

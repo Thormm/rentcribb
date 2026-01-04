@@ -11,7 +11,11 @@ type CardItemA = {
   reviews: number;
   title: string;
   location: string;
-  price: string;
+  price: number;
+  name: string;
+  space: string;
+  duration: string;
+  type: string;
 };
 
 const cards: CardItemA[] = [
@@ -21,8 +25,13 @@ const cards: CardItemA[] = [
     reviews: 527,
     title: "A room and parlor (New) is available",
     location: "Safari Agbeke",
-    price: "₦800,000 per Session",
     background: "bg-white",
+    price: 200000,
+    name: "Room Selfcontain",
+    space: "100 sq ft",
+    duration: "Yearly",
+    type: "Self-contained",
+    
   },
   {
     tier: 2,
@@ -30,8 +39,12 @@ const cards: CardItemA[] = [
     reviews: 27,
     title: "A Room Selfcontain (New) is available",
     location: "around PAYE for a Split Amount of",
-    price: "200,000 per Year.",
     background: "bg-[#CDBCEC]",
+    price: 200000,
+    name: "Room Selfcontain",
+    space: "100 sq ft",
+    duration: "Yearly",
+    type: "Self-contained",
   },
   {
     tier: 3,
@@ -39,8 +52,12 @@ const cards: CardItemA[] = [
     reviews: 527,
     title: "3 units of ‘A room in a flat’ (Furnished)",
     location: "is available around PAYE for",
-    price: "₦800,000 per 9months",
     background: "bg-white",
+    price: 200000,
+    name: "Room Selfcontain",
+    space: "100 sq ft",
+    duration: "Yearly",
+    type: "Self-contained",
   },
 ];
 
