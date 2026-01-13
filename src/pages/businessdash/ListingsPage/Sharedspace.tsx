@@ -46,6 +46,7 @@ interface FormData {
 const Sharedspace: React.FC = () => {
   const [searchParams] = useSearchParams();
   const spaceIdFromUrl = searchParams.get("id") || "";
+  const uploaderType = searchParams.get("uploader") || "";
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -192,6 +193,7 @@ const Sharedspace: React.FC = () => {
           formData={formData}
           setFormData={setFormData}
           onNext={goNext}
+          uploader={uploaderType}
         />
       )}
       {step === 2 && (

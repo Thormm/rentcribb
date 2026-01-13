@@ -58,25 +58,29 @@ async function getDraftSpaces(user: string) {
   const res = await fetch("https://www.cribb.africa/apigets.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "get_spaces", user }),
+    body: JSON.stringify({ action: "get_agent_spaces", user }),
   });
 
   const data = await res.json();
 
   const entire = (data.entire_spaces || []).map((item: any) => ({
     id: `entire-${item.id}`,
+    gotoid: item.id,
     name: item.space_name || "Entire Space",
     type: "entire",
     created_at: item.created_at,
     status: item.status,
+    space: "entirespace",
   }));
 
   const shared = (data.shared_spaces || []).map((item: any) => ({
     id: `shared-${item.id}`,
+    gotoid: item.id,
     name: item.space_name || "Shared Space",
     type: "shared",
     created_at: item.created_at,
     status: item.status,
+    space: "sharedspace",
   }));
 
   return [...entire, ...shared];
@@ -88,6 +92,8 @@ type DraftItem = {
   type: string;
   created_at: string;
   status?: string;
+  gotoid: string;
+  space: string;
 };
 
 const groupByStatus = (data: DraftItem[], order: string[]): DraftItem[] => {
@@ -117,6 +123,7 @@ function PaginatedDrafts() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("date_recent");
   const [fuse, setFuse] = useState<Fuse<any> | null>(null);
+  const navigate = useNavigate();
 
   const itemsPerPage = 10;
 
@@ -261,7 +268,15 @@ function PaginatedDrafts() {
             style={{ maxHeight: 420 }}
           >
             {currentData.map((item) => (
-              <div key={item.id} className="flex gap-6">
+              <div
+                key={item.id}
+                className="flex gap-6"
+                onClick={
+                  item.status?.trim() === "Incomplete"
+                    ? () => navigate(`/${item.space}?id=${item.gotoid}`)
+                    : undefined
+                }
+              >
                 {/* LEFT */}
                 <div className="grid grid-cols-10 items-center bg-white border rounded-4xl gap-2 px-4 py-4 shadow-sm flex-1">
                   <div className="col-span-2 flex justify-left">
@@ -481,7 +496,6 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
 
   return [...entire, ...shared];
 }
-
 
 function PaginatedCards() {
   const [cards, setCards] = useState<any[]>([]);
@@ -741,7 +755,7 @@ const Listings: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <div
-                  onClick={() => navigate("/entirespace")}
+                  onClick={() => navigate("/entirespace?uploader=agent")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
                 >
                   <PiHouse className="text-black text-4xl ml-5" />
@@ -761,7 +775,7 @@ const Listings: React.FC = () => {
 
               <div>
                 <div
-                  onClick={() => navigate("/sharedspace")}
+                  onClick={() => navigate("/sharedspace?uploader=agent")}
                   className="cursor-pointer relative flex border-1 pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <MdOutlineBed className="text-black text-3xl ml-5" />

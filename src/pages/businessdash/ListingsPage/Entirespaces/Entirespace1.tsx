@@ -64,12 +64,14 @@ interface Entirespace1Props {
   formData: any;
   setFormData: (data: any) => void;
   onNext?: () => void;
+  uploader : any;
 }
 
 export default function Entirespace1({
   formData,
   setFormData,
   onNext,
+  uploader,
 }: Entirespace1Props) {
   const navigate = useNavigate();
 
@@ -185,6 +187,7 @@ export default function Entirespace1({
       selectedLocation: formData.selectedLocation,
       selectedMonth: formData.selectedMonth,
       selectedRules: formData.selectedRules,
+      uploader: uploader,
     };
 
     try {

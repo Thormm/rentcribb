@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import { Medal, Star, User, ChevronLeft, ChevronRight } from "lucide-react";
 
 function TierBadge({ n }: { n: number }) {
@@ -46,6 +46,7 @@ type CardProps<T extends CardItemBase> = {
 
 export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
   const [idx, setIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   // Build full image URLs from item.photos and item.user
   const photoUrls = (item.photos || []).map((filename) => {
@@ -67,6 +68,17 @@ export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
     setIdx((p) => (p === photoUrls.length - 1 ? 0 : p + 1));
   }
 
+  useEffect(() => {
+    photoUrls.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, [photoUrls]);
+
+  useEffect(() => {
+    setLoading(true);
+  }, [idx]);
+
   return (
     <div
       className={`w-85 rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${item.background} border-black`}
@@ -75,15 +87,26 @@ export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
       <div className="relative h-75 border-black border-2 w-full overflow-hidden rounded-2xl bg-gray-100">
         {/* Image (or placeholder) */}
         {currentUrl ? (
-          <img
-            src={currentUrl}
-            alt={item.name ?? "space image"}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // fallback to placeholder if image fails
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
+          <>
+            {loading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
+                Loading...
+              </div>
+            )}
+
+            <img
+              src={currentUrl}
+              alt={item.name ?? "space image"}
+              className={`w-full h-full object-contain transition-opacity duration-300 ${
+                loading ? "opacity-0" : "opacity-100"
+              }`}
+              onLoad={() => setLoading(false)}
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+                setLoading(false);
+              }}
+            />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500">
             <div className="text-center">

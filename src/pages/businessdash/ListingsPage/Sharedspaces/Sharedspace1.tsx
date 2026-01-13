@@ -64,12 +64,14 @@ interface Sharedspace1Props {
   formData: any;
   setFormData: (data: any) => void;
   onNext?: () => void;
+  uploader : any;
 }
 
 export default function Sharedspace1({
   formData,
   setFormData,
   onNext,
+  uploader,
 }: Sharedspace1Props) {
   const navigate = useNavigate();
 
@@ -185,6 +187,7 @@ export default function Sharedspace1({
       selectedLocation: formData.selectedLocation,
       selectedMonth: formData.selectedMonth,
       selectedRules: formData.selectedRules,
+      uploader: uploader,
     };
 
     try {
