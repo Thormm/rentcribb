@@ -433,7 +433,7 @@ const Overview = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "overview_feedback_send",
+          action: "overview_feedback_send_merchant",
           user,
           feedback,
         }),

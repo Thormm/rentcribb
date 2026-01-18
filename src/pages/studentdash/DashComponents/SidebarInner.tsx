@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   MdOutlineAccountBalanceWallet,
   MdOutlineDashboard,
-  MdWallet
+  MdWallet,
 } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
 import { FiSettings, FiHome } from "react-icons/fi";
@@ -38,7 +38,7 @@ export default function SidebarInner({
     navigate("/login", { replace: true });
   };
   const navigate = useNavigate(); // ✅ initialize router navigation
- 
+
   // ✅ Fetch sidebar data
   useEffect(() => {
     const fetchSidebarData = async () => {
@@ -51,7 +51,7 @@ export default function SidebarInner({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            action: "getSidebarDataMerchant",
+            action: "getSidebarStudent",
             whats: session.user,
           }),
         });
@@ -65,7 +65,6 @@ export default function SidebarInner({
     };
     fetchSidebarData();
   }, []);
-
 
   const divider = (title: string) => (
     <div className="flex items-center my-2 md:my-4 rounded pl-2 pr-2 md:pl-5 md:pr-4 py-1 md:py-2 gap-1 w-full text-left">
@@ -94,8 +93,6 @@ export default function SidebarInner({
     },
   ];
 
-
-
   return (
     <aside className="md:w-[420px] h-full bg-black flex flex-col relative overflow-hidden">
       <div className="flex flex-col h-full w-full overflow-hidden">
@@ -120,47 +117,34 @@ export default function SidebarInner({
 
             {/* === FOR STUDENTS === */}
             {divider("FOR STUDENTS")}
-            {/* Roommates */}
-      <button
-        onClick={() => {
-          setActiveTab("roommates");
-        }}
-        className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-          ${
-            activeTab === "roommates"
-              ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-              : "text-[white] border-l-[3px] border-[black]"
-          }`}
-      >
-        <HiOutlineUsers className="h-8 w-8" />
-        <span className="truncate text-xl">Roommates</span>
-
-        
-          <>
-            <FaToggleOff className="w-6 ml-auto text-white" />
-            <span className="text-xs text-white">HIDDEN</span>
-          </>
-        
-      </button>
-
-
-           {/* Hostels   */}
-          <button
-            onClick={() => setActiveTab("hostels")}
-            className={`flex items-center rounded px-8 py-2 gap-3 transition w-full text-left 
-              ${
-                activeTab === "hostels"
-                  ? "text-[#FFA1A1] border-l-[3px] border-[#FFA1A1]"
-                  : "text-[white] border-l-[3px] border-[black]"
+            <button
+              onClick={() => setActiveTab("roommates")}
+              className={`${baseBtn} ${
+                activeTab === "roommates" ? activeClass : inactiveClass
               }`}
-          >
-            <FiHome className="h-8 w-8" />
-            <span className="truncate text-xl">Hostels</span>
-            <span className="text-xs px-4 py-1 font-bold rounded-lg ml-auto bg-white  text-black">
-              NEW
-            </span>
-          </button>
+            >
+              <HiOutlineUsers className={baseIcon} />
+              <span className="truncate text-[12px] md:text-xl">Rommates</span>
+              <>
+                <FaToggleOff className="w-6 ml-auto text-white" />
+                <span className="text-xs text-white">HIDDEN</span>
+              </>
+            </button>
 
+            <button
+              onClick={() => setActiveTab("hostels")}
+              className={`${baseBtn} ${
+                activeTab === "hostels" ? activeClass : inactiveClass
+              }`}
+            >
+              <FiHome className={baseIcon} />
+              <span className="truncate text-[12px] md:text-xl">Hostels</span>
+              <span className="text-xs px-4 py-1 font-bold rounded-lg ml-auto bg-white  text-black">
+                NEW
+              </span>
+            </button>
+
+           
 
             {/* === REFERRAL CARD === */}
             {divider("CRIBB INFLUENCERS")}
@@ -251,5 +235,3 @@ export default function SidebarInner({
     </aside>
   );
 }
-
-
