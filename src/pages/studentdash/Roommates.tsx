@@ -2,6 +2,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
+import StudentCard from "./DashComponents/StudentCard"; 
 import {
   MdWoman2,
   MdOutlinePostAdd,
@@ -63,59 +64,38 @@ function PaginatedCards() {
   return (
     <div>
       <div
-        className="space-y-3 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
+        className="space-y-3 px-5 max-h-[1000px] overflow-y-auto cards-scroll"
         style={{
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
         }}
       >
         {currentData.map((item) => (
-          <div className={`flex justify-${item.justify}`}>
+          <div className={`min-w-sm md:min-w-0 flex justify-${item.justify}`}>
+
             <div
               key={item.id}
-              className="inline-flex gap-6 pt-20 items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
+              className="flex gap-6 pt-20  items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
   before:content-[''] before:absolute before:-bottom-3 before:right-10 
   before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px] before:border-t-[12px] 
   before:border-l-transparent before:border-r-transparent before:border-t-[#F3EDFE]"
             >
               {/* Main card */}
-              <div className="relative text-black bg-[#EBD96B] rounded-4xl py-6 w-45 shadow-md text-center">
-                {/* Top circle */}
-                <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 bg-[#C2C8DA4D] w-30 h-30 rounded-full flex items-center justify-center">
-                  <span className="text-3xl font-semibold">{item.id}</span>
-                </div>
+              <StudentCard item={item} />
 
-                {/* Body */}
-                <div className="mt-20">
-                  <div className="flex justify-center gap-2">
-                    <MdWoman2 className="text-4xl mt-2" />
-                    <p className="text-sm leading-loose">
-                      {item.course} <br /> {item.level}
-                    </p>
-                    <CgCross className="text-4xl mt-2" />
-                  </div>
-
-                  {/* Icons row */}
-                  <div className="flex justify-center space-x-3 mt-2 mb-5">
-                    <FaUtensils className="text-3xl rounded-full bg-pink-400 p-1" />
-                    <FaFilm className="text-3xl rounded-full bg-pink-400 p-1" />
-                    <FaBook className="text-3xl rounded-full bg-pink-400 p-1" />
-                  </div>
-                </div>
-              </div>
 
               {/* Auxiliary card */}
-              <div className="flex flex-col justify-between w-64">
+              <div className="flex flex-col justify-between w-35 md:w-50">
                 <div className="flex flex-col gap-4">
                   <InfoPill className="bg-[#D6FFC3]">
                     <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-md py-1 text-black">Online</span>
+                      <span className="text-xs md:text-md py-1 text-black">Online</span>
                       <FaToggleOn size={25} className="ml-auto text-black" />
                     </div>
                   </InfoPill>
                   <InfoPill className="bg-[#FFA1A1]">
                     <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-md py-1 text-black">Delete</span>
+                      <span className="text-xs md:text-md py-1 text-black">Delete</span>
                       <MdOutlineDeleteForever
                         size={25}
                         className="ml-auto text-black"
@@ -172,7 +152,7 @@ function MatchedCards() {
   return (
     <div>
       <div
-        className="grid grid-cols-3 gap-6 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
+        className="grid grid-cols-2 my-10 md:grid-cols-3 gap-y-20 md:gap-x-6 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
         style={{
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
@@ -180,29 +160,7 @@ function MatchedCards() {
       >
         {currentData.map((item) => (
           <div key={item.id} className="flex justify-center">
-            <div className="relative text-black bg-[#EBD96B] mt-20 rounded-4xl py-6 w-45 shadow-md text-center">
-              {/* Bubble */}
-              <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 bg-[#C2C8DA4D] w-30 h-30 rounded-full flex items-center justify-center">
-                <span className="text-3xl font-semibold">{item.id}</span>
-              </div>
-
-              {/* Card content */}
-              <div className="mt-20">
-                <div className="flex justify-center gap-2">
-                  <MdWoman2 className="text-4xl mt-2" />
-                  <p className="text-sm leading-loose">
-                    {item.course} <br /> {item.level}
-                  </p>
-                  <CgCross className="text-4xl mt-2" />
-                </div>
-
-                <div className="flex justify-center space-x-3 mt-2 mb-5">
-                  <FaUtensils className="text-3xl rounded-full bg-pink-400 p-1" />
-                  <FaFilm className="text-3xl rounded-full bg-pink-400 p-1" />
-                  <FaBook className="text-3xl rounded-full bg-pink-400 p-1" />
-                </div>
-              </div>
-            </div>
+            <StudentCard item={item} />
           </div>
         ))}
       </div>
@@ -234,14 +192,17 @@ function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
-        <h2 className="text-4xl font-extrabold">{title}</h2>
+        <h2 className="text-2xl md:text-4xl font-extrabold">Hola, {title}</h2>
         <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
           <BsQuestionCircle className="text-white" size={40} />
         </div>
       </div>
-      <p className="text-sm pt-5">
-        We’ve made it a soft experience getting a Match...
+      <p className="text-xs md:text-sm pt-5">
+        Our goal is for your{" "}
+        <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
+        <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
       </p>
+
       <div
         className="mt-2 w-full border-t-4"
         style={{
@@ -266,14 +227,17 @@ function Tabs({
   return (
     <div
       className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
-      style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
+      style={{
+        borderStyle: "dashed",
+        borderColor: "#0000004D",
+      }}
     >
       {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-            "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
+            "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
               : ""
@@ -291,25 +255,26 @@ const Rommates = () => {
   const [activeTab, setActiveTab] = useState("Explore");
 
   return (
-    <div className="bg-white py-10">
-      <section className="px-10 flex justify-center">
+    <div className="bg-white md:py-10 mb-20">
+      <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           <SectionHeader title="Rommates" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5] overflow-x-auto">
+            {/* Tabs */}
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {/* Explore Tab */}
             {activeTab === "Explore" && (
-              <div className="p-5 space-y-6">
-                <div className="grid grid-cols-1 w-2/3 mt-5 gap-6">
+              <div className="p-2 md:p-5 md:w-2/3">
+                <div className="grid grid-cols-1  mt-5 gap-6">
                   <div>
                     <Label>VISIBILITY</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span>Active : Yes, Receiving Requests</span>
-                        <span className="bg-black space-x-1 px-4 rounded-md text-[#D6FFC3] flex items-center">
-                          <FaToggleOff /> <span>SWITCH</span>
+                        <span className=" text-xs md:text-sm">Active : Yes, Receiving Requests</span>
+                        <span className="bg-black space-x-1 px-4 py-2 rounded-md text-[#D6FFC3] flex items-center">
+                          <FaToggleOff /> <span className=" text-xs md:text-sm">SWITCH</span>
                         </span>
                       </div>
                     </InfoPill>
@@ -318,7 +283,7 @@ const Rommates = () => {
 
                 {/* Profile Card */}
                 <div className="justify-start flex ml-8">
-                  <div className="flex flex-col items-center mt-10">
+                  <div className="flex flex-col items-center mt-15">
                     <div className="relative text-black bg-[#EBD96B] rounded-4xl py-6 w-45 shadow-md text-center">
                       <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 bg-[#C2C8DA4D] w-30 h-30 rounded-full flex items-center justify-center">
                         <span className="text-3xl font-semibold">You</span>
@@ -347,12 +312,12 @@ const Rommates = () => {
                   </div>
                 </div>
 
-                <button className="w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="md:w-2/3 w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
                 </button>
 
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="mt-5 md:w-2/3 w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
@@ -361,7 +326,7 @@ const Rommates = () => {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
                   <div>
                     <Label>HOW IT WORKS</Label>
@@ -379,14 +344,14 @@ const Rommates = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 mt-8">
+                <div className="flex items-center gap-3 mt-8 mb-10">
                   <span className="text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR LISTINGS -------------------------------
                   </span>
                 </div>
                 <PaginatedCards />
 
-                <button className="w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
@@ -394,20 +359,20 @@ const Rommates = () => {
             )}
 
             {/* Match Tab */}
-            {activeTab === "Match" && (
+            {activeTab === "Match" && ( 
               <div className="mb-10">
-                <div className="flex items-center gap-3 w-2/3">
+                <div className="p-2 md:p-5 md:w-2/3">
                   <span className="text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR LISTINGS -------------------------------
                   </span>
                 </div>
 
                 <MatchedCards />
-                <button className="w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
                 </button>
-                <button className="w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
