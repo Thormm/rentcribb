@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
@@ -12,8 +12,16 @@ import { FiChevronDown } from "react-icons/fi";
 import { FaUtensils, FaFilm, FaBook, FaToggleOff } from "react-icons/fa";
 import { CgCross } from "react-icons/cg";
 import { BiComment } from "react-icons/bi";
-import { FaToggleOn } from "react-icons/fa";
-import { MdOutlineDeleteForever } from "react-icons/md";
+
+
+const getLoginData = () => {
+  try {
+    const raw = sessionStorage.getItem("login_data") || "{}";
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+};
 
 // ----------------------- Reusable Label -----------------------
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -27,36 +35,38 @@ function Label({ children, className }: LabelProps) {
   );
 }
 
-// ----------------------- Mock Data (20 Records) -----------------------
-const requestData = [
-  { id: 1, course: "Mass Comm", level: "100 Level", justify: "start" },
-  { id: 2, course: "Law", level: "200 Level", justify: "end" },
-  { id: 3, course: "Engineering", level: "300 Level", justify: "start" },
-  { id: 4, course: "Medicine", level: "400 Level", justify: "end" },
-  { id: 5, course: "Computer Sci", level: "100 Level", justify: "start" },
-  { id: 6, course: "Business Admin", level: "200 Level", justify: "end" },
-  { id: 7, course: "Economics", level: "300 Level", justify: "start" },
-  { id: 8, course: "Political Sci", level: "400 Level", justify: "end" },
-  { id: 9, course: "English", level: "100 Level", justify: "start" },
-  { id: 10, course: "Fine Arts", level: "200 Level", justify: "end" },
-  { id: 11, course: "History", level: "300 Level", justify: "start" },
-  { id: 12, course: "Accounting", level: "400 Level", justify: "end" },
-  { id: 13, course: "Architecture", level: "100 Level", justify: "start" },
-  { id: 14, course: "Philosophy", level: "200 Level", justify: "end" },
-  { id: 15, course: "Sociology", level: "300 Level", justify: "start" },
-  { id: 16, course: "Psychology", level: "400 Level", justify: "end" },
-  { id: 17, course: "Theatre Arts", level: "100 Level", justify: "start" },
-  { id: 18, course: "Education", level: "200 Level", justify: "end" },
-  { id: 19, course: "Nursing", level: "300 Level", justify: "start" },
-  { id: 20, course: "Public Admin", level: "400 Level", justify: "end" },
-];
+/* ----------------------- TYPES ----------------------- */
+interface Student {
+  id: number;
+  gender: string;
+  religion: string;
+  level: string;
+  faculty: string;
+  hobby: string[];
+  pet: string;
+}
 
-// ----------------------- Paginated Cards -----------------------
+/* ----------------------- API ----------------------- */
+const API_URL = "https://www.cribb.africa/apigets.php";
+
+/* ----------------------- PAGINATED CARDS ----------------------- 
 function PaginatedCards() {
+  const [data, setData] = useState<Student[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(requestData.length / itemsPerPage);
-  const currentData = requestData.slice(
+
+  useEffect(() => {
+    const fd = new FormData();
+    fd.append("action", "studentrequest");
+
+    fetch(API_URL, { method: "POST", body: fd })
+      .then(res => res.json())
+      .then(res => setData(res.data));
+  }, []);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const currentData = data.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
@@ -65,26 +75,18 @@ function PaginatedCards() {
     <div>
       <div
         className="space-y-3 px-5 max-h-[1000px] overflow-y-auto cards-scroll"
-        style={{
-          scrollbarColor: "#FFA1A1 transparent",
-          scrollbarWidth: "thin",
-        }}
+        style={{ scrollbarColor: "#FFA1A1 transparent", scrollbarWidth: "thin" }}
       >
-        {currentData.map((item) => (
-          <div className={`min-w-sm md:min-w-0 flex justify-${item.justify}`}>
-
-            <div
-              key={item.id}
-              className="flex gap-6 pt-20  items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
-  before:content-[''] before:absolute before:-bottom-3 before:right-10 
-  before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px] before:border-t-[12px] 
-  before:border-l-transparent before:border-r-transparent before:border-t-[#F3EDFE]"
+        {currentData.map(item => (
+          <div key={item.id} className="min-w-sm md:min-w-0 flex justify-start">
+            <div className="flex gap-6 md:pt-15 items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
+              before:content-[''] before:absolute before:-bottom-3 before:right-10
+              before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px]
+              before:border-t-[12px] before:border-l-transparent before:border-r-transparent
+              before:border-t-[#F3EDFE]"
             >
-              {/* Main card */}
               <StudentCard item={item} />
 
-
-              {/* Auxiliary card */}
               <div className="flex flex-col justify-between w-35 md:w-50">
                 <div className="flex flex-col gap-4">
                   <InfoPill className="bg-[#D6FFC3]">
@@ -93,22 +95,21 @@ function PaginatedCards() {
                       <FaToggleOn size={25} className="ml-auto text-black" />
                     </div>
                   </InfoPill>
+
                   <InfoPill className="bg-[#FFA1A1]">
                     <div className="inline-flex items-center justify-between w-full">
                       <span className="text-xs md:text-md py-1 text-black">Delete</span>
-                      <MdOutlineDeleteForever
-                        size={25}
-                        className="ml-auto text-black"
-                      />
+                      <MdOutlineDeleteForever size={25} className="ml-auto text-black" />
                     </div>
                   </InfoPill>
+
                   <div className="flex justify-center">
                     <button className="py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg">
                       EDIT
                     </button>
                   </div>
                 </div>
-                {/* Date or metadata */}
+
                 <div className="text-black text-center mt-4 text-sm">
                   11-12-2009
                 </div>
@@ -122,7 +123,7 @@ function PaginatedCards() {
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
-              key={i + 1}
+              key={i}
               onClick={() => setPage(i + 1)}
               className={clsx(
                 "px-3 py-1 rounded-md border",
@@ -138,13 +139,34 @@ function PaginatedCards() {
       )}
     </div>
   );
-}
+}*/
 
+
+/* ----------------------- MATCHED CARDS ----------------------- */
 function MatchedCards() {
+  const [data, setData] = useState<Student[]>([]);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 18; // 3 cards per row × 3 rows per page
-  const totalPages = Math.ceil(requestData.length / itemsPerPage);
-  const currentData = requestData.slice(
+  const itemsPerPage = 18;
+
+  useEffect(() => {
+    const login = getLoginData();
+    const whats = login?.user || "";
+    if (!whats) return;
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "studentmatched", whats }),
+    })
+      .then(res => res.json())
+      .then(res => setData(res.data))
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const currentData = data.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
@@ -152,13 +174,10 @@ function MatchedCards() {
   return (
     <div>
       <div
-        className="grid grid-cols-2 my-10 md:grid-cols-3 gap-y-20 md:gap-x-6 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
-        style={{
-          scrollbarColor: "#FFA1A1 transparent",
-          scrollbarWidth: "thin",
-        }}
+        className="grid grid-cols-2 py-15 md:grid-cols-3 gap-y-20 md:gap-x-6 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
+        style={{ scrollbarColor: "#FFA1A1 transparent", scrollbarWidth: "thin" }}
       >
-        {currentData.map((item) => (
+        {currentData.map(item => (
           <div key={item.id} className="flex justify-center">
             <StudentCard item={item} />
           </div>
@@ -169,7 +188,7 @@ function MatchedCards() {
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
-              key={i + 1}
+              key={i}
               onClick={() => setPage(i + 1)}
               className={clsx(
                 "px-3 py-1 rounded-md border",
@@ -186,6 +205,7 @@ function MatchedCards() {
     </div>
   );
 }
+
 
 // ----------------------- Section Header -----------------------
 function SectionHeader({ title }: { title: string }) {
@@ -266,8 +286,8 @@ const Rommates = () => {
 
             {/* Explore Tab */}
             {activeTab === "Explore" && (
-              <div className="p-2 md:p-5 md:w-2/3">
-                <div className="grid grid-cols-1  mt-5 gap-6">
+              <div className="p-2 md:p-5">
+                <div className="grid grid-cols-1 md:w-2/3 mt-5 gap-6">
                   <div>
                     <Label>VISIBILITY</Label>
                     <InfoPill>
@@ -312,12 +332,12 @@ const Rommates = () => {
                   </div>
                 </div>
 
-                <button className="md:w-2/3 w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className=" md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
                 </button>
 
-                <button className="mt-5 md:w-2/3 w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="mt-5 md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
@@ -349,7 +369,7 @@ const Rommates = () => {
                     --- YOUR LISTINGS -------------------------------
                   </span>
                 </div>
-                <PaginatedCards />
+               {/* <PaginatedCards /> */}
 
                 <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
