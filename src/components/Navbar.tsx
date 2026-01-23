@@ -1,98 +1,92 @@
+import { IoIosArrowDown } from "react-icons/io";
 import logo from "../assets/logo.png";
-import { useState } from "react";
+import nigeriaflag from "../assets/nigeriaflag.png";
+import { MdOutlineMenu, MdOutlineDashboard } from "react-icons/md";
+import { LuLogIn } from "react-icons/lu";
+
+const getLoginData = () => {
+  try {
+    const raw = sessionStorage.getItem("login_data") || "{}";
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+};
+
+const login = getLoginData();
+const whats = login?.user || "";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <>
       {/* Navbar */}
-      <nav className="sticky top-0 flex w-full justify-between items-center px-15 py-6 shadow-sm bg-white z-50 border-b">
-        {/* Left side (desktop links) */}
-        <div className="hidden md:flex space-x-20 text-black font-medium text-xl">
-          <a href="/products">Products</a>
-          <a href="/rent">/Rent</a>
+      <nav className="sticky border-4 top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-6 shadow-sm bg-white z-50">
+        {/* Left: Flag */}
+        <div className="hidden md:flex justify-center gap-6">
+          <span className="text-[8px] md:text-[18px] font-semibold">
+            Find a Roommate
+          </span>
+          <span className="text-[8px] md:text-[18px] font-semibold">
+            List your Space
+          </span>
         </div>
 
-        {/* Center Logo */}
-        <div className="flex items-center space-x-2">
-          <img src={logo} alt="Cribb.Africa Logo" className="h-10 w-auto" />
-          <h1 className="text-3xl font-extrabold">Cribb.Africa</h1>
-        </div>
-
-        {/* Right (desktop links + login) */}
-        <div className="hidden md:flex space-x-20 text-black items-center font-medium">
-          <a href="/about" className="hover:text-black text-xl">
-            About Us
-          </a>
-          <button className="px-8 py-3 bg-black text-sm text-white rounded-lg shadow-md">
-            LOGIN
-          </button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden flex items-center text-gray-800"
-          onClick={() => setIsMenuOpen(true)}
-        >
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
+        {/* Center: Logo */}
+        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
+          <img
+            src={logo}
+            alt="Cribb.Africa Logo"
+            className="hidden md:flex m-0 p-0 h-8 md:h-8"
+          />
+          <div className="rounded-full border bg-white flex md:hidden">
+            <img
+              src={logo}
+              alt="Nigeria Flag"
+              className="h-8 md:h-12 object-contain p-2"
             />
-          </svg>
-        </button>
-
-        {/* Mobile Overlay Menu */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-            <div className="absolute top-0 right-0 w-2/3 h-full bg-white p-6 flex flex-col">
-              {/* Close Button */}
-              <button
-                className="self-end mb-8"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <svg
-                  className="w-7 h-7 text-gray-700"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-
-              {/* Menu Items */}
-              <div className="flex flex-col items-center space-y-6 text-lg font-medium">
-                <a href="/products" onClick={() => setIsMenuOpen(false)}>
-                  Products
-                </a>
-                <a href="/rent" onClick={() => setIsMenuOpen(false)}>
-                  /Rent
-                </a>
-                <a href="/about" onClick={() => setIsMenuOpen(false)}>
-                  About Us
-                </a>
-                <button className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                  LOGIN
-                </button>
-              </div>
-            </div>
           </div>
-        )}
-      </nav></>
+          <div className="hidden md:flex flex-col items-end p-0 m-0">
+            <span className="text-2xl p-0 m-0 md:text-3xl font-extrabold ">
+              Cribb.Africa
+            </span>
+          </div>
+          <div className="md:hidden rounded-full bg-black p-2 shrink-0">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-4 md:h-8 object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Right: Toggle Button */}
+        <div className="flex justify-end md:justify-center items-center gap-2">
+          <div className="rounded-full bg-black hidden md:flex">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-7 md:h-12 object-contain p-3"
+            />
+          </div>
+          <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 border-2 bg-white flex items-center gap-2 text-black rounded-lg shadow-md whitespace-nowrap">
+            <MdOutlineMenu className="text-xs md:text-2xl" />
+            <span className="text-[10px] md:text-[15px] ">Products</span>
+            <IoIosArrowDown className="text-xs md:text-2xl" />
+          </button>
+          {!whats ? (
+            <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+              <span className="text-[10px] md:text-[15px]">GET STARTED</span>
+              <LuLogIn className="text-xs md:text-2xl" />
+            </button>
+          ) : (
+            <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+              <MdOutlineDashboard className="text-xs md:text-2xl" />
+              <span className="text-[10px] md:text-[15px]">DASHBOARD</span>
+            </button>
+          )}
+        </div>
+      </nav>
+    </>
   );
 };
 

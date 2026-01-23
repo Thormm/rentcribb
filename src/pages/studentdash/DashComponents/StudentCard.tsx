@@ -56,7 +56,7 @@ const StudentCard = ({ item }: { item: Student }) => {
               <MdWoman2 className="text-3xl" />
             )}
             <FaDog
-              className="text-3xl md:text-xl mt-2 pl-3 md:pl-0"
+              className="text-3xl md:text-lg mt-2 pl-3 md:pl-0"
               style={{
                 opacity: item.pet === "Dog" || item.pet === "Cat_Dog" ? 1 : 0,
               }}
@@ -81,7 +81,7 @@ const StudentCard = ({ item }: { item: Student }) => {
               <FaQuran   className="text-4xl md:text-xl px-2 md:px-0" />
             )}
             <FaCat
-              className="text-3xl md:text-xl mt-2 pr-3 md:pr-0"
+              className="text-3xl md:text-lg mt-2 pr-3 md:pr-0"
               style={{
                 opacity: item.pet === "Cat" || item.pet === "Cat_Dog" ? 1 : 0,
               }}

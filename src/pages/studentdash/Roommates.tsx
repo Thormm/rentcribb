@@ -12,6 +12,8 @@ import { FiChevronDown } from "react-icons/fi";
 import { FaUtensils, FaFilm, FaBook, FaToggleOff } from "react-icons/fa";
 import { CgCross } from "react-icons/cg";
 import { BiComment } from "react-icons/bi";
+import { FaToggleOn } from "react-icons/fa";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 
 const getLoginData = () => {
@@ -49,19 +51,26 @@ interface Student {
 /* ----------------------- API ----------------------- */
 const API_URL = "https://www.cribb.africa/apigets.php";
 
-/* ----------------------- PAGINATED CARDS ----------------------- 
+/* ----------------------- PAGINATED CARDS ----------------------- */
 function PaginatedCards() {
   const [data, setData] = useState<Student[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
-  useEffect(() => {
-    const fd = new FormData();
-    fd.append("action", "studentrequest");
-
-    fetch(API_URL, { method: "POST", body: fd })
+ useEffect(() => {
+    const login = getLoginData();
+    const whats = login?.user || "";
+    if (!whats) return;
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "studentmatched", whats }),
+    })
       .then(res => res.json())
-      .then(res => setData(res.data));
+      .then(res => setData(res.data))
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -78,7 +87,7 @@ function PaginatedCards() {
         style={{ scrollbarColor: "#FFA1A1 transparent", scrollbarWidth: "thin" }}
       >
         {currentData.map(item => (
-          <div key={item.id} className="min-w-sm md:min-w-0 flex justify-start">
+          <div key={item.id} className="min-w-sm md:min-w-0 flex justify-end">
             <div className="flex gap-6 md:pt-15 items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
               before:content-[''] before:absolute before:-bottom-3 before:right-10
               before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px]
@@ -139,7 +148,7 @@ function PaginatedCards() {
       )}
     </div>
   );
-}*/
+}
 
 
 /* ----------------------- MATCHED CARDS ----------------------- */
@@ -369,7 +378,7 @@ const Rommates = () => {
                     --- YOUR LISTINGS -------------------------------
                   </span>
                 </div>
-               {/* <PaginatedCards /> */}
+                <PaginatedCards /> 
 
                 <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />

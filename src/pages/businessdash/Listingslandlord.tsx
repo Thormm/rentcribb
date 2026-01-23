@@ -437,7 +437,7 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
   const res = await fetch("https://www.cribb.africa/apigets.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "get_live_spaces", user }),
+    body: JSON.stringify({ action: "get_landlord_live_spaces", user }),
   });
 
   const data = await res.json();
