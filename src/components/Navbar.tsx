@@ -74,12 +74,12 @@ const Navbar = () => {
             <IoIosArrowDown className="text-xs md:text-2xl" />
           </button>
           {!whats ? (
-            <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+            <button className="px-3 cursor-pointer border-black border-2 md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
               <span className="text-[10px] md:text-[15px]">GET STARTED</span>
               <LuLogIn className="text-xs md:text-2xl" />
             </button>
           ) : (
-            <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+            <button className="px-3 cursor-pointer border-black md:px-5 border-2 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
               <MdOutlineDashboard className="text-xs md:text-2xl" />
               <span className="text-[10px] md:text-[15px]">DASHBOARD</span>
             </button>
