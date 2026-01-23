@@ -3,6 +3,7 @@ import logo from "../assets/logo.png";
 import nigeriaflag from "../assets/nigeriaflag.png";
 import { MdOutlineMenu, MdOutlineDashboard } from "react-icons/md";
 import { LuLogIn } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 const getLoginData = () => {
   try {
@@ -15,12 +16,21 @@ const getLoginData = () => {
 
 const login = getLoginData();
 const whats = login?.user || "";
+const mode = login?.mode || "";
+const dashboard =
+  mode === "student"
+    ? "/studentdash"
+    : mode === "merchant"
+    ? "/businessdash"
+    : "/dashboard"; // safe fallback
 
 const Navbar = () => {
+  
+    const navigate = useNavigate();
   return (
     <>
       {/* Navbar */}
-      <nav className="sticky border-4 top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-6 shadow-sm bg-white z-50">
+      <nav className="sticky border-4 top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-2 md:px-6 py-3 md:py-6 shadow-sm bg-white z-50">
         {/* Left: Flag */}
         <div className="hidden md:flex justify-center gap-6">
           <span className="text-[8px] md:text-[18px] font-semibold">
@@ -68,18 +78,18 @@ const Navbar = () => {
               className="h-7 md:h-12 object-contain p-3"
             />
           </div>
-          <button className="px-3 cursor-pointer md:px-5 py-2 md:py-3 border-2 bg-white flex items-center gap-2 text-black rounded-lg shadow-md whitespace-nowrap">
+          <button className="px-2 cursor-pointer md:px-5 py-2 md:py-3 border-2 bg-white flex items-center gap-2 text-black rounded-lg shadow-md whitespace-nowrap">
             <MdOutlineMenu className="text-xs md:text-2xl" />
             <span className="text-[10px] md:text-[15px] ">Products</span>
             <IoIosArrowDown className="text-xs md:text-2xl" />
           </button>
           {!whats ? (
-            <button className="px-3 cursor-pointer border-black border-2 md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+            <button onClick={() => navigate("/signup")} className="px-2 cursor-pointer border-black border-2 md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
               <span className="text-[10px] md:text-[15px]">GET STARTED</span>
               <LuLogIn className="text-xs md:text-2xl" />
             </button>
           ) : (
-            <button className="px-3 cursor-pointer border-black md:px-5 border-2 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
+            <button onClick={() => navigate(dashboard)} className="px-2 cursor-pointer border-black md:px-5 border-2 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap">
               <MdOutlineDashboard className="text-xs md:text-2xl" />
               <span className="text-[10px] md:text-[15px]">DASHBOARD</span>
             </button>
