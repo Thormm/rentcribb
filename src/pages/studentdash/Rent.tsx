@@ -24,7 +24,7 @@ type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx("text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black", className)}
     >
       {children}
     </div>
@@ -53,7 +53,7 @@ const reviews = [
   { id: 10, date: "2025-09-20", name: "Ava Martinez" },
 ];
 
-function PaginatedDrafts({
+function PaginatedRequests({
   setShowFirst,
 }: {
   setShowFirst: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,9 +121,9 @@ function PaginatedDrafts({
               Request {(page - 1) * itemsPerPage + idx + 1}
             </div>
 
-            <div className="flex justify-between items-center w-full gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-6">
               <div className="flex items-center text-black px-6 text-sm flex-1 border-black rounded-4xl border py-3 shadow-sm">
-                <p>
+                <p className="text-xs md:text-base">
                   A {item.gender} Student needs a{" "}
                   <b>
                     {item.category === "Shared Space" ? "SHARED " : ""}
@@ -154,11 +154,13 @@ function PaginatedDrafts({
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-2 w-1/3">
-                <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-4 shadow-sm">
-                  <div className="flex items-center relative w-40 justify-between">
-                    <span className="text-md text-black truncate">More</span>
-                    <HiOutlineDotsVertical className="absolute -right-6 text-white w-12 h-12 p-3 rounded-full bg-black" />
+              <div className="grid grid-cols-2 md:grid-cols-1 gap-2 w-full md:w-1/3">
+                <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-2 md:py-4 shadow-sm">
+                  <div className="flex items-center relative w-20 md:w-40 justify-between">
+                    <span className="text-xs md:text-lg text-black truncate">
+                      More
+                    </span>
+                    <HiOutlineDotsVertical className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
                   </div>
                 </div>
 
@@ -166,11 +168,11 @@ function PaginatedDrafts({
                   onClick={() => setShowFirst(false)}
                   className="flex items-center justify-center bg-black gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
                 >
-                  <div className="flex items-center relative w-40 justify-between">
-                    <span className="text-md text-white truncate">
+                  <div className="flex items-center relative w-20 md:w-40 justify-between">
+                    <span className="text-xs md:text-lg text-white truncate">
                       {item.replies ?? 0} Replies
                     </span>
-                    <FaArrowRight className="absolute -right-6 text-white w-12 h-12 p-3 rounded-full bg-[#202020]" />
+                    <FaArrowRight className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-[#202020]" />
                   </div>
                 </div>
               </div>
@@ -277,7 +279,7 @@ function PaginatedCards2() {
   return (
     <div>
       <div
-        className="space-y-3 max-h-[1000px] overflow-y-auto pr-12 cards-scroll"
+        className="space-y-3 max-h-[1000px] overflow-y-auto pr-3 md:pr-12 cards-scroll"
         style={{
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
@@ -286,7 +288,7 @@ function PaginatedCards2() {
         {currentData.map((card, idx) => (
           <div
             key={idx}
-            className="mb-10 relative flex items-center w-full gap-10 bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
+            className="mb-10 relative items-center flex flex-col md:flex-row w-full gap-10 bg-[#F3EDFE] rounded-3xl p-2 md:p-5 pt-0 md:pt-0 shadow-lg md:pr-8
   before:content-[''] before:absolute before:-bottom-3 before:left-10 
   before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px] before:border-t-[12px] 
   before:border-l-transparent before:border-r-transparent before:border-t-[#F3EDFE]"
@@ -294,25 +296,26 @@ function PaginatedCards2() {
             <div className="w-auto flex justify-end">
               <Card item={card} />
             </div>
-            <div className="w-1/3 grid h-56 content-between gap-15">
-              <div className="flex flex-col gap-4 ">
-                <InfoPill className="bg-[#D6FFC3]">
+            <div className="md:w-1/3 grid md:h-56 content-between gap-5 md:gap-15">
+              <div className="grid grid-cols-3 items-center justify-content-center md:grid-cols-1 gap-1 md:gap-8">
+                <InfoPill className="bg-[#D6FFC3] md:rounded-full rounded-2xl py-2 px-2 md:px-8">
                   <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-md py-1 text-black">Online</span>
-                    <FaToggleOn size={25} className="ml-auto text-black" />
+                    <span className="text-xs md:text-lg py-1 text-black">
+                      Online
+                    </span>
+                    <FaToggleOn className="ml-auto md:text-2xl text-black" />
                   </div>
                 </InfoPill>
-                <InfoPill className="bg-[#FFA1A1]">
+                <InfoPill className="bg-[#FFA1A1] md:rounded-full rounded-2xl py-2 px-2 md:px-8">
                   <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-md py-1 text-black">Delete</span>
-                    <MdOutlineDeleteForever
-                      size={25}
-                      className="ml-auto text-black"
-                    />
+                    <span className="text-xs md:text-lg py-1 text-black">
+                      Delete
+                    </span>
+                    <MdOutlineDeleteForever className="ml-auto md:text-2xl text-black" />
                   </div>
                 </InfoPill>
                 <div className="flex justify-center">
-                  <button className="py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg">
+                  <button className="py-2 md:py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg">
                     EDIT
                   </button>
                 </div>
@@ -394,7 +397,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -449,10 +452,10 @@ const Rent = () => {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-1 md:p-5 mt-5 space-y-6">
                 {showFirst ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                       <div className="relative flex flex-col mb-10">
                         <Label>NEW REQUEST</Label>
                         <div
@@ -466,7 +469,7 @@ const Rent = () => {
                       <div className="col-span-2 grid grid-cols-2 gap-4">
                         <div>
                           <Label>TOTAL ACTIVE</Label>
-                          <InfoPill className="relative flex items-center bg-white">
+                          <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
                             <span>2</span>
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
@@ -474,7 +477,7 @@ const Rent = () => {
 
                         <div>
                           <Label>MAX REQUEST</Label>
-                          <InfoPill className="relative flex items-center bg-white">
+                          <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
                             <span>3</span>
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
@@ -488,9 +491,9 @@ const Rent = () => {
                       </span>
                     </div>
 
-                    <PaginatedDrafts setShowFirst={setShowFirst} />
+                    <PaginatedRequests setShowFirst={setShowFirst} />
 
-                    <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                    <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                       <BiComment className="w-8 h-8" />
                       View Rent Requests
                     </button>
@@ -502,10 +505,10 @@ const Rent = () => {
                       className="cursor-pointer text-white w-13 h-13 p-3 ml-8 rounded-full bg-black"
                     />
 
-                    <div className="col-span-2 grid grid-cols-2 gap-4 w-2/3">
+                    <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
                       <div>
                         <Label>HOW IT WORKS</Label>
-                        <InfoPill className="relative flex items-center bg-white">
+                        <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
                           <span className="py-1">Info</span>
                           <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
                         </InfoPill>
@@ -513,7 +516,7 @@ const Rent = () => {
 
                       <div>
                         <Label>FILTER</Label>
-                        <InfoPill className="relative flex items-center bg-white">
+                        <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
                           <select
                             value={stateValue}
                             onChange={(e) => setStateValue(e.target.value)}
@@ -543,14 +546,14 @@ const Rent = () => {
 
                     <button
                       onClick={() => navigate("/request")}
-                      className="cursor-pointer w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                      className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                     >
                       <BiComment className="w-8 h-8" />
                       Post a Rent Requests
                     </button>
                     <button
                       onClick={() => navigate("/studentlisting")}
-                      className="cursor-pointer w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                      className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                     >
                       <MdOutlinePostAdd className="w-8 h-8" />
                       View Other Listings
@@ -562,7 +565,7 @@ const Rent = () => {
 
             {/* Host Tab */}
             {activeTab === "Host" && (
-              <div className="w-2/3 p-5">
+              <div className="md:w-2/3 p-5">
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 my-8">
                   <span className="text-md font-semibold text-black tracking-wide">
@@ -576,7 +579,7 @@ const Rent = () => {
                     return (
                       <div
                         key={r.id}
-                        className="border-black rounded-4xl border px-6 py-4 shadow-sm "
+                        className="border-black rounded-4xl border px-2 md:px-6 py-4 shadow-sm "
                       >
                         {/* Row 1 */}
                         <div className="flex items-center">
@@ -587,11 +590,11 @@ const Rent = () => {
 
                           {/* Date + name */}
                           <div className="flex flex-grow items-center gap-5 px-4">
-                            <span className="text-md font-normal text-black whitespace-nowrap">
+                            <span className="text-xs md:text-lg font-normal text-black whitespace-nowrap">
                               {r.date}
                             </span>
-                            <span className="text-md text-black font-normal truncate">
-                              {r.name}
+                            <span className="text-xs md:text-lg text-black font-normal truncate">
+                              {r.name.length > 13 ? r.name.slice(0, 13) + "…" : r.name}
                             </span>
                           </div>
 
@@ -606,14 +609,14 @@ const Rent = () => {
 
                   <button
                     onClick={() => navigate("/request")}
-                    className="cursor-pointer w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                    className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                   >
                     <BiComment className="w-8 h-8" />
                     Post a Rent Requests
                   </button>
                   <button
                     onClick={() => navigate("/studentlisting")}
-                    className="cursor-pointer w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                    className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                   >
                     <MdOutlinePostAdd className="w-8 h-8" />
                     View Other Listings

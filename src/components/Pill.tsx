@@ -12,12 +12,16 @@ interface InfoPillProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export default function InfoPill({ children, className = "", ...props }: InfoPillProps) {
+export default function InfoPill({
+  children,
+  className = "",
+  ...props
+}: InfoPillProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         "w-full rounded-full border-[1.5px] px-8 py-3 md:py-4 text-[15px] text-[#222] shadow-sm",
-        className
+        className,
       )}
       {...props} // now accepts onClick, onMouseOver, etc.
     >
@@ -25,7 +29,6 @@ export default function InfoPill({ children, className = "", ...props }: InfoPil
     </div>
   );
 }
-
 
 // ✅ Reusable Button
 export function DfButton({
@@ -49,7 +52,7 @@ export function DfButton({
       className={cn(
         "text-white flex items-center justify-center gap-2 rounded-lg bg-black px-10 py-2 text-xl font-medium drop-shadow-lg transition-all",
         disabled ? "opacity-50 cursor-not-allowed" : "",
-        className
+        className,
       )}
     >
       {children}

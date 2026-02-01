@@ -269,7 +269,7 @@ export default function StudentListing() {
           <div className="mx-auto w-full max-w-6xl px-4">
             <div className="text-md font-semibold text-[#FFA1A1]">LISTINGS</div>
 
-            <div className="mt-1 flex items-center justify-between gap-4">
+            <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
               <h1 className="text-4xl my-4 font-extrabold">
                 Available Hostels in{" "}
                 <span className="text-[#C2C8DA]">
@@ -279,17 +279,17 @@ export default function StudentListing() {
 
               <button
                 onClick={() => navigate("/request")}
-                className="cursor-pointer inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
+                className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
               >
-                <SquarePlus className="h-10 w-10" />
+                <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
                 POST A REQUEST
               </button>
             </div>
 
-            <div className="grid grid-cols-[80%_20%] items-end">
+            <div className="grid md:grid-cols-[80%_20%] items-end mt-5 md:mt-0">
               <div>
                 {/* MAIN FILTERS */}
-                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+                <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
                   {/* Category */}
                   <div className="space-y-1">
                     <Label className="ml-8 text-white">Category</Label>
@@ -412,7 +412,7 @@ export default function StudentListing() {
 
                 {/* EXTRA FILTERS */}
                 {showAllFilters && (
-                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+                  <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
                     {/* Move in Date */}
                     <div className="space-y-1">
                       <Label className="ml-8 text-white">Move in Date</Label>
@@ -514,11 +514,11 @@ export default function StudentListing() {
                 )}
               </div>
 
-              <div className="flex items-center justify-end gap-4">
+              <div className="flex items-center justify-center mt-4 md:mt-0 md:justify-end gap-4">
                 <div className="grid grid-cols-1">
                   <button
                     onClick={clearFilters}
-                    className="text-[red] text-md cursor-pointer"
+                    className="text-[red] text-xs md:text-md cursor-pointer"
                   >
                     Clear Filter <span>›</span>
                   </button>
@@ -527,14 +527,14 @@ export default function StudentListing() {
                     className="inline-flex items-center gap-1 mt-3 cursor-pointer"
                     onClick={() => setShowAllFilters((v) => !v)}
                   >
-                    <span className="text-md text-[blue]">
+                    <span className="text-xs md:text-md text-[blue]">
                       {showAllFilters ? "Hide filters" : "Show all Filter"}
                     </span>
-                    <span className="text-md text-[blue] leading-none">›</span>
+                    <span className="text-xs md:text-md text-[blue] leading-none">›</span>
                   </button>
                 </div>
 
-                <button className="grid h-20 w-20 place-items-center rounded-full border-white border-2 bg-gradient-to-tr from-[#C6B0EF] to-[#4600C8] shadow-lg ring-1 ring-white/20">
+                <button className="grid h-15 w-15 md:h-20 md:w-20 place-items-center rounded-full border-white border-2 bg-gradient-to-tr from-[#C6B0EF] to-[#4600C8] shadow-lg ring-1 ring-white/20">
                   <Search className="h-5 w-5" />
                 </button>
               </div>
