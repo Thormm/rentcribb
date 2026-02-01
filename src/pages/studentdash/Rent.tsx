@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
+import { useNavigate } from "react-router-dom";
 import {
   MdOutlinePending,
   MdOutlinePostAdd,
@@ -52,87 +53,107 @@ const reviews = [
   { id: 10, date: "2025-09-20", name: "Ava Martinez" },
 ];
 
-// ----------------------- Realistic Mock Data (20 items with variables) -----------------------
-const draftItems = Array.from({ length: 20 }, (_, i) => {
-  const genders = ["Male", "Female"];
-  const apartments = ["2 Bedroom", "Self-Contain", "3 Bedroom"];
-  const locations = ["West End", "Safari", "School Road"];
-  const budgets = [
-    [200000, 350000],
-    [300000, 450000],
-    [500000, 750000],
-    [600000, 850000],
-    [900000, 1200000],
-    [1200000, 1500000],
-  ];
-
-  // Pick random values
-  const gender = genders[Math.floor(Math.random() * genders.length)];
-  const apartment = apartments[Math.floor(Math.random() * apartments.length)];
-  const location = locations[Math.floor(Math.random() * locations.length)];
-  const [minBudget, maxBudget] =
-    budgets[Math.floor(Math.random() * budgets.length)];
-  const date = "Sept 2025";
-
-  return {
-    id: i + 1,
-    gender,
-    apartment,
-    location,
-    minBudget,
-    maxBudget,
-    date,
-    description: `A ${gender} Student needs a ${apartment} apartment with POP Ceiling around ${location}. Budget: (${minBudget.toLocaleString()} - ${maxBudget.toLocaleString()}). Looking to Move-in on or before ${date}.`,
-  };
-});
-
-type PaginatedDraftsProps = {
+function PaginatedDrafts({
+  setShowFirst,
+}: {
   setShowFirst: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-function PaginatedDrafts({ setShowFirst }: PaginatedDraftsProps) {
+}) {
+  const [draftItems, setDraftItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+
+    if (!login?.user || !login?.signup_key) {
+      setDraftItems([]);
+      setLoading(false);
+      return;
+    }
+
+    fetch("https://www.cribb.africa/apigets.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "get_my_requests",
+        user: login.user,
+        signup_key: login.signup_key,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setDraftItems(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => setDraftItems([]))
+      .finally(() => setLoading(false));
+  }, []);
+
   const itemsPerPage = 10;
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
   const currentData = draftItems.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
+
+  if (loading) {
+    return <div className="px-8 text-black">Loading requests...</div>;
+  }
+
+  if (!draftItems.length) {
+    return <div className="px-8 text-black">No requests found</div>;
+  }
 
   return (
     <div>
-      {/* Scroll box (5 visible at once, scrollable) */}
       <div
         className="space-y-6 draft-scroll overflow-y-auto pr-2"
         style={{
-          maxHeight: "420px", // ✅ about 5 rows height
+          maxHeight: "420px",
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
         }}
       >
-        {currentData.map((item) => (
-          <div key={item.id}>
+        {currentData.map((item, idx) => (
+          <div key={item.id || idx}>
             <div className="grid grid-cols-1 font-semibold my-5 mx-8 text-black">
-              Request {item.id}
+              Request {(page - 1) * itemsPerPage + idx + 1}
             </div>
 
-            {/* Left column */}
             <div className="flex justify-between items-center w-full gap-6">
               <div className="flex items-center text-black px-6 text-sm flex-1 border-black rounded-4xl border py-3 shadow-sm">
                 <p>
-                  A {item.gender} Student needs a <b>{item.apartment}</b>{" "}
-                  apartment with POP Ceiling around {item.location}. <br />
-                  Budget:{" "}
+                  A {item.gender} Student needs a{" "}
                   <b>
-                    ({item.minBudget.toLocaleString()} -{" "}
-                    {item.maxBudget.toLocaleString()})
+                    {item.category === "Shared Space" ? "SHARED " : ""}
+                    {item.type}
                   </b>{" "}
+                  with{" "}
+                  {Array.isArray(item.features) && item.features.length
+                    ? item.features.join(", ")
+                    : "basic facilities"}{" "}
+                  around{" "}
+                  {[item.preferred_location_1, item.preferred_location_2]
+                    .filter(Boolean)
+                    .join(", ")}
+                  .
                   <br />
-                  Looking to Move-in on or before <b>{item.date}</b>
+                  Budget: <b>({item.budget})</b>
+                  <br />
+                  {item.move_in_date?.toLowerCase() === "urgently" ? (
+                    <>
+                      Looking to Move in <b>URGENTLY</b>
+                    </>
+                  ) : (
+                    <>
+                      Looking to Move-in on or before <b>{item.move_in_date}</b>
+                      .
+                    </>
+                  )}
                 </p>
               </div>
 
-              {/* Right column */}
               <div className="grid grid-cols-1 gap-2 w-1/3">
                 <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-4 shadow-sm">
                   <div className="flex items-center relative w-40 justify-between">
@@ -141,16 +162,15 @@ function PaginatedDrafts({ setShowFirst }: PaginatedDraftsProps) {
                   </div>
                 </div>
 
-                {/* 👇 This triggers parent change */}
                 <div
                   onClick={() => setShowFirst(false)}
-                  className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
+                  className="flex items-center justify-center bg-black gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
                 >
                   <div className="flex items-center relative w-40 justify-between">
-                    <span className="text-md text-black truncate">
-                      10 Replies
+                    <span className="text-md text-white truncate">
+                      {item.replies ?? 0} Replies
                     </span>
-                    <FaArrowRight className="absolute -right-6 text-white w-12 h-12 p-3 rounded-full bg-black" />
+                    <FaArrowRight className="absolute -right-6 text-white w-12 h-12 p-3 rounded-full bg-[#202020]" />
                   </div>
                 </div>
               </div>
@@ -159,7 +179,6 @@ function PaginatedDrafts({ setShowFirst }: PaginatedDraftsProps) {
         ))}
       </div>
 
-      {/* Pagination pills */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
@@ -170,7 +189,7 @@ function PaginatedDrafts({ setShowFirst }: PaginatedDraftsProps) {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -181,7 +200,6 @@ function PaginatedDrafts({ setShowFirst }: PaginatedDraftsProps) {
     </div>
   );
 }
-
 
 // ----------------------- Sample Card data (for Live) -----------------------
 const cards = Array.from({ length: 12 }, (_, i) => ({
@@ -205,7 +223,7 @@ function PaginatedCards() {
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentData = cards.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -217,7 +235,7 @@ function PaginatedCards() {
           scrollbarWidth: "thin",
         }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 px-5 gap-4 w-full">
           {currentData.map((card, idx) => (
             <Card key={idx} item={card} />
           ))}
@@ -234,7 +252,7 @@ function PaginatedCards() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -253,7 +271,7 @@ function PaginatedCards2() {
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentData = cards.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -315,7 +333,7 @@ function PaginatedCards2() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -328,18 +346,20 @@ function PaginatedCards2() {
 }
 
 // ----------------------- Section Header -----------------------
+// Header with help icon
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
-        <h2 className="text-4xl font-extrabold">{title}</h2>
+        <h2 className="text-2xl md:text-4xl font-extrabold">{title}</h2>
         <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
           <BsQuestionCircle className="text-white" size={40} />
         </div>
       </div>
-      <p className="text-sm pt-5">
+      <p className="text-xs md:text-sm pt-5">
         We’ve made it a soft experience getting your Place ...
       </p>
+
       <div
         className="mt-2 w-full border-t-4"
         style={{
@@ -371,7 +391,7 @@ function Tabs({
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-            "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
+            "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
               : ""
@@ -385,18 +405,19 @@ function Tabs({
 }
 
 // ----------------------- Main Component -----------------------
-const Hostels = () => {
+const Rent = () => {
   const [activeTab, setActiveTab] = useState("Booked");
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
+  const navigate = useNavigate();
 
   return (
-    <div className="bg-white py-10">
-      <section className="px-10 flex justify-center">
+    <div className="bg-white md:py-10 mb-20">
+      <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
-          <SectionHeader title="Hostels" />
+          <SectionHeader title="Rent" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {/* Booked Tab */}
@@ -409,11 +430,17 @@ const Hostels = () => {
                 </div>
 
                 <PaginatedCards />
-                <button className="w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/request")}
+                  className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   Post a Rent Requests
                 </button>
-                <button className="w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button
+                  onClick={() => navigate("/studentlisting")}
+                  className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   View Other Listings
                 </button>
@@ -424,11 +451,14 @@ const Hostels = () => {
             {activeTab === "Requests" && (
               <div className="p-5 mt-5 space-y-6">
                 {showFirst ? (
-                    <>
+                  <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
                       <div className="relative flex flex-col mb-10">
                         <Label>NEW REQUEST</Label>
-                        <div className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer">
+                        <div
+                          onClick={() => navigate("/request")}
+                          className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                        >
                           <FaPlus size={20} className="text-white" />
                         </div>
                       </div>
@@ -460,15 +490,17 @@ const Hostels = () => {
 
                     <PaginatedDrafts setShowFirst={setShowFirst} />
 
-
                     <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                       <BiComment className="w-8 h-8" />
                       View Rent Requests
                     </button>
                   </>
                 ) : (
-                <>
-                    <IoIosArrowBack  onClick={() => setShowFirst(true)} className="cursor-pointer text-white w-13 h-13 p-3 ml-8 rounded-full bg-black" />
+                  <>
+                    <IoIosArrowBack
+                      onClick={() => setShowFirst(true)}
+                      className="cursor-pointer text-white w-13 h-13 p-3 ml-8 rounded-full bg-black"
+                    />
 
                     <div className="col-span-2 grid grid-cols-2 gap-4 w-2/3">
                       <div>
@@ -509,14 +541,19 @@ const Hostels = () => {
 
                     <PaginatedCards2 />
 
-                    <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                    <button
+                      onClick={() => navigate("/request")}
+                      className="cursor-pointer w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                    >
                       <BiComment className="w-8 h-8" />
-                      View Rent Requests
+                      Post a Rent Requests
                     </button>
-
-                    <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                    <button
+                      onClick={() => navigate("/studentlisting")}
+                      className="cursor-pointer w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                    >
                       <MdOutlinePostAdd className="w-8 h-8" />
-                      Post New Listings
+                      View Other Listings
                     </button>
                   </>
                 )}
@@ -567,11 +604,17 @@ const Hostels = () => {
                     );
                   })}
 
-                  <button className="w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                  <button
+                    onClick={() => navigate("/request")}
+                    className="cursor-pointer w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                  >
                     <BiComment className="w-8 h-8" />
                     Post a Rent Requests
                   </button>
-                  <button className="w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                  <button
+                    onClick={() => navigate("/studentlisting")}
+                    className="cursor-pointer w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                  >
                     <MdOutlinePostAdd className="w-8 h-8" />
                     View Other Listings
                   </button>
@@ -585,5 +628,5 @@ const Hostels = () => {
   );
 };
 
-export default Hostels;
+export default Rent;
 ``;

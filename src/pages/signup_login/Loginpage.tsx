@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
@@ -24,7 +24,7 @@ function Maincard({
     <div
       className={clsx(
         "rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -65,7 +65,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -104,14 +104,15 @@ function InputField({
   );
 }
 
-interface LoginpageProps {
-  mode: "student" | "merchant";
-}
-
-export default function Loginpage({
-  mode: initialMode = "student",
-}: LoginpageProps) {
-  const [mode, setMode] = useState<"student" | "merchant">(initialMode);
+export default function Loginpage() {
+  const location = useLocation();
+  const [mode, setMode] = useState<"student" | "merchant">("student");
+  const signup =
+    mode === "student"
+      ? "/signup?mode=student"
+      : mode === "merchant"
+        ? "/signup?mode=merchant"
+        : "/signup"; // safe fallback
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -124,8 +125,21 @@ export default function Loginpage({
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlMode = params.get("mode");
+
+    if (urlMode === "student" || urlMode === "merchant") {
+      setMode(urlMode);
+    }
+  }, [location.search]);
+
   const toggleMode = () => {
-    setMode((prev) => (prev === "student" ? "merchant" : "student"));
+    setMode((prev) => {
+      const next = prev === "student" ? "merchant" : "student";
+      navigate(`?mode=${next}`, { replace: true });
+      return next;
+    });
   };
 
   const isEmail = (val: string) => {
@@ -166,7 +180,9 @@ export default function Loginpage({
             signup_key: data.signup_key,
             mode: mode,
             user: data.user,
-            verification : data.verification
+            verification: data.verification,
+            state: data.state,
+            school: data.school
           };
 
           // Save to sessionStorage as JSON string
@@ -181,7 +197,7 @@ export default function Loginpage({
               email: data.email,
               callNo: data.call_no,
               whats: data.whats,
-            })
+            }),
           );
           alert("Continue Registration");
           window.location.href = "/signup";
@@ -382,7 +398,7 @@ export default function Loginpage({
                     {mode === "student" ? "For Students" : "For Business"}?{" "}
                     <span
                       className="text-[#0556F8] cursor-pointer"
-                      onClick={() => navigate("/signup")}
+                      onClick={() => navigate(signup)}
                     >
                       Sign-up
                     </span>

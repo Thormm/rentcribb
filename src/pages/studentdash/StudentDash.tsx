@@ -6,7 +6,7 @@ import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
 import Roommates from "./Roommates";
-import Hostels from "./Hostels";
+import Rent from "./Rent";
 import SettingsPage from "./Settings";
 
 import SidebarInner from "./DashComponents/SidebarInner";
@@ -115,8 +115,8 @@ export default function BusinessDash() {
         return <Subscriptions />
       case "roommates":
         return <Roommates />;
-      case "hostels":
-        return <Hostels />;
+      case "rent":
+        return <Rent />;
       case "settings":
         return <SettingsPage />;
       default:

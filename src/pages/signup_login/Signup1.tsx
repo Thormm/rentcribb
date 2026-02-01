@@ -23,7 +23,7 @@ function Maincard({
     <div
       className={clsx(
         "rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -64,7 +64,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -97,7 +97,7 @@ function InputField({
           "bg-white",
           status === "valid" && "border border-green-600",
           status === "invalid" && "border border-red-600",
-          status === "idle" && "border border-black"
+          status === "idle" && "border border-black",
         )}
       >
         <div className="inline-flex items-center justify-between w-full">
@@ -126,21 +126,26 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
   const [callNo, setCallNo] = useState("");
   const [whats, setWhats] = useState("");
   const navigate = useNavigate();
+  const login =
+    mode === "student"
+      ? "/login?mode=student"
+      : mode === "merchant"
+        ? "/login?mode=merchant"
+        : "/login"; // safe fallback
 
   const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">(
-    "idle"
+    "idle",
   );
   const [callStatus, setCallStatus] = useState<"idle" | "valid" | "invalid">(
-    "idle"
+    "idle",
   );
   const [whatsStatus, setWhatsStatus] = useState<"idle" | "valid" | "invalid">(
-    "idle"
+    "idle",
   );
 
   const [emailError, setEmailError] = useState("");
   const [callError, setCallError] = useState("");
   const [whatsError, setWhatsError] = useState("");
-
 
   // ---------- server validation ----------
   const validateField = async (field: string) => {
@@ -221,28 +226,27 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
     whatsStatus === "valid";
 
   const handleVerify = () => {
-  if (!allValid) return;
+    if (!allValid) return;
 
-  // ✅ Save inputs into sessionStorage
-  sessionStorage.setItem(
-    "signup_data",
-    JSON.stringify({
-      email,
-      callNo,
-      whats,
-    })
-  );
+    // ✅ Save inputs into sessionStorage
+    sessionStorage.setItem(
+      "signup_data",
+      JSON.stringify({
+        email,
+        callNo,
+        whats,
+      }),
+    );
 
-  // Go to next page
-  if (onNext) onNext();
-};
-
+    // Go to next page
+    if (onNext) onNext();
+  };
 
   return (
     <>
       {/* Section */}
       <section
-        className="px-2 pt-1 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
+        className="px-2 pt-5 md:pt-10 pb-20 min-h-screen flex flex-col items-center justify-center text-black"
         style={{
           backgroundImage: `url(${signbg})`,
           backgroundSize: "cover",
@@ -306,9 +310,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                   onClick={handleVerify}
                   disabled={!allValid}
                 >
-                  <span className="text-xl">
-                    Continue
-                  </span>
+                  <span className="text-xl">Continue</span>
                   <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
                 </button>
               </InfoPill>
@@ -327,7 +329,12 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
               <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                 <span>
                   Have a Cribb.Africa account?{" "}
-                  <span className="text-[#0556F8] cursor-pointer"  onClick={() => navigate("/login")}>Log in</span>
+                  <span
+                    className="text-[#0556F8] cursor-pointer"
+                    onClick={() => navigate(login)}
+                  >
+                    Log in
+                  </span>
                 </span>
               </div>
             </div>

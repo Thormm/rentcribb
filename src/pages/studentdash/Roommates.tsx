@@ -221,15 +221,13 @@ function SectionHeader({ title }: { title: string }) {
   return (
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl md:text-4xl font-extrabold">Hola, {title}</h2>
+        <h2 className="text-2xl md:text-4xl font-extrabold">{title}</h2>
         <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
           <BsQuestionCircle className="text-white" size={40} />
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        Our goal is for your{" "}
-        <span className="text-[#FFA1A1] font-semibold">SCHOOL LIFE</span> to be{" "}
-        <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
+        We’ve made it a soft experience getting a Match ...
       </p>
 
       <div

@@ -565,7 +565,7 @@ export default function Sharedspace3({
                       >
                         <option value="">Select University</option>
                         {institutes.map((inst) => (
-                          <option key={inst.id} value={inst.id}>
+                          <option key={inst.id} value={inst.institution}>
                             {inst.institution}
                           </option>
                         ))}

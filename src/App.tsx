@@ -28,7 +28,7 @@ function Layout() {
   const location = useLocation();
 
   // Explicitly list only pages where you WANT the navbar
-  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests"];
+  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests", "/request"];
 
   // Check for exact matches, not just prefix matches
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
       { path: "/entirespace", element: <Entirespace /> },
       { path: "/sharedspace", element: <Sharedspace /> },
       { path: "/signup", element: <Signup /> },
-      { path: "/login", element: <Loginpage mode="student" /> },
+      { path: "/login", element: <Loginpage /> },
       { path: "/forgotpassword", element: <ForgotPassword /> },
       { path: "/businessonboarding", element: <Board /> },
     ],

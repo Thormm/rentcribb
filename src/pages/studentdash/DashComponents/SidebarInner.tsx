@@ -132,13 +132,13 @@ export default function SidebarInner({
             </button>
 
             <button
-              onClick={() => setActiveTab("hostels")}
+              onClick={() => setActiveTab("rent")}
               className={`${baseBtn} ${
-                activeTab === "hostels" ? activeClass : inactiveClass
+                activeTab === "rent" ? activeClass : inactiveClass
               }`}
             >
               <FiHome className={baseIcon} />
-              <span className="truncate text-[12px] md:text-xl">Hostels</span>
+              <span className="truncate text-[12px] md:text-xl">Rent</span>
               <span className="text-xs px-4 py-1 font-bold rounded-lg ml-auto bg-white  text-black">
                 NEW
               </span>

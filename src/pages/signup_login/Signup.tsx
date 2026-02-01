@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Signup1 from "./Signup1";
 import Signup2 from "./Signup2";
 import Signup3 from "./Signup3";
@@ -8,19 +9,34 @@ import logo from "../../assets/logo.png";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 
-
 const Signup = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"student" | "merchant">("student"); // default student
 
   const goNext = () => setStep((prev) => prev + 1);
   const goBack = () => setStep((prev) => prev - 1);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlMode = params.get("mode");
+
+    if (urlMode === "student" || urlMode === "merchant") {
+      setMode(urlMode);
+    }
+  }, [location.search]);
+
   const toggleMode = () => {
-    setMode((prev) => (prev === "student" ? "merchant" : "student"));
+    setMode((prev) => {
+      const next = prev === "student" ? "merchant" : "student";
+      navigate(`?mode=${next}`, { replace: true });
+      return next;
+    });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     // read from sessionStorage if present
     const savedStep = sessionStorage.getItem("signupStep");
     const savedMode = sessionStorage.getItem("signupMode");
@@ -50,7 +66,11 @@ const Signup = () => {
 
         {/* Center: Logo */}
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
-          <img src={logo} alt="Cribb.Africa Logo" className="m-0 p-0 h-8 md:h-11" />
+          <img
+            src={logo}
+            alt="Cribb.Africa Logo"
+            className="m-0 p-0 h-8 md:h-11"
+          />
           <div className="flex flex-col items-end p-0 m-0">
             <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
               Cribb
@@ -97,10 +117,9 @@ const Signup = () => {
       </nav>
 
       {/* Steps */}
-      
-      
+
       {step === 1 && <Signup1 mode={mode} onNext={goNext} />}
-      {step === 2 && <Signup2 mode={mode} onNext={goNext} onBack = {goBack} />}
+      {step === 2 && <Signup2 mode={mode} onNext={goNext} onBack={goBack} />}
       {step === 3 && <Signup3 mode={mode} onNext={goNext} />}
       {step === 4 && <Signup4 mode={mode} />}
     </>

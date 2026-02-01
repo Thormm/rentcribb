@@ -17,9 +17,9 @@ function Rating({ value, reviews }: { value: number; reviews: number }) {
   return (
     <div className="inline-flex items-center gap-2 text-md">
       <div className="inline-flex items-center gap-1">
-        <Star className="h-6 w-6 text-[orange]" />
-        <span className="font-semibold text-xl">{value}</span>
-        <span className="opacity-70 text-xl">({reviews})</span>
+        <Star className="h-4 w-4 md:h-6 md:w-6 text-[orange]" />
+        <span className="font-semibold text-xs md:text-xl">{value}</span>
+        <span className="opacity-70 text-xs md:text-xl">({reviews})</span>
       </div>
     </div>
   );
@@ -81,10 +81,10 @@ export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
 
   return (
     <div
-      className={`w-85 rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${item.background} border-black`}
+      className={`w-full md:w-80 rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${item.background} border-black`}
     >
       {/* image placeholder with shuttle buttons */}
-      <div className="relative h-75 border-black border-2 w-full overflow-hidden rounded-2xl bg-gray-100">
+      <div className="relative h-55 md:h-70 border-black border-2 w-full overflow-hidden rounded-2xl bg-gray-100">
         {/* Image (or placeholder) */}
         {currentUrl ? (
           <>
@@ -179,7 +179,7 @@ export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
       <div className="border-t-2 text-black  border-dashed border-gray-400 my-2"></div>
 
       {/* description */}
-      <p className="mt-3 text-md text-center text-black">
+      <p className="mt-3 text-xs md:text-base text-center text-black">
         {item.type} is available around{" "}
         <span className="font-semibold">{item.location}</span> for{" "}
         {item.space === "sharedspace" ? (
