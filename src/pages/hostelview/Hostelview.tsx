@@ -1,15 +1,16 @@
 import {
-  Star,
-  StarOff,
-  Info,
-  AlertTriangle,
-  Share2,
-  Calendar,
-  ShieldCheck,
-  User,
-  MapPin,
-  ChevronDown,
-} from "lucide-react";
+  FaStar,
+  FaRegStar,
+  FaInfoCircle,
+  FaExclamationTriangle,
+  FaShareAlt,
+  FaCalendarAlt,
+  FaShieldAlt,
+  FaUser,
+  FaMapMarkerAlt,
+  FaChevronDown,
+} from "react-icons/fa";
+
 import Card from "../../components/Cards";
 
 type CardItemA = {
@@ -83,16 +84,17 @@ function Maincard({
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="px-5 pt-10">
-      <h3 className="text-4xl font-medium text-center">{title}</h3>
-      <p className="text-center text-md pt-3">
+      
+        <h2 className="text-center text-2xl md:text-4xl font-extrabold">{title}</h2>
+      <p className="text-center text-xs md:text-sm pt-1 md:pt-5">
         Check out the Features of this Hostel
       </p>
       <div
-        className="mt-1 w-95 border-t-4 mx-auto text-[#0000004D]"
+        className="mt-2 w-full border-t-4"
         style={{
           borderStyle: "dashed",
           borderImage:
-            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
         }}
       />
     </div>
@@ -109,7 +111,7 @@ type LabelProps = React.PropsWithChildren<{
 
 function Label({ children, className }: LabelProps) {
   return (
-    <div className={clsx("text-md my-5 font-semibold ml-0", className)}>
+    <div className={clsx("text-sm md:text-lg md:my-2 font-semibold ml-0", className)}>
       {children}
     </div>
   );
@@ -120,9 +122,9 @@ function StarRow({ value = 4 }: { value?: number }) {
     <div className="flex items-center gap-1 text-yellow-500">
       {Array.from({ length: 5 }).map((_, i) =>
         i < value ? (
-          <Star key={i} size={25} fill="currentColor" />
+          <FaStar key={i} size={25} fill="currentColor" />
         ) : (
-          <StarOff key={i} size={25} />
+          <FaRegStar key={i} size={25} />
         )
       )}
     </div>
@@ -152,7 +154,7 @@ export default function Hostelview() {
         </div>
       </section>
 
-      <section className="mt-15 mx-12 grid grid-cols-1 lg:grid-cols-[40%_60%] gap-2 p-6 pt-0 bg-[#f5f5f7]">
+      <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0 bg-[#f5f5f7]">
         {/* Left Section */}
         <section className="relative w-full h-full">
           <img
@@ -160,7 +162,7 @@ export default function Hostelview() {
             alt="Guest relaxing"
             className="w-full h-full object-cover border-2 rounded-3xl"
           />
-          <button className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-7 py-4 font-semibold rounded-lg shadow-md">
+          <button className="text-xs md:text-base absolute bottom-3 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md">
             VIEW PHOTO
           </button>
         </section>
@@ -168,7 +170,7 @@ export default function Hostelview() {
         {/* Right Section */}
         <section className="flex flex-col gap-2">
           {/* Top image (no button) */}
-          <div className="relative w-full h-70">
+          <div className="relative hidden md:block w-full h-70">
             <img
               src={imgright}
               alt="Bunk bed view"
@@ -179,14 +181,14 @@ export default function Hostelview() {
           {/* Bottom image (with button) */}
           <div className="relative w-full h-full">
             <iframe
-              className="md:h-80 w-full h-70 object-cover border-2 rounded-3xl"
+              className="h-50 md:h-80 w-full object-cover border-2 rounded-3xl"
               src="https://www.youtube.com/embed/dQw4w9WgXcQ"
               title="How It Works Video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
-            <button className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-7 py-4 font-semibold rounded-lg shadow-md">
+            <button className="text-xs md:text-base absolute bottom-5 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md">
               VIEW VIDEO
             </button>
           </div>
@@ -194,18 +196,18 @@ export default function Hostelview() {
       </section>
 
       <section className="bg-[#F3EDFE] my-20">
-        <div className="mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
+        <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
           {/* LEFT STACK */}
           <div className="space-y-1">
             {/* HOSTEL VIEW */}
             <Maincard className="bg-[#F4F6F5] pb-5">
               <SectionHeader title="Hostel View" />
 
-              <div className="px-5 pb-4 pt-3 space-y-4">
+              <div className="md:px-5 pb-4 pt-3 space-y-5 md:space-y-8">
                 {/* Description */}
                 <div className="space-y-1">
                   <Label className="ml-8">Description</Label>
-                  <InfoPill>
+                  <InfoPill className="text-xs md:text-base">
                     3 units of “A room in a flat” (Furnished) is available
                     around IgPay for{" "}
                     <span className="font-extrabold">₦800,000</span> per 6
@@ -216,7 +218,7 @@ export default function Hostelview() {
                 {/* Bedrooms & Toilets */}
                 <div className="space-y-1">
                   <Label className="ml-8">Bedrooms and Toilets</Label>
-                  <InfoPill>
+                  <InfoPill className="text-xs md:text-base">
                     3 Bedroom : 2 Bathroom (1 Shared, 1 Ensuite)
                   </InfoPill>
                 </div>
@@ -224,7 +226,7 @@ export default function Hostelview() {
                 {/* Security */}
                 <div className="space-y-1">
                   <Label className="ml-8">Security</Label>
-                  <InfoPill>
+                  <InfoPill className="text-xs md:text-base">
                     Fenced &amp; Gate : Community Guard : Surveillance : Alarm :
                     Hostel guard
                   </InfoPill>
@@ -233,20 +235,20 @@ export default function Hostelview() {
                 {/* Water */}
                 <div className="space-y-1">
                   <Label className="ml-8">Water</Label>
-                  <InfoPill>
+                  <InfoPill className="text-xs md:text-base">
                     Borehole : Well : Clean : Running : Treated
                   </InfoPill>
                 </div>
 
                 {/* Grid pairs */}
-                <div className="">
+                <div className="space-y-5 md:space-y-5">
                   {/* Row 1 */}
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-1">
                       <Label>Power Supply</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-3 text-md">Good supply</div>
+                        <div className="mt-2 text-xs md:text-sm">Good supply</div>
                       </div>
                     </div>
 
@@ -254,7 +256,7 @@ export default function Hostelview() {
                       <Label>Network Strength</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-3 text-md">Network Coverage</div>
+                        <div className="mt-2 text-xs md:text-sm">Network Coverage</div>
                       </div>
                     </div>
                   </div>
@@ -265,7 +267,7 @@ export default function Hostelview() {
                       <Label>Compound</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-3 text-md">Good &amp; Aesthetic</div>
+                        <div className="mt-2 text-xs md:text-sm">Good &amp; Aesthetic</div>
                       </div>
                     </div>
 
@@ -273,7 +275,7 @@ export default function Hostelview() {
                       <Label>Access Road</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-3 text-md">
+                        <div className="mt-2 text-xs md:text-sm">
                           Good &amp; Accessibility
                         </div>
                       </div>
@@ -308,22 +310,22 @@ export default function Hostelview() {
                 </div>
 
                 <div
-                  className="mt-3 w-95 border-t-4 mx-auto text-[#0000004D]"
+                  className="mt-2 w-full border-t-4"
                   style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                  }}
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+        }}
                 />
 
                 {/* Report / Share */}
                 <div className="flex items-center justify-between mt-10">
                   <button className="inline-flex items-center text-sm gap-2 text-red-600  underline underline-offset-4">
-                    <AlertTriangle size={35} />
+                    <FaExclamationTriangle size={35} />
                     Report listing
                   </button>
                   <button className="inline-flex items-center gap-2 underline">
-                    SHARE <Share2 size={35} />
+                    SHARE <FaShareAlt size={35} />
                   </button>
                 </div>
               </div>
@@ -340,18 +342,18 @@ export default function Hostelview() {
                 {/* Book inspection */}
                 <div className="pt-2 w-full">
                   <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 text-xl font-medium drop-shadow-lg">
-                    <MapPin size={30} className="text-black" />
+                    <FaMapMarkerAlt size={30} className="text-black" />
                     <span>Check Proximity to your Uni </span>
                   </button>
                 </div>
 
                 <div
-                  className="mt-8 w-95 border-t-4 mx-auto text-[#0000004D]"
+                  className="mt-2 w-full border-t-4"
                   style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                  }}
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+        }}
                 />
               </div>
             </Maincard>
@@ -363,45 +365,45 @@ export default function Hostelview() {
             <Maincard className="bg-[#CDBCEC] pb-5">
               <SectionHeader title="Host" />
 
-              <div className="px-5 pb-5 pt-3">
+              <div className="md:px-5 space-y-5 pb-5 pt-3">
                 {/* Host row */}
-                <Label className="ml-8">Host</Label>
+                <Label className="my-0 ml-2 md:ml-8 py-2 ">Host</Label>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 bg-white rounded-xl border-3 px-2 py-3">
                     <div className="place-items-center">
-                      <User size={30} />
+                      <FaUser className="text-[16px] md:text-[25px]" />
                     </div>
-                    <span className="font-semibold text-xl mr-35">
+                    <span className="font-semibold text-sm md:text-xl mr-5 md:mr-35">
                       LANDLORD
                     </span>
                   </div>
 
-                  <button className="inline-flex items-center gap-1 text-xs font-semibold">
-                    <Star /> <span className="underline ml-3">1.2 (85)</span>
+                  <button className="inline-flex items-center md:gap-1 text-xs font-semibold">
+                    <FaStar className="text-lg text-yellow-400"/> <span className="underline ml-3">1.2 (85)</span>
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   {/* First InfoPill */}
                   <div className="space-y-1">
-                    <Label className="ml-8">Verification</Label>
-                    <InfoPill>
+                    <Label className="ml-3 md:ml-8">Verification</Label>
+                    <InfoPill className="px-3 md:px-base">
                       <div className="inline-flex items-center justify-between w-full text-[11px]">
-                        <span className="inline-flex items-center gap-2 rounded px-3 py-1 bg-black text-white ">
-                          <ShieldCheck size={14} /> TIER 1
+                        <span className="text-xs md:text-sm inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white ">
+                          <FaShieldAlt size={14} /> TIER 1
                         </span>
-                        <Info size={14} className="ml-auto" />
+                        <FaInfoCircle size={14} className="md:ml-auto" />
                       </div>
                     </InfoPill>
                   </div>
 
                   {/* Second InfoPill */}
                   <div className="space-y-1">
-                    <Label className="ml-8">No. of Listings</Label>
-                    <InfoPill>
+                    <Label className="ml-3 md:ml-8">No. of Listings</Label>
+                    <InfoPill className="px-3 md:px-base">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-md py-1">26</span>
-                        <Info size={14} className="ml-auto" />
+                        <span className="text-xs md:pl-6 md:text-sm py-1">26</span>
+                        <FaInfoCircle size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
                   </div>
@@ -409,13 +411,13 @@ export default function Hostelview() {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1">
-                    <Label className="ml-8">How long on Cribb</Label>
-                    <InfoPill>2 Months</InfoPill>
+                    <Label className="ml-3 md:ml-8">Joined</Label>
+                    <InfoPill className="px-3 md:pl-8 md:px-base"><span className="text-xs md:text-sm text-start">2 Months</span></InfoPill>
                   </div>
 
                   <div className="space-y-1">
-                    <Label className="ml-8">Last Seen</Label>
-                    <InfoPill>2 Days Ago</InfoPill>
+                    <Label className="ml-3 md:ml-8">Last Seen</Label>
+                    <InfoPill className="px-3 md:pl-8 md:px-base"><span className="text-xs md:text-sm">2 Months</span></InfoPill>
                   </div>
                 </div>
               </div>
@@ -425,24 +427,24 @@ export default function Hostelview() {
             <Maincard className="bg-[#CDBCEC] mt-10 pb-5">
               <SectionHeader title="Rent" />
 
-              <div className="px-5 pb-6 pt-3 space-y-4">
+              <div className="md:px-5 pb-6 pt-3 space-y-4">
                 {/* Inspection fee row */}
 
                 <div className="space-y-1">
                   <Label className="ml-8">Inspection Fee</Label>
                   <InfoPill className="bg-white">
                     <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-md py-1">₦800,000</span>
+                      <span className="text-xs md:text-sm py-1">₦800,000</span>
                       <div className="relative inline-flex items-center">
                         {/* Native select */}
-                        <select className="appearance-none bg-transparent text-sm focus:outline-none pr-6 cursor-pointer">
+                        <select className="appearance-none bg-transparen text-xs md:text-sm focus:outline-none pr-6 cursor-pointer">
                           <option>One Time Fee</option>
                           <option>Monthly Fee</option>
                           <option>Yearly Fee</option>
                         </select>
 
                         {/* Chevron icon */}
-                        <ChevronDown
+                        <FaChevronDown
                           size={16}
                           className="absolute right-0 pointer-events-none text-gray-600"
                         />
@@ -454,7 +456,7 @@ export default function Hostelview() {
                 {/* Breakdown */}
                 <div className="space-y-1">
                   <Label className="ml-8">Rent Breakdown</Label>
-                  <div className="rounded-2xl bg-white mx-1 border-1 p-3">
+                  <div className="rounded-2xl bg-white mx-1 border-1 md:p-3">
                     {[
                       ["Rent", "₦800,000 (yearly)"],
                       ["Caution", "₦80,000"],
@@ -464,11 +466,12 @@ export default function Hostelview() {
                     ].map(([label, value]) => (
                       <div
                         key={label}
-                        className="flex items-center justify-between py-2 px-4 text-md"
+                        className="flex items-center justify-between py-2 px-4 text-xs md:text-sm"
                       >
                         <span>{label}</span>
-                        <span className="inline-flex items-center gap-2">
-                          {value} <Info size={25} />
+                        <span className="inline-flex items-center gap-2 ">
+                          {value} <FaInfoCircle className="text-[16px] md:text-[25px]" />
+
                         </span>
                       </div>
                     ))}
@@ -487,19 +490,19 @@ export default function Hostelview() {
 
                 {/* Book inspection */}
                 <div className="pt-2 w-full">
-                  <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 text-xl font-medium drop-shadow-lg">
-                    <Calendar size={30} className="text-black" />
-                    <span>Book Inspection</span>
+                  <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 font-medium drop-shadow-lg">
+                    <FaCalendarAlt className="text-black text-[20px] md:text-[25px]" />
+                    <span className="text-lg md:text-3xl">Book Inspection</span>
                   </button>
                 </div>
 
                 <div
-                  className="mt-1 w-95 border-t-4 mx-auto text-[#0000004D]"
+                  className="mt-2 w-full border-t-4"
                   style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                  }}
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+        }}
                 />
 
                 <div className="w-full flex flex-col items-center text-center">
@@ -521,7 +524,7 @@ export default function Hostelview() {
                 </div>
 
                 <div className="pt-2 w-full">
-                  <button className="w-full flex items-center justify-center gap-2 rounded-full bg-black text-white px-5 py-5 text-3xl font-medium drop-shadow-lg">
+                  <button className="text-lg md:text-3xl  w-full flex items-center justify-center gap-2 rounded-full bg-black text-white px-5 py-5 font-medium drop-shadow-lg">
                     Connect
                   </button>
                 </div>
@@ -540,7 +543,7 @@ export default function Hostelview() {
                 <div className="mt-3 h-px w-full border-t border-dashed border-black/20" />
 
                 {/* content */}
-                <div className="mt-4 space-y-5 text-md text-white leading-relaxed">
+                <div className="mt-4 space-y-5 text-xs md:text-base text-white leading-relaxed">
                   <p>It’s safer not to pay ahead for inspections.</p>
                   <p>
                     Ask friends or someone you trust to accompany you for

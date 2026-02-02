@@ -28,7 +28,7 @@ function Layout() {
   const location = useLocation();
 
   // Explicitly list only pages where you WANT the navbar
-  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests", "/request"];
+  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests", "/request", "/hostelview"];
 
   // Check for exact matches, not just prefix matches
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
