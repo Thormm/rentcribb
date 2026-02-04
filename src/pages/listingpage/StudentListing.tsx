@@ -123,6 +123,7 @@ function Label({
 function PaginatedCards({ data }: { data: LiveSpace[] }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPage(1);
@@ -141,7 +142,12 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
         <div className="flex flex-wrap justify-center gap-6">
           {currentData.map((card) => (
             <div key={card.id}>
-              <Card item={card} />
+              <Card
+                item={card}
+                onView={() =>
+                  navigate("/hostelview", { state: { space: [card.id, card.space] } })
+                }
+              />
             </div>
           ))}
         </div>
@@ -177,6 +183,14 @@ export default function StudentListing() {
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const navigate = useNavigate();
 
+  // Run this at the top of your page/component
+  useEffect(() => {
+    const user = login?.user;
+    if (!user) {
+      navigate("/login"); // redirect using react-router
+    }
+  }, [navigate]);
+
   const statesAndLgas: { state: string; lgas: string[] }[] =
     React.useMemo(() => {
       try {
@@ -201,11 +215,6 @@ export default function StudentListing() {
     power_supply: "",
     security: "",
   });
-  useEffect(() => {
-    if (!login.school) return;
-
-    getLiveSpaces(login.school).then(setCards);
-  }, []);
 
   // ---------------- FILTERING ----------------
 
@@ -262,6 +271,11 @@ export default function StudentListing() {
     });
   };
 
+  useEffect(() => {
+    if (!login.school) return;
+    getLiveSpaces(login.school).then(setCards);
+  }, []);
+
   return (
     <div className="bg-[#F3EDFE]">
       <section className="min-h-screen w-full">
@@ -273,7 +287,7 @@ export default function StudentListing() {
               <h1 className="text-4xl my-4 font-extrabold">
                 Available Hostels in{" "}
                 <span className="text-[#C2C8DA]">
-                  {login.school.split(" - ")[0]}
+                  {login?.school?.split(" - ")?.[0] ?? ""}
                 </span>
               </h1>
 
@@ -530,7 +544,9 @@ export default function StudentListing() {
                     <span className="text-xs md:text-md text-[blue]">
                       {showAllFilters ? "Hide filters" : "Show all Filter"}
                     </span>
-                    <span className="text-xs md:text-md text-[blue] leading-none">›</span>
+                    <span className="text-xs md:text-md text-[blue] leading-none">
+                      ›
+                    </span>
                   </button>
                 </div>
 

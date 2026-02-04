@@ -42,9 +42,13 @@ type CardItemBase = {
 
 type CardProps<T extends CardItemBase> = {
   item: T;
+  onView?: () => void;
 };
 
-export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
+export default function Card<T extends CardItemBase>({
+  item,
+  onView,
+}: CardProps<T>) {
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -170,32 +174,34 @@ export default function Card<T extends CardItemBase>({ item }: CardProps<T>) {
         )}
       </div>
 
-      {/* meta row */}
-      <div className="mt-3 flex items-center text-black justify-between">
-        <TierBadge n={item.tier} />
-        <Rating value={item.rating} reviews={item.reviews} />
-      </div>
+      <div onClick={onView} className="cursor-pointer">
+        {/* meta row */}
+        <div className="mt-3 flex items-center text-black justify-between">
+          <TierBadge n={item.tier} />
+          <Rating value={item.rating} reviews={item.reviews} />
+        </div>
 
-      <div className="border-t-2 text-black  border-dashed border-gray-400 my-2"></div>
+        <div className="border-t-2 text-black  border-dashed border-gray-400 my-2"></div>
 
-      {/* description */}
-      <p className="mt-3 text-xs md:text-base text-center text-black">
-        {item.type} is available around{" "}
-        <span className="font-semibold">{item.location}</span> for{" "}
-        {item.space === "sharedspace" ? (
-          <>
-            a split amount of{" "}
+        {/* description */}
+        <p className="mt-3 text-xs md:text-base text-center text-black">
+          {item.type} is available around{" "}
+          <span className="font-semibold">{item.location}</span> for{" "}
+          {item.space === "sharedspace" ? (
+            <>
+              a split amount of{" "}
+              <span className="font-semibold">
+                ₦{Number(item.price).toLocaleString()}
+              </span>
+            </>
+          ) : (
             <span className="font-semibold">
               ₦{Number(item.price).toLocaleString()}
             </span>
-          </>
-        ) : (
-          <span className="font-semibold">
-            ₦{Number(item.price).toLocaleString()}
-          </span>
-        )}{" "}
-        {item.duration}.
-      </p>
+          )}{" "}
+          {item.duration}.
+        </p>
+      </div>
     </div>
   );
 }

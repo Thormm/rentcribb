@@ -1,3 +1,4 @@
+import React from "react";
 import {
   FaStar,
   FaRegStar,
@@ -10,8 +11,13 @@ import {
   FaMapMarkerAlt,
   FaChevronDown,
 } from "react-icons/fa";
-
+import InfoPill, { DfButton } from "../../components/Pill";
+import clsx from "clsx"; // optional, for cleaner class merging
 import Card from "../../components/Cards";
+import Footer from "../../components/Footer";
+import imgright from "../../assets/hero.jpg";
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type CardItemA = {
   background: string;
@@ -20,12 +26,11 @@ type CardItemA = {
   reviews: number;
   title: string;
   location: string;
-  price: number,
-  name: string,
-  space: string,
-  duration: string,
-  type: string,
-
+  price: number;
+  name: string;
+  space: string;
+  duration: string;
+  type: string;
 };
 
 const cards: CardItemA[] = [
@@ -84,8 +89,9 @@ function Maincard({
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="px-5 pt-10">
-      
-        <h2 className="text-center text-2xl md:text-4xl font-extrabold">{title}</h2>
+      <h2 className="text-center text-2xl md:text-4xl font-extrabold">
+        {title}
+      </h2>
       <p className="text-center text-xs md:text-sm pt-1 md:pt-5">
         Check out the Features of this Hostel
       </p>
@@ -101,17 +107,18 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-import InfoPill, { DfButton } from "../../components/Pill";
-
-import clsx from "clsx"; // optional, for cleaner class merging
-
 type LabelProps = React.PropsWithChildren<{
   className?: string;
 }>;
 
 function Label({ children, className }: LabelProps) {
   return (
-    <div className={clsx("text-sm md:text-lg md:my-2 font-semibold ml-0", className)}>
+    <div
+      className={clsx(
+        "text-sm md:text-lg md:my-2 font-semibold ml-0",
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -125,16 +132,82 @@ function StarRow({ value = 4 }: { value?: number }) {
           <FaStar key={i} size={25} fill="currentColor" />
         ) : (
           <FaRegStar key={i} size={25} />
-        )
+        ),
       )}
     </div>
   );
 }
 
-import Footer from "../../components/Footer";
-import imgright from "../../assets/hero.jpg";
-
 export default function Hostelview() {
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const navigate = useNavigate();
+  const [hostel, setHostel] = React.useState<any>(null);
+  const location = useLocation();
+  const space = location.state?.space;
+  const id = space?.[0];
+  const space_type = space?.[1];
+  const [openModal, setOpenModal] = React.useState<
+    null | "amenities" | "rules"
+  >(null);
+
+  const parseList = (value: any): string[] => {
+  if (!value) return [];
+
+  if (Array.isArray(value)) return value;
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+
+  useEffect(() => {
+    const user = login?.user;
+    if (!user) {
+      navigate("/login"); // redirect using react-router
+    }
+
+    if (!space) {
+      navigate("/studentlisting", { replace: true });
+    }
+  }, [space, navigate]);
+
+useEffect(() => {
+  if (!id || !space_type) return;
+
+  const fetchHostel = async () => {
+    const res = await fetch("https://www.cribb.africa/apigets.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "get_full_details_hostel",
+        id,
+        space_type,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.data) {
+      setHostel(data.data);
+      console.log("Fetched hostel data:", data.data);
+    } else {
+      console.log(data.message);
+    }
+  };
+
+  fetchHostel();
+}, [id, space_type]);
+
+
+if (!hostel) {
+  return <div className="p-10">Loading hostel...</div>;
+}
+
+
   return (
     <div className="bg-[#F3EDFE]">
       <section className=" w-full ">
@@ -147,7 +220,9 @@ export default function Hostelview() {
             <div className="mt-1 flex items-center justify-between gap-4">
               <h1 className="text-4xl my-4 font-extrabold ">
                 Available Hostels in{" "}
-                <span className="text-[#C2C8DA]">Lasu</span>
+                <span className="text-[#C2C8DA]">
+                  {hostel?.target_university?.split(" - ")?.[0] ?? ""}
+                </span>
               </h1>
             </div>
           </div>
@@ -248,7 +323,9 @@ export default function Hostelview() {
                       <Label>Power Supply</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-2 text-xs md:text-sm">Good supply</div>
+                        <div className="mt-2 text-xs md:text-sm">
+                          Good supply
+                        </div>
                       </div>
                     </div>
 
@@ -256,7 +333,9 @@ export default function Hostelview() {
                       <Label>Network Strength</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-2 text-xs md:text-sm">Network Coverage</div>
+                        <div className="mt-2 text-xs md:text-sm">
+                          Network Coverage
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -267,7 +346,9 @@ export default function Hostelview() {
                       <Label>Compound</Label>
                       <div>
                         <StarRow value={4} />
-                        <div className="mt-2 text-xs md:text-sm">Good &amp; Aesthetic</div>
+                        <div className="mt-2 text-xs md:text-sm">
+                          Good &amp; Aesthetic
+                        </div>
                       </div>
                     </div>
 
@@ -312,10 +393,10 @@ export default function Hostelview() {
                 <div
                   className="mt-2 w-full border-t-4"
                   style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-        }}
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+                  }}
                 />
 
                 {/* Report / Share */}
@@ -350,10 +431,10 @@ export default function Hostelview() {
                 <div
                   className="mt-2 w-full border-t-4"
                   style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-        }}
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+                  }}
                 />
               </div>
             </Maincard>
@@ -379,7 +460,8 @@ export default function Hostelview() {
                   </div>
 
                   <button className="inline-flex items-center md:gap-1 text-xs font-semibold">
-                    <FaStar className="text-lg text-yellow-400"/> <span className="underline ml-3">1.2 (85)</span>
+                    <FaStar className="text-lg text-yellow-400" />{" "}
+                    <span className="underline ml-3">1.2 (85)</span>
                   </button>
                 </div>
 
@@ -387,7 +469,7 @@ export default function Hostelview() {
                   {/* First InfoPill */}
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Verification</Label>
-                    <InfoPill className="px-3 md:px-base">
+                    <InfoPill className="px-3 md:pl-8 md:px-base">
                       <div className="inline-flex items-center justify-between w-full text-[11px]">
                         <span className="text-xs md:text-sm inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white ">
                           <FaShieldAlt size={14} /> TIER 1
@@ -402,7 +484,9 @@ export default function Hostelview() {
                     <Label className="ml-3 md:ml-8">No. of Listings</Label>
                     <InfoPill className="px-3 md:px-base">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:pl-6 md:text-sm py-1">26</span>
+                        <span className="text-xs md:pl-4 md:text-sm py-1">
+                          26
+                        </span>
                         <FaInfoCircle size={14} className="ml-auto" />
                       </div>
                     </InfoPill>
@@ -412,12 +496,18 @@ export default function Hostelview() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Joined</Label>
-                    <InfoPill className="px-3 md:pl-8 md:px-base"><span className="text-xs md:text-sm text-start">2 Months</span></InfoPill>
+                    <InfoPill className="px-3 md:pl-8 md:px-base">
+                      <span className="text-xs md:text-sm text-start">
+                        2 Months
+                      </span>
+                    </InfoPill>
                   </div>
 
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Last Seen</Label>
-                    <InfoPill className="px-3 md:pl-8 md:px-base"><span className="text-xs md:text-sm">2 Months</span></InfoPill>
+                    <InfoPill className="px-3 md:pl-8 md:px-base">
+                      <span className="text-xs md:text-sm">2 Months</span>
+                    </InfoPill>
                   </div>
                 </div>
               </div>
@@ -470,8 +560,8 @@ export default function Hostelview() {
                       >
                         <span>{label}</span>
                         <span className="inline-flex items-center gap-2 ">
-                          {value} <FaInfoCircle className="text-[16px] md:text-[25px]" />
-
+                          {value}{" "}
+                          <FaInfoCircle className="text-[16px] md:text-[25px]" />
                         </span>
                       </div>
                     ))}
@@ -492,17 +582,17 @@ export default function Hostelview() {
                 <div className="pt-2 w-full">
                   <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 font-medium drop-shadow-lg">
                     <FaCalendarAlt className="text-black text-[20px] md:text-[25px]" />
-                    <span className="text-lg md:text-3xl">Book Inspection</span>
+                    <span className="text-lg md:text-2xl">Book Inspection</span>
                   </button>
                 </div>
 
                 <div
                   className="mt-2 w-full border-t-4"
                   style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-        }}
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+                  }}
                 />
 
                 <div className="w-full flex flex-col items-center text-center">
@@ -524,7 +614,7 @@ export default function Hostelview() {
                 </div>
 
                 <div className="pt-2 w-full">
-                  <button className="text-lg md:text-3xl  w-full flex items-center justify-center gap-2 rounded-full bg-black text-white px-5 py-5 font-medium drop-shadow-lg">
+                  <button className="text-lg md:text-2xl  w-full flex items-center justify-center gap-2 rounded-full bg-black text-white px-5 py-5 font-medium drop-shadow-lg">
                     Connect
                   </button>
                 </div>
@@ -569,21 +659,61 @@ export default function Hostelview() {
       </section>
 
       <section className="bg-[#CDBCEC] my-20 rounded-4xl border-4">
-        {/* SECTION 2: Cards (no overlap into header) */}
-        <div className="w-full max-w-6xl px-4 pb-16 pt-6 mx-auto">
-          <h1 className="font-semibold text-lg">OTHER HOSTELS</h1>
-          <div className="flex flex-wrap justify-center gap-6 space-x-6">
+        <div className="w-full px-4 pb-16 pt-6">
+          <h1 className="font-semibold text-lg mb-6">OTHER HOSTELS</h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
             {cards.map((c, i) => (
               <Card key={i} item={c} />
             ))}
           </div>
 
-          <div className="flex justify-center mt-15">
-            <DfButton className="font-[300px] py-3 px-7 text-[16px]">VIEW LISTING</DfButton>
+          <div className="flex justify-center mt-10">
+            <DfButton className="font-[300] py-3 px-7 text-[16px]">
+              VIEW LISTING
+            </DfButton>
           </div>
         </div>
       </section>
+
       <Footer />
+
+      {openModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-[90%] max-w-md rounded-xl p-5">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg">
+                {openModal === "amenities" ? "All Amenities" : "House Rules"}
+              </h3>
+
+              <button
+                onClick={() => setOpenModal(null)}
+                className="text-sm underline"
+              >
+                Close
+              </button>
+            </div>
+
+            <ul className="space-y-2 text-sm max-h-[300px] overflow-y-auto">
+              {(openModal === "amenities"
+                ? parseList(hostel?.all_feature)
+                : parseList(hostel?.house_rules)
+              ).map((item, index) => (
+                <li key={index} className="border-b pb-1">
+                  • {item}
+                </li>
+              ))}
+
+              {(openModal === "amenities"
+                ? parseList(hostel?.all_feature)
+                : parseList(hostel?.house_rules)
+              ).length === 0 && (
+                <li className="text-gray-400">No data available</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
