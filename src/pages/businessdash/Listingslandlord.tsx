@@ -19,7 +19,7 @@ import {
   MdOutlineBookmarkAdded,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
-import { FaPlus, FaToggleOn, FaToggleOff } from "react-icons/fa";
+import { FaPlus, FaToggleOn, FaToggleOff, FaUserCheck } from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
@@ -39,6 +39,7 @@ const SORT_OPTIONS = [
   { value: "processing", label: "Processing" },
   { value: "incomplete", label: "Incomplete" },
   { value: "not_approved", label: "Not approved" },
+  { value: "Approved", label: "Approved" },
   { value: "shared", label: "Shared" },
   { value: "entire", label: "Entire space" },
   { value: "name_az", label: "Name A-Z" },
@@ -50,6 +51,7 @@ const statusIcons: any = {
   Processing: (
     <AiOutlineLoading3Quarters className="w-4 h-4 md:w-7 md:h-7 text-black animate-spin" />
   ),
+  Approved: <FaUserCheck className="w-4 h-4 md:w-7 md:h-7 text-black" />,
   "Not Approved": <TbCancel className="w-4 h-4 md:w-7 md:h-7 text-black" />,
 };
 
@@ -136,7 +138,7 @@ function PaginatedDrafts() {
         new Fuse(data, {
           keys: ["name"],
           threshold: 0.4,
-        })
+        }),
       );
     });
   }, []);
@@ -147,7 +149,7 @@ function PaginatedDrafts() {
         setSearch(val);
         setPage(1);
       }, 300),
-    []
+    [],
   );
 
   const filteredDrafts = useMemo(() => {
@@ -162,13 +164,13 @@ function PaginatedDrafts() {
       case "date_recent":
         data.sort(
           (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
         break;
       case "date_old":
         data.sort(
           (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         );
         break;
       case "processing":
@@ -176,6 +178,7 @@ function PaginatedDrafts() {
           "Processing",
           "Incomplete",
           "Not Approved",
+          "Approved",
         ]);
         break;
       case "not_approved":
@@ -183,6 +186,7 @@ function PaginatedDrafts() {
           "Not Approved",
           "Processing",
           "Incomplete",
+          "Approved",
         ]);
         break;
       case "incomplete":
@@ -190,16 +194,25 @@ function PaginatedDrafts() {
           "Incomplete",
           "Processing",
           "Not Approved",
+          "Approved",
+        ]);
+        break;
+      case "approved":
+        data = groupByStatus(data, [
+          "Approved",
+          "Incomplete",
+          "Processing",
+          "Not Approved",
         ]);
         break;
       case "shared":
         data.sort((a, b) =>
-          a.type === "shared" ? -1 : b.type === "shared" ? 1 : 0
+          a.type === "shared" ? -1 : b.type === "shared" ? 1 : 0,
         );
         break;
       case "entire":
         data.sort((a, b) =>
-          a.type === "entire" ? -1 : b.type === "entire" ? 1 : 0
+          a.type === "entire" ? -1 : b.type === "entire" ? 1 : 0,
         );
         break;
       case "name_az":
@@ -216,7 +229,7 @@ function PaginatedDrafts() {
   const totalPages = Math.ceil(filteredDrafts.length / itemsPerPage);
   const currentData = filteredDrafts.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -305,7 +318,8 @@ function PaginatedDrafts() {
                     "grid grid-cols-10 gap-2 md:gap-4 px-4 md:px-6 items-center border rounded-4xl py-4 shadow-sm w-[180px] md:w-[230px]",
                     item.status?.trim() === "Processing" && "bg-[#F3EDFE]",
                     item.status?.trim() === "Not Approved" && "bg-[#FFA9A9]",
-                    item.status?.trim() === "Incomplete" && "bg-white"
+                    item.status?.trim() === "Incomplete" && "bg-white",                 
+                    item.status?.trim() === "Approved" && "bg-[#cde7c9]",
                   )}
                 >
                   <div className="col-span-2 md:col-span-3 flex justify-center">
@@ -332,7 +346,7 @@ function PaginatedDrafts() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white"
-                  : "bg-white text-black"
+                  : "bg-white text-black",
               )}
             >
               {i + 1}
@@ -351,7 +365,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        className,
       )}
     >
       {children}
@@ -381,7 +395,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -513,7 +527,7 @@ function PaginatedCards() {
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentData = cards.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -603,7 +617,7 @@ function PaginatedCards() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}

@@ -122,7 +122,7 @@ function Label({
 
 function PaginatedCards({ data }: { data: LiveSpace[] }) {
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -141,7 +141,7 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
       <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
         <div className="flex flex-wrap justify-center gap-6">
           {currentData.map((card) => (
-            <div key={card.id}>
+            <div key={`${card.space}-${card.id}`}>
               <Card
                 item={card}
                 onView={() =>
@@ -154,7 +154,7 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-5">
+        <div className="flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
@@ -558,7 +558,7 @@ export default function StudentListing() {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-4">
           <PaginatedCards data={filteredCards} />
         </div>
       </section>

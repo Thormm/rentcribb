@@ -1,6 +1,5 @@
 import imgright from "../../../../../src/assets/list2.png";
 import { DfButton } from "../../../../components/Pill";
-import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../../components/Pill";
 import clsx from "clsx";
@@ -52,7 +51,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -83,11 +82,21 @@ function StarRow({
           />
         ) : (
           <LuStarOff key={i} size={25} onClick={() => onChange(i + 1)} />
-        )
+        ),
       )}
     </div>
   );
 }
+
+const securityOptions = [
+  "Hostel Guard",
+  "Fenced & Gated",
+  "Alarm",
+  "Surveillance",
+  "Community Guard",
+];
+
+const waterOptions = ["Running", "Borehole", "Clean", "Well", "Treated"];
 
 export default function Entirespace2({
   formData,
@@ -103,15 +112,27 @@ export default function Entirespace2({
   // saving state + status modal
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showWaterModal, setShowWaterModal] = useState(false);
 
   const updateField = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  const toggleMulti = (field: string, value: string) => {
+    const current = formData[field] || [];
+
+    const next = current.includes(value)
+      ? current.filter((v: string) => v !== value)
+      : [...current, value];
+
+    updateField(field, next);
+  };
+
   const saveAndContinue = async () => {
     if (
-      !formData.security ||
-      !formData.water ||
+      !formData.security?.length ||
+      !formData.water?.length ||
       !formData.power_supply ||
       !formData.network_strength ||
       !formData.compound ||
@@ -249,46 +270,126 @@ export default function Entirespace2({
                   <Label className="ml-2 md:ml-8">No. of Toilets</Label>
                   {counter("toilets", formData.toilets ?? 0)}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
                   <Label className="ml-2 md:ml-8">Security</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                        value={formData.security ?? ""}
-                        onChange={(e) =>
-                          updateField("security", e.target.value)
-                        }
-                      >
-                        <option value="">Select</option>
-                        <option value="Low">Low</option>
-                        <option value="Moderate">Moderate</option>
-                        <option value="High">High</option>
-                      </select>
-                      <IoIosArrowDown />
-                    </div>
+
+                  <InfoPill
+                    className="bg-white cursor-pointer"
+                    onClick={() => setShowSecurityModal(true)}
+                  >
+                    <span className="text-xs text-gray-500 whitespace-normal truncate">
+                      {(formData.security || []).length
+                        ? (formData.security || []).join(", ")
+                        : "Select options"}
+                    </span>
                   </InfoPill>
                 </div>
 
                 <div className="space-y-1">
                   <Label className="ml-2 md:ml-8">Water</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                        value={formData.water ?? ""}
-                        onChange={(e) => updateField("water", e.target.value)}
-                      >
-                        <option value="">Availability</option>
-                        <option value="Low">Low</option>
-                        <option value="Moderate">Moderate</option>
-                        <option value="High">High</option>
-                      </select>
-                      <IoIosArrowDown />
-                    </div>
+
+                  <InfoPill
+                    className="bg-white cursor-pointer"
+                    onClick={() => setShowWaterModal(true)}
+                  >
+                    <span className="text-xs text-gray-500">
+                      {(formData.water || []).length
+                        ? (formData.water || []).join(", ")
+                        : "Select options"}
+                    </span>
                   </InfoPill>
                 </div>
+
+                {showSecurityModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">
+                          Select Security Options
+                        </h3>
+                        <button
+                          className="text-sm text-gray-600"
+                          onClick={() => setShowSecurityModal(false)}
+                        >
+                          Close
+                        </button>
+                      </div>
+
+                      <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
+                        {securityOptions.map((opt) => (
+                          <label
+                            key={opt}
+                            className="flex items-center gap-3 text-sm cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(formData.security || []).includes(opt)}
+                              onChange={() => toggleMulti("security", opt)}
+                              className="w-4 h-4"
+                            />
+                            <span>{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+
+                      <div className="mt-4">
+                        <button
+                          className="w-full py-2 rounded-lg bg-black text-white"
+                          onClick={() => setShowSecurityModal(false)}
+                        >
+                          Done
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {showWaterModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">
+                          Select Water Options
+                        </h3>
+                        <button
+                          className="text-sm text-gray-600"
+                          onClick={() => setShowWaterModal(false)}
+                        >
+                          Close
+                        </button>
+                      </div>
+
+                      <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
+                        {waterOptions.map((opt) => (
+                          <label
+                            key={opt}
+                            className="flex items-center gap-3 text-sm cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(formData.water || []).includes(opt)}
+                              onChange={() => toggleMulti("water", opt)}
+                              className="w-4 h-4"
+                            />
+                            <span>{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+
+                      <div className="mt-4">
+                        <button
+                          className="w-full py-2 rounded-lg bg-black text-white"
+                          onClick={() => setShowWaterModal(false)}
+                        >
+                          Done
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Star rating rows */}
