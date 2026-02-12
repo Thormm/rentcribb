@@ -300,6 +300,7 @@ export default function Request() {
       should_have: features,
       move_in_date: moveInDate,
       budget,
+      school: login?.school,
     };
 
     try {

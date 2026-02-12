@@ -39,6 +39,21 @@ const states = [
   { value: "rivers", label: "Rivers" },
 ];
 
+// ----------------------- Sample Card data (for Live) -----------------------
+const cards = Array.from({ length: 12 }, (_, i) => ({
+  tier: (i % 3) + 1,
+  rating: 4.0 + (i % 5) * 0.1,
+  reviews: 100 + i * 10,
+  title: `Listing ${i + 1} - Room type available`,
+  location: `Location ${i + 1}`,
+  price: (i + 1) * 100000,
+  background: "bg-white",
+  name: "Room Selfcontain",
+  space: "100 sq ft",
+  duration: "Yearly",
+  type: "Self-contained",
+}));
+
 // ----------------------- Mock Reviews (10 Records) -----------------------
 const reviews = [
   { id: 1, date: "2025-09-01", name: "John Doe" },
@@ -52,6 +67,100 @@ const reviews = [
   { id: 9, date: "2025-09-18", name: "Daniel Taylor" },
   { id: 10, date: "2025-09-20", name: "Ava Martinez" },
 ];
+
+
+
+interface LiveSpace {
+  id: string;
+  space: "entirespace" | "sharedspace";
+  name: string;
+  type: string;
+  location: string;
+  price: number;
+  duration: string;
+  availability_month?: string;
+  power_supply?: number | string;
+  security?: number | string;
+
+  status: string;
+  active: string;
+  rating: number;
+  reviews: number;
+  tier: number;
+  bookmarks: number;
+  background: string;
+}
+
+
+async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
+  const res = await fetch("https://www.cribb.africa/apigets.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "get_booked_spaces", user }),
+  });
+
+  const parsePhotos = (raw: any) => {
+    if (!raw) return [];
+    try {
+      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const data = await res.json();
+
+  const entire: LiveSpace[] = (data.entire_spaces ?? []).map((item: any) => ({
+    id: item.id,
+    space: "entirespace",
+    name: item.name,
+    type: item.type,
+    location: item.location,
+    price: Number(item.price),
+    duration: item.duration,
+    availability_month: item.availability_month,
+    power_supply: item.power_supply,
+    security: item.security,
+    status: item.status,
+    active: item.active,
+    rating: item.rating,
+    reviews: item.reviews,
+    tier: item.tier,
+    bookmarks: item.bookmarks,
+    background: item.background,
+    created_at: item.created_at,
+    // NEW:
+    photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
+    user: item.user,
+  }));
+
+  const shared: LiveSpace[] = (data.shared_spaces ?? []).map((item: any) => ({
+    id: item.id,
+    space: "sharedspace",
+    name: item.name,
+    type: item.type,
+    location: item.location,
+    price: Number(item.price),
+    duration: item.duration,
+    availability_month: item.availability_month,
+    power_supply: item.power_supply,
+    security: item.security,
+    status: item.status,
+    active: item.active,
+    rating: item.rating,
+    reviews: item.reviews,
+    tier: item.tier,
+    bookmarks: item.bookmarks,
+    background: item.background,
+    created_at: item.created_at,
+    // NEW:
+    photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
+    user: item.user,
+  }));
+
+  return [...entire, ...shared];
+}
 
 function PaginatedRequests({
   setShowFirst,
@@ -203,49 +312,44 @@ function PaginatedRequests({
   );
 }
 
-// ----------------------- Sample Card data (for Live) -----------------------
-const cards = Array.from({ length: 12 }, (_, i) => ({
-  tier: (i % 3) + 1,
-  rating: 4.0 + (i % 5) * 0.1,
-  reviews: 100 + i * 10,
-  title: `Listing ${i + 1} - Room type available`,
-  location: `Location ${i + 1}`,
-  price: (i + 1) * 100000,
-  background: "bg-white",
-  name: "Room Selfcontain",
-  space: "100 sq ft",
-  duration: "Yearly",
-  type: "Self-contained",
-}));
 
 // ----------------------- Live: existing paginated cards (5 per page) -----------------------
-function PaginatedCards() {
+function PaginatedCards({ data }: { data: LiveSpace[] }) {
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(cards.length / itemsPerPage);
-  const currentData = cards.slice(
+  const itemsPerPage = 6;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setPage(1);
+  }, [data]);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const currentData = data.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage,
   );
 
   return (
     <div>
-      <div
-        className="space-y-3 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
-        style={{
-          scrollbarColor: "#FFA1A1 transparent",
-          scrollbarWidth: "thin",
-        }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 px-5 gap-4 w-full">
-          {currentData.map((card, idx) => (
-            <Card key={idx} item={card} />
+      <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {currentData.map((card) => (
+            <div key={`${card.space}-${card.id}`}>
+              <Card
+                item={card}
+                onView={() =>
+                  navigate("/hostelview", { state: { space: [card.id, card.space] } })
+                }
+              />
+            </div>
           ))}
         </div>
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-5">
+        <div className="flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
@@ -265,6 +369,8 @@ function PaginatedCards() {
     </div>
   );
 }
+
+
 
 // ----------------------- Paginated Cards -----------------------
 function PaginatedCards2() {
@@ -413,6 +519,13 @@ const Rent = () => {
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
   const navigate = useNavigate();
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  
+  const [cards, setCards] = useState<LiveSpace[]>([]);
+   useEffect(() => {
+      if (!login.user) return;
+      getLiveSpaces(login.user).then(setCards);
+    }, []);
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -432,7 +545,7 @@ const Rent = () => {
                   </span>
                 </div>
 
-                <PaginatedCards />
+                <PaginatedCards data={cards}/>
                 <button
                   onClick={() => navigate("/request")}
                   className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"

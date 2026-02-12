@@ -247,6 +247,51 @@ export default function Hostelview() {
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
+  const [agreed, setAgreed] = useState(false);
+  const [booking, setBooking] = useState(false);
+  const [bookMsg, setBookMsg] = useState("");
+
+  const handleBookInspection = async () => {
+    if (!agreed) return;
+
+    try {
+      setBooking(true);
+      setBookMsg("");
+
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "book_inspection",
+          user: login?.user,
+          signup_key: login?.signup_key,
+          spaceid: hostel?.id,
+          agent_landlord: hostel?.user,
+          space_type: space_type,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data?.status === "success" || data?.success) {
+        setBookMsg("Booked successfully");
+
+        setTimeout(() => {
+          setBookMsg("");
+        }, 3000); // 5 seconds
+      } else {
+        setBookMsg(data?.message || "Unable to book inspection");
+
+        setTimeout(() => {
+          setBookMsg("");
+        }, 3000); // 5 seconds
+      }
+    } catch (e) {
+      setBookMsg("Network error");
+    } finally {
+      setBooking(false);
+    }
+  };
 
   const isEntire = space_type === "entirespace";
   const mediaBase = isEntire
@@ -988,16 +1033,37 @@ export default function Hostelview() {
 
                 {/* Book Inspection */}
                 <div className="pt-2 w-full">
-                  <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 font-medium drop-shadow-lg">
+                  <button
+                    disabled={!agreed || booking}
+                    onClick={handleBookInspection}
+                    className={clsx(
+                      "w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                      agreed
+                        ? "bg-white cursor-pointer"
+                        : "bg-gray-300 cursor-not-allowed",
+                    )}
+                  >
                     <FaCalendarAlt className="text-black text-[20px] md:text-[25px]" />
-                    <span className="text-lg md:text-2xl">Book Inspection</span>
+                    <span className="text-lg md:text-2xl">
+                      {booking ? "Booking..." : "Book Inspection"}
+                    </span>
                   </button>
+                  {bookMsg && (
+                    <div className="text-center text-sm mt-2 text-[#044832]">
+                      {bookMsg}
+                    </div>
+                  )}
                 </div>
 
                 {/* Terms */}
                 <div className="w-full flex flex-col items-center text-center mt-2">
                   <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
-                    <input type="checkbox" className="h-4 w-4 accent-black" />
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-black"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                    />
                     <span>
                       I agree to the{" "}
                       <span className="underline font-semibold text-[#0556F8]">
@@ -1014,7 +1080,16 @@ export default function Hostelview() {
 
                 {/* Connect */}
                 <div className="pt-2 w-full">
-                  <button className="text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full bg-black text-white px-5 py-5 font-medium drop-shadow-lg">
+                  <button
+                    disabled={!agreed}
+                    onClick={() => navigate(`/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`)}
+                    className={clsx(
+                      "text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                      agreed
+                        ? "bg-black text-white"
+                        : "bg-gray-400 text-white cursor-not-allowed",
+                    )}
+                  >
                     Connect
                   </button>
                 </div>
