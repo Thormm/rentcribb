@@ -32,6 +32,16 @@ interface LiveRequest {
   created_at: string;
 }
 
+interface HostSpace {
+  id: number;
+  space_name: string;
+  full_address: string;
+  space_type: string;
+  units: string;
+  space: "shared" | "entire";
+  reply_key: string; // ← shared-47
+}
+
 // ----------------------- API -----------------------
 
 async function getRequests(): Promise<LiveRequest[]> {
@@ -94,7 +104,13 @@ function daysAgo(dateStr: string) {
 
 // ----------------------- PAGINATION + CARDS -----------------------
 
-function PaginatedCards({ data }: { data: LiveRequest[] }) {
+function PaginatedCards({
+  data,
+  openReply,
+}: {
+  data: LiveRequest[];
+  openReply: (card: LiveRequest) => void;
+}) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 15;
 
@@ -224,8 +240,8 @@ function PaginatedCards({ data }: { data: LiveRequest[] }) {
                   </div>
 
                   <button
-                    className="mx-auto text-md md:text-xl bg-black text-white  rounded-xl px-10 py-3 shadow-md hover:opacity-95"
-                    aria-label="Reply"
+                    onClick={() => openReply(card)}
+                    className="mx-auto text-md md:text-xl bg-black text-white rounded-xl px-10 py-3 shadow-md hover:opacity-95"
                   >
                     REPLY
                   </button>
@@ -266,10 +282,91 @@ export default function StudentListing() {
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const navigate = useNavigate();
   const [showFeatures, setShowFeatures] = useState<boolean>(false);
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyLoading, setReplyLoading] = useState(false);
+  const [activeRequest, setActiveRequest] = useState<LiveRequest | null>(null);
+  const [replySpaces, setReplySpaces] = useState<HostSpace[]>([]);
+  const [selectedReplyKeys, setSelectedReplyKeys] = useState<string[]>([]);
 
   const [institutes, setInstitutes] = useState<
     { id: number; institution: string }[]
   >([]);
+
+  async function getMySpacesForReply(
+    user: string,
+    school: string,
+  ): Promise<HostSpace[]> {
+    const res = await fetch("https://www.cribb.africa/apigets.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "get_reply_spaces",
+        user,
+        target_university: school,
+      }),
+    });
+    console.log("i even reach here");
+    const data = await res.json();
+    console.log("API response for spaces:", data);
+
+    // 👇 IMPORTANT: always read spaces safely
+    const spaces = Array.isArray(data?.spaces)
+      ? data.spaces
+      : typeof data?.spaces === "string"
+        ? JSON.parse(data.spaces)
+        : [];
+
+    return spaces.map((r: any) => ({
+      id: Number(r.id),
+      space_name: r.space_name,
+      full_address: r.full_address,
+      space_type: r.space_type,
+      units: String(r.units),
+      space: r.space_scope, // or r.space_scope depending on backend
+      reply_key: `${r.space_scope}-${r.id}`,
+    }));
+  }
+
+  async function openReply(card: LiveRequest) {
+    console.log("Opening reply for card:", card);
+    setActiveRequest(card);
+    setReplySpaces([]);
+    setSelectedReplyKeys([]);
+    setReplyLoading(true);
+    setReplyOpen(true);
+
+    try {
+      const spaces = await getMySpacesForReply(login.user, card.school);
+      console.log("Fetched spaces:", spaces);
+      setReplySpaces(spaces);
+    } catch (err) {
+      console.error("Error fetching spaces:", err);
+      setReplySpaces([]);
+    } finally {
+      setReplyLoading(false);
+    }
+  }
+
+  async function sendReply() {
+    if (!activeRequest) return;
+    if (selectedReplyKeys.length === 0) return;
+
+    await fetch("https://www.cribb.africa/api_save.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "save_request_responses",
+        request_id: activeRequest.id,
+        responses: selectedReplyKeys,
+      }),
+    });
+
+    setReplyOpen(false);
+    setSelectedReplyKeys([]);
+    setReplySpaces([]);
+    setActiveRequest(null);
+  }
+
   useEffect(() => {
     fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
@@ -641,9 +738,131 @@ export default function StudentListing() {
         </div>
 
         <div className="flex justify-center mb-4">
-          <PaginatedCards data={filteredCards} />
+          <PaginatedCards data={filteredCards} openReply={openReply} />
         </div>
       </section>
+      {replyOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl relative">
+            <button
+              className="absolute right-4 top-4 text-xl font-bold z-10"
+              onClick={() => setReplyOpen(false)}
+            >
+              ×
+            </button>
+
+            <div className="p-10 border-b grid grid-cols-1 items-center text-center justify-center">
+              <span className="font-bold text-lg py-3 items-center text-center justify-center">
+                Select space(s) to reply with
+              </span>
+
+              <button
+                disabled={
+                  selectedReplyKeys.length === 0 ||
+                  replyLoading ||
+                  replySpaces.length === 0
+                }
+                onClick={sendReply}
+                className={clsx(
+                  "px-4 py-2 rounded-lg text-white",
+                  selectedReplyKeys.length === 0 ||
+                    replyLoading ||
+                    replySpaces.length === 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-black",
+                )}
+              >
+                SEND REPLY
+              </button>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto p-4 space-y-3">
+              {replyLoading && (
+                <div className="text-sm text-gray-500 text-center py-6">
+                  Loading your spaces...
+                </div>
+              )}
+
+              {!replyLoading && replySpaces.length === 0 && (
+                <div className="text-sm text-gray-500 text-center py-6">
+                  You have no spaces for this school.
+                </div>
+              )}
+
+              {!replyLoading &&
+                replySpaces.length > 0 &&
+                replySpaces.map((s) => {
+                  const selected = selectedReplyKeys.includes(s.reply_key);
+
+                  return (
+                    <div
+                      key={s.reply_key}
+                      onClick={() => {
+                        setSelectedReplyKeys((prev) =>
+                          prev.includes(s.reply_key)
+                            ? prev.filter((k) => k !== s.reply_key)
+                            : [...prev, s.reply_key],
+                        );
+                      }}
+                      className={clsx(
+                        "border rounded-2xl p-4 cursor-pointer transition-all flex items-start justify-between gap-4",
+                        selected
+                          ? "border-violet-600 bg-violet-50 ring-2 ring-violet-200"
+                          : "border-gray-200 hover:border-gray-400",
+                      )}
+                    >
+                      <div className="space-y-1">
+                        <div className="">
+                          
+                          <span className="text-sm">{s.space_name}</span>{'  '}
+                          <span
+                            className={clsx(
+                              "px-2 py-0.5 rounded-full capitalize text-xs",
+                              s.space === "shared"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-emerald-100 text-emerald-700",
+                            )}
+                          >
+                            {s.space} space
+                          </span>
+                        </div>
+
+                        <div className="text-xs text-gray-500">
+                          {s.full_address}
+                        </div>
+
+                        {/* nice shared / entire badge + unit */}
+                        <div className="flex items-center gap-2 text-[11px] mt-1">
+                          
+
+                          <span className="text-gray-600">
+                            {s.units} unit{s.units === "1" ? "" : "s"}
+                          </span>
+
+                          <span className="text-gray-400">•</span>
+
+                          <span className="text-gray-600">{s.space_type}</span>
+                        </div>
+                      </div>
+
+                      {/* radio indicator */}
+                      <div
+                        className={clsx(
+                          "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1",
+                          selected ? "border-violet-600" : "border-gray-300",
+                        )}
+                      >
+                        {selected && (
+                          <div className="w-2.5 h-2.5 bg-violet-600 rounded-full" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
