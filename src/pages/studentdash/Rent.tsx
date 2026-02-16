@@ -24,7 +24,10 @@ type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        className,
+      )}
     >
       {children}
     </div>
@@ -39,21 +42,6 @@ const states = [
   { value: "rivers", label: "Rivers" },
 ];
 
-// ----------------------- Sample Card data (for Live) -----------------------
-const cards = Array.from({ length: 12 }, (_, i) => ({
-  tier: (i % 3) + 1,
-  rating: 4.0 + (i % 5) * 0.1,
-  reviews: 100 + i * 10,
-  title: `Listing ${i + 1} - Room type available`,
-  location: `Location ${i + 1}`,
-  price: (i + 1) * 100000,
-  background: "bg-white",
-  name: "Room Selfcontain",
-  space: "100 sq ft",
-  duration: "Yearly",
-  type: "Self-contained",
-}));
-
 // ----------------------- Mock Reviews (10 Records) -----------------------
 const reviews = [
   { id: 1, date: "2025-09-01", name: "John Doe" },
@@ -67,8 +55,6 @@ const reviews = [
   { id: 9, date: "2025-09-18", name: "Daniel Taylor" },
   { id: 10, date: "2025-09-20", name: "Ava Martinez" },
 ];
-
-
 
 interface LiveSpace {
   id: string;
@@ -91,6 +77,64 @@ interface LiveSpace {
   background: string;
 }
 
+async function getRepliesSpaces(responses: string[]): Promise<LiveSpace[]> {
+  const res = await fetch("https://www.cribb.africa/apigets.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "get_request_replies_spaces",
+      responses,
+    }),
+  });
+
+  const data = await res.json();
+
+  const entire = (data.entire_spaces ?? []).map((item: any) => ({
+    id: item.id,
+    space: "entirespace",
+    name: item.name,
+    type: item.type,
+    location: item.location,
+    price: Number(item.price),
+    duration: item.duration,
+    availability_month: item.availability_month,
+    power_supply: item.power_supply,
+    security: item.security,
+    status: item.status,
+    active: item.active,
+    rating: item.rating,
+    reviews: item.reviews,
+    tier: item.tier,
+    bookmarks: item.bookmarks,
+    background: item.background,
+    photos: item.photos,
+    user: item.user,
+  }));
+
+  const shared = (data.shared_spaces ?? []).map((item: any) => ({
+    id: item.id,
+    space: "sharedspace",
+    name: item.name,
+    type: item.type,
+    location: item.location,
+    price: Number(item.price),
+    duration: item.duration,
+    availability_month: item.availability_month,
+    power_supply: item.power_supply,
+    security: item.security,
+    status: item.status,
+    active: item.active,
+    rating: item.rating,
+    reviews: item.reviews,
+    tier: item.tier,
+    bookmarks: item.bookmarks,
+    background: item.background,
+    photos: item.photos,
+    user: item.user,
+  }));
+
+  return [...entire, ...shared];
+}
 
 async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
   const res = await fetch("https://www.cribb.africa/apigets.php", {
@@ -164,8 +208,10 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
 
 function PaginatedRequests({
   setShowFirst,
+  setSelectedResponses,
 }: {
   setShowFirst: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedResponses: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const [draftItems, setDraftItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -274,13 +320,39 @@ function PaginatedRequests({
                 </div>
 
                 <div
-                  onClick={() => setShowFirst(false)}
+                  onClick={() => {
+                    let list: string[] = [];
+
+                    try {
+                      list =
+                        typeof item.responses === "string"
+                          ? JSON.parse(item.responses)
+                          : item.responses;
+                    } catch {
+                      list = [];
+                    }
+                    setSelectedResponses(list);
+                    setShowFirst(false);
+                  }}
                   className="flex items-center justify-center bg-black gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
                 >
                   <div className="flex items-center relative w-20 md:w-40 justify-between">
                     <span className="text-xs md:text-lg text-white truncate">
-                      {item.replies ?? 0} Replies
+                      {(() => {
+                        try {
+                          const list =
+                            typeof item.responses === "string"
+                              ? JSON.parse(item.responses)
+                              : item.responses;
+
+                          return Array.isArray(list) ? list.length : 0;
+                        } catch {
+                          return 0;
+                        }
+                      })()}{" "}
+                      Replies
                     </span>
+
                     <FaArrowRight className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-[#202020]" />
                   </div>
                 </div>
@@ -312,7 +384,6 @@ function PaginatedRequests({
   );
 }
 
-
 // ----------------------- Live: existing paginated cards (5 per page) -----------------------
 function PaginatedCards({ data }: { data: LiveSpace[] }) {
   const [page, setPage] = useState(1);
@@ -334,15 +405,18 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
     <div>
       <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           {currentData.map((card) => (
-            <div key={`${card.space}-${card.id}`}>
-              <Card
-                item={card}
-                onView={() =>
-                  navigate("/hostelview", { state: { space: [card.id, card.space] } })
-                }
-              />
+            <div key={`${card.space}-${card.id}`} className="mb-10 ...">
+              <div className="w-auto flex justify-end">
+                <Card
+                  item={card}
+                  onView={() =>
+                    navigate("/hostelview", {
+                      state: { space: [card.id, card.space] },
+                    })
+                  }
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -370,17 +444,31 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
   );
 }
 
-
-
 // ----------------------- Paginated Cards -----------------------
-function PaginatedCards2() {
+function PaginatedCards2({ responses }: { responses: string[] }) {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<LiveSpace[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(cards.length / itemsPerPage);
-  const currentData = cards.slice(
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const currentData = data.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage,
   );
+
+  useEffect(() => {
+    if (!responses.length) {
+      setData([]);
+      return;
+    }
+
+    setLoading(true);
+
+    getRepliesSpaces(responses)
+      .then(setData)
+      .finally(() => setLoading(false));
+  }, [responses]);
 
   return (
     <div>
@@ -391,9 +479,19 @@ function PaginatedCards2() {
           scrollbarWidth: "thin",
         }}
       >
-        {currentData.map((card, idx) => (
+        {loading && (
+          <div className="text-sm text-gray-500">Loading replies...</div>
+        )}
+
+        {!responses.length > 0 && data.length === 0 && (
+          <div className="text-sm text-gray-500">
+            No replies found for this request.
+          </div>
+        )}
+
+        {currentData.map((card) => (
           <div
-            key={idx}
+            key={`${card.space}-${card.id}`}
             className="mb-10 relative items-center flex flex-col md:flex-row w-full gap-10 bg-[#F3EDFE] rounded-3xl p-2 md:p-5 pt-0 md:pt-0 shadow-lg md:pr-8
   before:content-[''] before:absolute before:-bottom-3 before:left-10 
   before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px] before:border-t-[12px] 
@@ -514,18 +612,19 @@ function Tabs({
 }
 
 // ----------------------- Main Component -----------------------
-const Rent = () => {
+export default function Rent() {
+  const [selectedResponses, setSelectedResponses] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("Booked");
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
   const navigate = useNavigate();
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-  
+
   const [cards, setCards] = useState<LiveSpace[]>([]);
-   useEffect(() => {
-      if (!login.user) return;
-      getLiveSpaces(login.user).then(setCards);
-    }, []);
+  useEffect(() => {
+    if (!login.user) return;
+    getLiveSpaces(login.user).then(setCards);
+  }, []);
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -545,7 +644,7 @@ const Rent = () => {
                   </span>
                 </div>
 
-                <PaginatedCards data={cards}/>
+                <PaginatedCards data={cards} />
                 <button
                   onClick={() => navigate("/request")}
                   className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
@@ -604,7 +703,10 @@ const Rent = () => {
                       </span>
                     </div>
 
-                    <PaginatedRequests setShowFirst={setShowFirst} />
+                    <PaginatedRequests
+                      setShowFirst={setShowFirst}
+                      setSelectedResponses={setSelectedResponses}
+                    />
 
                     <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                       <BiComment className="w-8 h-8" />
@@ -651,11 +753,12 @@ const Rent = () => {
 
                     <div className="flex items-center">
                       <span className="text-md font-semibold text-black tracking-wide mt-10">
-                        --- REPLIES ----------------------------------26
+                        --- REPLIES ----------------------------------
+                        {selectedResponses.length}
                       </span>
                     </div>
 
-                    <PaginatedCards2 />
+                    <PaginatedCards2 responses={selectedResponses} />
 
                     <button
                       onClick={() => navigate("/request")}
@@ -707,7 +810,9 @@ const Rent = () => {
                               {r.date}
                             </span>
                             <span className="text-xs md:text-lg text-black font-normal truncate">
-                              {r.name.length > 13 ? r.name.slice(0, 13) + "…" : r.name}
+                              {r.name.length > 13
+                                ? r.name.slice(0, 13) + "…"
+                                : r.name}
                             </span>
                           </div>
 
@@ -742,7 +847,4 @@ const Rent = () => {
       </section>
     </div>
   );
-};
-
-export default Rent;
-``;
+}
