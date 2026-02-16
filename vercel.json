@@ -2,8 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://www.cribb.africa",
-      "permanent": false
+      "destination": "/index.html"
     }
   ]
 }
