@@ -483,7 +483,7 @@ function PaginatedCards2({ responses }: { responses: string[] }) {
           <div className="text-sm text-gray-500">Loading replies...</div>
         )}
 
-        {!responses.length > 0 && data.length === 0 && (
+        {!responses.length && data.length === 0 && (
           <div className="text-sm text-gray-500">
             No replies found for this request.
           </div>
