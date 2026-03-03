@@ -13,7 +13,7 @@ function Maincard({
     <div
       className={clsx(
         "rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -54,7 +54,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -69,6 +69,7 @@ function InputField({
   value,
   onChange,
   status,
+  autoComplete,
 }: {
   label: string;
   placeholder: string;
@@ -76,6 +77,7 @@ function InputField({
   value: string;
   onChange: (val: string) => void;
   status: "idle" | "valid" | "invalid";
+  autoComplete?: string;
 }) {
   return (
     <div className="space-y-1">
@@ -85,7 +87,7 @@ function InputField({
           "bg-white border",
           status === "valid" && "border-green-600",
           status === "invalid" && "border-red-600",
-          status === "idle" && "border-black"
+          status === "idle" && "border-black",
         )}
       >
         <div className="inline-flex items-center justify-between w-full">
@@ -93,6 +95,7 @@ function InputField({
             type={type}
             placeholder={placeholder}
             value={value}
+            autoComplete={autoComplete}
             onChange={(e) => onChange(e.target.value)}
             className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
@@ -120,7 +123,8 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
     confirm === "" ? "idle" : confirm === password ? "valid" : "invalid";
 
   // check if all fields except referral are filled
-  const canContinue = firstName && lastName && password && confirm && password === confirm;;
+  const canContinue =
+    firstName && lastName && password && confirm && password === confirm;
 
   const handleSubmit = async () => {
     if (!canContinue) return;
@@ -138,7 +142,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
         referral,
         thirdpage: true,
         signup_key, // send the key to PHP
-        mode: mode
+        mode: mode,
       }),
       credentials: "include",
     });
@@ -197,7 +201,8 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
                 placeholder="Enter last name"
                 value={lastName}
                 onChange={setLastName}
-                status={"idle"}
+                status="idle"
+                autoComplete="family-name"
               />
               <InputField
                 label="PASSWORD"

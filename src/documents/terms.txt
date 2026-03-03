@@ -1,0 +1,104 @@
+
+Last Updated: 3-3-2026
+
+Welcome to Cribb for Business (“Cribb for Business,” “we,” “our,” or “us”). These Terms and Conditions of Use (the “Terms”) govern your access to and use of the Cribb for Business mobile application, website, platform, and related services (collectively, the “Service”).
+By creating an account, subscribing, listing, accessing, or otherwise using the Service, you (“User,” “you,” or “your”) acknowledge that you have read, understood, and agree to be legally bound by these Terms. If you do not agree, you must immediately cease use of the Service.
+
+1. Eligibility and Registration
+1.1. You must be at least eighteen (18) years of age to register for or use the Service. By registering, you represent and warrant that you meet this requirement and have the legal capacity to enter into these Terms.
+1.2. Users must provide accurate, current, and complete registration details, including but not limited to full name, residential address, contact information, and government-issued identification, and promptly update such information when necessary.
+1.3. Cribb for Business reserves the right to request additional information, including but not limited to employment details, verified phone number, alternative contact information, and photo verification.
+1.4. You are solely responsible for maintaining the confidentiality of your login credentials and for all activity conducted under your account. Any unauthorized use must be reported immediately.
+
+2. Account Security and Responsibilities
+2.1. You agree not to share, sell, transfer, or assign your account or access credentials to any other person without written authorization from Cribb for Business.
+2.2. You shall be held responsible for all use of the Service under your account, whether authorized or unauthorized.
+2.3. Cribb for Business reserves the right, at its sole discretion, to reclaim, suspend, or terminate accounts and usernames that are deemed inappropriate, misleading, obscene, or otherwise objectionable.
+
+3. User Conduct and Prohibited Activities
+3.1. Users must use the Service strictly in accordance with applicable laws, regulations, and these Terms.
+3.2. Users are prohibited from engaging in the following activities:
+	•	Submitting false, misleading, fraudulent, or incomplete information;
+	•	Accessing or attempting to access the Service through automated or non-human means (including bots, scripts, scrapers, or similar tools);
+	•	Using the Service for any commercial purpose not expressly authorized by Cribb for Business;
+	•	Posting, transmitting, or distributing any unlawful, defamatory, obscene, discriminatory, or otherwise objectionable content;
+	•	Harassing, bullying, intimidating, or threatening other users or Cribb for Business personnel;
+	•	Circumventing, disabling, or interfering with security-related features of the Service;
+	•	Reverse-engineering, decompiling, or disassembling any part of the Service;
+	•	Attempting to impersonate another user or individual;
+	•	Using the Service in any manner that infringes on the rights of third parties, including intellectual property, privacy, and publicity rights.
+3.3. Any violation of this section constitutes a material breach of these Terms and may result in account suspension, termination, and potential legal action.
+
+4. Listings, Subscriptions, and Transactions
+4.1. Cribb for Business functions as a digital platform facilitating connections between users seeking roommates, short-let rentals, or subscription-based accommodation. Cribb for Business is not a landlord, tenant, broker, or agent.
+4.2. All agreements, whether for rentals, subscriptions, or roommate arrangements, are entered into solely between Users. Cribb for Business bears no responsibility for verifying the accuracy, safety, legality, or enforceability of any agreement or listing.
+4.3. Users are solely responsible for conducting due diligence, verifying counterparties, and ensuring compliance with applicable tenancy or housing laws.
+4.4. By making a subscription, Members consent to Cribb for Business sharing necessary information with Hosts to facilitate due diligence and accommodation arrangements.
+
+5. Payment Terms, Billing, and Refund Policy
+5.1. Subscription Models
+	•	Monthly Subscription: Recurring billing every thirty (30) days.
+	•	Quarterly Subscription: Recurring billing every ninety (90) days at a discounted rate.
+	•	Pay-As-You-Go: One-time, usage-based payments without renewal obligations.
+5.2. Billing and PaymentBy subscribing, you authorize Cribb for Business and its designated payment processors to charge your selected payment method for applicable fees on a recurring basis, unless canceled in accordance with these Terms.
+5.3. Renewals and CancellationsSubscriptions automatically renew at the end of each billing cycle unless canceled by you through your dashboard prior to renewal. No refunds or credits are provided for partial billing cycles or unused services.
+5.4. Refund PolicyAll payments are strictly non-refundable, except at Cribb for Business’ sole discretion in cases such as proven billing errors.
+5.5. Payment TimelinesPayments are processed through third-party providers. Hosts may receive payments within timelines communicated by Cribb for Business, subject to applicable banking and settlement rules.
+5.6. Price ModificationsCribb for Business reserves the right to revise pricing, subscription models, and billing practices upon thirty (30) days’ notice. Continued use of the Service after such changes constitutes acceptance.
+
+6. Content Ownership, User Contributions, and Intellectual Property
+6.1. The Service, including but not limited to software, databases, logos, trade names, designs, photographs, audio-visual materials, and related intellectual property (“Cribb IP”), is owned or licensed by Cribb for Business and protected under applicable copyright and trademark laws.
+6.2. By posting or submitting any content (“Contributions”), you grant Cribb for Business a worldwide, royalty-free, transferable, sublicensable license to host, use, reproduce, display, distribute, and adapt such Contributions for purposes of operating, promoting, or improving the Service.
+6.3. You retain ownership of your Contributions. However, you waive any moral rights to the extent permitted by law.
+6.4. Unauthorized reproduction, redistribution, or exploitation of Cribb IP or other Users’ Contributions is strictly prohibited.
+
+7. Privacy and Data Protection
+7.1. Cribb for Business collects, processes, and shares personal data in accordance with its Privacy Policy, incorporated herein by reference.
+7.2. Users consent to the collection, storage, and processing of personal information, including for identity verification, payment processing, and compliance with legal obligations.
+7.3. While Cribb for Business takes commercially reasonable measures to secure User data, no system is entirely immune to breaches, and Users acknowledge and accept such inherent risks.
+
+8. Third-Party Services and Links
+8.1. The Service may contain links or integrations with third-party websites, software, or services. Cribb for Business does not endorse, control, or assume responsibility for such third-party resources.
+8.2. Your dealings with third parties are solely between you and such third parties. Cribb for Business disclaims liability for losses or damages arising from such interactions.
+
+9. Communications and Notifications
+9.1. By registering, Users consent to receive electronic communications, including but not limited to account updates, transactional notices, and promotional messages.
+9.2. Users may opt out of promotional messages but cannot opt out of transactional communications essential to use of the Service.
+9.3. Notices from Cribb for Business will be deemed delivered upon transmission to the email or phone number associated with your account.
+
+10. Termination and Suspension
+10.1. Cribb for Business reserves the right, at its sole discretion, to suspend, restrict, or terminate access to the Service for any violation of these Terms, suspected fraudulent activity, or for any reason whatsoever without prior notice.
+10.2. Upon termination, all rights granted under these Terms immediately cease. Users remain liable for any outstanding obligations incurred prior to termination.
+
+11. Disclaimers and Limitation of Liability
+11.1. The Service is provided on an “AS IS” and “AS AVAILABLE” basis. Cribb for Business expressly disclaims all warranties, whether express, implied, or statutory, including but not limited to merchantability, fitness for a particular purpose, and non-infringement.
+11.2. Cribb for Business does not warrant that the Service will be uninterrupted, error-free, secure, or free of harmful code.
+11.3. To the fullest extent permitted by law, Cribb for Business shall not be liable for any indirect, incidental, consequential, or punitive damages, including lost profits, goodwill, or data, arising from use of the Service.
+11.4. In any case, the maximum aggregate liability of Cribb for Business shall not exceed the total amount paid by you to Cribb for Business in the twelve (12) months preceding the event giving rise to the claim.
+
+12. Indemnification
+You agree to indemnify, defend, and hold harmless Cribb for Business, its affiliates, officers, employees, contractors, and agents from and against all claims, liabilities, damages, losses, and expenses (including legal fees) arising out of or in connection with:
+	•	Your access to or use of the Service;
+	•	Your violation of these Terms;
+	•	Your violation of any third-party rights;
+	•	Your Contributions or interactions with other Users.
+
+13. Dispute Resolution and Governing Law
+13.1. These Terms shall be governed by and construed in accordance with the laws of [Insert Jurisdiction].
+13.2. Parties shall first attempt to resolve disputes amicably through good-faith negotiations.
+13.3. Failing amicable resolution, disputes shall be referred to mediation. If unresolved, they shall be submitted to the exclusive jurisdiction of competent courts in [Insert City, Country].
+
+14. Force Majeure
+Cribb for Business shall not be held liable for delays or failures in performance caused by events beyond its reasonable control, including natural disasters, government actions, labor disputes, internet outages, or other force majeure events.
+
+15. Assignment
+15.1. Users may not assign, transfer, or sublicense their rights or obligations under these Terms without prior written consent of Cribb for Business.
+15.2. Cribb for Business may assign or transfer its rights and obligations without restriction.
+
+16. Modifications to Terms and Services
+16.1. Cribb for Business reserves the right, at its sole discretion, to amend, update, modify, or replace these Terms, with or without prior notice.
+16.2. Continued use of the Service after posting modifications constitutes binding acceptance of the revised Terms.
+16.3. Cribb for Business may also, at any time, modify or discontinue aspects of the Service without liability.
+
+17. Miscellaneous
+17.1. Entire Agreement: These Terms, together with the Privacy Policy, constitute the full and exclusive agreement between you and Cribb for Business.17.2. Severability: If any provision of these Terms is found unenforceable, the remaining provisions shall remain in full force.17.3. Waiver: Failure of Cribb for Business to enforce any provision shall not constitute a waiver of future enforcement.17.4. Relationship: Nothing in these Terms creates a partnership, joint venture, employment, or agency relationship between Users and Cribb for Business.17.5. Feedback: Any suggestions, ideas, or feedback submitted by Users may be used by Cribb for Business freely without obligation or compensation.

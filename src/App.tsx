@@ -4,6 +4,7 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./pages/home/Home";
 import StudentListing from "./pages/listingpage/StudentListing";
@@ -32,11 +33,16 @@ function Layout() {
 
   // Check for exact matches, not just prefix matches
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
+  // ✅ shared state between Navbar and /home
+  const [loginModal, setLoginModal] = useState(false);
 
   return (
     <>
-      {shouldShowNavbar && <Navbar />}
-      <Outlet />
+       {shouldShowNavbar && (
+        <Navbar setLoginModal={setLoginModal} />
+      )}
+
+      <Outlet context={{ loginModal, setLoginModal }} />
     </>
   );
 }

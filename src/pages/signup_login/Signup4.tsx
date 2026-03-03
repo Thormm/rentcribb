@@ -6,6 +6,9 @@ import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
 import { FaArrowRight } from "react-icons/fa";
 import { RiListView } from "react-icons/ri";
+import termsText from "../../documents/terms.txt?raw";
+import privacyText from "../../documents/privacy.txt?raw";
+import { FaTimes } from "react-icons/fa";
 
 function Maincard({
   className,
@@ -15,7 +18,7 @@ function Maincard({
     <div
       className={clsx(
         "rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -56,7 +59,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-8",
-        className
+        className,
       )}
     >
       {children}
@@ -78,6 +81,9 @@ export default function Signup4({ mode }: Signup4Props) {
   const [agreed, setAgreed] = useState(false);
   const [institutes, setInstitutes] = useState<Institute[]>([]);
   const navigate = useNavigate();
+  const [terms_privacy, setTerms_privacy] = useState(false);
+  const [docType, setDocType] = useState<"terms" | "privacy" | null>(null);
+  const [docText, setDocText] = useState("");
 
   // Static list of Nigerian states (you can expand this list)
   const states = [
@@ -136,11 +142,15 @@ export default function Signup4({ mode }: Signup4Props) {
   }, []);
 
   const openTerms = () => {
-    window.open("/terms", "_blank");
+    setDocType("terms");
+    setDocText(termsText);
+    setTerms_privacy(true);
   };
 
   const openPrivacy = () => {
-    window.open("/privacy", "_blank");
+    setDocType("privacy");
+    setDocText(privacyText);
+    setTerms_privacy(true);
   };
 
   const handleSubmit = async () => {
@@ -168,7 +178,11 @@ export default function Signup4({ mode }: Signup4Props) {
       const data = await res.json();
 
       if (data.success) {
-        navigate("/login");
+        if (mode === "student") {
+          navigate("/login?mode=student");
+        } else {
+          navigate("/login?mode=merchant");
+        }
       } else {
         alert(data.message || "Something went wrong");
       }
@@ -248,9 +262,9 @@ export default function Signup4({ mode }: Signup4Props) {
               </div>
             </div>
 
-            <InfoPill className="bg-white cursor-pointer">
+            <InfoPill className="bg-white">
               <button
-                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3"
+                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3 cursor-pointer"
                 onClick={openTerms}
               >
                 <RiListView className="text-lg md:text-4xl -ml-2" />
@@ -261,9 +275,9 @@ export default function Signup4({ mode }: Signup4Props) {
               </button>
             </InfoPill>
 
-            <InfoPill className="bg-white cursor-pointer my-3">
+            <InfoPill className="bg-white my-3">
               <button
-                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3"
+                className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3 cursor-pointer"
                 onClick={openPrivacy}
               >
                 <RiListView className="text-lg md:text-4xl -ml-2" />
@@ -308,6 +322,49 @@ export default function Signup4({ mode }: Signup4Props) {
           </div>
         </Maincard>
       </div>
+
+      {terms_privacy && (
+        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+          {/* Modal Box */}
+          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+            {/* Close */}
+            <div
+              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => setTerms_privacy(false)}
+            >
+              <FaTimes className="text-white text-2xl" />
+            </div>
+
+            {/* Header */}
+            <h2 className="text-2xl mt-5 font-medium text-center text-black">
+              {docType === "terms" ? "Terms of Use" : "Privacy Policy"}
+            </h2>
+
+            <div
+              className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+
+            {/* Pills */}
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto text-sm text-black whitespace-pre-wrap">
+              {docText}
+            </div>
+
+            <div
+              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

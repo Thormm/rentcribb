@@ -17,7 +17,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -33,7 +33,7 @@ function Maincard({
     <div
       className={clsx(
         "relative rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -64,7 +64,7 @@ function InputField({
           "bg-white border",
           status === "valid" && "border-green-600",
           status === "invalid" && "border-red-600",
-          status === "idle" && "border-black"
+          status === "idle" && "border-black",
         )}
       >
         <div className="inline-flex items-center justify-between w-full">
@@ -116,8 +116,7 @@ export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   // check if all fields except referral are filled
- const canContinue = password && confirm && password === confirm;
-
+  const canContinue = password && confirm && password === confirm;
 
   // password match logic
   const confirmStatus =
@@ -164,7 +163,7 @@ export default function ResetPassword() {
 
       if (data.success) {
         setCodeSent(true);
-        setCountdown(60);
+        setCountdown(30);
       } else {
         // show error from backend
         alert(data.message || "Failed to send OTP. Please try again.");
@@ -220,7 +219,6 @@ export default function ResetPassword() {
     }
   };
 
-
   const handlechange = async () => {
     if (!canContinue) return;
 
@@ -236,7 +234,7 @@ export default function ResetPassword() {
         call_no: callNo,
         password: password,
         signup_key, // send the key to PHP
-        mode: mode
+        mode: mode,
       }),
       credentials: "include",
     });
@@ -355,10 +353,10 @@ export default function ResetPassword() {
                       {sending
                         ? "Sending..."
                         : countdown > 0
-                        ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                            countdown % 60
-                          ).padStart(2, "0")}`
-                        : "Re-Send Code"}
+                          ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                              countdown % 60,
+                            ).padStart(2, "0")}`
+                          : "Re-Send Code"}
                     </button>
                   </InfoPill>
                 )}
@@ -389,7 +387,7 @@ export default function ResetPassword() {
                       "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                   }}
                 />
-{/* Footer link */}
+                {/* Footer link */}
                 <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                   <span>
                     Remember Password?
@@ -401,48 +399,46 @@ export default function ResetPassword() {
                     </span>
                   </span>
                 </div>
-                
               </div>
             </Maincard>
           ) : (
             <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
-                        <SectionHeader
+              <SectionHeader
                 title="Forgot Password?"
                 caption="Chill, Let’s setup a new one ASAP"
               />
-            
-                        <div className="md:px-5 pb-4 pt-3 space-y-4">
-                         
-                          <InputField
-                            label="PASSWORD"
-                            placeholder="Enter your password"
-                            type="password"
-                            value={password}
-                            onChange={setPassword}
-                            status={password ? "valid" : "idle"}
-                          />
-                          <InputField
-                            label="CONFIRM PASSWORD"
-                            placeholder="Re-enter your password"
-                            type="password"
-                            value={confirm}
-                            onChange={setConfirm}
-                            status={confirmStatus}
-                          />
-                          
-                          {/* Continue Button */}
-                          <InfoPill className="mt-5 md:mt-10 bg-black text-white">
-                            <button
-                              className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
-                              onClick={handlechange}
-                              disabled={!canContinue}
-                            >
-                              <span className="text-xl">Proceed</span>
-                              <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
-                            </button>
-                          </InfoPill>
-                        </div>
-                      </Maincard>
+
+              <div className="md:px-5 pb-4 pt-3 space-y-4">
+                <InputField
+                  label="PASSWORD"
+                  placeholder="Enter your password"
+                  type="password"
+                  value={password}
+                  onChange={setPassword}
+                  status={password ? "valid" : "idle"}
+                />
+                <InputField
+                  label="CONFIRM PASSWORD"
+                  placeholder="Re-enter your password"
+                  type="password"
+                  value={confirm}
+                  onChange={setConfirm}
+                  status={confirmStatus}
+                />
+
+                {/* Continue Button */}
+                <InfoPill className="mt-5 md:mt-10 bg-black text-white">
+                  <button
+                    className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
+                    onClick={handlechange}
+                    disabled={!canContinue}
+                  >
+                    <span className="text-xl">Proceed</span>
+                    <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
+                  </button>
+                </InfoPill>
+              </div>
+            </Maincard>
           )}
         </div>
       </section>

@@ -14,7 +14,11 @@ const getLoginData = () => {
   }
 };
 
-const Navbar = () => {
+type NavbarProps = {
+  setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Navbar = ({ setLoginModal }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -114,7 +118,7 @@ const Navbar = () => {
             <>
               {!whats ? (
                 <button
-                  onClick={() => navigate("/signup")}
+                  onClick={() => setLoginModal(true)}
                   className="px-2 cursor-pointer border-black border-2 md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
                 >
                   <span className="text-[10px] md:text-[15px]">

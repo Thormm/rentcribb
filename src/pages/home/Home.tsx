@@ -22,7 +22,17 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 
 import Footer from "../../components/Footer";
+import { useNavigate } from "react-router-dom";
+import { MdOutlineBackpack } from "react-icons/md";
+import { BiSolidBriefcase } from "react-icons/bi";
+import { FaTimes } from "react-icons/fa";
+import { FiArrowRight } from "react-icons/fi";
+import { useOutletContext } from "react-router-dom";
 
+type LayoutContext = {
+  loginModal: boolean;
+  setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 
 type Testimony = {
@@ -140,6 +150,10 @@ const Home = () => {
   }, []);
 
   const t = DATA[i];
+  const { loginModal, setLoginModal } =
+    useOutletContext<LayoutContext>();
+  const navigate = useNavigate(); 
+  
 
   return (
     <div>
@@ -672,7 +686,105 @@ const Home = () => {
       </section>
 
       <Footer />
+
+
+
+ {/* Modal Box 2*/}
+      {loginModal && (
+        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+          {/* Modal Box */}
+          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+            {/* Close */}
+            <div
+              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => setLoginModal(false)}
+            >
+              <FaTimes className="text-white text-2xl" />
+            </div>
+
+            {/* Header */}
+            <h2 className="text-3xl mt-5 font-medium text-center text-black">
+              Get Started
+            </h2>
+            <p className="text-xs md:text-sm text-black text-center mt-5">
+              Hola, What would you like to do on Cribb
+            </p>
+
+            <div
+              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+
+            {/* Pills */}
+            <div className="space-y-6">
+              {/* Waitlist */}
+              <div>
+                <div
+                  onClick={() => navigate("/login?mode=student")}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
+                >
+                  <MdOutlineBackpack className="text-black text-2xl md:text-4xl ml-5" />
+                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                    Cribb for students
+                  </span>
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                  </div>
+                </div>
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                    Connect directly to landlords, agents & roommate at your Uni.{" "}
+                  </span>
+                </div>
+              </div>
+
+              {/* Coming Soon */}
+              <div className="text-xs md:text-md font-semibold text-black text-center">
+                ----------------- OR -----------------
+              </div>
+
+              {/* Business dash */}
+              <div>
+                <div
+                  onClick={() => navigate("/login?mode=merchant")}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
+                >
+                  <BiSolidBriefcase className="text-white text-2xl md:text-4xl ml-5" />
+                  <span className="flex-1 text-white text-md md:text-lg text-center font-medium">
+                   Cribb for Business
+                  </span>
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                  </div>
+                </div>
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                    List your space : reply renters requests & receive bookings.{" "}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
     </div>
+
+
+
   );
 };
 

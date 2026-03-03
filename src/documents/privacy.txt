@@ -1,0 +1,75 @@
+
+
+Last Updated: 3-3-2026
+
+This Privacy Policy explains how Cribb for Business (“Cribb for Business,” “Company,” “we,” “us,” or “our”) collects, uses, stores, shares, and protects your personal information when you access or use our mobile application, website, and related services (collectively, the “Service”).
+By using the Service, you consent to the practices described in this Privacy Policy.
+
+1. Information We Collect
+We may collect the following categories of personal and sensitive information from you:
+1.1. Identity Data: Full name, date of birth, gender, government-issued identification (e.g., National ID, passport, BVN).1.2. Contact Data: Email address, phone number, home address, and emergency contacts.1.3. Educational/Professional Data: Student or employment verification, school name, department, or company details.1.4. Financial Data: Payment method details, billing history, and transaction records.1.5. Biometric Data: Photographs or “selfies” used for KYC verification.1.6. Usage Data: IP address, device type, browser, operating system, and activity logs related to use of the Service.1.7. Location Data: Approximate or precise location when required for services such as listing verification or fraud detection.1.8. User Content: Messages, reviews, listings, or other contributions submitted by you through the Service.
+
+2. How We Use Your Information
+We process your information for the following purposes:
+	•	To create and manage your account;
+	•	To verify your identity and conduct KYC checks;
+	•	To provide and improve the Service;
+	•	To process payments, subscriptions, and transactions;
+	•	To ensure compliance with applicable laws and regulations;
+	•	To detect, prevent, and address fraud or security issues;
+	•	To enable communication between Users (e.g., Hosts and Members);
+	•	To send you important updates, account notices, and promotional offers;
+	•	To comply with tax, regulatory, and legal obligations.
+
+3. Legal Basis for Processing
+We process your data under the following legal bases (as applicable):
+	•	Consent: Where you provide explicit consent (e.g., for marketing communications).
+	•	Contractual Necessity: Where processing is required to provide the Service or fulfill our obligations under a contract with you.
+	•	Legal Obligation: Where processing is required to comply with applicable laws.
+	•	Legitimate Interests: For fraud prevention, platform improvement, and ensuring safety of Users.
+
+4. Data Sharing and Disclosure
+We may share your personal information with:
+	•	Service Providers: Third-party vendors that support payment processing, identity verification, hosting, and analytics.
+	•	Hosts and Members: To facilitate communication, due diligence, and accommodation arrangements.
+	•	Regulatory Authorities: Where required by law, regulation, or legal process.
+	•	Business Transfers: In case of a merger, acquisition, or sale of assets, your data may be transferred to the successor entity.
+	•	Legal and Safety Reasons: Where disclosure is necessary to protect rights, enforce Terms, or ensure safety of Users.
+We do not sell personal information to third parties for unrelated marketing purposes.
+
+5. Data Retention
+We retain personal data only for as long as necessary to:
+	•	Provide the Service;
+	•	Comply with legal obligations;
+	•	Resolve disputes;
+	•	Enforce agreements.
+Upon account termination, your data will be deleted or anonymized unless law requires otherwise.
+
+6. Data Security
+We implement reasonable technical, administrative, and physical safeguards to protect your data from unauthorized access, alteration, disclosure, or destruction. However, no system is 100% secure, and you acknowledge the risks inherent in electronic transmission.
+
+7. Your Rights
+Depending on your jurisdiction (e.g., under NDPR in Nigeria or GDPR in the EU), you may have the following rights:
+	•	Right to access the personal data we hold about you;
+	•	Right to request correction of inaccurate or incomplete data;
+	•	Right to request deletion (“right to be forgotten”) where legally applicable;
+	•	Right to restrict or object to processing of your data;
+	•	Right to withdraw consent at any time where processing is based on consent;
+	•	Right to request data portability.
+Requests may be submitted to: [Insert Contact Email].
+
+8. International Transfers
+If your data is transferred outside your country (e.g., to third-party providers), we will ensure that appropriate safeguards are in place, such as contractual obligations or data protection certifications.
+
+9. Children’s Privacy
+The Service is not directed to individuals under 18 years of age. We do not knowingly collect personal data from minors. If we learn that we have inadvertently collected data from a minor, we will delete it promptly.
+
+10. Cookies and Tracking Technologies
+We may use cookies, pixels, and similar technologies to enhance User experience, analyze Service usage, and deliver personalized content. You can manage cookie preferences through your browser settings.
+
+11. Updates to this Privacy Policy
+We may update this Privacy Policy from time to time with or without prior notice. Updates will be effective immediately upon posting on the platform. Continued use of the Service constitutes acceptance of the revised Privacy Policy.
+
+12. Contact Us
+If you have questions or concerns regarding this Privacy Policy or our data practices, please contact us at:
+Cribb for Business[Insert Business Address]Email: [Insert Email Address]Phone: [Insert Phone Number]

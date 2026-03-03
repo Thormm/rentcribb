@@ -92,7 +92,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
       const data = await res.json();
       if (data.success) {
         setCodeSent(true);
-        setCountdown(60);
+        setCountdown(30);
       }
     } catch (err) {
       console.error("Send SMS failed", err);
@@ -113,7 +113,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
       const data = await res.json();
       if (data.success) {
         setCodeSent(true);
-        setCountdown(60);
+        setCountdown(30);
       }
     } catch (err) {
       console.error("Send Email failed", err);
