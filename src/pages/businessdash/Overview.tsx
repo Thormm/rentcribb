@@ -529,11 +529,12 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>CALL NUMBER</Label>
                     <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1 text-black">
-                          {callNo}
-                        </span>
-                      </div>
+                      <input
+                        type="text"
+                        readOnly
+                        value={callNo}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
                     </InfoPill>
                   </div>
 
@@ -554,11 +555,12 @@ const Overview = () => {
                   <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
                     <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1 text-black">
-                          {email}
-                        </span>
-                      </div>
+                      <input
+                        type="text"
+                        readOnly
+                        value={email}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
                     </InfoPill>
                   </div>
 
