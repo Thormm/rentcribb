@@ -62,8 +62,13 @@ export default function SidebarInner({
     // Save it back to sessionStorage
     sessionStorage.setItem("login_data", JSON.stringify(updatedData));
 
-    // Navigate to onboarding page
-    navigate("/businessonboarding");
+    // Determine which section exists
+    let addQuery = "";
+    if (showAgentSection) addQuery = "?add=Landlord";
+    else if (showLandlordSection) addQuery = "?add=Agent";
+
+    // Navigate to onboarding page with query if any
+    navigate("/businessonboarding" + addQuery);
   };
 
   // ✅ Fetch sidebar data
@@ -71,7 +76,7 @@ export default function SidebarInner({
     const fetchSidebarData = async () => {
       try {
         const session = JSON.parse(
-          sessionStorage.getItem("login_data") || "{}"
+          sessionStorage.getItem("login_data") || "{}",
         );
         if (!session?.user) return;
         const res = await fetch("https://www.cribb.africa/apigets.php", {

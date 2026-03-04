@@ -182,7 +182,7 @@ export default function Loginpage() {
             user: data.user,
             verification: data.verification,
             state: data.state,
-            school: data.school
+            school: data.school,
           };
 
           // Save to sessionStorage as JSON string
@@ -412,9 +412,9 @@ export default function Loginpage() {
 
       {/* Modal Box 1*/}
       {open && mode === "student" && (
-        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           {/* Modal Box */}
-          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+          <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             {/* Close */}
             <div
               className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
@@ -508,8 +508,9 @@ export default function Loginpage() {
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
                     Join the wait list to be among the first to experience
-                    Cribb/Rent <br />Share your pain points to help us build a softer
-                    life for Uni-student{" "}
+                    Cribb/Rent <br />
+                    Share your pain points to help us build a softer life for
+                    Uni-student{" "}
                   </span>
                 </div>
               </div>
@@ -597,7 +598,8 @@ export default function Loginpage() {
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
                     List your entire or shared space and connect to students.
-                    <br />Explore rent requests and reply with your available spaces.
+                    <br />
+                    Explore rent requests and reply with your available spaces.
                   </span>
                 </div>
               </div>
@@ -621,8 +623,9 @@ export default function Loginpage() {
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
                     Join the wait list to be among the first to experience
-                    Cribb/Rent <br />Share your pain points to help us build a softer
-                    life for Uni-student{" "}
+                    Cribb/Rent <br />
+                    Share your pain points to help us build a softer life for
+                    Uni-student{" "}
                   </span>
                 </div>
               </div>
@@ -663,7 +666,7 @@ export default function Loginpage() {
 
       {/* ==== FORGOT PROMPT MODAL ==== */}
       {showForgotPrompt && (
-        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
             <div
               className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"

@@ -71,21 +71,39 @@ export default function Board2({
   mode,
   onBack,
   category,
+  data,
+  setData,
+  board1Data,
 }: {
   mode: "student" | "merchant";
-  category: "Agent" | "Landlord";
+  category: string;
   onBack?: () => void;
+  data: {
+    bname: string;
+    bAbout: string;
+    bAddress: string;
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      bname: string;
+      bAbout: string;
+      bAddress: string;
+    }>
+  >;
+  board1Data: {
+    category: string;
+    bemail: string;
+    bNo: string;
+    whatsapp: string;
+  };
 }) {
-  const [bname, setEmail] = useState("");
-  const [bAbout, setCallNo] = useState("");
-  const [bAddress, setWhatsapp] = useState("");
   const [loading, setLoading] = useState(false);
   const [openmodal, setOpen] = useState(false);
   const [showCongrats, setCongrats] = useState(false);
-  const [hasPlan, setHasPlan] = useState(false); // ✅ added
+  const [hasPlan, setHasPlan] = useState(false);
+
   const navigate = useNavigate();
 
-  // ✅ Run only once and determine if user already has a plan
   useEffect(() => {
     const loginData = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     const { user, category } = loginData;
@@ -105,16 +123,15 @@ export default function Board2({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched plan:", data);
         if (data && data.plan && Object.keys(data.plan).length > 0) {
-          setHasPlan(true); // ✅ plan exists
+          setHasPlan(true);
         }
       })
       .catch((err) => console.error("Network error:", err))
       .finally(() => setLoading(false));
-  }, []); // ✅ runs only once when page opens
+  }, []);
 
-  const canContinue = bname && bAbout && bAddress;
+  const canContinue = data.bname && data.bAbout && data.bAddress;
 
   const handleSave = async () => {
     if (!canContinue) {
@@ -127,15 +144,40 @@ export default function Board2({
     const user = login_data.user;
 
     setLoading(true);
+
     try {
-      const response = await fetch("https://www.cribb.africa/api_save.php", {
+      // -------- save board1 first ----------
+      const res1 = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: board1Data.category,
+          bemail: board1Data.bemail,
+          bNo: board1Data.bNo,
+          whatsapp: board1Data.whatsapp,
+          board1: true,
+          user,
+          mode,
+          signup_key,
+        }),
+      });
+
+      const r1 = await res1.json();
+
+      if (!r1.success) {
+        alert(r1.message || "Failed to save board1 data.");
+        return;
+      }
+
+      // -------- then save board2 ----------
+      const res2 = await fetch("https://www.cribb.africa/api_save.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           category,
-          bname,
-          bAbout,
-          bAddress,
+          bname: data.bname,
+          bAbout: data.bAbout,
+          bAddress: data.bAddress,
           board2: true,
           user,
           mode,
@@ -143,21 +185,15 @@ export default function Board2({
         }),
       });
 
-      const data = await response.json();
-      if (data.success) {
-        
-        const login_data = JSON.parse(
-          sessionStorage.getItem("login_data") || "{}"
-        );
+      const r2 = await res2.json();
 
+      if (r2.success) {
         login_data.verification = "4";
-
-        alert("Saved successfully!");
-        // Save to sessionStorage
         sessionStorage.setItem("login_data", JSON.stringify(login_data));
+        alert("Saved successfully!");
         setOpen(true);
       } else {
-        alert(data.message || "Failed to save data.");
+        alert(r2.message || "Failed to save board2 data.");
       }
     } catch (error) {
       console.error("Save error:", error);
@@ -215,7 +251,6 @@ export default function Board2({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-          {/* LEFT IMAGE */}
           <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
             <img
               src={imgright}
@@ -230,7 +265,6 @@ export default function Board2({
             </button>
           </div>
 
-          {/* RIGHT FORM */}
           <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
             <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
               <SectionHeader
@@ -273,8 +307,10 @@ export default function Board2({
                   <Label className="ml-8">Business Name</Label>
                   <InfoPill className="bg-white">
                     <input
-                      value={bname}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={data.bname}
+                      onChange={(e) =>
+                        setData((p) => ({ ...p, bname: e.target.value }))
+                      }
                       className="w-full appearance-none bg-transparent text-xs outline-none"
                       placeholder="Enter your business name"
                       type="text"
@@ -286,8 +322,10 @@ export default function Board2({
                   <Label className="ml-8">About</Label>
                   <InfoPill className="bg-white">
                     <input
-                      value={bAbout}
-                      onChange={(e) => setCallNo(e.target.value)}
+                      value={data.bAbout}
+                      onChange={(e) =>
+                        setData((p) => ({ ...p, bAbout: e.target.value }))
+                      }
                       className="w-full appearance-none bg-transparent text-xs outline-none"
                       placeholder="Enter your business description"
                     />
@@ -298,8 +336,10 @@ export default function Board2({
                   <Label className="ml-8">Business Address</Label>
                   <InfoPill className="bg-white">
                     <input
-                      value={bAddress}
-                      onChange={(e) => setWhatsapp(e.target.value)}
+                      value={data.bAddress}
+                      onChange={(e) =>
+                        setData((p) => ({ ...p, bAddress: e.target.value }))
+                      }
                       className="w-full appearance-none bg-transparent text-xs outline-none"
                       placeholder="Enter your business address"
                     />
@@ -326,8 +366,9 @@ export default function Board2({
       </section>
 
       {openmodal && (
-        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
-          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
+          {/* Modal Box */}
+          <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
               className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
@@ -338,6 +379,7 @@ export default function Board2({
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
               Plan
             </h2>
+
             <p className="text-xs md:text-sm text-black text-center mt-5">
               Simple, Transparent Plan based on your need
             </p>
@@ -367,7 +409,6 @@ export default function Board2({
                 </div>
               </div>
 
-              {/* ✅ Free Trial hidden if hasPlan is true */}
               {!hasPlan && (
                 <div>
                   <div
@@ -382,6 +423,7 @@ export default function Board2({
                       <FiArrowRight className="text-white text-xl md:text-2xl" />
                     </div>
                   </div>
+
                   <div className="flex justify-center mt-1">
                     <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
                       Up to 1 listing : Unlimited bookings : Reply requests for
@@ -424,7 +466,7 @@ export default function Board2({
       )}
 
       {showCongrats && (
-        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
             <p className="text-sm text-center text-gray-600 mb-4">
               Your 14-day free trial has started. You have access to all

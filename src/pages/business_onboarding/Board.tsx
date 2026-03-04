@@ -1,23 +1,51 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Board1 from "./Board1";
 import Board2 from "./Board2";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import logo from "../../assets/logo.png";
 
 const Board = () => {
+  const [board1Data, setBoard1Data] = useState({
+    category: "",
+    bemail: "",
+    bNo: "",
+    whatsapp: "",
+  });
+
+  const [board2Data, setBoard2Data] = useState({
+    bname: "",
+    bAbout: "",
+    bAddress: "",
+  });
+
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const mode = login_data.mode;
   const verification = login_data.verification;
-  const category = login_data.category;
+
+  // ✅ Determine category priority:
+  // 1. URL query (?add)
+  // 2. login_data.category
+  // 3. board1Data.category
+  // 4. default to "agent"
+  const queryCategory = searchParams.get("add");
+  const effectiveCategory =
+    queryCategory || login_data.category || board1Data.category || "";
+
+  // Pre-fill board1Data.category with effectiveCategory if empty
+  useEffect(() => {
+    if (!board1Data.category) {
+      setBoard1Data((prev) => ({ ...prev, category: effectiveCategory }));
+    }
+  }, [effectiveCategory, board1Data.category]);
 
   const goNext = () => setStep((prev) => prev + 1);
   const goBack = () => setStep((prev) => Math.max(1, prev - 1));
 
-  // ✅ Redirect if verification is 4
   useEffect(() => {
     if (verification === "4" || verification === 4) {
       navigate("/businessrequests");
@@ -27,7 +55,6 @@ const Board = () => {
   return (
     <>
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
-        {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
             <img
@@ -38,7 +65,6 @@ const Board = () => {
           </div>
         </div>
 
-        {/* Center: Logo */}
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
           <img src={logo} alt="Cribb.Africa Logo" className="m-0 p-0 h-8 md:h-11" />
           <div className="flex flex-col items-end p-0 m-0">
@@ -51,7 +77,6 @@ const Board = () => {
           </div>
         </div>
 
-        {/* Right: Button (only on step 1) */}
         {step === 1 && (
           <div className="flex justify-end md:justify-center items-center gap-2">
             <div className="md:hidden rounded-full bg-black p-2 shrink-0">
@@ -65,9 +90,24 @@ const Board = () => {
         )}
       </nav>
 
-      {/* Steps */}
-      {step === 1 && <Board1 mode={mode} onNext={goNext} />}
-      {step === 2 && <Board2 category={category} mode={mode} onBack={goBack} />}
+      {step === 1 && (
+        <Board1
+          data={board1Data}
+          setData={setBoard1Data}
+          onNext={goNext}
+        />
+      )}
+
+      {step === 2 && (
+        <Board2
+          category={board1Data.category} // pass selected category from Board1
+          mode={mode}
+          data={board2Data}
+          setData={setBoard2Data}
+          board1Data={board1Data}
+          onBack={goBack}
+        />
+      )}
     </>
   );
 };

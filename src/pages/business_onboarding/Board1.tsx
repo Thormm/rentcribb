@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import imgright from "../../assets/board1.png";
 import InfoPill from "../../components/Pill";
-import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
+import { FaTimes } from "react-icons/fa";
 
 function Maincard({
   className = "",
@@ -59,50 +58,55 @@ function Label({
 }
 
 export default function Board1({
-  mode,
   onNext,
+  data,
+  setData,
 }: {
-  mode: "student" | "merchant";
   onNext?: () => void;
+  data: {
+    category: string;
+    bemail: string;
+    bNo: string;
+    whatsapp: string;
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      category: string;
+      bemail: string;
+      bNo: string;
+      whatsapp: string;
+    }>
+  >;
 }) {
   const navigate = useNavigate();
 
-  // === State for input fields ===
-  const [category, setCategory] = useState("");
-  const [bemail, setEmail] = useState("");
-  const [bNo, setCallNo] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [loading, setLoading] = useState(false);
+  const canContinue =
+    data.bemail && data.bNo && data.whatsapp && data.category;
 
-  // === Validate required fields ===
-  const canContinue = category && bemail && bNo && whatsapp;
-
-  // === Validation helpers ===
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const isValidPhone = (phone: string) => /^\+?[0-9]{8,15}$/.test(phone);
 
-  // === Handle Save to API ===
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!canContinue) {
       alert("All fields are required.");
       return;
     }
 
-    if (!isValidEmail(bemail)) {
+    if (!isValidEmail(data.bemail)) {
       alert("Please enter a valid email address.");
       return;
     }
 
-    if (!isValidPhone(bNo)) {
+    if (!isValidPhone(data.bNo)) {
       alert(
         "Please enter a valid business call number (only digits, optional +, 8–15 digits)."
       );
       return;
     }
 
-    if (!isValidPhone(whatsapp)) {
+    if (!isValidPhone(data.whatsapp)) {
       alert(
         "Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits)."
       );
@@ -110,44 +114,11 @@ export default function Board1({
     }
 
     const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    const signup_key = login_data.signup_key;
-    const user = login_data.user;
-    login_data.category = category;
-    login_data.email = bemail;
-
-    // Save to sessionStorage
+    login_data.category = data.category; // keep prefilled or selected category
+    login_data.email = data.bemail;
     sessionStorage.setItem("login_data", JSON.stringify(login_data));
 
-    setLoading(true);
-    try {
-      const response = await fetch("https://www.cribb.africa/api_save.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category,
-          bemail,
-          bNo,
-          whatsapp,
-          board1: true,
-          user,
-          mode,
-          signup_key,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert("Saved successfully!");
-        if (onNext) onNext();
-      } else {
-        alert(data.message || "Failed to save data.");
-      }
-    } catch (error) {
-      console.error("Save error:", error);
-      alert("Network or server error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    onNext?.();
   };
 
   return (
@@ -163,7 +134,6 @@ export default function Board1({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        {/* LEFT SIDE: IMAGE */}
         <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
@@ -171,14 +141,13 @@ export default function Board1({
             className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
           />
           <button
-            onClick={() => navigate("/login")}
-            className="cursor-pointer absolute top-5 right-5 md:right-15 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            onClick={() => navigate("/businessdash")}
+            className="cursor-pointer absolute top-5 left-5 md:right-15 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
-            <IoIosArrowBack size={14} />
+            <FaTimes size={14} />
           </button>
         </div>
 
-        {/* RIGHT SIDE: FORM */}
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
@@ -187,31 +156,38 @@ export default function Board1({
             />
 
             <div className="md:px-5 pb-4 pt-3 space-y-4">
-              {/* Category */}
+              {/* ✅ Category: Read-only if prefilled, dropdown if empty */}
               <div>
                 <Label className="ml-8">Business Category</Label>
                 <InfoPill className="bg-white">
-                  <div className="inline-flex items-center justify-between w-full">
+                  {data.category ? (
+                    <span className="text-xs text-gray-600">
+                      {data.category}
+                    </span>
+                  ) : (
                     <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
+                      value={data.category}
+                      onChange={(e) =>
+                        setData((p) => ({ ...p, category: e.target.value }))
+                      }
                       className="w-full bg-transparent text-xs text-gray-500 outline-none"
                     >
                       <option value="">Select your Business Category</option>
                       <option value="Agent">Agent</option>
                       <option value="Landlord">Landlord</option>
                     </select>
-                  </div>
+                  )}
                 </InfoPill>
               </div>
 
-              {/* Email */}
               <div>
                 <Label className="ml-8">Business Email</Label>
                 <InfoPill className="bg-white">
                   <input
-                    value={bemail}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={data.bemail}
+                    onChange={(e) =>
+                      setData((p) => ({ ...p, bemail: e.target.value }))
+                    }
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter your business email"
                     type="email"
@@ -220,15 +196,14 @@ export default function Board1({
                 </InfoPill>
               </div>
 
-              {/* Call Number */}
               <div>
                 <Label className="ml-8">Business Call No.</Label>
                 <InfoPill className="bg-white">
                   <input
-                    value={bNo}
+                    value={data.bNo}
                     onChange={(e) => {
                       const val = e.target.value.replace(/[^0-9+]/g, "");
-                      setCallNo(val);
+                      setData((p) => ({ ...p, bNo: val }));
                     }}
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business call number"
@@ -238,15 +213,14 @@ export default function Board1({
                 </InfoPill>
               </div>
 
-              {/* Whatsapp */}
               <div>
                 <Label className="ml-8">Whatsapp No.</Label>
                 <InfoPill className="bg-white">
                   <input
-                    value={whatsapp}
+                    value={data.whatsapp}
                     onChange={(e) => {
                       const val = e.target.value.replace(/[^0-9+]/g, "");
-                      setWhatsapp(val);
+                      setData((p) => ({ ...p, whatsapp: val }));
                     }}
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business whatsapp number"
@@ -256,17 +230,14 @@ export default function Board1({
                 </InfoPill>
               </div>
 
-              {/* Proceed Button */}
               <div className="pt-2 w-full flex items-center justify-center">
                 <InfoPill className="mt-2 bg-black text-white">
                   <button
                     className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
                     onClick={handleSave}
-                    disabled={!canContinue || loading}
+                    disabled={!canContinue}
                   >
-                    <span className="text-xl">
-                      {loading ? "Saving..." : "Proceed"}
-                    </span>
+                    <span className="text-xl">Proceed</span>
                     <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
                   </button>
                 </InfoPill>
