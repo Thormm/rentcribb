@@ -655,7 +655,7 @@ const toggleDay = (day: string) => {
                   <div className="md:col-span-2 px-3">
                     <Label>INSPECTION DAYS</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      {/* Display selected days */}
+                      {/* Display selected days*/}
                       <div
                         className="flex justify-between w-full py-2 cursor-pointer"
                         onClick={() => setOpen(!open)}
