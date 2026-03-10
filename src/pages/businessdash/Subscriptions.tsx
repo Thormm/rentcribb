@@ -16,7 +16,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        className,
       )}
     >
       {children}
@@ -72,7 +72,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -99,7 +99,7 @@ function PaginatedList({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -146,7 +146,7 @@ function PaginatedList({
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -211,10 +211,10 @@ const Subscriptions = () => {
   const [showCongrats, setCongrats] = useState(false);
   const [activeTab, setActiveTab] = useState("Agent");
   const [agentFilled, setHasAgentEmail] = useState<boolean | undefined>(
-    undefined
+    undefined,
   );
   const [landlordFilled, setHasLandlordEmail] = useState<boolean | undefined>(
-    undefined
+    undefined,
   );
   const [hasAgentPlan, setHasAgentPlan] = useState(false);
   const [hasLandlordPlan, setHasLandlordPlan] = useState(false);
@@ -243,10 +243,10 @@ const Subscriptions = () => {
 
           // ✅ Check for active running plans
           const activeAgent = agentPlans.find(
-            (p: any) => String(p.status).toLowerCase() === "running"
+            (p: any) => String(p.status).toLowerCase() === "running",
           );
           const activeLandlord = landlordPlans.find(
-            (p: any) => String(p.status).toLowerCase() === "running"
+            (p: any) => String(p.status).toLowerCase() === "running",
           );
 
           const hasAgentPlan = !!activeAgent;
@@ -308,7 +308,7 @@ const Subscriptions = () => {
       (role === "landlord" && !landlordFilled)
     ) {
       const loginData = JSON.parse(
-        sessionStorage.getItem("login_data") || "{}"
+        sessionStorage.getItem("login_data") || "{}",
       );
       const updatedData = { ...loginData, verification: 0 };
       // Save it back to sessionStorage
@@ -338,8 +338,8 @@ const Subscriptions = () => {
                   {!hasAgentPlan && (
                     <button
                       onClick={() => handleClickRole("agent")}
-                      className="md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-3 md:px-5 py-2 md:py-3 shadow-sm text-sm md:text-md text-white"
-                    >
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
+                    
                       <TbUserSquare className="w-8 h-8" />
                       {agentFilled === false
                         ? "Become an Agent >>"
@@ -450,8 +450,7 @@ const Subscriptions = () => {
                   {!hasLandlordPlan && (
                     <button
                       onClick={() => handleClickRole("landlord")}
-                      className="md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-3 md:px-5 py-2 md:py-3 shadow-sm text-sm md:text-md text-white"
-                    >
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
                       <TbUserSquare className="w-8 h-8" />
                       {landlordFilled === false
                         ? "Become a Landlord >>"

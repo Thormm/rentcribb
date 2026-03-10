@@ -777,7 +777,7 @@ const Overview = () => {
               <div className="md:w-2/3 p-5">
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 my-4 md:my-8">
-                  <span className="text-md font-semibold text-black tracking-wide">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     -- GIVE REVIEWS -------------
                   </span>
                 </div>

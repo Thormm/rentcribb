@@ -14,8 +14,17 @@ import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaPlus } from "react-icons/fa";
+//import { FaPlus } from "react-icons/fa";
 import { useDashboardTab } from "./DashComponents/DashboardTabContext";
+
+const days = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -24,7 +33,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        className,
       )}
     >
       {children}
@@ -99,7 +108,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -125,14 +134,11 @@ interface AgentDetails {
 }
 
 const Bizoverview: React.FC = () => {
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [activeTab, setActiveTabPage] = useState<string>("Profile");
-  // Note: original code referenced `plans` in the useState initializer.
-  // To keep identical behavior to your original file, we keep this line as-is.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activePlan, setActivePlan] = useState<any>("TIER1");
-
   const [agentDetails, setAgentDetails] = useState<AgentDetails>({
     agent_callno: "",
     agent_email: "",
@@ -153,6 +159,14 @@ const Bizoverview: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<FilterValue>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 4; // per your instruction
+
+  const [open, setOpen] = useState(false);
+
+const toggleDay = (day: string) => {
+  setSelectedDays((prev) =>
+    prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+  );
+};
 
   // derived values (computed from reviews)
   const filterCounts = useMemo(() => {
@@ -182,7 +196,7 @@ const Bizoverview: React.FC = () => {
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filtered.length / itemsPerPage)),
-    [filtered.length]
+    [filtered.length],
   );
 
   const currentItems = useMemo(() => {
@@ -200,7 +214,7 @@ const Bizoverview: React.FC = () => {
   useEffect(() => {
     const fetchAgentDetails = async () => {
       const login_data = JSON.parse(
-        sessionStorage.getItem("login_data") || "{}"
+        sessionStorage.getItem("login_data") || "{}",
       );
       const user = login_data?.user || "";
 
@@ -240,7 +254,7 @@ const Bizoverview: React.FC = () => {
   useEffect(() => {
     const loadReviews = async () => {
       const login_data = JSON.parse(
-        sessionStorage.getItem("login_data") || "{}"
+        sessionStorage.getItem("login_data") || "{}",
       );
       const user = login_data?.user || "";
 
@@ -264,7 +278,7 @@ const Bizoverview: React.FC = () => {
             "Failed to parse reviews JSON:",
             parseErr,
             "raw:",
-            clean
+            clean,
           );
           data = null;
         }
@@ -340,7 +354,7 @@ const Bizoverview: React.FC = () => {
         ],
       },
     }),
-    [agentDetails]
+    [agentDetails],
   ); // 👈 updates only when agentDetails changes
   const current = plans[activePlan];
 
@@ -351,6 +365,50 @@ const Bizoverview: React.FC = () => {
     const avg = sum / reviews.length;
     return avg.toFixed(1);
   }, [reviews]);
+
+  // LOAD SAVED DAYS FROM PHP
+  useEffect(() => {
+    const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    const user = login_data?.user || "";
+
+    fetch("https://www.cribb.africa/apigets.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: user,
+        action: "getinspectiondays",
+        type: "agent",
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.inspection_days) {
+          setSelectedDays(data.inspection_days.split(","));
+        }
+      });
+  }, []);
+
+
+
+  const saveChanges = async () => {
+    const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    const user = login_data?.user || "";
+    await fetch("https://www.cribb.africa/api_save.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: user,
+        action: "saveinspectiondays",
+        type: "agent",
+        signupkey: login_data?.signup_key,
+        inspection_days: selectedDays.join(","),
+      }),
+    });
+  };
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -482,7 +540,7 @@ const Bizoverview: React.FC = () => {
                               "flex items-center justify-center gap-2 rounded-lg md:px-4 py-2 font-semibold transition-colors duration-200 border",
                               isActive
                                 ? "bg-black text-[#D6FFC3] border-black shadow-md"
-                                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                                : "bg-white text-black border-gray-300 hover:bg-gray-100",
                             )}
                           >
                             <MdVerified />
@@ -594,14 +652,45 @@ const Bizoverview: React.FC = () => {
                 {/* Inputs grid */}
                 <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2 px-3">
                     <Label>INSPECTION DAYS</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
-                      <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
+                      {/* Display selected days */}
+                      <div
+                        className="flex justify-between w-full py-2 cursor-pointer"
+                        onClick={() => setOpen(!open)}
+                      >
+                        <span className="text-black text-xs md:text-sm">
+                          {selectedDays.length
+                            ? selectedDays.join(", ").length > 25
+                              ? selectedDays.join(", ").slice(0, 25) + "..."
+                              : selectedDays.join(", ")
+                            : "Select days available for Inspection"}
+                        </span>
+                        <FiChevronDown className="text-gray-500" />
+                      </div>
+
+                      {/* Dropdown */}
+                      {open && (
+                        <div className="absolute top-full left-0 right-0 bg-white border rounded shadow mt-1 z-20">
+                          {days.map((day) => (
+                            <label
+                              key={day}
+                              className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedDays.includes(day)}
+                                onChange={() => toggleDay(day)}
+                              />
+                              {day}
+                            </label>
+                          ))}
+                        </div>
+                      )}
                     </InfoPill>
                   </div>
-                  {/* Row 2 */}
+                  {/* Row 2 
                   <div>
                     <Label>INSPECTION</Label>
                     <InfoPill className="relative flex items-center bg-white">
@@ -616,11 +705,15 @@ const Bizoverview: React.FC = () => {
                       <FaPlus className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>
                   </div>
+                  */}
                 </div>
 
                 {/* Save Changes */}
                 <div className="mt-10 flex justify-center">
-                  <button className="py-3 text-md px-4 font-medium text-white bg-black shadow-lg rounded-lg">
+                  <button
+                    onClick={saveChanges}
+                    className="py-3 text-md px-4 font-medium text-white bg-black shadow-lg rounded-lg"
+                  >
                     SAVE CHANGES
                   </button>
                 </div>
@@ -760,7 +853,7 @@ const Bizoverview: React.FC = () => {
                             "flex items-center w-25 md:w-35 justify-center border-3 gap-2 rounded-lg px-4 py-2 font-semibold shadow-sm whitespace-nowrap",
                             selectedFilter === f.value
                               ? "bg-black text-white border-black"
-                              : "bg-white text-black border-black"
+                              : "bg-white text-black border-black",
                           )}
                         >
                           <span className="text-xs md:text-lg">
@@ -852,7 +945,7 @@ const Bizoverview: React.FC = () => {
                                         key={i}
                                         className="w-4 h-4 md:w-7 md:h-7 text-gray-300"
                                       />
-                                    )
+                                    ),
                                   )}
                                 </div>
                               )}

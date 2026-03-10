@@ -14,7 +14,7 @@ import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { FaPlus } from "react-icons/fa";
+//import { FaPlus } from "react-icons/fa";
 import { useDashboardTab } from "./DashComponents/DashboardTabContext";
 
 // Reusable Label
@@ -597,15 +597,19 @@ const Hostelview: React.FC = () => {
                   <div className="md:col-span-2">
                     <Label>INSPECTION DAYS</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
+                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black">
+                        <option value="">Select days available for Inspection</option>  
+                      </select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
-                  {/* Row 2 */}
+                  {/* Row 2 
                   <div>
                     <Label>INSPECTION</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
+                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black">
+                        <option value="">Select days available for Inspection</option>  
+                      </select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -615,7 +619,7 @@ const Hostelview: React.FC = () => {
                       <input className="appearance-none w-full bg-transparent outline-none py-1 text-black" />
                       <FaPlus className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>
-                  </div>
+                  </div>*/}
                 </div>
 
                 {/* Save Changes */}
