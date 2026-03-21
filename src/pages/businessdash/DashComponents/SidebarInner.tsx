@@ -47,9 +47,10 @@ export default function SidebarInner({
     // ✅ Clear all saved user session data
     sessionStorage.clear();
     localStorage.clear();
-
-    // ✅ Redirect to login
-    navigate("/login", { replace: true });
+    const loginData = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    let mode = "student";
+    if (loginData?.mode === "merchant") mode = "merchant";
+    navigate(`/login?mode=${mode}`, { replace: true });
   };
   const navigate = useNavigate(); // ✅ initialize router navigation
   const handleAddBusiness = () => {
@@ -306,7 +307,7 @@ export default function SidebarInner({
                 <div className="flex justify-between items-center mt-3 md:mt-4 w-full">
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md"
+                    className="cursor-pointer flex items-center gap-1 text-red-600 font-semibold text-[10px] md:text-md"
                   >
                     <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
                   </button>

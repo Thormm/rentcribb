@@ -268,6 +268,7 @@ export default function Hostelview() {
           spaceid: hostel?.id,
           agent_landlord: hostel?.user,
           space_type: space_type,
+          uploader: hostel?.uploader,
         }),
       });
 

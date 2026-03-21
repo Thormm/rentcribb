@@ -19,19 +19,14 @@ import {
   MdOutlineBookmarkAdded,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
-import { FaPlus, FaToggleOn, FaToggleOff, FaUserCheck } from "react-icons/fa";
+import { FaToggleOn, FaToggleOff, FaUserCheck, FaPlus } from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
 import { RiInformationLine } from "react-icons/ri";
+import { GrStatusGood } from "react-icons/gr";
 
 // ----------------------- CONSTANTS -----------------------
-const states = [
-  { value: "", label: "Sort by" },
-  { value: "lagos", label: "Lagos" },
-  { value: "abuja", label: "Abuja" },
-  { value: "rivers", label: "Rivers" },
-];
 
 const SORT_OPTIONS = [
   { value: "date_recent", label: "Date (Recent)" },
@@ -39,7 +34,7 @@ const SORT_OPTIONS = [
   { value: "processing", label: "Processing" },
   { value: "incomplete", label: "Incomplete" },
   { value: "not_approved", label: "Not approved" },
-  { value: "Approved", label: "Approved" },
+  { value: "approved", label: "Approved" },
   { value: "shared", label: "Shared" },
   { value: "entire", label: "Entire space" },
   { value: "name_az", label: "Name A-Z" },
@@ -235,7 +230,7 @@ function PaginatedDrafts() {
   return (
     <div>
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3 hidden">
         <div>
           <Label>FILTER</Label>
           <InfoPill className="relative flex items-center bg-white">
@@ -267,23 +262,30 @@ function PaginatedDrafts() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 my-4">
-        <span className="text-md font-semibold text-black tracking-wide mt-5">
+      <div className="flex items-center">
+        <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-15">
           --- YOUR DRAFTS ------
         </span>
       </div>
 
       {/* Drafts List */}
-      <div className="overflow-x-auto md:overflow-visible">
+      <div
+        className="overflow-x-auto md:overflow-visible"
+        style={{
+          maxHeight: "420px",
+          scrollbarColor: "#FFA1A1 transparent",
+          scrollbarWidth: "thin",
+        }}
+      >
         <div className="min-w-[580px] md:min-w-0">
           <div
-            className="space-y-6 overflow-y-auto pr-2"
+            className="space-y-6 overflow-y-auto pr-2 py-8"
             style={{ maxHeight: 420 }}
           >
             {currentData.map((item) => (
               <div
                 key={item.id}
-                className="flex gap-6"
+                className="flex gap-6 "
                 onClick={
                   item.status?.trim() === "Incomplete"
                     ? () => navigate(`/${item.space}?id=${item.gotoid}`)
@@ -318,7 +320,7 @@ function PaginatedDrafts() {
                     "grid grid-cols-10 gap-2 md:gap-4 px-4 md:px-6 items-center border rounded-4xl py-4 shadow-sm w-[180px] md:w-[230px]",
                     item.status?.trim() === "Processing" && "bg-[#F3EDFE]",
                     item.status?.trim() === "Not Approved" && "bg-[#FFA9A9]",
-                    item.status?.trim() === "Incomplete" && "bg-white",                 
+                    item.status?.trim() === "Incomplete" && "bg-white",
                     item.status?.trim() === "Approved" && "bg-[#cde7c9]",
                   )}
                 >
@@ -385,14 +387,17 @@ function Tabs({
   return (
     <div
       className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
-      style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
+      style={{
+        borderStyle: "dashed",
+        borderColor: "#0000004D",
+      }}
     >
       {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-            "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
+            "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
               : "",
@@ -415,7 +420,7 @@ function SectionHeader({ title }: { title: string }) {
           <BsQuestionCircle className="text-white" size={40} />
         </div>
       </div>
-      <p className="text-sm pt-5">Managment your Apartments on Cribb</p>
+      <p className="text-sm pt-5">Manage your Apartments on Cribb</p>
 
       <div
         className="mt-2 w-full border-t-4"
@@ -630,19 +635,17 @@ function PaginatedCards() {
 }
 
 // ----------------------- MAIN PAGE -----------------------
-const Listingslandlord: React.FC = () => {
+const Listings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
-  const [stateValue, setStateValue] = useState(""); // store state code/name
 
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           {/* Header */}
-          <SectionHeader title="Listingslandlord" />
+          <SectionHeader title="Listings" />
 
           <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
@@ -667,7 +670,7 @@ const Listingslandlord: React.FC = () => {
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
                         12
-                        <FiChevronDown className="pointer-events-none absolute right-5 text-[black]" />
+                        <GrStatusGood className="pointer-events-none absolute right-5 text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
@@ -678,7 +681,7 @@ const Listingslandlord: React.FC = () => {
                       </InfoPill>
                     </div>
                   </div>
-
+                  {/*
                   <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>CATEGORY</Label>
@@ -711,15 +714,15 @@ const Listingslandlord: React.FC = () => {
                         <IoIosArrowForward className="pointer-events-none absolute right-1  text-white w-13 h-13 p-3 rounded-full bg-black" />
                       </InfoPill>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex items-center gap-3 mt-8">
-                  <span className="text-md font-semibold text-black tracking-wide mt-10">
-                    --- YOUR LISTINGS -------------------------------
+                  <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-10">
+                    ------- YOUR LISTINGS -------
                   </span>
                 </div>
                 <PaginatedCards />
-                <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
@@ -728,6 +731,16 @@ const Listingslandlord: React.FC = () => {
 
             {activeTab === "Drafts" && (
               <div className="md:p-5 mt-5 space-y-6">
+                <div className="relative flex flex-col mb-10">
+                  <Label>NEW LISTING</Label>
+                  <div
+                    onClick={() => setOpen(true)}
+                    className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                  >
+                    <FaPlus size={20} className="text-white" />
+                  </div>
+                </div>
+
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}
                 <PaginatedDrafts />
                 <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
@@ -839,4 +852,4 @@ const Listingslandlord: React.FC = () => {
   );
 };
 
-export default Listingslandlord;
+export default Listings;

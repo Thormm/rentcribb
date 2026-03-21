@@ -3,19 +3,20 @@ import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
 import Card from "../../components/Cards";
-import { PiHouse, PiCalendar } from "react-icons/pi";
+import { PiHouse } from "react-icons/pi";
 import { HiOutlineUsers, HiOutlineMail } from "react-icons/hi";
 import {
-  MdOutlinePendingActions,
-  MdErrorOutline,
-  MdBlock,
   MdOutlineDeleteForever,
+  MdOutlineCall,
+  MdOutlinePostAdd,
+  MdLightbulbOutline,
 } from "react-icons/md";
 import { FaToggleOn } from "react-icons/fa";
 import { FiChevronDown, FiCopy } from "react-icons/fi";
-import { IoIosArrowForward } from "react-icons/io";
+//import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
 import { RiWhatsappLine } from "react-icons/ri";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 // ----------------------- States -----------------------
 const states = [
@@ -28,6 +29,7 @@ const states = [
 // ----------------------- Draft mock data -----------------------
 const draftItems = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
+  hostel: `Hostel ${i + 1}`,
   name: `Name ${i + 1}`,
   leftIcon: i % 2 === 0 ? "house" : "users",
   shared: i % 2 === 0,
@@ -208,6 +210,7 @@ function PaginatedCards() {
 // ----------------------- Paginated Drafts -----------------------
 function PaginatedDrafts() {
   const [page, setPage] = useState(1);
+  const [expanded, setExpanded] = useState<number | null>(null);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
   const currentData = draftItems.slice(
@@ -232,7 +235,7 @@ function PaginatedDrafts() {
           >
             {/* LEFT CARD */}
             <div className="flex-1 border-black rounded-4xl border px-6 py-4 shadow-sm">
-              {/* Row 1 */}
+              {/* Row 1 (always visible) */}
               <div className="flex items-center">
                 <div className="w-6 h-6 flex items-center justify-center text-black">
                   {item.type === "home" ? (
@@ -243,80 +246,87 @@ function PaginatedDrafts() {
                 </div>
 
                 <div className="flex flex-grow items-center gap-5 px-4">
+                  {/* Date on the left */}
                   <span className="text-md font-normal text-black whitespace-nowrap">
-                    {item.date}
+                    {item.hostel}
                   </span>
+                  {/* Name in the middle */}
                   <span className="text-md text-black font-normal truncate">
                     {item.name}
                   </span>
                 </div>
 
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <BiComment className="w-7 h-7 text-black" />
-                </div>
+                {/* Dropdown / up arrow instead of comment icon */}
+                <button
+                  className="w-6 h-6 flex items-center justify-center"
+                  onClick={() =>
+                    setExpanded(expanded === item.id ? null : item.id)
+                  }
+                >
+                  {expanded === item.id ? (
+                    <IoIosArrowUp className="w-7 h-7 text-black" />
+                  ) : (
+                    <IoIosArrowDown className="w-7 h-7 text-black" />
+                  )}
+                </button>
               </div>
+              {/* Row 2: Date (left) + Action Icons (right) */}
+              {expanded === item.id && (
+                <div className="flex items-center text-[black] justify-between mt-3 px-8">
+                  {/* Date on left */}
+                  <span className="text-xs">{item.date}</span>
 
-              {/* Row 2 - Contact Info */}
-              <div className="mt-6">
-                <div className="grid grid-cols-2 gap-2 text-sm text-black">
-                  {[
-                    {
-                      icon: <PiCalendar className="w-5 h-5 text-gray-600" />,
-                      label: item.date,
-                    },
-                    {
-                      icon: (
-                        <HiOutlineUsers className="w-5 h-5 text-gray-600" />
-                      ),
-                      label: item.call,
-                    },
-                    {
-                      icon: (
-                        <HiOutlineMail className="w-5 h-5 text-gray-600 flex-shrink-0" />
-                      ),
-                      label: item.email,
-                    },
-                    {
-                      icon: (
-                        <RiWhatsappLine className="w-5 h-5 text-gray-600" />
-                      ),
-                      label: item.whatsapp,
-                    },
-                  ].map((field, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between shadow-xl rounded-lg p-3 bg-white hover:shadow-2xl transition"
-                    >
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        {field.icon}
-                        <span className="truncate max-w-[140px] text-gray-800">
-                          {field.label}
-                        </span>
-                      </div>
-                      <FiCopy className="w-5 h-5 text-gray-700 cursor-pointer flex-shrink-0 hover:text-black transition" />
+                  {/* Icons on right */}
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-white   shadow flex items-center justify-center">
+                      <HiOutlineMail className="w-4 h-4 " />
                     </div>
-                  ))}
+                    <div className="w-8 h-8 rounded-full bg-white   shadow flex items-center justify-center">
+                      <MdOutlineCall className="w-4 h-4 " />
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-white   shadow flex items-center justify-center">
+                      <RiWhatsappLine className="w-4 h-4 " />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+              {/* Expanded Section: Contact Info */}
+              {expanded === item.id && (
+                <div className="mt-4 bg-white rounded-xl border  p-4 px-8 text-black shadow-sm">
+                  <div className="space-y-3">
+                    {[
+                      { label: "Email", value: item.email },
+                      { label: "Call no.", value: item.call },
+                      { label: "Whatsapp", value: item.whatsapp },
+                    ].map((field, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between"
+                      >
+                        <span className="text-sm">{field.label}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm  truncate max-w-[180px]">
+                            {field.value}
+                          </span>
+                          <FiCopy className="w-4 h-4 cursor-pointer hover:text-black transition" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* RIGHT STATUS */}
-            <div className="flex items-center justify-center gap-3 w-1/3 border-black rounded-4xl border py-4 shadow-sm">
-              <div className="flex items-center w-40 space-x-3">
-                {item.statusIcon === "processing" && (
-                  <MdOutlinePendingActions className="w-6 h-6 text-black" />
-                )}
-                {item.statusIcon === "incomplete" && (
-                  <MdErrorOutline className="w-6 h-6 text-black" />
-                )}
-                {item.statusIcon === "notapproved" && (
-                  <MdBlock className="w-6 h-6 text-black" />
-                )}
-                <span className="text-md text-black truncate">
-                  {item.status}
-                </span>
-              </div>
-            </div>
+            <div className="flex items-center justify-between w-1/3 border border-black rounded-4xl py-4 px-6 shadow-sm">
+  {/* Dynamic status text */}
+  <span className="text-md text-black truncate">
+    {item.status} {/* e.g. "Processing", "Pending", "Incomplete" */}
+  </span>
+
+  {/* Constant dropdown icon */}
+  <IoIosArrowDown className="w-6 h-6 text-black" />
+</div>
           </div>
         ))}
       </div>
@@ -344,7 +354,7 @@ function PaginatedDrafts() {
 }
 
 // ----------------------- Page -----------------------
-const Bookingslandlord: React.FC = () => {
+const Bookingsagent: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Bookings");
   const [stateValue, setStateValue] = useState("");
 
@@ -359,18 +369,13 @@ const Bookingslandlord: React.FC = () => {
 
             {activeTab === "Bookings" && (
               <div className="p-5 mt-5 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
-                  {/* --- STATS ROW (TOTAL + TOP BOOKINGS) --- */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
                   <div className="col-span-2">
-                    {/* Row 1: Labels */}
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <Label>TOTAL</Label>
                       <Label>TOP BOOKINGS</Label>
                     </div>
-
-                    {/* Row 2: Circle + Bars */}
                     <div className="flex items-center gap-8">
-                      {/* TOTAL Circle */}
                       <div className="flex-shrink-0">
                         <div className="w-28 h-28 rounded-full bg-[#C2C8DA4D] flex items-center justify-center shadow-lg">
                           <span className="text-3xl font-medium text-black">
@@ -378,8 +383,6 @@ const Bookingslandlord: React.FC = () => {
                           </span>
                         </div>
                       </div>
-
-                      {/* TOP BOOKINGS */}
                       <div className="flex-1 space-y-3">
                         {[
                           { name: "Great Villa", value: 90 },
@@ -387,13 +390,11 @@ const Bookingslandlord: React.FC = () => {
                           { name: "Kaffto Laurel", value: 40 },
                         ].map((b, i) => (
                           <div key={i} className="flex items-center gap-3">
-                            {/* Booking name */}
-                            <span className="w-28 text-sm text-black truncate">
+                            <span className="w-28 text-md text-black truncate">
                               {b.name}
                             </span>
 
-                            {/* Bar */}
-                            <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-black"
                                 style={{ width: `${b.value}%` }}
@@ -439,9 +440,10 @@ const Bookingslandlord: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                */}
 
                 <div className="flex items-center gap-3 my-8">
-                  <span className="text-md font-medium text-black tracking-wide mt-10">
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR BOOKINGS ------------------------------- STATUS
                     ----------
                   </span>
@@ -451,7 +453,12 @@ const Bookingslandlord: React.FC = () => {
 
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
+                </button>
+
+                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                  <MdOutlinePostAdd className="w-8 h-8" />
+                  Post New Listings
                 </button>
               </div>
             )}
@@ -459,47 +466,53 @@ const Bookingslandlord: React.FC = () => {
             {activeTab === "Requests" && (
               <div className="p-5 mt-5 space-y-6">
                 <div className="col-span-2 grid grid-cols-2 gap-4 w-2/3">
-                    <div>
-                      <Label>FILTER</Label>
-                      <InfoPill className="relative flex items-center bg-white">
-                        <select
-                          value={stateValue}
-                          onChange={(e) => setStateValue(e.target.value)}
-                          className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                        >
-                          <option value="">{states[0].label}</option>
-                          {states
-                            .filter((s) => s.value !== "")
-                            .map((s) => (
-                              <option key={s.value} value={s.value}>
-                                {s.label}
-                              </option>
-                            ))}
-                        </select>
-                        <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
-                      </InfoPill>
-                    </div>
-
-                    <div>
-                      <Label>SEARCH BY NAME</Label>
-                      <InfoPill className="relative flex items-center bg-white">
-                        <input
-                          className="appearance-none w-full bg-transparent outline-none py-1 text-black"
-                          placeholder="Enter here"
-                        ></input>
-                        <IoIosArrowForward className="pointer-events-none absolute right-1  text-white w-13 h-13 p-3 rounded-full bg-black" />
-                      </InfoPill>
-                    </div>
-                  </div>
-                <PaginatedCards />
                 
+                  <div>
+                    <Label>HOW IT WORKS</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <span className="py-1"
+                        
+                      >Info</span>
+                      <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
+                    </InfoPill>
+                  </div>
+                
+                  <div>
+                    <Label>FILTER</Label>
+                    <InfoPill className="relative flex items-center bg-white">
+                      <select
+                        value={stateValue}
+                        onChange={(e) => setStateValue(e.target.value)}
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                      >
+                        <option value="">{states[0].label}</option>
+                        {states
+                          .filter((s) => s.value !== "")
+                          .map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
+                            </option>
+                          ))}
+                      </select>
+                      <FiChevronDown className="pointer-events-none absolute right-5 text-black" />
+                    </InfoPill>
+                  </div>
+
+                </div>
+                <div className="flex items-center">
+                  <span className="text-md font-semibold text-black tracking-wide mt-10">
+                    --- REPLIES ----------------------------------26
+                  </span>
+                </div>
+                <PaginatedCards />
+
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
-                  View Sent Requests
+                  View Rent Requests
                 </button>
-                
+
                 <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
-                  <BiComment className="w-8 h-8" />
+                  <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
                 </button>
               </div>
@@ -511,4 +524,4 @@ const Bookingslandlord: React.FC = () => {
   );
 };
 
-export default Bookingslandlord;
+export default Bookingsagent;

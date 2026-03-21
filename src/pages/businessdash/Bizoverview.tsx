@@ -162,11 +162,11 @@ const Bizoverview: React.FC = () => {
 
   const [open, setOpen] = useState(false);
 
-const toggleDay = (day: string) => {
-  setSelectedDays((prev) =>
-    prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-  );
-};
+  const toggleDay = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
 
   // derived values (computed from reviews)
   const filterCounts = useMemo(() => {
@@ -389,8 +389,6 @@ const toggleDay = (day: string) => {
         }
       });
   }, []);
-
-
 
   const saveChanges = async () => {
     const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
