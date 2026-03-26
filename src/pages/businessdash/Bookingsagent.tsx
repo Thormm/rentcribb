@@ -339,6 +339,7 @@ const mockRequests = Array.from({ length: 15 }, (_, i) => ({
   budget: `₦${200000 + i * 10000}`,
   move_in_date: i % 2 === 0 ? "Urgently" : "May 2026",
   responses: JSON.stringify(["a", "b", "c"].slice(0, (i % 3) + 1)),
+  
 }));
 
 /** ---------------- MOCK CARDS (MATCH YOUR TYPE) ---------------- */
@@ -356,6 +357,7 @@ const mockCards = Array.from({ length: 1 }, (_, i) => ({
   photos: [], // leave empty → your fallback UI will show
   user: "demo",
   name: `Apartment ${i + 1}`,
+   card2: true
 }));
 
 function PaginatedRequests() {
