@@ -346,7 +346,7 @@ const mockRequests = Array.from({ length: 15 }, (_, i) => ({
 }));
 
 /** ---------------- MOCK CARDS (MATCH YOUR TYPE) ---------------- */
-const mockCards = Array.from({ length: 1 }, (_, i) => ({
+const mockCards = Array.from({ length: 2 }, (_, i) => ({
   id: `${i}`,
   background: "bg-white",
   tier: (i % 3) + 1,
