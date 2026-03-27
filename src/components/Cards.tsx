@@ -102,7 +102,7 @@ export default function Card<T extends CardItemBase>({
       <div
         className={`${
           isCard2
-            ? "relative overflow-visible"
+            ? "relative overflow-visible mb-5"
             : "w-full md:w-80"
         } rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${
           item.background
@@ -228,7 +228,7 @@ export default function Card<T extends CardItemBase>({
     return (
       <div className="relative w-60 md:w-80 mx-5">
         {/* FLOATING ICONS */}
-        <div className="absolute -top-4 -left-5 flex flex-col gap-5 z-10">
+        <div className="absolute -top-2 md:-top-4 -left-5 flex flex-col gap-5 z-10">
           <HiOutlineDotsVertical className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
           {item.pending && (
             <AiOutlineLoading3Quarters className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />

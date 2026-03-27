@@ -35,12 +35,15 @@ interface DraftItem {
   space_name: string;
 }
 
-// ----------------------- Reusable small helpers -----------------------
+// Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        className,
+      )}
     >
       {children}
     </div>
@@ -82,14 +85,17 @@ function Tabs({
   return (
     <div
       className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
-      style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
+      style={{
+        borderStyle: "dashed",
+        borderColor: "#0000004D",
+      }}
     >
       {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => setActive(tab)}
           className={clsx(
-            "flex-1 pb-2 pt-2 text-lg relative text-black font-medium text-center",
+            "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
               : "",
@@ -369,7 +375,10 @@ function PaginatedRequests() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" style={{
+          scrollbarColor: "#FFA1A1 transparent",
+          scrollbarWidth: "thin",
+        }}>
       {currentData.map((item: any, idx: number) => (
         <div key={item.id || idx} className="space-y-4">
           {/* ---------------- TITLE ---------------- */}
@@ -384,7 +393,7 @@ function PaginatedRequests() {
             <div className="flex items-stretch w-full md:w-[60%]">
               {/* TEXT BOX */}
               <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
-                <p className="text-sm">
+                <p className="text-xs md:text-sm">
                   A {item.gender} Student needs a{" "}
                   <b>
                     {item.category === "Shared Space" ? "SHARED " : ""}
@@ -561,8 +570,8 @@ const Bookingsagent: React.FC = () => {
             )}
 
             {activeTab === "Requests" && (
-              <div className="p-5 mt-5 space-y-6">
-                <div className="col-span-2 grid grid-cols-2 gap-4 w-2/3">
+              <div className="md:p-5 mt-5 space-y-6">
+                <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
                   <div>
                     <Label>HOW IT WORKS</Label>
                     <InfoPill className="relative flex items-center bg-white">
@@ -593,8 +602,8 @@ const Bookingsagent: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <span className="text-md font-semibold text-black tracking-wide mt-10">
-                    --- REPLIES ----------------------------------26
+                  <span className="text-md font-semibold text-black tracking-wide mt-5 md:mt-10">
+                    --- REPLIES --------
                   </span>
                 </div>
                 <PaginatedRequests />
