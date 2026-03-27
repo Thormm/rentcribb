@@ -102,7 +102,6 @@ function Tabs({
   );
 }
 
-
 // ----------------------- Paginated Drafts -----------------------
 function PaginatedDrafts() {
   const [page, setPage] = useState(1);
@@ -326,7 +325,6 @@ function PaginatedDrafts() {
   );
 }
 
-
 /** ---------------- MOCK REQUESTS ---------------- */
 const mockRequests = Array.from({ length: 15 }, (_, i) => ({
   id: `${i}`,
@@ -339,7 +337,6 @@ const mockRequests = Array.from({ length: 15 }, (_, i) => ({
   budget: `₦${200000 + i * 10000}`,
   move_in_date: i % 2 === 0 ? "Urgently" : "May 2026",
   responses: JSON.stringify(["a", "b", "c"].slice(0, (i % 3) + 1)),
-  
 }));
 
 /** ---------------- MOCK CARDS (MATCH YOUR TYPE) ---------------- */
@@ -357,7 +354,7 @@ const mockCards = Array.from({ length: 1 }, (_, i) => ({
   photos: [], // leave empty → your fallback UI will show
   user: "demo",
   name: `Apartment ${i + 1}`,
-   card2: true
+  card2: true,
 }));
 
 function PaginatedRequests() {
@@ -368,61 +365,66 @@ function PaginatedRequests() {
 
   const currentData = mockRequests.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
     <div className="space-y-8">
-
       {currentData.map((item: any, idx: number) => (
         <div key={item.id || idx} className="space-y-4">
-
           {/* ---------------- TITLE ---------------- */}
-          <div className="font-semibold text-black">
-            Request {(page - 1) * itemsPerPage + idx + 1}
+          <div className="flex justify-end">
+            <span className=" bg-white text-[#5B5B5B] text-xs md:text-sm rounded-xl p-2">
+              You replied...
+            </span>
           </div>
 
           {/* ---------------- ROW 1 → REQUEST (RIGHT) ---------------- */}
           <div className="flex justify-end">
-            <div className="w-full md:w-[60%] border-black rounded-3xl border p-4 shadow-sm text-black">
+            <div className="flex items-stretch w-full md:w-[60%]">
+              {/* TEXT BOX */}
+              <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
+                <p className="text-sm">
+                  A {item.gender} Student needs a{" "}
+                  <b>
+                    {item.category === "Shared Space" ? "SHARED " : ""}
+                    {item.type}
+                  </b>{" "}
+                  with {item.features.join(", ")} around{" "}
+                  {[item.preferred_location_1, item.preferred_location_2]
+                    .filter(Boolean)
+                    .join(", ")}
+                  .
+                  <br />
+                  Budget: <b>{item.budget}</b>
+                  <br />
+                  {item.move_in_date?.toLowerCase() === "urgently" ? (
+                    <>
+                      Looking to Move in <b>URGENTLY</b>
+                    </>
+                  ) : (
+                    <>
+                      Move-in before <b>{item.move_in_date}</b>
+                    </>
+                  )}
+                </p>
+              </div>
 
-              <p className="text-sm">
-                A {item.gender} Student needs a{" "}
-                <b>
-                  {item.category === "Shared Space" ? "SHARED " : ""}
-                  {item.type}
-                </b>{" "}
-                with {item.features.join(", ")} around{" "}
-                {[item.preferred_location_1, item.preferred_location_2]
-                  .filter(Boolean)
-                  .join(", ")}
-                .
-                <br />
-                Budget: <b>{item.budget}</b>
-                <br />
-                {item.move_in_date?.toLowerCase() === "urgently" ? (
-                  <>Looking to Move in <b>URGENTLY</b></>
-                ) : (
-                  <>Move-in before <b>{item.move_in_date}</b></>
-                )}
-              </p>
+              {/* VERTICAL LINE */}
+              <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
             </div>
           </div>
 
           {/* ---------------- ROW 2 → CARDS (LEFT + SCROLL) ---------------- */}
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-max">
-
               {mockCards.map((card: any) => (
                 <div key={card.id} className="shrink-0">
                   <Card item={card} />
-                                    
                 </div>
               ))}
-
             </div>
           </div>
-
         </div>
       ))}
 
@@ -437,7 +439,7 @@ function PaginatedRequests() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}

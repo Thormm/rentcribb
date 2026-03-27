@@ -3,6 +3,10 @@ import { Medal, Star, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaArrowRight } from "react-icons/fa";
 import { GrCheckmark } from "react-icons/gr";
+import { MdDeleteForever } from "react-icons/md";
+import { TbCancel, TbArrowBack  } from "react-icons/tb";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 
 function TierBadge({ n }: { n: number }) {
   return (
@@ -42,6 +46,11 @@ type CardItemBase = {
   user?: string;
   name: string;
   card2?: boolean; // 👈 toggle for V2
+  approve?: boolean; // V2
+  pending?: boolean; // V2
+  delete?: boolean; // V2
+  decline?: boolean; // V2
+  unsend?: boolean; // V2
 };
 
 type CardProps<T extends CardItemBase> = {
@@ -221,7 +230,22 @@ export default function Card<T extends CardItemBase>({
         {/* FLOATING ICONS */}
         <div className="absolute -top-4 -left-5 flex flex-col gap-5 z-10">
           <HiOutlineDotsVertical className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
-          <GrCheckmark className="w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-[#D6FFC3] border-2 shadow-md" />
+          {item.pending && (
+            <AiOutlineLoading3Quarters className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+          )}
+          {item.approve && (
+            <GrCheckmark className="w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-[#D6FFC3] border-2 shadow-md" />
+          )}
+          {item.delete && (
+            <MdDeleteForever  className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+          )}
+          {item.decline && (
+            <TbCancel className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+          )}
+          {item.unsend && (
+            <TbArrowBack  className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+          )}
+          
           <FaArrowRight className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
         </div>
 
