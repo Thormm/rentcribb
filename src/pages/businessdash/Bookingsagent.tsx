@@ -557,12 +557,12 @@ const Bookingsagent: React.FC = () => {
 
                 <PaginatedDrafts />
 
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
 
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
                 </button>
@@ -575,7 +575,7 @@ const Bookingsagent: React.FC = () => {
                   <div>
                     <Label>HOW IT WORKS</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <span className="py-1">Info</span>
+                      <span className="text-xs md:text-sm">Info</span>
                       <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
                     </InfoPill>
                   </div>
@@ -586,7 +586,7 @@ const Bookingsagent: React.FC = () => {
                       <select
                         value={stateValue}
                         onChange={(e) => setStateValue(e.target.value)}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-black"
+                        className="appearance-none w-full bg-transparent outline-none text-xs md:text-sm text-black"
                       >
                         <option value="">{states[0].label}</option>
                         {states
