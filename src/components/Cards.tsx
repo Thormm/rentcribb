@@ -92,7 +92,6 @@ export default function Card<T extends CardItemBase>({
     });
   }, [photoUrls]);
 
-  // ✅ FIX: react to image URL change (not just index)
   useEffect(() => {
     setLoading(true);
   }, [currentUrl]);
