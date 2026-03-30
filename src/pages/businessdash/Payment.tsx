@@ -249,7 +249,7 @@ const Payment = () => {
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
                   <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
-                    --- HISTORY --------------------------
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList data={withdrawals} />
@@ -261,7 +261,7 @@ const Payment = () => {
               <div className="p-5">
                 <div className="flex items-center gap-3 mt-5 mb-5">
                   <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList data={topups} />
@@ -345,7 +345,7 @@ const Payment = () => {
                 <div className="p-5">
                   <div className="flex items-center gap-3 mb-5">
                     <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
-                      ----- ENTRIES --------------------------
+                      --- ENTRIES --------------------
                     </span>
                   </div>
                   <PaginatedList data={refunds[activeRefund]} />

@@ -390,7 +390,7 @@ export default function StudentListing() {
   }, [navigate]);
 
   const [filters, setFilters] = useState({
-    school: login.school || "", // default school
+    school: "", // default school
     category: "",
     type: "",
     gender: "",
@@ -448,7 +448,6 @@ export default function StudentListing() {
   };
 
   useEffect(() => {
-    if (!login.school) return;
     getRequests().then(setCards);
   }, [login.school]);
 

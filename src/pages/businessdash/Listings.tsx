@@ -722,7 +722,7 @@ const Listings: React.FC = () => {
                   </span>
                 </div>
                 <PaginatedCards />
-                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button onClick={() => navigate("/businessrequests")} className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>

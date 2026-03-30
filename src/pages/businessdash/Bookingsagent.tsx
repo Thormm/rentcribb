@@ -5,6 +5,7 @@ import InfoPill from "../../components/Pill";
 import Card from "../../components/Cards";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiOutlineUserCircle } from "react-icons/hi2";
+import { GrCheckmark } from "react-icons/gr";
 import {
   MdOutlineCall,
   MdOutlinePostAdd,
@@ -12,9 +13,11 @@ import {
 } from "react-icons/md";
 import { FiChevronDown, FiCopy } from "react-icons/fi";
 //import { IoIosArrowForward } from "react-icons/io";
+import { TbCancel } from "react-icons/tb";
 import { BiComment } from "react-icons/bi";
 import { RiWhatsappLine } from "react-icons/ri";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 // ----------------------- States -----------------------
 const states = [
@@ -109,9 +112,14 @@ function Tabs({
 }
 
 // ----------------------- Paginated Drafts -----------------------
-function PaginatedDrafts() {
+function PaginatedBookings() {
   const [page, setPage] = useState(1);
-  const [expanded, setExpanded] = useState<number | string | null>(null);
+  const [expandedLeft, setExpandedLeft] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [expandedRight, setExpandedRight] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -181,12 +189,17 @@ function PaginatedDrafts() {
         {currentData.map((item) => (
           <div
             key={item.id}
-            className="flex items-start gap-6 w-[450px] md:w-full"
+            className="flex gap-6 w-[450px] md:w-full items-center"
           >
             {/* Left card */}
-            <div className="flex-1 border-black rounded-4xl border px-6 py-4 shadow-sm">
+            <div
+              className={clsx(
+                "flex-1 border-black rounded-4xl border shadow-sm",
+                "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center", // <--- add self-start
+              )}
+            >
               {/* Header row */}
-              <div className="flex items-center">
+              <div className="flex items-center px-4 py-3">
                 <div className="w-6 h-6 flex items-center justify-center text-black">
                   <HiOutlineUserCircle className="w-7 h-7" />
                 </div>
@@ -210,10 +223,13 @@ function PaginatedDrafts() {
                 <button
                   className="ml-auto w-6 h-6 flex items-center justify-center"
                   onClick={() =>
-                    setExpanded(expanded === item.id ? null : item.id)
+                    setExpandedLeft((prev) => ({
+                      ...prev,
+                      [item.id]: !prev[item.id],
+                    }))
                   }
                 >
-                  {expanded === item.id ? (
+                  {expandedLeft[item.id] ? (
                     <IoIosArrowUp className="w-7 h-7 text-black" />
                   ) : (
                     <IoIosArrowDown className="w-7 h-7 text-black" />
@@ -222,11 +238,11 @@ function PaginatedDrafts() {
               </div>
 
               {/* Row 2 icons */}
-              {expanded === item.id && (
-                <div className="flex items-center text-black justify-between mt-3 md:px-8">
+              {expandedLeft[item.id] && (
+                <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
                   <span className="text-xs">{item.date}</span>
 
-                  <div className="flex gap-1 md:gap-3">
+                  <div className="flex gap-2 md:gap-3">
                     <div
                       className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
                       onClick={() =>
@@ -258,9 +274,9 @@ function PaginatedDrafts() {
               )}
 
               {/* Expanded contact info */}
-              {expanded === item.id && (
-                <div className="mt-4 bg-white rounded-xl border p-2 md:p-4 md:px-8 text-black shadow-sm">
-                  <div className="space-y-3">
+              {expandedLeft[item.id] && (
+                <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
+                  <div className="space-y-4">
                     {[
                       { label: "Email", value: item.email },
                       { label: "Call no.", value: item.call },
@@ -273,20 +289,17 @@ function PaginatedDrafts() {
                         <span className="text-xs md:text-base font-semibold">
                           {field.label}
                         </span>
-
                         <div className="flex items-center gap-2">
                           <span className="text-xs md:text-base truncate">
                             {field.value?.length > 15
                               ? field.value.slice(0, 15) + "…"
                               : field.value}
                           </span>
-
                           <FiCopy
                             className="w-4 h-4 cursor-pointer"
                             onClick={() => handleCopy(field.label, field.value)}
                           />
                         </div>
-
                         {copiedField === field.label && (
                           <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
                             Copied!
@@ -299,11 +312,51 @@ function PaginatedDrafts() {
               )}
             </div>
 
-            {/* Right status */}
-            <div className="w-[150px] md:w-[200px] flex-shrink-0 border border-black rounded-4xl py-4 px-6 shadow-sm flex justify-center items-center">
-              <span className="text-xs md:text-sm text-black text-center">
-                {item.status}
-              </span>
+            {/* Right status card */}
+            <div className="min-h-[40px] md:min-h-[60px] w-[150px] md:w-[200px] flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center">
+              {/* Header row */}
+              <div
+                className="flex items-center justify-between  px-6 py-4 cursor-pointer"
+                onClick={() =>
+                  setExpandedRight((prev) => ({
+                    ...prev,
+                    [item.id]: !prev[item.id],
+                  }))
+                }
+              >
+                <span className="text-xs md:text-sm text-black">
+                  {item.status == "Inspection" && (<span>Waiting...</span>)}
+                </span>
+                <span>
+                  {expandedRight[item.id] ? (
+                    <IoIosArrowUp className="w-5 h-5 text-black" />
+                  ) : (
+                    <IoIosArrowDown className="w-5 h-5 text-black" />
+                  )}
+                </span>
+              </div>
+
+              {/* Expanded right card buttons */}
+              {expandedRight[item.id] && (
+                <div className="flex flex-col px-6 gap-3 pb-4">
+                  {item.status == "Inspection" && (
+                    <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
+                      <span className="text-xs md:text-sm text-black">
+                        Decline
+                      </span>
+                      <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
+                    </div>
+                  )}
+                  {item.status == "Inspection" && (
+                    <div className="flex items-center justify-between bg-[#D6FFC3] p-2 rounded-md">
+                      <span className="text-xs md:text-sm text-black">
+                        Completed
+                      </span>
+                      <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full  border-2 shadow-md" />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -331,59 +384,84 @@ function PaginatedDrafts() {
   );
 }
 
-/** ---------------- MOCK REQUESTS ---------------- */
-const mockRequests = Array.from({ length: 15 }, (_, i) => ({
-  id: `${i}`,
-  gender: "Male",
-  category: i % 2 === 0 ? "Shared Space" : "Private",
-  type: "Self Contain",
-  features: ["WiFi", "Water"],
-  preferred_location_1: "UI",
-  preferred_location_2: "Bodija",
-  budget: `₦${200000 + i * 10000}`,
-  move_in_date: i % 2 === 0 ? "Urgently" : "May 2026",
-  responses: JSON.stringify(["a", "b", "c"].slice(0, (i % 3) + 1)),
-}));
-
-/** ---------------- MOCK CARDS (MATCH YOUR TYPE) ---------------- */
-const mockCards = Array.from({ length: 2 }, (_, i) => ({
-  id: `${i}`,
-  background: "bg-white",
-  tier: (i % 3) + 1,
-  rating: 4.2 + (i % 2),
-  reviews: 10 + i,
-  type: "Self Contain",
-  location: "Ibadan",
-  space: i % 2 === 0 ? "sharedspace" : "entirespace",
-  price: 150000 + i * 5000,
-  duration: "per year",
-  photos: [], // leave empty → your fallback UI will show
-  user: "demo",
-  name: `Apartment ${i + 1}`,
-  card2: true,
-}));
-
 function PaginatedRequests() {
   const [page, setPage] = useState(1);
+  const [requests, setRequests] = useState<any[]>([]);
 
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(mockRequests.length / itemsPerPage);
 
-  const currentData = mockRequests.slice(
+  useEffect(() => {
+    const loginData = sessionStorage.getItem("login_data");
+    if (!loginData) return;
+
+    const user = JSON.parse(loginData)?.user;
+
+    const fetchData = async () => {
+      const res = await fetch("https://www.cribb.africa/apigets.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "get_agent_requests",
+          user: user,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const requestsWithPhotos = (data.requests || []).map((req: any) => ({
+          ...req,
+          spaces: (req.spaces || []).map((space: any) => ({
+            ...space,
+            user: space.user || req.user || user, // keep user if needed
+            photos: Array.isArray(space.photos_full)
+              ? space.photos_full.map((url: string) => {
+                  const parts = url.split("/");
+                  return parts[parts.length - 1];
+                })
+              : [],
+          })),
+        }));
+
+        setRequests(requestsWithPhotos);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const totalPages = Math.ceil(requests.length / itemsPerPage);
+  const currentData = requests.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage,
   );
 
+  const parseFeatures = (features: any) => {
+    if (Array.isArray(features)) return features.join(", ");
+    if (features) {
+      try {
+        const arr = JSON.parse(features);
+        return Array.isArray(arr) ? arr.join(", ") : "";
+      } catch {
+        return "";
+      }
+    }
+    return "";
+  };
+
   return (
-    <div className="space-y-8" style={{
-          scrollbarColor: "#FFA1A1 transparent",
-          scrollbarWidth: "thin",
-        }}>
+    <div
+      className="space-y-8"
+      style={{
+        scrollbarColor: "#FFA1A1 transparent",
+        scrollbarWidth: "thin",
+      }}
+    >
       {currentData.map((item: any, idx: number) => (
         <div key={item.id || idx} className="space-y-4">
           {/* ---------------- TITLE ---------------- */}
           <div className="flex justify-end">
-            <span className=" bg-white text-[#5B5B5B] text-xs md:text-sm rounded-xl p-2">
+            <span className="bg-white text-[#5B5B5B] text-xs md:text-sm rounded-xl p-2">
               You replied...
             </span>
           </div>
@@ -394,12 +472,13 @@ function PaginatedRequests() {
               {/* TEXT BOX */}
               <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
                 <p className="text-xs md:text-sm">
-                  A {item.gender} Student needs a{" "}
+                  A {item.gender} {item.category === "Student" ? "Student" : ""}{" "}
+                  needs a{" "}
                   <b>
                     {item.category === "Shared Space" ? "SHARED " : ""}
                     {item.type}
                   </b>{" "}
-                  with {item.features.join(", ")} around{" "}
+                  {parseFeatures(item.features)} around{" "}
                   {[item.preferred_location_1, item.preferred_location_2]
                     .filter(Boolean)
                     .join(", ")}
@@ -427,7 +506,7 @@ function PaginatedRequests() {
           {/* ---------------- ROW 2 → CARDS (LEFT + SCROLL) ---------------- */}
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-max">
-              {mockCards.map((card: any) => (
+              {(item.spaces || []).map((card: any) => (
                 <div key={card.id} className="shrink-0">
                   <Card item={card} />
                 </div>
@@ -464,6 +543,7 @@ function PaginatedRequests() {
 const Bookingsagent: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Bookings");
   const [stateValue, setStateValue] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -555,14 +635,20 @@ const Bookingsagent: React.FC = () => {
                   </span>
                 </div>
 
-                <PaginatedDrafts />
+                <PaginatedBookings />
 
-                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
 
-                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button
+                  onClick={() => navigate("/listings")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
                 </button>
@@ -608,12 +694,18 @@ const Bookingsagent: React.FC = () => {
                 </div>
                 <PaginatedRequests />
 
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
 
-                <button className="w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button
+                  onClick={() => navigate("/listings")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
                 </button>

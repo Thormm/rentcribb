@@ -105,7 +105,7 @@ function PaginatedList({
   return (
     <div>
       <div
-        className="space-y-4 max-h-[350px] overflow-y-auto pr-2"
+        className="space-y-4 max-h-[350px] overflow-y-auto pr-2 mb-4 md:mb-0"
         style={{
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
@@ -118,14 +118,14 @@ function PaginatedList({
           >
             <div className="flex items-center gap-3">
               {item.status === "done" ? (
-                <GrStatusGood className="text-black w-4 h-4 md:w-7 md:h-7" />
+                <GrStatusGood className="text-black w-5 h-5 md:w-7 md:h-7" />
               ) : (
-                <MdOutlinePending className="text-black w-4 h-4 md:w-7 md:h-7" />
+                <MdOutlinePending className="text-black w-5 h-5 md:w-7 md:h-7" />
               )}
-              <span className="text-[9px] md:text-sm text-black">
+              <span className="text-[11px] md:text-sm text-black">
                 {item.date}
               </span>
-              <span className="text-[9px] md:text-sm text-black">
+              <span className="text-[11px] md:text-sm text-black">
                 {item.plan}
               </span>
             </div>
@@ -293,6 +293,10 @@ const Subscriptions = () => {
       const data = await response.json();
       if (data.success) {
         setCongrats(true);
+
+        setTimeout(() => {
+          navigate("/businessdash");
+        }, 5000);
       } else {
         alert(data.message || "Failed to save data.");
       }
@@ -332,14 +336,14 @@ const Subscriptions = () => {
 
             {/* Agent Tab */}
             {activeTab === "Agent" && (
-              <div className="px-2 pt-5 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mb-5 bg-transparent">
+              <div className="px-2 md:p-5 md:mt-5">
+                <div className="flex flex-col gap-8 mt-5 md:mt-1 mb-5 bg-transparent">
                   {/* show button only if there's no running agent plan */}
                   {!hasAgentPlan && (
                     <button
                       onClick={() => handleClickRole("agent")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
-                    
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                    >
                       <TbUserSquare className="w-8 h-8" />
                       {agentFilled === false
                         ? "Become an Agent >>"
@@ -427,7 +431,7 @@ const Subscriptions = () => {
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
                   <span className="text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                    --- HISTORY ----------------
                   </span>
                 </div>
                 <PaginatedList
@@ -444,13 +448,14 @@ const Subscriptions = () => {
 
             {/* Landlord Tab */}
             {activeTab === "Landlord" && (
-              <div className="px-2 pt-5 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mb-5 bg-transparent">
+              <div className="px-2 md:p-5 md:mt-5">
+                <div className="flex flex-col gap-8 mt-5 md:mt-1 mb-5 bg-transparent">
                   {/* show button only if there's no running landlord plan */}
                   {!hasLandlordPlan && (
                     <button
                       onClick={() => handleClickRole("landlord")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                    >
                       <TbUserSquare className="w-8 h-8" />
                       {landlordFilled === false
                         ? "Become a Landlord >>"
@@ -535,7 +540,7 @@ const Subscriptions = () => {
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
                   <span className="text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                    ----- HISTORY -------------------
                   </span>
                 </div>
                 <PaginatedList
@@ -578,15 +583,6 @@ const Subscriptions = () => {
               Your 14-day free trial has started. You have access to all
               features for the next 14 days. Enjoy exploring!
             </p>
-
-            <div className="flex justify-center">
-              <button
-                className="px-4 py-2 bg-black text-white rounded-lg"
-                onClick={() => setCongrats(false)}
-              >
-                OK
-              </button>
-            </div>
           </div>
         </div>
       )}

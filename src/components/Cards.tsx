@@ -4,9 +4,9 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaArrowRight } from "react-icons/fa";
 import { GrCheckmark } from "react-icons/gr";
 import { MdDeleteForever } from "react-icons/md";
-import { TbCancel, TbArrowBack  } from "react-icons/tb";
+import { TbCancel, TbArrowBack } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import { CgClose } from "react-icons/cg";
 
 function TierBadge({ n }: { n: number }) {
   return (
@@ -39,18 +39,16 @@ type CardItemBase = {
   reviews: number;
   type: string;
   location: string;
-  space: string; // "sharedspace" | "entirespace"
+  space: string;
   price: number;
   duration: string;
   photos?: string[];
   user?: string;
   name: string;
-  card2?: boolean; // 👈 toggle for V2
-  approve?: boolean; // V2
-  pending?: boolean; // V2
-  delete?: boolean; // V2
-  decline?: boolean; // V2
-  unsend?: boolean; // V2
+  card2?: boolean;
+  approve?: boolean;
+  pending?: boolean;
+  decline?: boolean;
 };
 
 type CardProps<T extends CardItemBase> = {
@@ -65,7 +63,9 @@ export default function Card<T extends CardItemBase>({
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Build image URLs
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleModal = () => setIsModalOpen((prev) => !prev);
+
   const photoUrls = (item.photos || []).map((filename) => {
     const folder =
       item.space === "sharedspace" ? "shared_spaces" : "entire_spaces";
@@ -92,23 +92,20 @@ export default function Card<T extends CardItemBase>({
     });
   }, [photoUrls]);
 
+  // ✅ FIX: react to image URL change (not just index)
   useEffect(() => {
     setLoading(true);
-  }, [idx]);
+  }, [currentUrl]);
 
-  // ✅ BASE CARD (shared UI)
   function BaseCard({ isCard2 }: { isCard2: boolean }) {
     return (
       <div
         className={`${
-          isCard2
-            ? "relative overflow-visible mb-5"
-            : "w-full md:w-80"
+          isCard2 ? "relative overflow-visible mb-5" : "w-full md:w-80"
         } rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${
           item.background
         } border-black`}
       >
-        {/* IMAGE */}
         <div className="relative h-55 md:h-70 border-black border-2 w-full overflow-hidden rounded-2xl bg-gray-100">
           {currentUrl ? (
             <>
@@ -119,6 +116,7 @@ export default function Card<T extends CardItemBase>({
               )}
 
               <img
+                key={currentUrl} // ✅ FIX: force re-render for cache issues
                 src={currentUrl}
                 alt={item.name ?? "space image"}
                 className={`w-full h-full object-contain transition-opacity duration-300 ${
@@ -153,7 +151,6 @@ export default function Card<T extends CardItemBase>({
             </div>
           )}
 
-          {/* NAV BUTTONS */}
           <div className="absolute right-2 top-2 flex items-center gap-2">
             <button
               onClick={prev}
@@ -176,7 +173,6 @@ export default function Card<T extends CardItemBase>({
             </button>
           </div>
 
-          {/* DOTS */}
           {hasPhotos && photoUrls.length > 1 && (
             <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex gap-2">
               {photoUrls.map((_, i) => (
@@ -192,7 +188,6 @@ export default function Card<T extends CardItemBase>({
           )}
         </div>
 
-        {/* CONTENT */}
         <div onClick={onView} className="cursor-pointer">
           <div className="mt-3 flex items-center text-black justify-between">
             <TierBadge n={item.tier} />
@@ -223,30 +218,78 @@ export default function Card<T extends CardItemBase>({
     );
   }
 
-  // ✅ CONDITIONAL RENDER
   if (item.card2) {
     return (
       <div className="relative w-60 md:w-80 mx-5">
-        {/* FLOATING ICONS */}
         <div className="absolute -top-2 md:-top-4 -left-5 flex flex-col gap-5 z-10">
-          <HiOutlineDotsVertical className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+          {isModalOpen ? (
+            <CgClose
+              onClick={toggleModal}
+              className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md cursor-pointer"
+            />
+          ) : (
+            <HiOutlineDotsVertical
+              onClick={toggleModal}
+              className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md cursor-pointer"
+            />
+          )}
+          {isModalOpen && (
+            <div className="absolute -top-2 md:-top-4 left-12 bg-white border-2 border-black rounded-2xl shadow-lg z-10 w-[200px] p-4 flex flex-col gap-3">
+              <div className="text-center text-xs md:text-sm font-semibold text-black">
+                {"10 - 03 - 2023"}
+              </div>
+              <div className="border-t-2 border-dashed border-gray-400"></div>
+              <div className="flex flex-col">
+                {item.pending && (
+                  <div className="flex items-center justify-between p-2">
+                    <span className="text-xs md:text-sm text-black">Pending</span>
+                    <AiOutlineLoading3Quarters className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}{item.pending && (
+                  <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
+                    <span className="text-xs md:text-sm text-black">Unsend</span>
+                    <TbArrowBack className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+                {item.approve && (
+                  <div className="flex items-center justify-between p-2">
+                    <span className="text-xs md:text-sm text-black">Accepted</span>
+                    <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full  border-2 shadow-md" />
+                  </div>
+                )}
+                {item.approve && (
+                  <div className="flex items-center justify-between bg-black p-2 rounded-md">
+                    <span className="text-xs md:text-sm text-white">View Info</span>
+                    <FaArrowRight className="text-white w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+                {item.decline && (
+                  <div className="flex items-center justify-between p-2">
+                    <span className="text-xs md:text-sm text-black">Declined</span>
+                    <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+                {item.decline && (
+                  <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
+                    <span className="text-xs md:text-sm text-black">Delete</span>
+                    <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+                
+              </div>
+            </div>
+          )}
+
           {item.pending && (
-            <AiOutlineLoading3Quarters className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+            <AiOutlineLoading3Quarters className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-white shadow-md" />
           )}
           {item.approve && (
             <GrCheckmark className="w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-[#D6FFC3] border-2 shadow-md" />
           )}
-          {item.delete && (
-            <MdDeleteForever  className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
-          )}
+
           {item.decline && (
-            <TbCancel className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
+            <TbCancel className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-[#FFA1A1] shadow-md" />
           )}
-          {item.unsend && (
-            <TbArrowBack  className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
-          )}
-          
-          <FaArrowRight className="text-white w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-black shadow-md" />
         </div>
 
         <BaseCard isCard2={true} />
@@ -254,6 +297,5 @@ export default function Card<T extends CardItemBase>({
     );
   }
 
-  // DEFAULT CARD
   return <BaseCard isCard2={false} />;
 }
