@@ -338,7 +338,7 @@ function PaginatedBookings() {
 
               {/* Expanded right card buttons */}
               {expandedRight[item.id] && (
-                <div className="flex flex-col px-6 gap-3 pb-4">
+                <div className="flex flex-col px-3 md:px-6 gap-3 pb-4">
                   {item.status == "Inspection" && (
                     <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
                       <span className="text-xs md:text-sm text-black">
