@@ -729,7 +729,7 @@ const Home = () => {
                 >
                   <MdOutlineBackpack className="text-black text-2xl md:text-4xl ml-5" />
                   <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    Cribb for students
+                    Cribb for Students
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
@@ -757,7 +757,7 @@ const Home = () => {
                   <span className="flex-1 text-white text-md md:text-lg text-center font-medium">
                    Cribb for Business
                   </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#202020] flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
                   </div>
                 </div>

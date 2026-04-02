@@ -314,15 +314,16 @@ const Subscriptions = () => {
       const loginData = JSON.parse(
         sessionStorage.getItem("login_data") || "{}",
       );
+
       const updatedData = { ...loginData, verification: 0 };
-      // Save it back to sessionStorage
+
       sessionStorage.setItem("login_data", JSON.stringify(updatedData));
-      navigate("/businessonboarding");
+
+      navigate(
+        `/businessonboarding?add=${role === "landlord" ? "Landlord" : "Agent"}`,
+      );
       return;
     }
-
-    // ✅ navigate with role param
-    navigate(`/businessplan?role=${role}`);
   };
 
   return (
@@ -422,6 +423,7 @@ const Subscriptions = () => {
 
                     <button
                       disabled={!hasAgentPlan || !agentFilled}
+                      onClick={() => navigate("/businessplan?role=agent")}
                       className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg"
                     >
                       UPGRADE
@@ -532,7 +534,10 @@ const Subscriptions = () => {
                     >
                       FREE TRIAL
                     </button>
-                    <button className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg">
+                    <button
+                      onClick={() => navigate("/businessplan?role=landlord")}
+                      className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg"
+                    >
                       UPGRADE
                     </button>
                   </div>
