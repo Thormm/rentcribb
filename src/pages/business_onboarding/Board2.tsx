@@ -255,7 +255,7 @@ export default function Board2({
             <img
               src={imgright}
               alt="Traveler with suitcase"
-              className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+              className="h-full w-full object-cover"
             />
             <button
               onClick={onBack}
@@ -476,7 +476,7 @@ export default function Board2({
             <div className="flex justify-center">
               <button
                 className="px-4 py-2 bg-black text-white rounded-lg"
-                onClick={() => navigate("/businessrequests")}
+                onClick={() => navigate("/businessdash?goto=listings")}
               >
                 OK
               </button>

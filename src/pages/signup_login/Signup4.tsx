@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
-import { FaArrowRight } from "react-icons/fa";
+import { FiArrowRight } from "react-icons/fi";
 import { RiListView } from "react-icons/ri";
 import termsText from "../../documents/terms.txt?raw";
 import privacyText from "../../documents/privacy.txt?raw";
@@ -35,7 +35,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -220,7 +220,7 @@ export default function Signup4({ mode }: Signup4Props) {
             caption="Review, Acknowledge and Agree to Proceed"
           />
 
-          <div className="space-y-5 md:space-y-6 pt-3 md:pt-5">
+          <div className="space-y-5 md:space-y-6 pt-5 md:pt-5">
             <div className="space-y-1">
               <Label>
                 {mode === "student"
@@ -271,7 +271,7 @@ export default function Signup4({ mode }: Signup4Props) {
                 <span className="flex-1 text-center text-md md:text-xl">
                   Terms of Use
                 </span>
-                <FaArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
+                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
               </button>
             </InfoPill>
 
@@ -284,7 +284,7 @@ export default function Signup4({ mode }: Signup4Props) {
                 <span className="flex-1 text-center text-md md:text-xl">
                   Privacy Policy
                 </span>
-                <FaArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
+                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
               </button>
             </InfoPill>
 

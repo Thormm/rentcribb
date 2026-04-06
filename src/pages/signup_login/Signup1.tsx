@@ -40,7 +40,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -304,7 +304,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
               />
 
               {/* Verify Button */}
-              <InfoPill className="mt-5 md:mt-10 bg-black text-white">
+              <InfoPill className="mt-8 md:mt-10 bg-black text-white">
                 <button
                   className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
                   onClick={handleVerify}
@@ -330,7 +330,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                 <span>
                   Have a Cribb.Africa account?{" "}
                   <span
-                    className="text-[#0556F8] cursor-pointer"
+                    className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
                     onClick={() => navigate(login)}
                   >
                     Log in

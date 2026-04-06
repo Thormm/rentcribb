@@ -30,7 +30,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -188,7 +188,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
               caption="Let’s get you Set-Up, it’s super easy!"
             />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-4">
+            <div className="md:px-5 pb-4 pt-5 space-y-4">
               <InputField
                 label="FIRST NAME"
                 placeholder="Enter first name"
@@ -202,7 +202,6 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
                 value={lastName}
                 onChange={setLastName}
                 status="idle"
-                autoComplete="family-name"
               />
               <InputField
                 label="PASSWORD"
@@ -229,7 +228,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
               />
 
               {/* Continue Button */}
-              <InfoPill className="mt-5 md:mt-10 bg-black text-white">
+              <InfoPill className="mt-8 md:mt-10 bg-black text-white">
                 <button
                   className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
                   onClick={handleSubmit}

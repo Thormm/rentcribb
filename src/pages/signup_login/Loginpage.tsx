@@ -41,7 +41,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Welcome to Cribb"}
       </p>
@@ -319,11 +319,11 @@ export default function Loginpage() {
       >
         <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
           {/* Left: Image changes with mode */}
-          <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10">
+          <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 ">
             <img
               src={mode === "student" ? loginStudent : loginMerchant}
               alt="Login visual"
-              className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+              className="h-full w-full object-cover"
             />
           </div>
 
@@ -355,7 +355,7 @@ export default function Loginpage() {
 
                 <div className="w-full flex pr-5 justify-end">
                   <span
-                    className="text-xs rounded bg-white p-1 text-[#EC0000] cursor-pointer"
+                    className="text-xs shadow rounded-md bg-white py-1 px-2 text-[#EC0000] cursor-pointer"
                     onClick={handleForgotClick}
                   >
                     Forgot Password?
@@ -363,14 +363,14 @@ export default function Loginpage() {
                 </div>
 
                 {/* Continue Button */}
-                <InfoPill className="mt-5 md:mt-5 bg-black text-white">
+                <InfoPill className="mt-5 md:mt-5 py-4 bg-black text-white grid align-middle">
                   <button
                     className="inline-flex cursor-pointer items-center justify-center w-full"
                     onClick={handleContinue}
                     disabled={!username || !password || loading}
                   >
                     <LuLogIn className="ml-2 text-2xl md:text-4xl" />
-                    <span className="text-md md:text-xl">
+                    <span className="text-lg md:text-xl">
                       &nbsp;&nbsp;{" "}
                       {loading
                         ? "Logging in..."
@@ -397,7 +397,7 @@ export default function Loginpage() {
                     New to Cribb.Africa{" "}
                     {mode === "student" ? "For Students" : "For Business"}?{" "}
                     <span
-                      className="text-[#0556F8] cursor-pointer"
+                      className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
                       onClick={() => navigate(signup)}
                     >
                       Sign-up

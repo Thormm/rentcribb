@@ -25,7 +25,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -49,7 +49,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -61,6 +61,7 @@ export default function Board1({
   onNext,
   data,
   setData,
+  lockedCategory,
 }: {
   onNext?: () => void;
   data: {
@@ -77,11 +78,11 @@ export default function Board1({
       whatsapp: string;
     }>
   >;
+  lockedCategory?: boolean;
 }) {
   const navigate = useNavigate();
 
-  const canContinue =
-    data.bemail && data.bNo && data.whatsapp && data.category;
+  const canContinue = data.bemail && data.bNo && data.whatsapp && data.category;
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -101,14 +102,14 @@ export default function Board1({
 
     if (!isValidPhone(data.bNo)) {
       alert(
-        "Please enter a valid business call number (only digits, optional +, 8–15 digits)."
+        "Please enter a valid business call number (only digits, optional +, 8–15 digits).",
       );
       return;
     }
 
     if (!isValidPhone(data.whatsapp)) {
       alert(
-        "Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits)."
+        "Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits).",
       );
       return;
     }
@@ -138,7 +139,7 @@ export default function Board1({
           <img
             src={imgright}
             alt="Traveler with suitcase"
-            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+            className="h-full w-full object-cover"
           />
           <button
             onClick={() => navigate("/businessdash")}
@@ -160,7 +161,7 @@ export default function Board1({
               <div>
                 <Label className="ml-8">Business Category</Label>
                 <InfoPill className="bg-white">
-                  {data.category ? (
+                  {lockedCategory ? (
                     <span className="text-xs text-gray-600">
                       {data.category}
                     </span>

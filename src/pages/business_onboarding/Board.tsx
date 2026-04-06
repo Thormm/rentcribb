@@ -6,19 +6,6 @@ import nigeriaflag from "../../assets/nigeriaflag.png";
 import logo from "../../assets/logo.png";
 
 const Board = () => {
-  const [board1Data, setBoard1Data] = useState({
-    category: "",
-    bemail: "",
-    bNo: "",
-    whatsapp: "",
-  });
-
-  const [board2Data, setBoard2Data] = useState({
-    bname: "",
-    bAbout: "",
-    bAddress: "",
-  });
-
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,15 +20,20 @@ const Board = () => {
   // 3. board1Data.category
   // 4. default to "agent"
   const queryCategory = searchParams.get("add");
-  const effectiveCategory =
-    queryCategory || login_data.category || board1Data.category || "";
+  const lockedCategory = queryCategory || "";
 
-  // Pre-fill board1Data.category with effectiveCategory if empty
-  useEffect(() => {
-    if (!board1Data.category) {
-      setBoard1Data((prev) => ({ ...prev, category: effectiveCategory }));
-    }
-  }, [effectiveCategory, board1Data.category]);
+  const [board1Data, setBoard1Data] = useState({
+    category: lockedCategory || "",
+    bemail: "",
+    bNo: "",
+    whatsapp: "",
+  });
+
+  const [board2Data, setBoard2Data] = useState({
+    bname: "",
+    bAbout: "",
+    bAddress: "",
+  });
 
   const goNext = () => setStep((prev) => prev + 1);
   const goBack = () => setStep((prev) => Math.max(1, prev - 1));
@@ -66,7 +58,11 @@ const Board = () => {
         </div>
 
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
-          <img src={logo} alt="Cribb.Africa Logo" className="m-0 p-0 h-8 md:h-11" />
+          <img
+            src={logo}
+            alt="Cribb.Africa Logo"
+            className="m-0 p-0 h-8 md:h-11"
+          />
           <div className="flex flex-col items-end p-0 m-0">
             <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
               Cribb
@@ -95,6 +91,7 @@ const Board = () => {
           data={board1Data}
           setData={setBoard1Data}
           onNext={goNext}
+          lockedCategory={!!lockedCategory}
         />
       )}
 

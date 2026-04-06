@@ -13,7 +13,7 @@ function Maincard({
     <div
       className={clsx(
         "relative rounded-2xl md:rounded-4xl px-5 border-4 shadow",
-        className
+        className,
       )}
     >
       {children}
@@ -30,7 +30,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">{caption}</p>
       <div
         className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
@@ -40,6 +40,22 @@ function SectionHeader({
             "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
         }}
       />
+    </div>
+  );
+}
+
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        className,
+      )}
+    >
+      {children}
     </div>
   );
 }
@@ -187,15 +203,15 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-center w-full md:w-2/5">
+      <div className="grid grid-cols-1 px-3 md:px-0 items-center w-full md:w-2/5">
         {/* ---------- Call No. Verification ---------- */}
         {!showEmail && (
-          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10 relative">
             <button
               onClick={onBack}
-              className="absolute cursor-pointer top-3 left-3 bg-black text-white rounded-full p-2 shadow"
+              className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
             >
-              <IoChevronBack className="text-base" />
+              <IoChevronBack className="text-base text-white" />
             </button>
 
             <SectionHeader
@@ -204,6 +220,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
             />
 
             <div className="md:px-5 pb-4 pt-3 space-y-6">
+              <Label className="ml-8 my-1">Enter OTP</Label>
               <InfoPill className="bg-white flex items-center px-3 mb-1 border-2 border-black">
                 <BsClipboard2Minus
                   className="text-black text-lg md:text-3xl shrink-0 cursor-pointer"
@@ -238,15 +255,15 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   <button
                     disabled={sending || countdown > 0}
                     onClick={handleSendSMS}
-                    className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
+                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
                     {sending
                       ? "Sending..."
                       : countdown > 0
-                      ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                          countdown % 60
-                        ).padStart(2, "0")}`
-                      : "Re-Send Code"}
+                        ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                            countdown % 60,
+                          ).padStart(2, "0")}`
+                        : "Re-Send Code"}
                   </button>
                 </InfoPill>
               )}
@@ -256,7 +273,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   <button
                     onClick={handleVerify}
                     disabled={loading}
-                    className="inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
+                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
                   >
                     {loading ? "Verifying..." : "Verify"}
                   </button>
@@ -278,13 +295,15 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                 }}
               />
 
-              <div className="flex justify-center text-xs md:text-sm">
-                Can’t get OTP?
-                <span
-                  className="text-[#0556F8] cursor-pointer ml-1"
-                  onClick={() => setShowEmail(true)}
-                >
-                  Verify by Email
+              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
+                <span>
+                  Can’t get OTP?{" "}
+                  <span
+                    className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md  bg-white py-1 px-2"
+                    onClick={() => setShowEmail(true)}
+                  >
+                    Verify by Email
+                  </span>
                 </span>
               </div>
             </div>
@@ -296,9 +315,9 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <button
               onClick={onBack}
-              className="absolute cursor-pointer top-3 left-3 bg-black text-white rounded-full p-2 shadow"
+              className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
             >
-              <IoChevronBack className="text-base" />
+              <IoChevronBack className="text-base text-white" />
             </button>
 
             <SectionHeader
@@ -331,7 +350,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   <button
                     onClick={handleSendEmail}
                     disabled={sending}
-                    className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
+                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
                     {sending ? "Sending..." : "Send Code"}
                   </button>
@@ -341,15 +360,15 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   <button
                     disabled={sending || countdown > 0}
                     onClick={handleSendEmail}
-                    className="inline-flex items-center cursor-pointer justify-center w-full disabled:opacity-50 gap-2"
+                    className="text-xl inline-flex items-center cursor-pointer justify-center w-full disabled:opacity-50 gap-2"
                   >
                     {sending
                       ? "Sending..."
                       : countdown > 0
-                      ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                          countdown % 60
-                        ).padStart(2, "0")}`
-                      : "Re-Send Code"}
+                        ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                            countdown % 60,
+                          ).padStart(2, "0")}`
+                        : "Re-Send Code"}
                   </button>
                 </InfoPill>
               )}
@@ -360,7 +379,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                     <button
                       onClick={handleVerify}
                       disabled={loading}
-                      className="inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
+                      className="text-xl inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
                     >
                       {loading ? "Verifying..." : "Verify"}
                     </button>
@@ -382,14 +401,15 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                     "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                 }}
               />
-
-              <div className="flex justify-center text-xs md:text-sm">
-                Can’t get Email?
-                <span
-                  className="text-[#0556F8] cursor-pointer ml-1"
-                  onClick={() => setShowEmail(false)}
-                >
-                  Verify by SMS
+              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
+                <span>
+                  Can’t get Email?{" "}
+                  <span
+                    className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md  bg-white py-1 px-2"
+                    onClick={() => setShowEmail(false)}
+                  >
+                    Verify by SMS
+                  </span>
                 </span>
               </div>
             </div>

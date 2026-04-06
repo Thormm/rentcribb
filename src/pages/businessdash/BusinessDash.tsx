@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import logo from "../../assets/logo2.png";
 import Overview from "./Overview";
 import Payment from "./Payment";
@@ -19,16 +20,16 @@ import { FaRegBell } from "react-icons/fa";
 export default function BusinessDash() {
   const navigate = useNavigate(); // ✅ initialize router navigation
 
-  // Detect ?goto=listings or any tab name
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const goto = params.get("goto");
+    const goto = searchParams.get("goto");
 
     if (goto) {
-      setActiveTab(goto); // change tab
-      localStorage.setItem("dashboard:tab", goto); // store preference
+      setActiveTab(goto);
+      localStorage.setItem("dashboard:tab", goto);
     }
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     const loginData = sessionStorage.getItem("login_data");
@@ -53,10 +54,10 @@ export default function BusinessDash() {
   }, [navigate]);
 
   const [open, setOpen] = useState<boolean>(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
   );
   const [isLarge, setIsLarge] = useState<boolean>(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
   );
   const [activeTab, setActiveTab] = useState("overview");
   const [openSection, setOpenSection] = useState<string | null>(null);
