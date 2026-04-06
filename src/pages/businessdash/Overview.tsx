@@ -86,7 +86,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",

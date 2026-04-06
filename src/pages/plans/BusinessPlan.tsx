@@ -400,8 +400,8 @@ const BusinessPlan = () => {
             />
             <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
               <span
-                className="text-[#0556F8] cursor-pointer"
-                onClick={() => navigate("/businessdash")}
+                className="text-[#0556F8] cursor-pointer shadow rounded-md bg-white py-1 px-2"
+                onClick={() => navigate("/businessdash?goto=subscriptions")}
               >
                 Continue to Dashboard{" "}
               </span>
