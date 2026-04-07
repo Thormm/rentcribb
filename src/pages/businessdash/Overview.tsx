@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiCamera, FiChevronDown, FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
@@ -8,6 +8,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiMail } from "react-icons/fi";
 import { MdOutlinePending } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import LGAS_DATA from "../../components/localgovt.json";
 
 // === Helper to get login info from sessionStorage ===
 const getLoginData = () => {
@@ -110,46 +111,6 @@ function Tabs({
   );
 }
 
-// Full list of Nigerian states + FCT
-const NIGERIA_STATES = [
-  { value: "", label: "Select State" },
-  { value: "abia", label: "Abia" },
-  { value: "adamawa", label: "Adamawa" },
-  { value: "akwa_ibom", label: "Akwa Ibom" },
-  { value: "anambra", label: "Anambra" },
-  { value: "bauchi", label: "Bauchi" },
-  { value: "benue", label: "Benue" },
-  { value: "borno", label: "Borno" },
-  { value: "cross_river", label: "Cross River" },
-  { value: "delta", label: "Delta" },
-  { value: "ebonyi", label: "Ebonyi" },
-  { value: "edo", label: "Edo" },
-  { value: "ekiti", label: "Ekiti" },
-  { value: "enugu", label: "Enugu" },
-  { value: "gombe", label: "Gombe" },
-  { value: "imo", label: "Imo" },
-  { value: "jigawa", label: "Jigawa" },
-  { value: "kaduna", label: "Kaduna" },
-  { value: "kano", label: "Kano" },
-  { value: "katsina", label: "Katsina" },
-  { value: "kebbi", label: "Kebbi" },
-  { value: "kogi", label: "Kogi" },
-  { value: "kwara", label: "Kwara" },
-  { value: "lagos", label: "Lagos" },
-  { value: "nasarawa", label: "Nasarawa" },
-  { value: "niger", label: "Niger" },
-  { value: "ogun", label: "Ogun" },
-  { value: "ondo", label: "Ondo" },
-  { value: "oshun", label: "Oshun" },
-  { value: "oyo", label: "Oyo" },
-  { value: "plateau", label: "Plateau" },
-  { value: "rivers", label: "Rivers" },
-  { value: "sokoto", label: "Sokoto" },
-  { value: "taraba", label: "Taraba" },
-  { value: "yobe", label: "Yobe" },
-  { value: "zamfara", label: "Zamfara" },
-  { value: "fct", label: "FCT (Abuja)" },
-];
 
 const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
 const SAVE_URL = "https://www.cribb.africa/api_save.php";
@@ -192,6 +153,19 @@ const Overview = () => {
 
   // refs
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+   const statesAndLgas: { state: string; lgas: string[] }[] =
+      React.useMemo(() => {
+        try {
+          if (Array.isArray(LGAS_DATA as any)) return LGAS_DATA as any;
+          return Object.keys(LGAS_DATA as any).map((s) => ({
+            state: s,
+            lgas: (LGAS_DATA as any)[s],
+          }));
+        } catch (e) {
+          return [];
+        }
+      }, []);
 
   // fetch data on mount
   useEffect(() => {
@@ -597,12 +571,17 @@ const Overview = () => {
                         disabled={isProfileLocked}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                       >
-                        {NIGERIA_STATES.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
+                      <option value="">Around where?</option>
+                      {statesAndLgas.map((s) => (
+                        <optgroup label={s.state} key={s.state}>
+                          {s.lgas.map((l) => (
+                            <option key={l} value={`${s.state} - ${l}`}>
+                              {l}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
                       <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
                     </InfoPill>
                   </div>

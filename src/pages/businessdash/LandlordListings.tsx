@@ -230,7 +230,7 @@ function PaginatedDrafts() {
   return (
     <div>
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3 hidden">
+      <div className=" grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3 hidden">
         <div>
           <Label>FILTER</Label>
           <InfoPill className="relative flex items-center bg-white">

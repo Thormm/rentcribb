@@ -5,13 +5,13 @@ import logo from "../../assets/logo2.png";
 import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
-import Bizoverview from "./Bizoverview";
+import Agentoverview from "./AgentOverview";
 import SettingsPage from "./Settings";
-import Listings from "./Listings";
-import Bookingsagent from "./Bookingsagent";
-import Bookingslandlord from "./Bookingslandlord";
-import Hosteloverview from "./Hosteloverview";
-import Listingslandlord from "./Listingslandlord";
+import Listings from "./AgentListings";
+import Landlordoverview from "./LandlordOverview";
+import Bookingsagent from "./AgentBookings";
+import Bookingslandlord from "./LandlordBookings";
+import Listingslandlord from "./LandlordListings";
 import SidebarInner from "./DashComponents/SidebarInner";
 import { DashboardTabContext } from "./DashComponents/DashboardTabContext";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -116,8 +116,10 @@ export default function BusinessDash() {
         return <Payment />;
       case "subscriptions":
         return <Subscriptions />;
-      case "bizoverview":
-        return <Bizoverview />;
+      case "agentoverview":
+        return <Agentoverview />;
+      case "landlordoverview":
+        return <Landlordoverview />;
       case "listings":
         return <Listings />;
       case "listingslandlord":
@@ -126,8 +128,6 @@ export default function BusinessDash() {
         return <Bookingsagent />;
       case "bookingslandlord":
         return <Bookingslandlord />;
-      case "hosteloverview":
-        return <Hosteloverview />;
       case "settings":
         return <SettingsPage />;
       default:

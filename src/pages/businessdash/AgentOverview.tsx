@@ -133,7 +133,7 @@ interface AgentDetails {
   first: string;
 }
 
-const Bizoverview: React.FC = () => {
+const Agentoverview: React.FC = () => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -986,4 +986,4 @@ const Bizoverview: React.FC = () => {
   );
 };
 
-export default Bizoverview;
+export default Agentoverview;

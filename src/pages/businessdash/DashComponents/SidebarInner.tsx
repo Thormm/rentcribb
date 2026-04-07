@@ -136,9 +136,9 @@ export default function SidebarInner({
     icon: <HiOutlineUserCircle className={baseIcon} />,
     items: [
       {
-        label: "Business Overview",
+        label: "Overview",
         icon: <MdOutlineAddBusiness className={baseIcon} />,
-        tab: "bizoverview",
+        tab: "agentoverview",
       },
       {
         label: "Listings",
@@ -159,9 +159,9 @@ export default function SidebarInner({
     icon: <TbUserSquare className={baseIcon} />,
     items: [
       {
-        label: "Hostel Overview",
+        label: "Overview",
         icon: <PiHouse className={baseIcon} />,
-        tab: "hosteloverview",
+        tab: "landlordoverview",
       },
       {
         label: "Listings",

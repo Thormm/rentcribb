@@ -61,7 +61,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden"
       style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
     >
       {tabs.map((tab) => (
@@ -355,58 +355,60 @@ const Subscriptions = () => {
                   {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
                 </div>
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>CURRENT PLAN</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {agentPlan.plan ? agentPlan.plan : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                  {hasAgentPlan && (
+                    <>
+                      {" "}
+                      <div className="space-y-1 col-span-2 md:col-span-1">
+                        <Label>CURRENT PLAN</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {agentPlan.plan ? agentPlan.plan : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>VALID UNTIL</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {agentPlan.expires_at
-                            ? formatDateTime(agentPlan.expires_at)
-                            : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div className="space-y-1 col-span-2 md:col-span-1">
+                        <Label>VALID UNTIL</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {agentPlan.expires_at
+                                ? formatDateTime(agentPlan.expires_at)
+                                : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  {/* LISTING LIMIT and CONNECTION */}
-                  <div>
-                    <Label>LISTING LIMIT</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                            ?.listing || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      {/* LISTING LIMIT and CONNECTION */}
+                      <div>
+                        <Label>LISTING LIMIT</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
+                                ?.listing || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                            ?.connection || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>CONNECTION</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
+                                ?.connection || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
+                    </>
+                  )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
                     <button
                       onClick={() => freeplan("Agent")}
@@ -420,11 +422,14 @@ const Subscriptions = () => {
                     >
                       FREE TRIAL
                     </button>
-
                     <button
-                      disabled={!hasAgentPlan || !agentFilled}
+                      disabled={!agentFilled}
                       onClick={() => navigate("/businessplan?role=agent")}
-                      className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg"
+                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg ${
+                        !agentFilled
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-black text-white"
+                      }`}
                     >
                       UPGRADE
                     </button>
@@ -467,76 +472,81 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>CURRENT PLAN</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {landlordPlan.plan ? landlordPlan.plan : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                  {hasLandlordPlan && (
+                    <>
+                      {" "}
+                      <div className="space-y-1 col-span-2 md:col-span-1">
+                        <Label>CURRENT PLAN</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {landlordPlan.plan ? landlordPlan.plan : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>VALID UNTIL</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {landlordPlan.expires_at
-                            ? formatDateTime(landlordPlan.expires_at)
-                            : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div className="space-y-1 col-span-2 md:col-span-1">
+                        <Label>VALID UNTIL</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {landlordPlan.expires_at
+                                ? formatDateTime(landlordPlan.expires_at)
+                                : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div>
-                    <Label>LISTING LIMIT</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {LANDLORD_PLAN_DETAILS[
-                            landlordPlan.plan?.toLowerCase()
-                          ]?.listing || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>LISTING LIMIT</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {LANDLORD_PLAN_DETAILS[
+                                landlordPlan.plan?.toLowerCase()
+                              ]?.listing || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {LANDLORD_PLAN_DETAILS[
-                            landlordPlan.plan?.toLowerCase()
-                          ]?.connection || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>CONNECTION</Label>
+                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {LANDLORD_PLAN_DETAILS[
+                                landlordPlan.plan?.toLowerCase()
+                              ]?.connection || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
+                    </>
+                  )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
                     <button
                       onClick={() => freeplan("Landlord")}
-                      disabled={!hasLandlordPlan || !landlordFilled}
-                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg
-    ${
-      hasLandlordPlan || !landlordFilled
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
-    }`}
+                      disabled={hasLandlordPlan || !landlordFilled}
+                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg ${
+                        hasLandlordPlan || !landlordFilled
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
+                      }`}
                     >
                       FREE TRIAL
                     </button>
                     <button
+                      disabled={!landlordFilled}
                       onClick={() => navigate("/businessplan?role=landlord")}
-                      className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg"
+                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg ${
+                        !landlordFilled
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-black text-white"
+                      }`}
                     >
                       UPGRADE
                     </button>
@@ -588,6 +598,14 @@ const Subscriptions = () => {
               Your 14-day free trial has started. You have access to all
               features for the next 14 days. Enjoy exploring!
             </p>
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 bg-black text-white rounded-lg"
+                onClick={() => navigate("/businessdash")}
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       )}

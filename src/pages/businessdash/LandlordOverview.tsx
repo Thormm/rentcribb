@@ -133,7 +133,7 @@ interface LandlordDetails {
   first: string;
 }
 
-const Hostelview: React.FC = () => {
+const Landlordoverview: React.FC = () => {
   const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [activeTab, setActiveTabPage] = useState<string>("Profile");
@@ -997,4 +997,4 @@ const Hostelview: React.FC = () => {
   );
 };
 
-export default Hostelview;
+export default Landlordoverview;
