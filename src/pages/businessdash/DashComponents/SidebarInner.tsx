@@ -143,12 +143,12 @@ export default function SidebarInner({
       {
         label: "Listings",
         icon: <RiListView className={baseIcon} />,
-        tab: "listings",
+        tab: "agentlistings",
       },
       {
         label: "Bookings & Requests",
         icon: <MdOutlineBookmarkAdded className={baseIcon} />,
-        tab: "bookingsagent",
+        tab: "agentbookings",
       },
     ],
   };
@@ -166,12 +166,12 @@ export default function SidebarInner({
       {
         label: "Listings",
         icon: <RiListView className={baseIcon} />,
-        tab: "listingslandlord",
+        tab: "landlordlistings",
       },
       {
         label: "Bookings",
         icon: <MdOutlineBookmarkAdded className={baseIcon} />,
-        tab: "bookingslandlord",
+        tab: "landlordbookings",
       },
     ],
   };

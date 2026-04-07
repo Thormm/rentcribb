@@ -540,7 +540,7 @@ function PaginatedRequests() {
 }
 
 // ----------------------- Page -----------------------
-const Bookingsagent: React.FC = () => {
+const Agentbookings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Bookings");
   const [stateValue, setStateValue] = useState("");
   const navigate = useNavigate();
@@ -646,7 +646,7 @@ const Bookingsagent: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate("/listings")}
+                  onClick={() => navigate("/agentlistings")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
@@ -703,7 +703,7 @@ const Bookingsagent: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate("/listings")}
+                  onClick={() => navigate("/agentlistings")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
@@ -718,4 +718,4 @@ const Bookingsagent: React.FC = () => {
   );
 };
 
-export default Bookingsagent;
+export default Agentbookings;

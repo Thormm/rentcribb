@@ -354,7 +354,7 @@ function PaginatedDrafts() {
 }
 
 // ----------------------- Page -----------------------
-const Bookingsagent: React.FC = () => {
+const Landlordbookings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Bookings");
   const [stateValue, setStateValue] = useState("");
 
@@ -524,4 +524,4 @@ const Bookingsagent: React.FC = () => {
   );
 };
 
-export default Bookingsagent;
+export default Landlordbookings;

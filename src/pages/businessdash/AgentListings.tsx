@@ -635,7 +635,7 @@ function PaginatedCards() {
 }
 
 // ----------------------- MAIN PAGE -----------------------
-const Listings: React.FC = () => {
+const Agentlistings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -852,4 +852,4 @@ const Listings: React.FC = () => {
   );
 };
 
-export default Listings;
+export default Agentlistings;

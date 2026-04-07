@@ -6,12 +6,12 @@ import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
 import Agentoverview from "./AgentOverview";
-import SettingsPage from "./Settings";
-import Listings from "./AgentListings";
+import Agentlistings from "./AgentListings";
+import Agentbookings from "./AgentBookings";
 import Landlordoverview from "./LandlordOverview";
-import Bookingsagent from "./AgentBookings";
-import Bookingslandlord from "./LandlordBookings";
-import Listingslandlord from "./LandlordListings";
+import Landlordlistings from "./LandlordListings";
+import Landlordbookings from "./LandlordBookings";
+import SettingsPage from "./Settings";
 import SidebarInner from "./DashComponents/SidebarInner";
 import { DashboardTabContext } from "./DashComponents/DashboardTabContext";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -120,14 +120,14 @@ export default function BusinessDash() {
         return <Agentoverview />;
       case "landlordoverview":
         return <Landlordoverview />;
-      case "listings":
-        return <Listings />;
-      case "listingslandlord":
-        return <Listingslandlord />;
-      case "bookingsagent":
-        return <Bookingsagent />;
-      case "bookingslandlord":
-        return <Bookingslandlord />;
+      case "agentlistings":
+        return <Agentlistings />;
+      case "landlordlistings":
+        return <Landlordlistings />;
+      case "agentbookings":
+        return <Agentbookings />;
+      case "landlordbookings":
+        return <Landlordbookings />;
       case "settings":
         return <SettingsPage />;
       default:
