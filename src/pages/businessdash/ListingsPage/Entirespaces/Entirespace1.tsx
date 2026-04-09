@@ -356,27 +356,30 @@ export default function Entirespace1({
                 <div className="space-y-1">
                   <Label>Location</Label>
                   <InfoPill className="bg-white">
-                    <select
-                      value={formData.selectedLocation}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          selectedLocation: e.target.value,
-                        })
-                      }
-                      className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
-                    >
-                      <option value="">Around where?</option>
-                      {statesAndLgas.map((s) => (
-                        <optgroup label={s.state} key={s.state}>
-                          {s.lgas.map((l) => (
-                            <option key={l} value={`${s.state} - ${l}`}>
-                              {l}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
+                    <div className="flex items-center justify-between w-full">
+                      <select
+                        value={formData.selectedLocation}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            selectedLocation: e.target.value,
+                          })
+                        }
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                      >
+                        <option value="">Around where?</option>
+                        {statesAndLgas.map((s) => (
+                          <optgroup label={s.state} key={s.state}>
+                            {s.lgas.map((l) => (
+                              <option key={l} value={`${s.state} - ${l}`}>
+                                {l}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
 
@@ -384,23 +387,27 @@ export default function Entirespace1({
                 <div className="space-y-1">
                   <Label>Availability</Label>
                   <InfoPill className="bg-white">
-                    <select
-                      value={formData.selectedMonth}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          selectedMonth: e.target.value,
-                        })
-                      }
-                      className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
-                    >
-                      <option value="">Available from?</option>
-                      {availabilityMonths.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center justify-between w-full">
+                      <select
+                        value={formData.selectedMonth}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            selectedMonth: e.target.value,
+                          })
+                        }
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                      >
+                        <option value="">Available from?</option>
+                        {availabilityMonths.map((m) => (
+                          <option key={m} value={m}>
+                            {m}
+                          </option>
+                        ))}
+                      </select>
+
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
               </div>
@@ -413,12 +420,15 @@ export default function Entirespace1({
                 >
                   <Label>House Rules</Label>
                   <InfoPill className="bg-white cursor-pointer">
-                    <input
-                      value={houseRulesDisplay}
-                      readOnly
-                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
-                      placeholder="Select house rules"
-                    />
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={houseRulesDisplay}
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
               </div>

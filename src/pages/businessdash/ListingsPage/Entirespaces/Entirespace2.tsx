@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import imgright from "../../../../../src/assets/list2.png";
 import InfoPill, { DfButton } from "../../../../components/Pill";
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { LuStar, LuStarOff } from "react-icons/lu";
 import clsx from "clsx";
@@ -53,7 +53,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -190,7 +190,7 @@ export default function Entirespace2({
 
   const counter = (field: string, value: number, min = 0) => (
     <InfoPill className="bg-white">
-      <div className="inline-flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
         <FaMinus
           className="cursor-pointer"
           onClick={() =>
@@ -331,56 +331,69 @@ export default function Entirespace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-4">No. of Bedroom</Label>
-                  <span className="text-xs">{counter("bedrooms", formData.bedrooms ?? 0)}</span>
+                  <Label>No. of Bedroom</Label>
+                  {counter("bedrooms", formData.bedrooms ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-4">No. of Ensuite</Label>
-                  <span className="text-xs">{counter("ensuite", formData.ensuite ?? 0)}</span>
+                  <Label>No. of Ensuite</Label>
+                  {counter("ensuite", formData.ensuite ?? 0)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-4">No. of Bathroom</Label>
-                  <span className="text-xs">{counter("bathrooms", formData.bathrooms ?? 1, 1)}</span>
+                  <Label>No. of Bathroom</Label>
+                  {counter("bathrooms", formData.bathrooms ?? 1, 1)}
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-4">No. of Toilets</Label>
-                  <span className="text-xs">{counter("toilets", formData.toilets ?? 0)}</span>
+                  <Label>No. of Toilets</Label>
+                  {counter("toilets", formData.toilets ?? 0)}
                 </div>
               </div>
 
               {/* SECURITY + WATER */}
 
               <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1">
-                  <Label className="ml-4">Security</Label>
-
-                  <InfoPill
-                    className="bg-white cursor-pointer px-4"
-                    onClick={() => setShowSecurityModal(true)}
-                  >
-                    <span className="text-xs text-gray-500">
-                      {security.length
-                        ? limitDisplay(security.join(", "), 12)
-                        : "Select options"}
-                    </span>
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowSecurityModal(true)}
+                >
+                  <Label>Security</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          security.length
+                            ? limitDisplay(security.join(", "), 12)
+                            : "Select options"
+                        }
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
-
-                <div className="space-y-1">
-                  <Label className="ml-4">Water</Label>
-
-                  <InfoPill
-                    className="bg-white cursor-pointer px-4"
-                    onClick={() => setShowWaterModal(true)}
-                  >
-                    <span className="text-xs text-gray-500">
-                      {water.length
-                        ? limitDisplay(water.join(", "), 12)
-                        : "Select options"}
-                    </span>
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowWaterModal(true)}
+                >
+                  <Label>Security</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          water.length
+                            ? limitDisplay(water.join(", "), 12)
+                            : "Select options"
+                        }
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
               </div>
@@ -389,7 +402,7 @@ export default function Entirespace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label className="ml-4">Power Supply</Label>
+                  <Label >Power Supply</Label>
                   <StarRow
                     value={formData.power_supply ?? 0}
                     onChange={(v) => updateField("power_supply", v)}
@@ -397,7 +410,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label className="ml-4">Network </Label>
+                  <Label >Network </Label>
                   <StarRow
                     value={formData.network_strength ?? 0}
                     onChange={(v) => updateField("network_strength", v)}
@@ -405,7 +418,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label className="ml-4">Compound</Label>
+                  <Label >Compound</Label>
                   <StarRow
                     value={formData.compound ?? 0}
                     onChange={(v) => updateField("compound", v)}
@@ -413,7 +426,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label className="ml-4">Access Road</Label>
+                  <Label >Access Road</Label>
                   <StarRow
                     value={formData.access_road ?? 0}
                     onChange={(v) => updateField("access_road", v)}
