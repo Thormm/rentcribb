@@ -29,7 +29,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -52,7 +52,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-4",
         className,
       )}
     >
@@ -443,7 +443,7 @@ export default function Entirespace3({
   };
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10  flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -457,7 +457,7 @@ export default function Entirespace3({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler with suitcase"
@@ -484,7 +484,7 @@ export default function Entirespace3({
               <div className="grid grid-cols-2 gap-6">
                 {/* All Features */}
                 <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">All Feature</Label>
+                  <Label>All Feature</Label>
                   <InfoPill
                     className="bg-white cursor-pointer"
                     onClick={() => setShowAllFeaturesModal(true)}
@@ -502,7 +502,7 @@ export default function Entirespace3({
 
                 {/* Special Feature */}
                 <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Special Feature</Label>
+                  <Label>Special Feature</Label>
                   <InfoPill
                     className="bg-white cursor-pointer"
                     onClick={() => setShowSpecialFeatureModal(true)}
@@ -520,7 +520,7 @@ export default function Entirespace3({
 
                 {/* Photo */}
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Hostel Photo</Label>
+                  <Label>Hostel Photo</Label>
                   <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
@@ -565,7 +565,7 @@ export default function Entirespace3({
 
                 {/* Video */}
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Hostel Video</Label>
+                  <Label>Hostel Video</Label>
                   <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
@@ -609,7 +609,7 @@ export default function Entirespace3({
               {/* Target University */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Target University</Label>
+                  <Label>Target University</Label>
 
                   <InfoPill
                     className="bg-white cursor-pointer"

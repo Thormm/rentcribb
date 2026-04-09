@@ -14,7 +14,7 @@ function Maincard({ className = "", children }: React.PropsWithChildren<{ classN
 function SectionHeader({ title, caption }: { title: string; caption?: string }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">{caption ?? "Check out the Features of this Hostel"}</p>
       <div
         className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
@@ -28,7 +28,7 @@ function SectionHeader({ title, caption }: { title: string; caption?: string }) 
 }
 
 function Label({ children, className }: React.PropsWithChildren<{ className?: string }>) {
-  return <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}>{children}</div>;
+  return <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-4", className)}>{children}</div>;
 }
 
 interface Entirespace4Props {
@@ -104,7 +104,7 @@ export default function Entirespace4({ onBack, formData, setFormData, uploader }
     ["rent","caution_fee", "service_charge", "agreement_fee", "agency_fee"].includes(field);
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -118,7 +118,7 @@ export default function Entirespace4({ onBack, formData, setFormData, uploader }
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img src={imgright} alt="Traveler with suitcase" className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl" />
           <button
             onClick={onBack}
@@ -132,7 +132,7 @@ export default function Entirespace4({ onBack, formData, setFormData, uploader }
           <Maincard className="bg-[#CDBCEC] pb-5 md:pb-8 md:px-10">
             <SectionHeader title="Booking & Rent" caption="Help Guest Imagine their Stay in your Space" />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-4">
+            <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 mb:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 {[
                   "inspection",
@@ -151,7 +151,7 @@ export default function Entirespace4({ onBack, formData, setFormData, uploader }
 
                   return (
                     <div key={field} className="space-y-1">
-                      <Label className="ml-5">{label}</Label>
+                      <Label>{label}</Label>
                       <InfoPill className="bg-white">
                         <div className="inline-flex items-center justify-between w-full">
                           {isSelectField(field) ? (

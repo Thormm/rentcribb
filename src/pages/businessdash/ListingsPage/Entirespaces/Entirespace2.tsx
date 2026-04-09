@@ -28,7 +28,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
 
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
@@ -283,7 +283,7 @@ export default function Entirespace2({
   /* ---------------- UI ---------------- */
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       {/* Progress */}
 
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
@@ -302,7 +302,7 @@ export default function Entirespace2({
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
         {/* IMAGE */}
 
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler"
@@ -331,23 +331,23 @@ export default function Entirespace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label>No. of Bedroom</Label>
-                  {counter("bedrooms", formData.bedrooms ?? 0)}
+                  <Label className="ml-4">No. of Bedroom</Label>
+                  <span className="text-xs">{counter("bedrooms", formData.bedrooms ?? 0)}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <Label>No. of Ensuite</Label>
-                  {counter("ensuite", formData.ensuite ?? 0)}
+                  <Label className="ml-4">No. of Ensuite</Label>
+                  <span className="text-xs">{counter("ensuite", formData.ensuite ?? 0)}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <Label>No. of Bathroom</Label>
-                  {counter("bathrooms", formData.bathrooms ?? 1, 1)}
+                  <Label className="ml-4">No. of Bathroom</Label>
+                  <span className="text-xs">{counter("bathrooms", formData.bathrooms ?? 1, 1)}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <Label>No. of Toilets</Label>
-                  {counter("toilets", formData.toilets ?? 0)}
+                  <Label className="ml-4">No. of Toilets</Label>
+                  <span className="text-xs">{counter("toilets", formData.toilets ?? 0)}</span>
                 </div>
               </div>
 
@@ -355,30 +355,30 @@ export default function Entirespace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label>Security</Label>
+                  <Label className="ml-4">Security</Label>
 
                   <InfoPill
-                    className="bg-white cursor-pointer px-4 md:px-8"
+                    className="bg-white cursor-pointer px-4"
                     onClick={() => setShowSecurityModal(true)}
                   >
                     <span className="text-xs text-gray-500">
                       {security.length
-                        ? limitDisplay(security.join(", "), 15)
+                        ? limitDisplay(security.join(", "), 12)
                         : "Select options"}
                     </span>
                   </InfoPill>
                 </div>
 
                 <div className="space-y-1">
-                  <Label>Water</Label>
+                  <Label className="ml-4">Water</Label>
 
                   <InfoPill
-                    className="bg-white cursor-pointer px-4 md:px-8"
+                    className="bg-white cursor-pointer px-4"
                     onClick={() => setShowWaterModal(true)}
                   >
                     <span className="text-xs text-gray-500">
                       {water.length
-                        ? limitDisplay(water.join(", "), 15)
+                        ? limitDisplay(water.join(", "), 12)
                         : "Select options"}
                     </span>
                   </InfoPill>
@@ -389,7 +389,7 @@ export default function Entirespace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label>Power Supply</Label>
+                  <Label className="ml-4">Power Supply</Label>
                   <StarRow
                     value={formData.power_supply ?? 0}
                     onChange={(v) => updateField("power_supply", v)}
@@ -397,7 +397,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label>Network Strength</Label>
+                  <Label className="ml-4">Network </Label>
                   <StarRow
                     value={formData.network_strength ?? 0}
                     onChange={(v) => updateField("network_strength", v)}
@@ -405,7 +405,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label>Compound</Label>
+                  <Label className="ml-4">Compound</Label>
                   <StarRow
                     value={formData.compound ?? 0}
                     onChange={(v) => updateField("compound", v)}
@@ -413,7 +413,7 @@ export default function Entirespace2({
                 </div>
 
                 <div>
-                  <Label>Access Road</Label>
+                  <Label className="ml-4">Access Road</Label>
                   <StarRow
                     value={formData.access_road ?? 0}
                     onChange={(v) => updateField("access_road", v)}

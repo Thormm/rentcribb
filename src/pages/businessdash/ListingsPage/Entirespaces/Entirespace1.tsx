@@ -135,11 +135,28 @@ export default function Entirespace1({
         return [];
       }
     }, []);
+  const updateField = (field: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+  const counter = (field: string, value: number, min = 0) => (
+    <InfoPill className="bg-white">
+      <div className="inline-flex items-center justify-between w-full">
+        <FaMinus
+          className="cursor-pointer"
+          onClick={() =>
+            updateField(field, Math.max(min, (formData[field] || min) - 1))
+          }
+        />
 
-  const incUnits = () =>
-    setFormData({ ...formData, units: Math.min(50, formData.units + 1) });
-  const decUnits = () =>
-    setFormData({ ...formData, units: Math.max(1, formData.units - 1) });
+        <span>{value}</span>
+
+        <FaPlus
+          className="cursor-pointer"
+          onClick={() => updateField(field, (formData[field] || min) + 1)}
+        />
+      </div>
+    </InfoPill>
+  );
 
   const toggleRule = (rule: string) => {
     const newRules = formData.selectedRules.includes(rule)
@@ -222,8 +239,8 @@ export default function Entirespace1({
   const houseRulesDisplay =
     formData.selectedRules.length === 0
       ? "Select all that applies"
-      : rulesText.length > 25
-        ? rulesText.slice(0, 25) + "..."
+      : rulesText.length > 40
+        ? rulesText.slice(0, 40) + "..."
         : rulesText;
 
   return (
@@ -267,8 +284,8 @@ export default function Entirespace1({
               {/* SPACE NAME */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Space Name (Your Eyes Only)</Label>
-                  <InfoPill className="bg-white">
+                  <Label className="ml-4">Space Name (Your Eyes Only)</Label>
+                  <InfoPill className="bg-white px-4">
                     <input
                       value={formData.spaceName}
                       onChange={(e) =>
@@ -284,8 +301,8 @@ export default function Entirespace1({
               {/* ADDRESS */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Full Address (Your Eyes Only)</Label>
-                  <InfoPill className="bg-white">
+                  <Label className="ml-4">Full Address (Your Eyes Only)</Label>
+                  <InfoPill className="bg-white px-4">
                     <input
                       value={formData.fullAddress}
                       onChange={(e) =>
@@ -304,8 +321,8 @@ export default function Entirespace1({
               {/* TYPE + UNITS */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Type</Label>
-                  <InfoPill className="bg-white">
+                  <Label className="ml-4">Type</Label>
+                  <InfoPill className="bg-whit px-4">
                     <div className="inline-flex items-center justify-between w-full">
                       <select
                         value={formData.selectedType}
@@ -330,24 +347,16 @@ export default function Entirespace1({
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-8">No. of Units</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <button onClick={decUnits} className="px-2">
-                        <FaMinus />
-                      </button>
-                      <span>{formData.units}</span>
-                      <button onClick={incUnits} className="px-2">
-                        <FaPlus />
-                      </button>
-                    </div>
-                  </InfoPill>
+                  <Label className="ml-4">No. of Units</Label>
+                  <span className="text-xs">
+                    {counter("units", formData.units ?? 0)}
+                  </span>
                 </div>
 
                 {/* LOCATION */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Location</Label>
-                  <InfoPill className="bg-white">
+                  <Label className="ml-4">Location</Label>
+                  <InfoPill className="bg-white px-4">
                     <select
                       value={formData.selectedLocation}
                       onChange={(e) =>
@@ -374,8 +383,8 @@ export default function Entirespace1({
 
                 {/* AVAILABILITY */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Availability</Label>
-                  <InfoPill className="bg-white">
+                  <Label className="ml-4">Availability</Label>
+                  <InfoPill className="bg-white px-4">
                     <select
                       value={formData.selectedMonth}
                       onChange={(e) =>
@@ -403,11 +412,11 @@ export default function Entirespace1({
                   className="space-y-1"
                   onClick={() => setShowHouseModal(true)}
                 >
-                  <Label className="ml-8">House Rules</Label>
-                  <InfoPill className="bg-white cursor-pointer">
-                      <span className="text-xs text-gray-500">
-                        {houseRulesDisplay}
-                      </span>
+                  <Label className="ml-4">House Rules</Label>
+                  <InfoPill className="bg-white cursor-pointer px-4">
+                    <span className="text-xs text-gray-500">
+                      {houseRulesDisplay}
+                    </span>
                   </InfoPill>
                 </div>
               </div>

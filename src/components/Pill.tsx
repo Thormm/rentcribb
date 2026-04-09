@@ -20,7 +20,7 @@ export default function InfoPill({
   return (
     <div
       className={cn(
-        "w-full rounded-full border-[1.5px] px-8 py-3 md:py-4 text-[15px] text-[#222] shadow-sm",
+        "w-full rounded-full border-[1.5px] px-4 py-3 md:py-4 text-[15px] text-[#222] shadow-sm",
         className,
       )}
       {...props} // now accepts onClick, onMouseOver, etc.
