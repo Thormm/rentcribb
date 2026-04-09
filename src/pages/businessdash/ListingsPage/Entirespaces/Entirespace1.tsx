@@ -140,7 +140,7 @@ export default function Entirespace1({
   };
   const counter = (field: string, value: number, min = 0) => (
     <InfoPill className="bg-white">
-      <div className="flex items-center justify-between w-full leading-5 text-xs">
+      <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
         <FaMinus
           className="cursor-pointer"
           onClick={() =>
@@ -416,7 +416,7 @@ export default function Entirespace1({
                     <input
                       value={houseRulesDisplay}
                       readOnly
-                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
                       placeholder="Select house rules"
                     />
                   </InfoPill>
