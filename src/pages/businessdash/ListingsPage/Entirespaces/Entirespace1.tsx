@@ -322,7 +322,7 @@ export default function Entirespace1({
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
                   <Label className="ml-4">Type</Label>
-                  <InfoPill className="bg-whit px-4">
+                  <InfoPill className="bg-white px-4">
                     <div className="inline-flex items-center justify-between w-full">
                       <select
                         value={formData.selectedType}
@@ -332,7 +332,7 @@ export default function Entirespace1({
                             selectedType: e.target.value,
                           })
                         }
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Space Type</option>
                         {spaceTypes.map((t) => (
@@ -348,7 +348,7 @@ export default function Entirespace1({
 
                 <div className="space-y-1">
                   <Label className="ml-4">No. of Units</Label>
-                  <span className="text-xs">
+                  <span className="text-xs py-1">
                     {counter("units", formData.units ?? 0)}
                   </span>
                 </div>
@@ -365,7 +365,7 @@ export default function Entirespace1({
                           selectedLocation: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                      className="w-full appearance-none py-1 bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
                     >
                       <option value="">Around where?</option>
                       {statesAndLgas.map((s) => (
@@ -393,7 +393,7 @@ export default function Entirespace1({
                           selectedMonth: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                      className="w-full appearance-none py-1 bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
                     >
                       <option value="">Available from?</option>
                       {availabilityMonths.map((m) => (
@@ -414,9 +414,11 @@ export default function Entirespace1({
                 >
                   <Label className="ml-4">House Rules</Label>
                   <InfoPill className="bg-white cursor-pointer px-4">
-                    <span className="text-xs text-gray-500">
-                      {houseRulesDisplay}
-                    </span>
+                    <input
+                      value={houseRulesDisplay}
+                      className="w-full appearance-none bg-transparent text-xs outline-none py-1 "
+                      placeholder="Give your entire unit a name"
+                    />
                   </InfoPill>
                 </div>
               </div>
