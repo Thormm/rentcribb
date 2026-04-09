@@ -555,7 +555,7 @@ export default function Entirespace3({
                     </div>
                   </div>
 
-                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
+                  <div className="flex justify-center mt-1 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
                       add a sum of 5 photos that shows overall view of the space
                       features.
@@ -597,7 +597,7 @@ export default function Entirespace3({
                     </div>
                   </div>
 
-                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
+                  <div className="flex justify-center mt-1 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
                       add a 2mins videos that shows detailed & quick overall
                       view of the space.
