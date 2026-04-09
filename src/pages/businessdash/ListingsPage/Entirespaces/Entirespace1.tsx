@@ -291,7 +291,7 @@ export default function Entirespace1({
                       onChange={(e) =>
                         setFormData({ ...formData, spaceName: e.target.value })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none py-1 "
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
                       placeholder="Give your entire unit a name"
                     />
                   </InfoPill>
@@ -311,7 +311,7 @@ export default function Entirespace1({
                           fullAddress: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none py-1"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
                       placeholder="Enter Space address"
                     />
                   </InfoPill>
@@ -323,7 +323,7 @@ export default function Entirespace1({
                 <div className="space-y-1">
                   <Label className="ml-4">Type</Label>
                   <InfoPill className="bg-white px-4">
-                    <div className="inline-flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.selectedType}
                         onChange={(e) =>
@@ -332,7 +332,7 @@ export default function Entirespace1({
                             selectedType: e.target.value,
                           })
                         }
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer py-1"
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Space Type</option>
                         {spaceTypes.map((t) => (
@@ -341,14 +341,14 @@ export default function Entirespace1({
                           </option>
                         ))}
                       </select>
-                      <IoIosArrowDown />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
                 <div className="space-y-1">
                   <Label className="ml-4">No. of Units</Label>
-                  <span className="text-xs py-1">
+                  <span className="block text-xs leading-5 py-1">
                     {counter("units", formData.units ?? 0)}
                   </span>
                 </div>
@@ -365,7 +365,7 @@ export default function Entirespace1({
                           selectedLocation: e.target.value,
                         })
                       }
-                      className="w-full appearance-none py-1 bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                     >
                       <option value="">Around where?</option>
                       {statesAndLgas.map((s) => (
@@ -393,7 +393,7 @@ export default function Entirespace1({
                           selectedMonth: e.target.value,
                         })
                       }
-                      className="w-full appearance-none py-1 bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                     >
                       <option value="">Available from?</option>
                       {availabilityMonths.map((m) => (
@@ -416,8 +416,9 @@ export default function Entirespace1({
                   <InfoPill className="bg-white cursor-pointer px-4">
                     <input
                       value={houseRulesDisplay}
-                      className="w-full appearance-none bg-transparent text-xs outline-none py-1 "
-                      placeholder="Give your entire unit a name"
+                      readOnly
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer"
+                      placeholder="Select house rules"
                     />
                   </InfoPill>
                 </div>
