@@ -521,12 +521,12 @@ export default function Entirespace3({
                 {/* Photo */}
                 <div className="space-y-1">
                   <Label>Hostel Photo</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
                         {formData.photos?.length
-                          ? `Photos (${formData.photos.length}/5)`
+                          ? `Photos (${formData.photos.length})`
                           : "Add Photo"}
                       </span>
 
@@ -566,11 +566,11 @@ export default function Entirespace3({
                 {/* Video */}
                 <div className="space-y-1">
                   <Label>Hostel Video</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
-                        {formData.video ? "Video (1/1)" : "Add Video"}
+                        {formData.video ? "Video (1)" : "Add Video"}
                       </span>
 
                       <div className="ml-auto flex items-center gap-2">
