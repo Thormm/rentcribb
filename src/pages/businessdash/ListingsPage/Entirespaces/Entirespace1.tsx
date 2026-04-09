@@ -51,7 +51,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -140,7 +140,7 @@ export default function Entirespace1({
   };
   const counter = (field: string, value: number, min = 0) => (
     <InfoPill className="bg-white">
-      <div className="inline-flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full leading-5 text-xs">
         <FaMinus
           className="cursor-pointer"
           onClick={() =>
@@ -284,8 +284,8 @@ export default function Entirespace1({
               {/* SPACE NAME */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-4">Space Name (Your Eyes Only)</Label>
-                  <InfoPill className="bg-white px-4">
+                  <Label>Space Name (Your Eyes Only)</Label>
+                  <InfoPill className="bg-white">
                     <input
                       value={formData.spaceName}
                       onChange={(e) =>
@@ -301,8 +301,8 @@ export default function Entirespace1({
               {/* ADDRESS */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-4">Full Address (Your Eyes Only)</Label>
-                  <InfoPill className="bg-white px-4">
+                  <Label>Full Address (Your Eyes Only)</Label>
+                  <InfoPill className="bg-white">
                     <input
                       value={formData.fullAddress}
                       onChange={(e) =>
@@ -321,8 +321,8 @@ export default function Entirespace1({
               {/* TYPE + UNITS */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-4">Type</Label>
-                  <InfoPill className="bg-white px-4">
+                  <Label>Type</Label>
+                  <InfoPill className="bg-white">
                     <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.selectedType}
@@ -347,16 +347,15 @@ export default function Entirespace1({
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-4">No. of Units</Label>
-                  <span className="block text-xs leading-5 py-1">
-                    {counter("units", formData.units ?? 0)}
-                  </span>
+                  <Label>No. of Units</Label>
+                  {counter("units", formData.units ?? 0)}
                 </div>
-
+              </div>
+              <div className="grid grid-cols-2 gap-6">
                 {/* LOCATION */}
                 <div className="space-y-1">
-                  <Label className="ml-4">Location</Label>
-                  <InfoPill className="bg-white px-4">
+                  <Label>Location</Label>
+                  <InfoPill className="bg-white">
                     <select
                       value={formData.selectedLocation}
                       onChange={(e) =>
@@ -383,8 +382,8 @@ export default function Entirespace1({
 
                 {/* AVAILABILITY */}
                 <div className="space-y-1">
-                  <Label className="ml-4">Availability</Label>
-                  <InfoPill className="bg-white px-4">
+                  <Label>Availability</Label>
+                  <InfoPill className="bg-white">
                     <select
                       value={formData.selectedMonth}
                       onChange={(e) =>
@@ -412,8 +411,8 @@ export default function Entirespace1({
                   className="space-y-1"
                   onClick={() => setShowHouseModal(true)}
                 >
-                  <Label className="ml-4">House Rules</Label>
-                  <InfoPill className="bg-white cursor-pointer px-4">
+                  <Label>House Rules</Label>
+                  <InfoPill className="bg-white cursor-pointer">
                     <input
                       value={houseRulesDisplay}
                       readOnly
