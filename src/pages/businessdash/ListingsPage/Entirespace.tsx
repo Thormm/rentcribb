@@ -218,6 +218,7 @@ const Entirespace: React.FC = () => {
           formData={formData}
           setFormData={setFormData}
           onBack={goBack}
+          uploader={uploaderType}
         />
       )}
     </>

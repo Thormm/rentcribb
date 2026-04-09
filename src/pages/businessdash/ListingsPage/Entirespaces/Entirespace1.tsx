@@ -28,7 +28,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -52,7 +52,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -64,7 +64,7 @@ interface Entirespace1Props {
   formData: any;
   setFormData: (data: any) => void;
   onNext?: () => void;
-  uploader : any;
+  uploader: any;
 }
 
 export default function Entirespace1({
@@ -148,11 +148,6 @@ export default function Entirespace1({
     setFormData({ ...formData, selectedRules: newRules });
   };
 
-  const houseRulesDisplay =
-    formData.selectedRules.length === 0
-      ? "Select all that applies"
-      : formData.selectedRules.join(", ");
-
   const handleNext = async () => {
     if (
       !formData.spaceName ||
@@ -222,8 +217,17 @@ export default function Entirespace1({
     }
   };
 
+  const rulesText = formData.selectedRules.join(", ");
+
+  const houseRulesDisplay =
+    formData.selectedRules.length === 0
+      ? "Select all that applies"
+      : rulesText.length > 25
+        ? rulesText.slice(0, 25) + "..."
+        : rulesText;
+
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:px-10 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -237,15 +241,15 @@ export default function Entirespace1({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler with suitcase"
-            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+            className="h-full w-full object-cover"
           />
 
           <button
-            onClick={() => navigate("/businessdash")}
+            onClick={() => navigate(`/businessdash?goto=${uploader}listings`)}
             className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
@@ -270,7 +274,7 @@ export default function Entirespace1({
                       onChange={(e) =>
                         setFormData({ ...formData, spaceName: e.target.value })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none px-2 py-1"
+                      className="w-full appearance-none bg-transparent text-xs outline-none py-1 "
                       placeholder="Give your entire unit a name"
                     />
                   </InfoPill>
@@ -290,7 +294,7 @@ export default function Entirespace1({
                           fullAddress: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none px-2 py-1"
+                      className="w-full appearance-none bg-transparent text-xs outline-none py-1"
                       placeholder="Enter Space address"
                     />
                   </InfoPill>
@@ -401,9 +405,9 @@ export default function Entirespace1({
                 >
                   <Label className="ml-8">House Rules</Label>
                   <InfoPill className="bg-white cursor-pointer">
-                    <span className="text-xs md:text-sm text-gray-500">
-                      {houseRulesDisplay}
-                    </span>
+                      <span className="text-xs text-gray-500">
+                        {houseRulesDisplay}
+                      </span>
                   </InfoPill>
                 </div>
               </div>

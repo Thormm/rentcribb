@@ -35,9 +35,10 @@ interface Entirespace4Props {
   onBack?: () => void;
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
+  uploader: any;
 }
 
-export default function Entirespace4({ onBack, formData, setFormData }: Entirespace4Props) {
+export default function Entirespace4({ onBack, formData, setFormData, uploader }: Entirespace4Props) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -86,7 +87,7 @@ export default function Entirespace4({ onBack, formData, setFormData }: Entiresp
         setTimeout(() => {
           setStatusMessage(null);
         }, 1000);
-        navigate("/businessdash?goto=listings");
+        navigate(`/businessdash?goto=${uploader}listings`);
       } 
       else {setStatusMessage("Error: " + (data.message || "Unknown"));
         setTimeout(() => setStatusMessage(null), 2000);} 

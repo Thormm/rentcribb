@@ -53,7 +53,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        className,
       )}
     >
       {children}
@@ -214,7 +214,7 @@ export default function Entirespace3({
         const duration = videoEl.duration;
         if (duration > 120) {
           alert(
-            "Video must not exceed 2 minutes (120 seconds). Please choose a shorter video."
+            "Video must not exceed 2 minutes (120 seconds). Please choose a shorter video.",
           );
           return;
         }
@@ -241,8 +241,12 @@ export default function Entirespace3({
 
   /* ----------------- Submit (XHR for progress) ----------------- */
   const handleSubmit = async () => {
-    // target_university is required per previous logic
-    if (!formData.target_university) {
+    const selectedUniversities = JSON.parse(formData.target_university || "[]");
+
+    if (
+      selectedUniversities.length === 0 ||
+      (!(formData.photos && formData.photos.length > 0) && !formData.video)
+    ) {
       setStatusMessage("Please complete all required fields");
       setTimeout(() => setStatusMessage(null), 2000);
       return;
@@ -307,7 +311,7 @@ export default function Entirespace3({
                     fn &&
                     (fn.startsWith("http://") || fn.startsWith("https://"))
                       ? fn
-                      : `${base}/${fn}`
+                      : `${base}/${fn}`,
                   );
                   setFormData((prev: any) => ({ ...prev, photos: urls }));
                 }
@@ -320,8 +324,8 @@ export default function Entirespace3({
                       resp.video_final.startsWith("https://"))
                       ? resp.video_final
                       : resp.video_final
-                      ? `${base}/${resp.video_final}`
-                      : null;
+                        ? `${base}/${resp.video_final}`
+                        : null;
                   setFormData((prev: any) => ({ ...prev, video: vUrl }));
                 }
 
@@ -376,6 +380,68 @@ export default function Entirespace3({
     }
   };
 
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const userSchoolState = (login?.school || "").toLowerCase();
+
+  const filteredInstitutes = React.useMemo(() => {
+    if (!userSchoolState) return institutes;
+
+    return institutes.filter((inst) =>
+      (inst?.institution || "").toLowerCase().includes(`(${userSchoolState})`),
+    );
+  }, [institutes, userSchoolState]);
+
+  const [showUniversityModal, setShowUniversityModal] = useState(false);
+
+  const normalize = (str: string) => str.replace(/\s+/g, " ").trim();
+
+  let selectedUniversities: string[] = [];
+  try {
+    selectedUniversities = JSON.parse(formData.target_university || "[]");
+  } catch {
+    selectedUniversities = [];
+  }
+
+  const toggleUniversity = (uni: string) => {
+    const normalizedUni = normalize(uni);
+
+    setFormData((prev: any) => {
+      let current: string[] = [];
+      try {
+        current = JSON.parse(prev.target_university || "[]");
+      } catch {
+        current = [];
+      }
+
+      let next: string[];
+      if (current.includes(normalizedUni)) {
+        next = current.filter((u) => u !== normalizedUni);
+      } else {
+        next = [...current, normalizedUni];
+      }
+
+      return {
+        ...prev,
+        target_university: JSON.stringify(next), // <-- store as string
+      };
+    });
+  };
+
+  const selectAllUniversities = () => {
+    const all = filteredInstitutes.map((i) => normalize(i.institution));
+    setFormData((prev: any) => ({
+      ...prev,
+      target_university: JSON.stringify(all),
+    }));
+  };
+
+  const clearAllUniversities = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      target_university: JSON.stringify([]),
+    }));
+  };
+
   return (
     <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
@@ -426,7 +492,7 @@ export default function Entirespace3({
                     <div className="inline-flex items-center justify-between w-full">
                       <span className="text-xs text-gray-500 truncate block w-full">
                         {truncateText(
-                          formData.all_feature || "Select Features"
+                          formData.all_feature || "Select Features",
                         )}
                       </span>
                       <IoIosArrowDown />
@@ -444,7 +510,7 @@ export default function Entirespace3({
                     <div className="inline-flex items-center justify-between w-full">
                       <span className="text-xs text-gray-500 truncate block w-full">
                         {truncateText(
-                          formData.special_feature || "Select Special Feature"
+                          formData.special_feature || "Select Special Feature",
                         )}
                       </span>
                       <IoIosArrowDown />
@@ -495,8 +561,6 @@ export default function Entirespace3({
                       features.
                     </span>
                   </div>
-
-                 
                 </div>
 
                 {/* Video */}
@@ -539,8 +603,6 @@ export default function Entirespace3({
                       view of the space.
                     </span>
                   </div>
-
-                  
                 </div>
               </div>
 
@@ -548,26 +610,20 @@ export default function Entirespace3({
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
                   <Label className="ml-8">Target University</Label>
-                  <InfoPill className="bg-white">
+
+                  <InfoPill
+                    className="bg-white cursor-pointer"
+                    onClick={() => setShowUniversityModal(true)}
+                  >
                     <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        name="target_university"
-                        value={formData.target_university}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            target_university: e.target.value,
-                          })
-                        }
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                      >
-                        <option value="">Select University</option>
-                        {institutes.map((inst) => (
-                          <option key={inst.id} value={inst.institution}>
-                            {inst.institution}
-                          </option>
-                        ))}
-                      </select>
+                      <span className="text-xs text-gray-500 truncate block w-full">
+                        {truncateText(
+                          selectedUniversities.length > 0
+                            ? selectedUniversities.join(", ")
+                            : "Select Target Universities",
+                        )}
+                      </span>
+
                       <IoIosArrowDown />
                     </div>
                   </InfoPill>
@@ -604,6 +660,70 @@ export default function Entirespace3({
           </Maincard>
         </div>
       </div>
+
+      {showUniversityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">
+                Select Target Universities
+              </h3>
+
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => setShowUniversityModal(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="flex gap-3 mb-3">
+              <button
+                className="text-xs px-3 py-1 bg-black text-white rounded"
+                onClick={selectAllUniversities}
+              >
+                Select All
+              </button>
+
+              <button
+                className="text-xs px-3 py-1 bg-gray-200 rounded"
+                onClick={clearAllUniversities}
+              >
+                Clear All
+              </button>
+            </div>
+
+            <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
+              {filteredInstitutes.map((inst) => (
+                <label
+                  key={inst.id}
+                  className="flex items-center gap-3 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedUniversities.includes(
+                      normalize(inst.institution),
+                    )}
+                    onChange={() => toggleUniversity(inst.institution)}
+                    className="w-4 h-4"
+                  />
+
+                  <span>{inst.institution}</span>
+                </label>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => setShowUniversityModal(false)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ALL FEATURES MODAL */}
       {showAllFeaturesModal && (

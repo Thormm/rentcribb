@@ -24,6 +24,7 @@ const days = [
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];
 
 // Reusable Label

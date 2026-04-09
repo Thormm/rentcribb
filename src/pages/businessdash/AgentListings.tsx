@@ -288,7 +288,7 @@ function PaginatedDrafts() {
                 className="flex gap-6 "
                 onClick={
                   item.status?.trim() === "Incomplete"
-                    ? () => navigate(`/${item.space}?id=${item.gotoid}`)
+                    ? () => navigate(`/${item.space}?id=${item.gotoid}&&uploader=agent`)
                     : undefined
                 }
               >
