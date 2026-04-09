@@ -379,7 +379,7 @@ export default function Entirespace2({
                   className="space-y-1"
                   onClick={() => setShowWaterModal(true)}
                 >
-                  <Label>Security</Label>
+                  <Label>Water</Label>
                   <InfoPill className="bg-white cursor-pointer">
                     <div className="flex items-center justify-between w-full">
                       <input

@@ -52,7 +52,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-4",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -483,37 +483,43 @@ export default function Entirespace3({
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 mb:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 {/* All Features */}
-                <div className="space-y-1">
-                  <Label>All Feature</Label>
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowAllFeaturesModal(true)}
-                  >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs text-gray-500 truncate block w-full">
-                        {truncateText(
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowAllFeaturesModal(true)}
+                >
+                  <Label>Features</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
                           formData.all_feature || "Select Features",
                         )}
-                      </span>
-                      <IoIosArrowDown />
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
                 {/* Special Feature */}
-                <div className="space-y-1">
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowSpecialFeatureModal(true)}
+                >
                   <Label>Special Feature</Label>
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowSpecialFeatureModal(true)}
-                  >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs text-gray-500 truncate block w-full">
-                        {truncateText(
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
                           formData.special_feature || "Select Special Feature",
                         )}
-                      </span>
-                      <IoIosArrowDown />
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
@@ -608,23 +614,24 @@ export default function Entirespace3({
 
               {/* Target University */}
               <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-1">
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowUniversityModal(true)}
+                >
                   <Label>Target University</Label>
-
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowUniversityModal(true)}
-                  >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs text-gray-500 truncate block w-full">
-                        {truncateText(
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
                           selectedUniversities.length > 0
                             ? selectedUniversities.join(", ")
                             : "Select Target Universities",
                         )}
-                      </span>
-
-                      <IoIosArrowDown />
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
