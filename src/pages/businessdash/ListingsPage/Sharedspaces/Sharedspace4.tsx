@@ -1,4 +1,4 @@
-import { useState } from "react"; 
+import { useState } from "react";
 import imgright from "../../../../../src/assets/list4.png";
 import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
 import InfoPill from "../../../../components/Pill";
@@ -7,37 +7,71 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
-function Maincard({ className = "", children }: React.PropsWithChildren<{ className?: string }>) {
-  return <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>{children}</div>;
+function Maincard({
+  className = "",
+  children,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
+      {children}
+    </div>
+  );
 }
 
-function SectionHeader({ title, caption }: { title: string; caption?: string }) {
+function SectionHeader({
+  title,
+  caption,
+}: {
+  title: string;
+  caption?: string;
+}) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
-      <p className="text-center text-xs md:text-md pt-3">{caption ?? "Check out the Features of this Hostel"}</p>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
+      <p className="text-center text-xs md:text-md pt-3">
+        {caption ?? "Check out the Features of this Hostel"}
+      </p>
       <div
         className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
         style={{
           borderStyle: "dashed",
-          borderImage: "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
         }}
       />
     </div>
   );
 }
 
-function Label({ children, className }: React.PropsWithChildren<{ className?: string }>) {
-  return <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-0", className)}>{children}</div>;
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 interface Sharedspace4Props {
   onBack?: () => void;
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
+  uploader: any;
 }
 
-export default function Sharedspace4({ onBack, formData, setFormData }: Sharedspace4Props) {
+export default function Sharedspace4({
+  onBack,
+  formData,
+  setFormData,
+  uploader,
+}: Sharedspace4Props) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -62,7 +96,7 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
       const payload = {
         action: "shared_space4",
         user: user,
-        signup_key:signup_key,
+        signup_key: signup_key,
         inspection: formData.inspection,
         price: formData.price,
         rent: formData.rent,
@@ -81,15 +115,16 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
       });
 
       const data = await response.json();
-      if (data.success){
+      if (data.success) {
         setStatusMessage("Saved successfully!");
         setTimeout(() => {
           setStatusMessage(null);
         }, 1000);
-        navigate("/businessdash?goto=listings");
-      } 
-      else {setStatusMessage("Error: " + (data.message || "Unknown"));
-        setTimeout(() => setStatusMessage(null), 2000);} 
+        navigate(`/businessdash?goto=${uploader}listings`);
+      } else {
+        setStatusMessage("Error: " + (data.message || "Unknown"));
+        setTimeout(() => setStatusMessage(null), 2000);
+      }
     } catch (err) {
       setStatusMessage("Network error");
       setTimeout(() => setStatusMessage(null), 2000);
@@ -98,12 +133,19 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
     }
   };
 
-  const isSelectField = (field: string) => field === "inspection" || field === "duration";
+  const isSelectField = (field: string) =>
+    field === "inspection" || field === "duration";
   const hasInfoIcon = (field: string) =>
-    ["rent","caution_fee", "service_charge", "agreement_fee", "agency_fee"].includes(field);
+    [
+      "rent",
+      "caution_fee",
+      "service_charge",
+      "agreement_fee",
+      "agency_fee",
+    ].includes(field);
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -117,8 +159,12 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
-          <img src={imgright} alt="Traveler with suitcase" className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl" />
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+          <img
+            src={imgright}
+            alt="Traveler with suitcase"
+            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+          />
           <button
             onClick={onBack}
             className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
@@ -129,9 +175,12 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
           <Maincard className="bg-[#CDBCEC] pb-5 md:pb-8 md:px-10">
-            <SectionHeader title="Booking & Rent" caption="Help Guest Imagine their Stay in your Space" />
+            <SectionHeader
+              title="Booking & Rent"
+              caption="Help Guest Imagine their Stay in your Space"
+            />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-4">
+            <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 mb:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 {[
                   "inspection",
@@ -150,16 +199,19 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
 
                   return (
                     <div key={field} className="space-y-1">
-                      <Label className="ml-5">{label}</Label>
+                      <Label>{label}</Label>
                       <InfoPill className="bg-white">
                         <div className="inline-flex items-center justify-between w-full">
                           {isSelectField(field) ? (
                             <select
                               value={formData[field] || ""}
                               onChange={(e) =>
-                                setFormData({ ...formData, [field]: e.target.value })
+                                setFormData({
+                                  ...formData,
+                                  [field]: e.target.value,
+                                })
                               }
-                              className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                              className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
                             >
                               {field === "inspection" ? (
                                 <>
@@ -183,10 +235,15 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
                               type="number"
                               value={formData[field] || ""}
                               onChange={(e) =>
-                                setFormData({ ...formData, [field]: e.target.value })
+                                setFormData({
+                                  ...formData,
+                                  [field]: e.target.value,
+                                })
                               }
-                              placeholder={field === "price" ? "Enter Amount" : "How much?"}
-                              className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none"
+                              placeholder={
+                                field === "price" ? "Enter Amount" : "How much?"
+                              }
+                              className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
                             />
                           )}
 
@@ -194,10 +251,12 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
                             <button
                               type="button"
                               onClick={() =>
-                                setFormData({ ...formData, price: Number(formData.price || 0) + 1 })
+                                setFormData({
+                                  ...formData,
+                                  price: Number(formData.price || 0) + 1,
+                                })
                               }
-                            >
-                            </button>
+                            ></button>
                           ) : (
                             hasInfoIcon(field) && <RiInformationLine />
                           )}
@@ -218,14 +277,6 @@ export default function Sharedspace4({ onBack, formData, setFormData }: Sharedsp
                     "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                 }}
               />
-
-              {/*<button
-                onClick={() => alert("Preview not implemented")}
-                className="w-full my-8 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
-              >
-                <MdOutlinePayments className="w-8 h-8" />
-                Preview Pricing
-              </button>*/}
 
               <button
                 onClick={handleSave}

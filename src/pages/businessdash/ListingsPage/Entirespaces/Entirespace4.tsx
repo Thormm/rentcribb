@@ -278,14 +278,6 @@ export default function Entirespace4({
                 }}
               />
 
-              {/*<button
-                onClick={() => alert("Preview not implemented")}
-                className="w-full my-8 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
-              >
-                <MdOutlinePayments className="w-8 h-8" />
-                Preview Pricing
-              </button>*/}
-
               <button
                 onClick={handleSave}
                 disabled={loading}

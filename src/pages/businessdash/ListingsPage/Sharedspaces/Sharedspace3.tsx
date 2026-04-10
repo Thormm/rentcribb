@@ -29,7 +29,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -52,8 +52,8 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -214,7 +214,7 @@ export default function Sharedspace3({
         const duration = videoEl.duration;
         if (duration > 120) {
           alert(
-            "Video must not exceed 2 minutes (120 seconds). Please choose a shorter video."
+            "Video must not exceed 2 minutes (120 seconds). Please choose a shorter video.",
           );
           return;
         }
@@ -241,8 +241,12 @@ export default function Sharedspace3({
 
   /* ----------------- Submit (XHR for progress) ----------------- */
   const handleSubmit = async () => {
-    // target_university is required per previous logic
-    if (!formData.target_university) {
+    const selectedUniversities = JSON.parse(formData.target_university || "[]");
+
+    if (
+      selectedUniversities.length === 0 ||
+      (!(formData.photos && formData.photos.length > 0) && !formData.video)
+    ) {
       setStatusMessage("Please complete all required fields");
       setTimeout(() => setStatusMessage(null), 2000);
       return;
@@ -307,7 +311,7 @@ export default function Sharedspace3({
                     fn &&
                     (fn.startsWith("http://") || fn.startsWith("https://"))
                       ? fn
-                      : `${base}/${fn}`
+                      : `${base}/${fn}`,
                   );
                   setFormData((prev: any) => ({ ...prev, photos: urls }));
                 }
@@ -320,8 +324,8 @@ export default function Sharedspace3({
                       resp.video_final.startsWith("https://"))
                       ? resp.video_final
                       : resp.video_final
-                      ? `${base}/${resp.video_final}`
-                      : null;
+                        ? `${base}/${resp.video_final}`
+                        : null;
                   setFormData((prev: any) => ({ ...prev, video: vUrl }));
                 }
 
@@ -333,11 +337,9 @@ export default function Sharedspace3({
                 resolve();
               } else {
                 reject(resp?.message || "Upload failed");
-                setTimeout(() => setStatusMessage(null), 2000);
               }
             } catch (err) {
               reject("Invalid server response");
-              setTimeout(() => setStatusMessage(null), 2000);
             }
           }
         };
@@ -378,8 +380,70 @@ export default function Sharedspace3({
     }
   };
 
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const userSchoolState = (login?.school || "").toLowerCase();
+
+  const filteredInstitutes = React.useMemo(() => {
+    if (!userSchoolState) return institutes;
+
+    return institutes.filter((inst) =>
+      (inst?.institution || "").toLowerCase().includes(`(${userSchoolState})`),
+    );
+  }, [institutes, userSchoolState]);
+
+  const [showUniversityModal, setShowUniversityModal] = useState(false);
+
+  const normalize = (str: string) => str.replace(/\s+/g, " ").trim();
+
+  let selectedUniversities: string[] = [];
+  try {
+    selectedUniversities = JSON.parse(formData.target_university || "[]");
+  } catch {
+    selectedUniversities = [];
+  }
+
+  const toggleUniversity = (uni: string) => {
+    const normalizedUni = normalize(uni);
+
+    setFormData((prev: any) => {
+      let current: string[] = [];
+      try {
+        current = JSON.parse(prev.target_university || "[]");
+      } catch {
+        current = [];
+      }
+
+      let next: string[];
+      if (current.includes(normalizedUni)) {
+        next = current.filter((u) => u !== normalizedUni);
+      } else {
+        next = [...current, normalizedUni];
+      }
+
+      return {
+        ...prev,
+        target_university: JSON.stringify(next), // <-- store as string
+      };
+    });
+  };
+
+  const selectAllUniversities = () => {
+    const all = filteredInstitutes.map((i) => normalize(i.institution));
+    setFormData((prev: any) => ({
+      ...prev,
+      target_university: JSON.stringify(all),
+    }));
+  };
+
+  const clearAllUniversities = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      target_university: JSON.stringify([]),
+    }));
+  };
+
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10  flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -393,7 +457,7 @@ export default function Sharedspace3({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler with suitcase"
@@ -419,66 +483,63 @@ export default function Sharedspace3({
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 mb:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 {/* All Features */}
-                <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">All Feature</Label>
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowAllFeaturesModal(true)}
-                  >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs text-gray-500 truncate block w-full">
-                        {truncateText(
-                          formData.all_feature || "Select Features"
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowAllFeaturesModal(true)}
+                >
+                  <Label>Features</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
+                          formData.all_feature || "Select Features",
                         )}
-                      </span>
-                      <IoIosArrowDown />
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
                 {/* Special Feature */}
-                <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Special Feature</Label>
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowSpecialFeatureModal(true)}
-                  >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs text-gray-500 truncate block w-full">
-                        {truncateText(
-                          formData.special_feature || "Select Special Feature"
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowSpecialFeatureModal(true)}
+                >
+                  <Label>Special Feature</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
+                          formData.special_feature || "Select Special Feature",
                         )}
-                      </span>
-                      <IoIosArrowDown />
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
                 {/* Photo */}
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Hostel Photo</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <Label>Hostel Photo</Label>
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
                         {formData.photos?.length
-                          ? `Photos (${formData.photos.length}/5)`
-                          : "Add Photo"}
-                      </span>
-
-                      <div className="ml-auto flex items-center gap-2">
-                        {photoUploadProgress > 0 &&
+                          ? `Photos (${formData.photos.length})`
+                          : "Add Photo"}{photoUploadProgress > 0 &&
                           photoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
-                              Uploading {photoUploadProgress}%
+                              {photoUploadProgress}%
                             </span>
                           )}
-                        {uploadProgress > 0 && uploadProgress < 100 && (
-                          <span className="text-xs text-[#2b8a3e]">
-                            Uploading {uploadProgress}%
-                          </span>
-                        )}
-                      </div>
+                      </span>
 
                       <input
                         type="file"
@@ -497,33 +558,22 @@ export default function Sharedspace3({
                       features.
                     </span>
                   </div>
-
-                 
                 </div>
 
                 {/* Video */}
                 <div className="space-y-1">
-                  <Label className="ml-5 md:ml-8">Hostel Video</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-8 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
+                  <Label>Hostel Video</Label>
+                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
                     <div className="flex items-center gap-3">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
-                        {formData.video ? "Video (1/1)" : "Add Video"}
-                      </span>
-
-                      <div className="ml-auto flex items-center gap-2">
-                        {videoUploadProgress > 0 &&
+                        {formData.video ? "Video (1)" : "Add Video"} {videoUploadProgress > 0 &&
                           videoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
-                              Uploading {videoUploadProgress}%
+                              {videoUploadProgress}%
                             </span>
                           )}
-                        {uploadProgress > 0 && uploadProgress < 100 && (
-                          <span className="text-xs text-[#2b8a3e]">
-                            Uploading {uploadProgress}%
-                          </span>
-                        )}
-                      </div>
+                      </span>
 
                       <input
                         type="file"
@@ -541,36 +591,29 @@ export default function Sharedspace3({
                       view of the space.
                     </span>
                   </div>
-
-                  
                 </div>
               </div>
 
               {/* Target University */}
               <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-1">
-                  <Label className="ml-8">Target University</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        name="target_university"
-                        value={formData.target_university}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            target_university: e.target.value,
-                          })
-                        }
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                      >
-                        <option value="">Select University</option>
-                        {institutes.map((inst) => (
-                          <option key={inst.id} value={inst.institution}>
-                            {inst.institution}
-                          </option>
-                        ))}
-                      </select>
-                      <IoIosArrowDown />
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowUniversityModal(true)}
+                >
+                  <Label>Target University</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={truncateText(
+                          selectedUniversities.length > 0
+                            ? selectedUniversities.join(", ")
+                            : "Select Target Universities",
+                        )}
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
@@ -606,6 +649,70 @@ export default function Sharedspace3({
           </Maincard>
         </div>
       </div>
+
+      {showUniversityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">
+                Select Target Universities
+              </h3>
+
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => setShowUniversityModal(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="flex gap-3 mb-3">
+              <button
+                className="text-xs px-3 py-1 bg-black text-white rounded"
+                onClick={selectAllUniversities}
+              >
+                Select All
+              </button>
+
+              <button
+                className="text-xs px-3 py-1 bg-gray-200 rounded"
+                onClick={clearAllUniversities}
+              >
+                Clear All
+              </button>
+            </div>
+
+            <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
+              {filteredInstitutes.map((inst) => (
+                <label
+                  key={inst.id}
+                  className="flex items-center gap-3 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedUniversities.includes(
+                      normalize(inst.institution),
+                    )}
+                    onChange={() => toggleUniversity(inst.institution)}
+                    className="w-4 h-4"
+                  />
+
+                  <span>{inst.institution}</span>
+                </label>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => setShowUniversityModal(false)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ALL FEATURES MODAL */}
       {showAllFeaturesModal && (

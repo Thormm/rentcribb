@@ -533,22 +533,13 @@ export default function Entirespace3({
                       <span className="text-xs text-gray-500">
                         {formData.photos?.length
                           ? `Photos (${formData.photos.length})`
-                          : "Add Photo"}
-                      </span>
-
-                      <div className="ml-auto flex items-center gap-2">
-                        {photoUploadProgress > 0 &&
+                          : "Add Photo"}{photoUploadProgress > 0 &&
                           photoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
-                              Uploading {photoUploadProgress}%
+                              {photoUploadProgress}%
                             </span>
                           )}
-                        {uploadProgress > 0 && uploadProgress < 100 && (
-                          <span className="text-xs text-[#2b8a3e]">
-                            Uploading {uploadProgress}%
-                          </span>
-                        )}
-                      </div>
+                      </span>
 
                       <input
                         type="file"
@@ -576,22 +567,13 @@ export default function Entirespace3({
                     <div className="flex items-center gap-3">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
-                        {formData.video ? "Video (1)" : "Add Video"}
-                      </span>
-
-                      <div className="ml-auto flex items-center gap-2">
-                        {videoUploadProgress > 0 &&
+                        {formData.video ? "Video (1)" : "Add Video"} {videoUploadProgress > 0 &&
                           videoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
-                              Uploading {videoUploadProgress}%
+                              {videoUploadProgress}%
                             </span>
                           )}
-                        {uploadProgress > 0 && uploadProgress < 100 && (
-                          <span className="text-xs text-[#2b8a3e]">
-                            Uploading {uploadProgress}%
-                          </span>
-                        )}
-                      </div>
+                      </span>
 
                       <input
                         type="file"

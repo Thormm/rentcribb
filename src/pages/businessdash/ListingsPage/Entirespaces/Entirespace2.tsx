@@ -73,7 +73,7 @@ function StarRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-1 text-yellow-500 cursor-pointer ${className}`}
+      className={`flex items-center gap-1 mt-1 mb:mt-0 text-yellow-500 cursor-pointer ${className}`}
     >
       {Array.from({ length: 5 }).map((_, i) =>
         i < value ? (
@@ -212,6 +212,10 @@ export default function Entirespace2({
 
   const saveAndContinue = async () => {
     if (
+      !formData.bedrooms ||
+      !formData.ensuite ||
+      !formData.bathrooms ||
+      !formData.toilets ||
       !security.length ||
       !water.length ||
       !formData.power_supply ||
@@ -332,7 +336,7 @@ export default function Entirespace2({
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
                   <Label>No. of Bedroom</Label>
-                  {counter("bedrooms", formData.bedrooms ?? 0)}
+                  {counter("bedrooms", formData.bedrooms ?? 1, 1)}
                 </div>
 
                 <div className="space-y-1">
@@ -342,7 +346,7 @@ export default function Entirespace2({
 
                 <div className="space-y-1">
                   <Label>No. of Bathroom</Label>
-                  {counter("bathrooms", formData.bathrooms ?? 1, 1)}
+                  {counter("bathrooms", formData.bathrooms ?? 0)}
                 </div>
 
                 <div className="space-y-1">

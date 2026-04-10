@@ -139,7 +139,7 @@ export default function BusinessDash() {
     <DashboardTabContext.Provider value={{ activeTab, setActiveTab }}>
       <div className="h-screen w-screen overflow-hidden bg-neutral-950 text-neutral-100">
         {/* NAVBAR */}
-        <nav className="flex items-center justify-between px-4 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
+        <nav className="flex items-center justify-between px-4 md:px-15 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
           {/* Left side: menu (mobile) + logo (desktop) */}
           <div className="flex items-center gap-3">
             {/* Mobile Menu Toggle */}

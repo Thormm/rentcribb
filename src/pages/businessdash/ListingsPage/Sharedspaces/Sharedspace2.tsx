@@ -4,93 +4,39 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../../components/Pill";
 import clsx from "clsx";
-``;
 import { LuStar, LuStarOff } from "react-icons/lu";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaMale, FaFemale, FaMoon, FaCross, FaBan } from "react-icons/fa";
 
-function Maincard({
-  className = "",
-  children,
-}: React.PropsWithChildren<{ className?: string }>) {
-  return (
-    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
-      {children}
-    </div>
-  );
-}
 
-function SectionHeader({
-  title,
-  caption,
-}: {
-  title: string;
-  caption?: string;
-}) {
-  return (
-    <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
-      <p className="text-center text-xs md:text-md pt-3">
-        {caption ?? "Check out the Features of this Hostel"}
-      </p>
-      <div
-        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-        style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-        }}
-      />
-    </div>
-  );
-}
+  const genderOptions: OptionItem[] = [
+    { id: "male", icon: <FaMale /> },
+    { id: "female", icon: <FaFemale /> },
+  ];
 
-function Label({
-  children,
-  className,
-}: React.PropsWithChildren<{ className?: string }>) {
-  return (
-    <div
-      className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+  const religionOptions: OptionItem[] = [
+    { id: "christian", icon: <FaCross /> },
+    { id: "muslim", icon: <FaMoon /> },
+    { id: "none", icon: <FaBan /> },
+  ];
 
-function StarRow({
-  value,
-  onChange,
-  className = "",
-}: {
-  className?: string;
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div
-      className={`flex items-center gap-1 text-yellow-500 cursor-pointer ${className}`}
-    >
-      {Array.from({ length: 5 }).map((_, i) =>
-        i < value ? (
-          <LuStar
-            key={i}
-            size={25}
-            fill="currentColor"
-            onClick={() => onChange(i + 1)}
-          />
-        ) : (
-          <LuStarOff key={i} size={25} onClick={() => onChange(i + 1)} />
-        ),
-      )}
-    </div>
-  );
-}
+  const yearOptions = [
+    { value: "", label: "Choose preference" },
+    { value: "100 level", label: "100 Level" },
+    { value: "200 level", label: "200 Level" },
+    { value: "300 level", label: "300 Level" },
+    { value: "400 level", label: "400 Level" },
+    { value: "postgrad", label: "Postgraduate" },
+  ];
 
-/* --- New small components for icon option groups --- */
+  const facultyOptions = [
+    { value: "", label: "Choose preference" },
+    { value: "engineering", label: "Engineering" },
+    { value: "sciences", label: "Sciences" },
+    { value: "arts", label: "Arts" },
+    { value: "management", label: "Management" },
+    { value: "law", label: "Law" },
+  ];
 
 type OptionItem = {
   id: string;
@@ -133,6 +79,91 @@ function IconOptionGroup({
   );
 }
 
+function Maincard({
+  className = "",
+  children,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({
+  title,
+  caption,
+}: {
+  title: string;
+  caption?: string;
+}) {
+  return (
+    <div className="pt-8 md:px-5">
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
+
+      <p className="text-center text-xs md:text-md pt-3">
+        {caption ?? "Check out the Features of this Hostel"}
+      </p>
+
+      <div
+        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
+    </div>
+  );
+}
+
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function StarRow({
+  value,
+  onChange,
+  className = "",
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-1 mt-1 mb:mt-0 text-yellow-500 cursor-pointer ${className}`}
+    >
+      {Array.from({ length: 5 }).map((_, i) =>
+        i < value ? (
+          <LuStar
+            key={i}
+            size={25}
+            fill="currentColor"
+            onClick={() => onChange(i + 1)}
+          />
+        ) : (
+          <LuStarOff key={i} size={25} onClick={() => onChange(i + 1)} />
+        ),
+      )}
+    </div>
+  );
+}
+
+/* ---------------- OPTIONS ---------------- */
+
 const securityOptions = [
   "Hostel Guard",
   "Fenced & Gated",
@@ -143,7 +174,57 @@ const securityOptions = [
 
 const waterOptions = ["Running", "Borehole", "Clean", "Well", "Treated"];
 
-/* --- Main component --- */
+/* ---------------- HELPERS ---------------- */
+
+/* Fix backend formats like:
+["Fenced & Gated","Surveillance"]
+["[\"Fenced & Gated\"","\"Surveillance\"]"]
+"a,b"
+*/
+function normalizeArray(value: any): string[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value
+      .map((v) =>
+        String(v)
+          .replace(/[\[\]"]/g, "")
+          .trim(),
+      )
+      .filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((v) =>
+            String(v)
+              .replace(/[\[\]"]/g, "")
+              .trim(),
+          )
+          .filter(Boolean);
+      }
+    } catch {}
+
+    return value
+      .replace(/[\[\]"]/g, "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+/* limit visible characters in textbox */
+function limitDisplay(text: string, max = 15) {
+  if (text.length <= max) return text;
+  return text.slice(0, max) + "...";
+}
+
+/* ---------------- MAIN COMPONENT ---------------- */
 
 export default function Sharedspace2({
   formData,
@@ -156,44 +237,31 @@ export default function Sharedspace2({
   onNext?: () => void;
   onBack?: () => void;
 }) {
-  // saving state + status modal
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [showWaterModal, setShowWaterModal] = useState(false);
 
-  // initialize preference fields if not present
-  React.useEffect(() => {
-    setFormData((prev: any) => ({
-      pref_gender: prev.pref_gender ?? "",
-      pref_religion: prev.pref_religion ?? "",
-      pref_year: prev.pref_year ?? "",
-      pref_faculty: prev.pref_faculty ?? "",
-      security: prev.security ?? "",
-      water: prev.water ?? "",
-      power_supply: prev.power_supply ?? 0,
-      network_strength: prev.network_strength ?? 0,
-      compound: prev.compound ?? 0,
-      access_road: prev.access_road ?? 0,
-      ...prev,
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const security = normalizeArray(formData.security);
+  const water = normalizeArray(formData.water);
 
   const updateField = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
   const toggleMulti = (field: string, value: string) => {
-    const current = formData[field] || [];
+    const current = field === "security" ? security : water;
 
     const next = current.includes(value)
-      ? current.filter((v: string) => v !== value)
+      ? current.filter((v) => v !== value)
       : [...current, value];
 
     updateField(field, next);
   };
+
+ 
+
+  /* ---------------- SAVE ---------------- */
 
   const saveAndContinue = async () => {
     if (
@@ -201,8 +269,8 @@ export default function Sharedspace2({
       !formData.pref_religion ||
       !formData.pref_year ||
       !formData.pref_faculty ||
-      !formData.security?.length ||
-      !formData.water?.length ||
+      !security.length ||
+      !water.length ||
       !formData.power_supply ||
       !formData.network_strength ||
       !formData.compound ||
@@ -214,29 +282,23 @@ export default function Sharedspace2({
     }
 
     if (loading) return;
+
     setLoading(true);
     setStatusMessage("Saving...");
 
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    const user = login?.user || "";
-    const signup_key = login?.signup_key || "";
 
     const payload = {
       action: "shared_space2",
-      user: user,
-      signup_key: signup_key,
+      user: login?.user || "",
+      signup_key: login?.signup_key || "",
       space_id: formData.space_id ?? 0,
-
-      // send the new preference fields
       pref_gender: formData.pref_gender ?? "",
       pref_religion: formData.pref_religion ?? "",
       pref_year: formData.pref_year ?? "",
       pref_faculty: formData.pref_faculty ?? "",
-
-      // keep the rating fields as before
-
-      security: formData.security ?? "",
-      water: formData.water ?? "",
+      security,
+      water,
       power_supply: formData.power_supply ?? 0,
       network_strength: formData.network_strength ?? 0,
       compound: formData.compound ?? 0,
@@ -246,65 +308,44 @@ export default function Sharedspace2({
     try {
       const res = await fetch("https://www.cribb.africa/api_save.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+
       if (data.success) {
         setStatusMessage("Saved successfully!");
+
         setTimeout(() => {
           setStatusMessage(null);
           onNext && onNext();
         }, 1000);
       } else {
-        setStatusMessage("Error: " + (data.message || "Unknown"));
-        setTimeout(() => setStatusMessage(null), 2000);
+        setStatusMessage(data.message || "Error saving");
       }
-    } catch (e) {
+    } catch {
       setStatusMessage("Network error");
-      setTimeout(() => setStatusMessage(null), 2000);
     } finally {
       setLoading(false);
     }
   };
 
-  /* keep counter helper in case you still need it elsewhere (not used for the first four) */
+  useEffect(() => {
+    if (!formData.bathrooms) updateField("bathrooms", 1);
+  }, []);
 
-  /* options used by new controls */
-  const genderOptions: OptionItem[] = [
-    { id: "male", icon: <FaMale /> },
-    { id: "female", icon: <FaFemale /> },
-  ];
-
-  const religionOptions: OptionItem[] = [
-    { id: "christian", icon: <FaCross /> },
-    { id: "muslim", icon: <FaMoon /> },
-    { id: "none", icon: <FaBan /> },
-  ];
-
-  const yearOptions = [
-    { value: "", label: "Choose preference" },
-    { value: "100 level", label: "100 Level" },
-    { value: "200 level", label: "200 Level" },
-    { value: "300 level", label: "300 Level" },
-    { value: "400 level", label: "400 Level" },
-    { value: "postgrad", label: "Postgraduate" },
-  ];
-
-  const facultyOptions = [
-    { value: "", label: "Choose preference" },
-    { value: "engineering", label: "Engineering" },
-    { value: "sciences", label: "Sciences" },
-    { value: "arts", label: "Arts" },
-    { value: "management", label: "Management" },
-    { value: "law", label: "Law" },
-  ];
+  /* ---------------- UI ---------------- */
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+      {/* Progress */}
+
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
+
         <div className="min-w-0 flex items-center justify-center">
           <div className="flex gap-2 flex-wrap justify-center max-w-full">
             <a className="w-15 h-2 bg-[#3A3A3A]" />
@@ -316,19 +357,24 @@ export default function Sharedspace2({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        {/* IMAGE */}
+
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
-            alt="Traveler with suitcase"
+            alt="Traveler"
             className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
           />
+
           <button
             onClick={onBack}
-            className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white"
           >
             <IoIosArrowBack size={14} />
           </button>
         </div>
+
+        {/* CARD */}
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 md:px-10">
@@ -338,6 +384,8 @@ export default function Sharedspace2({
             />
 
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 md:mt-0">
+              {/* COUNTERS */}
+
               <div className="grid grid-cols-2 gap-6">
                 {/* ---- REPLACED ROWS: Four preference controls ---- */}
 
@@ -408,163 +456,83 @@ export default function Sharedspace2({
                 {/* ---- Keep the Security & Water selects as before ---- */}
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Security</Label>
+              {/* SECURITY + WATER */}
 
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowSecurityModal(true)}
-                  >
-                    <span className="text-xs text-gray-500 whitespace-normal truncate">
-                      {(formData.security || []).length
-                        ? (formData.security || []).join(", ")
-                        : "Select options"}
-                    </span>
+              <div className="grid grid-cols-2 gap-6">
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowSecurityModal(true)}
+                >
+                  <Label>Security</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          security.length
+                            ? limitDisplay(security.join(", "), 12)
+                            : "Select options"
+                        }
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
-
-                <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Water</Label>
-
-                  <InfoPill
-                    className="bg-white cursor-pointer"
-                    onClick={() => setShowWaterModal(true)}
-                  >
-                    <span className="text-xs text-gray-500">
-                      {(formData.water || []).length
-                        ? (formData.water || []).join(", ")
-                        : "Select options"}
-                    </span>
+                <div
+                  className="space-y-1"
+                  onClick={() => setShowWaterModal(true)}
+                >
+                  <Label>Water</Label>
+                  <InfoPill className="bg-white cursor-pointer">
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          water.length
+                            ? limitDisplay(water.join(", "), 12)
+                            : "Select options"
+                        }
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
-
-                {showSecurityModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">
-                          Select Security Options
-                        </h3>
-                        <button
-                          className="text-sm text-gray-600"
-                          onClick={() => setShowSecurityModal(false)}
-                        >
-                          Close
-                        </button>
-                      </div>
-
-                      <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
-                        {securityOptions.map((opt) => (
-                          <label
-                            key={opt}
-                            className="flex items-center gap-3 text-sm cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={(formData.security || []).includes(opt)}
-                              onChange={() => toggleMulti("security", opt)}
-                              className="w-4 h-4"
-                            />
-                            <span>{opt}</span>
-                          </label>
-                        ))}
-                      </div>
-
-                      <div className="mt-4">
-                        <button
-                          className="w-full py-2 rounded-lg bg-black text-white"
-                          onClick={() => setShowSecurityModal(false)}
-                        >
-                          Done
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {showWaterModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">
-                          Select Water Options
-                        </h3>
-                        <button
-                          className="text-sm text-gray-600"
-                          onClick={() => setShowWaterModal(false)}
-                        >
-                          Close
-                        </button>
-                      </div>
-
-                      <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
-                        {waterOptions.map((opt) => (
-                          <label
-                            key={opt}
-                            className="flex items-center gap-3 text-sm cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={(formData.water || []).includes(opt)}
-                              onChange={() => toggleMulti("water", opt)}
-                              className="w-4 h-4"
-                            />
-                            <span>{opt}</span>
-                          </label>
-                        ))}
-                      </div>
-
-                      <div className="mt-4">
-                        <button
-                          className="w-full py-2 rounded-lg bg-black text-white"
-                          onClick={() => setShowWaterModal(false)}
-                        >
-                          Done
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
-              {/* Star rating rows */}
+              {/* RATINGS */}
+
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label className="space-y-1 pl-2 md:pl-6">Power Supply</Label>
+                  <Label >Power Supply</Label>
                   <StarRow
-                    className="space-y-1 md:pl-2"
                     value={formData.power_supply ?? 0}
                     onChange={(v) => updateField("power_supply", v)}
                   />
                 </div>
 
                 <div>
-                  <Label className="space-y-1 pl-2 md:pl-6">
-                    Network Strength
-                  </Label>
+                  <Label >Network </Label>
                   <StarRow
-                    className="space-y-1 md:pl-2"
                     value={formData.network_strength ?? 0}
                     onChange={(v) => updateField("network_strength", v)}
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label className="space-y-1 pl-2 md:pl-6">Compound</Label>
+                  <Label >Compound</Label>
                   <StarRow
-                    className="space-y-1 md:pl-2"
                     value={formData.compound ?? 0}
                     onChange={(v) => updateField("compound", v)}
                   />
                 </div>
 
                 <div>
-                  <Label className="space-y-1 pl-2 md:pl-6">Access Road</Label>
+                  <Label >Access Road</Label>
                   <StarRow
-                    className="space-y-1 md:pl-2"
                     value={formData.access_road ?? 0}
                     onChange={(v) => updateField("access_road", v)}
                   />
@@ -582,10 +550,75 @@ export default function Sharedspace2({
       </div>
 
       {/* STATUS MODAL */}
+
       {statusMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl p-6 w-72 text-center shadow-lg">
-            <p className="text-sm md:text-md">{statusMessage}</p>
+            <p>{statusMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* SECURITY MODAL */}
+
+      {showSecurityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">Select Security</h3>
+              <button onClick={() => setShowSecurityModal(false)}>Close</button>
+            </div>
+
+            {securityOptions.map((opt) => (
+              <label key={opt} className="flex items-center gap-3 py-1">
+                <input
+                  type="checkbox"
+                  checked={security.includes(opt)}
+                  onChange={() => toggleMulti("security", opt)}
+                />
+
+                {opt}
+              </label>
+            ))}
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setShowSecurityModal(false)}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* WATER MODAL */}
+
+      {showWaterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">Select Water</h3>
+              <button onClick={() => setShowWaterModal(false)}>Close</button>
+            </div>
+
+            {waterOptions.map((opt) => (
+              <label key={opt} className="flex items-center gap-3 py-1">
+                <input
+                  type="checkbox"
+                  checked={water.includes(opt)}
+                  onChange={() => toggleMulti("water", opt)}
+                />
+
+                {opt}
+              </label>
+            ))}
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setShowWaterModal(false)}
+            >
+              Done
+            </button>
           </div>
         </div>
       )}

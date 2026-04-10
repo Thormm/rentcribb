@@ -39,8 +39,8 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -87,7 +87,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -101,7 +101,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -110,7 +110,6 @@ function Tabs({
     </div>
   );
 }
-
 
 const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
 const SAVE_URL = "https://www.cribb.africa/api_save.php";
@@ -131,6 +130,7 @@ const Overview = () => {
   const [landmark, setLandmark] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
+  const [school, setSchool] = useState("");
   const [callNo, setCallNo] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [localImageFile, setLocalImageFile] = useState<File | null>(null);
@@ -145,27 +145,27 @@ const Overview = () => {
   // feedback / UI
   const [expanded, setExpanded] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [key: number]: number }>(
-    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.rating || 0 }), {})
+    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.rating || 0 }), {}),
   );
   const [feedbackTexts, setFeedbackTexts] = useState<{ [key: number]: string }>(
-    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.text || "" }), {})
+    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.text || "" }), {}),
   );
 
   // refs
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-   const statesAndLgas: { state: string; lgas: string[] }[] =
-      React.useMemo(() => {
-        try {
-          if (Array.isArray(LGAS_DATA as any)) return LGAS_DATA as any;
-          return Object.keys(LGAS_DATA as any).map((s) => ({
-            state: s,
-            lgas: (LGAS_DATA as any)[s],
-          }));
-        } catch (e) {
-          return [];
-        }
-      }, []);
+  const statesAndLgas: { state: string; lgas: string[] }[] =
+    React.useMemo(() => {
+      try {
+        if (Array.isArray(LGAS_DATA as any)) return LGAS_DATA as any;
+        return Object.keys(LGAS_DATA as any).map((s) => ({
+          state: s,
+          lgas: (LGAS_DATA as any)[s],
+        }));
+      } catch (e) {
+        return [];
+      }
+    }, []);
 
   // fetch data on mount
   useEffect(() => {
@@ -191,6 +191,7 @@ const Overview = () => {
         setStateValue(p.state || "");
         setLandmark(p.landmark || "");
         setEmail(p.email || "");
+        setSchool(p.school || "");
         setCallNo(p.call_no || "");
         // profile_image from backend is expected to be a full URL (as per your PHP case)
         setProfileImage(p.profile_image || null);
@@ -475,7 +476,7 @@ const Overview = () => {
                   {/* Row 1 – First & Last Name */}
                   <div className="space-y-1">
                     <Label>FIRST NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -488,7 +489,7 @@ const Overview = () => {
 
                   <div className="space-y-1">
                     <Label>LAST NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -502,7 +503,7 @@ const Overview = () => {
                   {/* Row 2 – Call Number & WhatsApp */}
                   <div className="space-y-1">
                     <Label>CALL NUMBER</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -514,7 +515,7 @@ const Overview = () => {
 
                   <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
+                    <InfoPill>
                       <input
                         type="tel"
                         value={whatsapp}
@@ -528,7 +529,7 @@ const Overview = () => {
                   {/* Row 3 – Email (Full Width) */}
                   <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -538,11 +539,24 @@ const Overview = () => {
                     </InfoPill>
                   </div>
 
+                  {/* Row 3 – Email (Full Width) */}
+                  <div className="col-span-2 space-y-1">
+                    <Label>PRINCIPAL PLACE OF BUSINESS</Label>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={school}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
+                    </InfoPill>
+                  </div>
+
                   {/* Row 4 – Full Address (Full Width) */}
                   <div className="col-span-2 space-y-1">
                     <Label>FULL ADDRESS</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -561,7 +575,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>STATE</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 relative flex items-center ${
+                      className={`relative flex items-center ${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -571,17 +585,17 @@ const Overview = () => {
                         disabled={isProfileLocked}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                       >
-                      <option value="">Around where?</option>
-                      {statesAndLgas.map((s) => (
-                        <optgroup label={s.state} key={s.state}>
-                          {s.lgas.map((l) => (
-                            <option key={l} value={`${s.state} - ${l}`}>
-                              {l}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
+                        <option value="">Around where?</option>
+                        {statesAndLgas.map((s) => (
+                          <optgroup label={s.state} key={s.state}>
+                            {s.lgas.map((l) => (
+                              <option key={l} value={`${s.state} - ${l}`}>
+                                {l}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
                       <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -589,7 +603,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>LANDMARK</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -607,10 +621,10 @@ const Overview = () => {
 
                 {/* Save Changes */}
                 {!isProfileLocked && (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center mb-3">
                     <button
                       onClick={handleSave}
-                      className="py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
                     >
                       SAVE CHANGES
                     </button>
@@ -624,13 +638,13 @@ const Overview = () => {
               <div className="my-10 md:w-2/3">
                 <div className="flex flex-col p-5 gap-8 bg-transparent">
                   {/* Coming Soon */}
-                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-white px-4 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
 
                   {/* Join Waitlist */}
-                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
                   </button>
@@ -647,7 +661,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>FIRST NAME</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -665,7 +679,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>LAST NAME</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -684,7 +698,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>CALL NO.</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 flex items-center justify-between ${
+                      className={`flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -702,7 +716,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 flex items-center justify-between ${
+                      className={`flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -721,7 +735,7 @@ const Overview = () => {
                   <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -739,10 +753,10 @@ const Overview = () => {
 
                 {/* Save Changes */}
                 {!isKinLocked && (
-                  <div className="mt-10 flex justify-center">
+                  <div className="mt-10 mb-2 flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="py-3 text-md px-4 font-medium bg-black text-white shadow-lg rounded-lg"
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
                     >
                       SAVE CHANGES
                     </button>
@@ -824,7 +838,7 @@ const Overview = () => {
                                         className="w-7 h-7 text-gray-300 cursor-pointer"
                                         onClick={() => handleStarClick(r.id, i)}
                                       />
-                                    )
+                                    ),
                                   )}
                                 </div>
 
@@ -869,7 +883,7 @@ const Overview = () => {
                   <button
                     onClick={handleSendFeedback}
                     disabled={isSending}
-                    className="py-3 text-md px-8 font-medium bg-black shadow-lg rounded-lg text-white"
+                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
                   >
                     {isSending ? "SENDING..." : "SEND"}
                   </button>

@@ -47,10 +47,7 @@ export default function SidebarInner({
     // ✅ Clear all saved user session data
     sessionStorage.clear();
     localStorage.clear();
-    const loginData = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    let mode = "student";
-    if (loginData?.mode === "merchant") mode = "merchant";
-    navigate(`/login?mode=${mode}`, { replace: true });
+    navigate(`/login?mode=merchant`); // ✅ Redirect to login page
   };
   const navigate = useNavigate(); // ✅ initialize router navigation
   const handleAddBusiness = () => {

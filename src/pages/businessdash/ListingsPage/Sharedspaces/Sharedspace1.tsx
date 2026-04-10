@@ -28,7 +28,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -51,8 +51,8 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -64,7 +64,7 @@ interface Sharedspace1Props {
   formData: any;
   setFormData: (data: any) => void;
   onNext?: () => void;
-  uploader : any;
+  uploader: any;
 }
 
 export default function Sharedspace1({
@@ -135,11 +135,28 @@ export default function Sharedspace1({
         return [];
       }
     }, []);
+  const updateField = (field: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+  const counter = (field: string, value: number, min = 0) => (
+    <InfoPill className="bg-white">
+      <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
+        <FaMinus
+          className="cursor-pointer"
+          onClick={() =>
+            updateField(field, Math.max(min, (formData[field] || min) - 1))
+          }
+        />
 
-  const incUnits = () =>
-    setFormData({ ...formData, units: Math.min(50, formData.units + 1) });
-  const decUnits = () =>
-    setFormData({ ...formData, units: Math.max(1, formData.units - 1) });
+        <span>{value}</span>
+
+        <FaPlus
+          className="cursor-pointer"
+          onClick={() => updateField(field, (formData[field] || min) + 1)}
+        />
+      </div>
+    </InfoPill>
+  );
 
   const toggleRule = (rule: string) => {
     const newRules = formData.selectedRules.includes(rule)
@@ -147,11 +164,6 @@ export default function Sharedspace1({
       : [...formData.selectedRules, rule];
     setFormData({ ...formData, selectedRules: newRules });
   };
-
-  const houseRulesDisplay =
-    formData.selectedRules.length === 0
-      ? "Select all that applies"
-      : formData.selectedRules.join(", ");
 
   const handleNext = async () => {
     if (
@@ -222,8 +234,17 @@ export default function Sharedspace1({
     }
   };
 
+  const rulesText = formData.selectedRules.join(", ");
+
+  const houseRulesDisplay =
+    formData.selectedRules.length === 0
+      ? "Select all that applies"
+      : rulesText.length > 40
+        ? rulesText.slice(0, 40) + "..."
+        : rulesText;
+
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:px-10 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
@@ -237,15 +258,15 @@ export default function Sharedspace1({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
             alt="Traveler with suitcase"
-            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+            className="h-full w-full object-cover"
           />
 
           <button
-            onClick={() => navigate("/businessdash")}
+            onClick={() => navigate(`/businessdash?goto=${uploader}listings`)}
             className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
@@ -263,15 +284,15 @@ export default function Sharedspace1({
               {/* SPACE NAME */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Space Name (Your Eyes Only)</Label>
+                  <Label>Space Name (Your Eyes Only)</Label>
                   <InfoPill className="bg-white">
                     <input
                       value={formData.spaceName}
                       onChange={(e) =>
                         setFormData({ ...formData, spaceName: e.target.value })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none px-2 py-1"
-                      placeholder="Give your entire unit a name"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
+                      placeholder="Give your shared unit a name"
                     />
                   </InfoPill>
                 </div>
@@ -280,7 +301,7 @@ export default function Sharedspace1({
               {/* ADDRESS */}
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Full Address (Your Eyes Only)</Label>
+                  <Label>Full Address (Your Eyes Only)</Label>
                   <InfoPill className="bg-white">
                     <input
                       value={formData.fullAddress}
@@ -290,7 +311,7 @@ export default function Sharedspace1({
                           fullAddress: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs outline-none px-2 py-1"
+                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
                       placeholder="Enter Space address"
                     />
                   </InfoPill>
@@ -300,9 +321,9 @@ export default function Sharedspace1({
               {/* TYPE + UNITS */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="ml-8">Type</Label>
+                  <Label>Type</Label>
                   <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.selectedType}
                         onChange={(e) =>
@@ -311,7 +332,7 @@ export default function Sharedspace1({
                             selectedType: e.target.value,
                           })
                         }
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Space Type</option>
                         {spaceTypes.map((t) => (
@@ -320,75 +341,73 @@ export default function Sharedspace1({
                           </option>
                         ))}
                       </select>
-                      <IoIosArrowDown />
+                      <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-8">No. of Units</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <button onClick={decUnits} className="px-2">
-                        <FaMinus />
-                      </button>
-                      <span>{formData.units}</span>
-                      <button onClick={incUnits} className="px-2">
-                        <FaPlus />
-                      </button>
-                    </div>
-                  </InfoPill>
+                  <Label>No. of Roommate</Label>
+                  {counter("units", formData.units ?? 2,2)}
                 </div>
-
+              </div>
+              <div className="grid grid-cols-2 gap-6">
                 {/* LOCATION */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Location</Label>
+                  <Label>Location</Label>
                   <InfoPill className="bg-white">
-                    <select
-                      value={formData.selectedLocation}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          selectedLocation: e.target.value,
-                        })
-                      }
-                      className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                    >
-                      <option value="">Around where?</option>
-                      {statesAndLgas.map((s) => (
-                        <optgroup label={s.state} key={s.state}>
-                          {s.lgas.map((l) => (
-                            <option key={l} value={`${s.state} - ${l}`}>
-                              {l}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </select>
+                    <div className="flex items-center justify-between w-full">
+                      <select
+                        value={formData.selectedLocation}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            selectedLocation: e.target.value,
+                          })
+                        }
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                      >
+                        <option value="">Around where?</option>
+                        {statesAndLgas.map((s) => (
+                          <optgroup label={s.state} key={s.state}>
+                            {s.lgas.map((l) => (
+                              <option key={l} value={`${s.state} - ${l}`}>
+                                {l}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
 
                 {/* AVAILABILITY */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Availability</Label>
+                  <Label>Availability</Label>
                   <InfoPill className="bg-white">
-                    <select
-                      value={formData.selectedMonth}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          selectedMonth: e.target.value,
-                        })
-                      }
-                      className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                    >
-                      <option value="">Available from?</option>
-                      {availabilityMonths.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center justify-between w-full">
+                      <select
+                        value={formData.selectedMonth}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            selectedMonth: e.target.value,
+                          })
+                        }
+                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                      >
+                        <option value="">Available from?</option>
+                        {availabilityMonths.map((m) => (
+                          <option key={m} value={m}>
+                            {m}
+                          </option>
+                        ))}
+                      </select>
+
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
               </div>
@@ -399,11 +418,17 @@ export default function Sharedspace1({
                   className="space-y-1"
                   onClick={() => setShowHouseModal(true)}
                 >
-                  <Label className="ml-8">House Rules</Label>
+                  <Label>House Rules</Label>
                   <InfoPill className="bg-white cursor-pointer">
-                    <span className="text-xs md:text-sm text-gray-500">
-                      {houseRulesDisplay}
-                    </span>
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={houseRulesDisplay}
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        placeholder="Select house rules"
+                      />
+                      <IoIosArrowDown className="ml-2" />
+                    </div>
                   </InfoPill>
                 </div>
               </div>

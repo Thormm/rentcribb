@@ -48,6 +48,7 @@ const Sharedspace: React.FC = () => {
   const spaceIdFromUrl = searchParams.get("id") || "";
   const uploaderType = searchParams.get("uploader") || "";
 
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     space_id: "",
@@ -217,6 +218,7 @@ const Sharedspace: React.FC = () => {
           formData={formData}
           setFormData={setFormData}
           onBack={goBack}
+          uploader={uploaderType}
         />
       )}
     </>
