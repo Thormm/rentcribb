@@ -8,6 +8,9 @@ import InfoPill from "../../components/Pill";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { IoChevronBack } from "react-icons/io5";
 import { MdDoubleArrow } from "react-icons/md";
+import { FaTelegram, FaTimes } from "react-icons/fa";
+import { RiWhatsappFill } from "react-icons/ri";
+import { FiArrowRight } from "react-icons/fi";
 
 function Label({
   children,
@@ -58,7 +61,7 @@ function InputField({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="ml-8">{label}</Label>
+      <Label className="ml-6">{label}</Label>
       <InfoPill
         className={clsx(
           "bg-white border",
@@ -115,6 +118,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [open, setOpen] = useState(false);
   // check if all fields except referral are filled
   const canContinue = password && confirm && password === confirm;
 
@@ -294,16 +298,17 @@ export default function ResetPassword() {
           backgroundPosition: "center",
         }}
       >
-        <div className="grid grid-cols-1 items-center w-full md:w-2/5">
+        <div className="grid grid-cols-1 items-center w-full md:w-2/5 px-2 md:px-0">
           {!card2 ? (
-            <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+            <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10 relative">
               {/* Back button */}
-              <button
+
+              <div
+                className="absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
                 onClick={() => navigate("/login")}
-                className="absolute cursor-pointer top-3 left-3 bg-black text-white rounded-full p-2 shadow"
               >
-                <IoChevronBack className="text-base" />
-              </button>
+                <IoChevronBack className="text-white text-2xl" />
+              </div>
 
               <SectionHeader
                 title="Forgot Password?"
@@ -388,15 +393,16 @@ export default function ResetPassword() {
                   }}
                 />
                 {/* Footer link */}
-                <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
-                  <span>
-                    Remember Password?
-                    <span
-                      className="text-[#0556F8] cursor-pointer"
-                      onClick={() => navigate("/login")}
-                    >
-                      Sign-up
-                    </span>
+                <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center items-center gap-2">
+                  <span className="">Cant get OTP?</span>
+
+                  <span
+                    className="flex items-center gap-1  cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
+                    onClick={() => setOpen(true)}
+                  >
+                    <span className="text-[#0556F8]">Verify by</span>
+                    <FaTelegram className="text-lg" />
+                    <RiWhatsappFill className="text-lg" />
                   </span>
                 </div>
               </div>
@@ -442,6 +448,77 @@ export default function ResetPassword() {
           )}
         </div>
       </section>
+
+      {/* Modal Box remains as in your raw code */}
+      {open && (
+        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+            <div
+              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => setOpen(false)}
+            >
+              <FaTimes className="text-white text-2xl" />
+            </div>
+            <h2 className="text-3xl mt-5 font-medium text-center text-black">
+              New Passkey
+            </h2>
+            <p className="text-sm text-black text-center mt-5">
+              Chill, Let’s setup a new one ASAP
+            </p>
+
+            <div
+              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+
+            <div className="space-y-6">
+              <div>
+                <div
+                  onClick={() => navigate("/entirespace?uploader=agent")}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#BCDFFE]"
+                >
+                  <FaTelegram className="text-black text-4xl ml-5" />
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Get PassKey on Telegram
+                  </span>
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-md font-semibold text-black text-center">
+                --------OR --------
+              </div>
+
+              <div>
+                <div className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#D6FFC3]">
+                  <RiWhatsappFill className="text-black text-3xl ml-5" />
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Get PassKey on Whatsapp
+                  </span>
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

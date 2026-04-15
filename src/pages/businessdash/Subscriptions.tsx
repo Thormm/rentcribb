@@ -15,7 +15,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -61,7 +61,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
     >
       {tabs.map((tab) => (
@@ -360,7 +360,7 @@ const Subscriptions = () => {
                       {" "}
                       <div className="space-y-1 col-span-2 md:col-span-1">
                         <Label>CURRENT PLAN</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm text-black">
                               {agentPlan.plan ? agentPlan.plan : ""}
@@ -371,7 +371,7 @@ const Subscriptions = () => {
                       </div>
                       <div className="space-y-1 col-span-2 md:col-span-1">
                         <Label>VALID UNTIL</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm text-black">
                               {agentPlan.expires_at
@@ -385,7 +385,7 @@ const Subscriptions = () => {
                       {/* LISTING LIMIT and CONNECTION */}
                       <div>
                         <Label>LISTING LIMIT</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
                               {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
@@ -397,7 +397,7 @@ const Subscriptions = () => {
                       </div>
                       <div>
                         <Label>CONNECTION</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
                               {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
@@ -477,7 +477,7 @@ const Subscriptions = () => {
                       {" "}
                       <div className="space-y-1 col-span-2 md:col-span-1">
                         <Label>CURRENT PLAN</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm text-black">
                               {landlordPlan.plan ? landlordPlan.plan : ""}
@@ -514,7 +514,7 @@ const Subscriptions = () => {
                       </div>
                       <div>
                         <Label>CONNECTION</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
                               {LANDLORD_PLAN_DETAILS[

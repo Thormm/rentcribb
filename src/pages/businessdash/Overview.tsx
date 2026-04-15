@@ -40,7 +40,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-6",
-        className,
+        className
       )}
     >
       {children}
@@ -874,7 +874,7 @@ const Overview = () => {
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
                     placeholder="Hola, Cribb ..."
-                    className="w-full min-h-[110px] py-3 px-5 md:px-10 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
+                    className="w-full min-h-[110px] py-3 px-6 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
                   />
                 </div>
 

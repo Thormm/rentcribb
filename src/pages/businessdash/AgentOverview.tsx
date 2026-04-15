@@ -33,7 +33,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -95,7 +95,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -435,7 +435,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - Business Name */}
                   <div className="md:col-span-2">
                     <Label>BUSINESS NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
                         {agentDetails.bname_agent || "-"}
                       </span>
@@ -445,7 +445,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - About */}
                   <div className="md:col-span-2">
                     <Label>ABOUT</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
                         {agentDetails.babout_agent || "—"}
                       </span>
@@ -455,7 +455,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - Call Number */}
                   <div>
                     <Label>CALL NUMBER</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-xs md:text-sm py-1">
                           {agentDetails.agent_callno || "—"}
@@ -467,7 +467,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - WhatsApp Number */}
                   <div>
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
+                    <InfoPill>
                       <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
                         {agentDetails.agent_whats || "—"}
                       </span>
@@ -477,7 +477,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - Email */}
                   <div className="md:col-span-2">
                     <Label>BUSINESS EMAIL</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-xs md:text-sm py-1">
                           {agentDetails.agent_email || "—"}
@@ -489,7 +489,7 @@ const Agentoverview: React.FC = () => {
                   {/* Row - Address */}
                   <div className="md:col-span-2">
                     <Label>BUSINESS ADDRESS</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
                         {agentDetails.baddress_agent || "—"}
                       </span>
@@ -506,7 +506,7 @@ const Agentoverview: React.FC = () => {
                   {/* Current Verification Level */}
                   <div className="md:col-span-2">
                     <Label>CURRENT VERIFICATION LEVEL</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-xs md:text-sm py-1">
                           {current.tag}
@@ -556,9 +556,7 @@ const Agentoverview: React.FC = () => {
                 {/* Features 1 */}
                 <div className="md:col-span-2 mt-6">
                   <div className="flex items-center gap-3 mt-10 mb-5">
-                    <span className="text-md font-semibold text-black tracking-wide">
-                      --- REQUIREMENTS ----------------------------
-                    </span>
+                    <Label>------- REQUIREMENTS --------</Label>
                   </div>
 
                   {/* Features 2 (only for TIER1) */}
@@ -647,13 +645,13 @@ const Agentoverview: React.FC = () => {
             )}
 
             {activeTab === "Operations" && (
-              <div className="md:p-5 md:w-2/3 mt-5">
+              <div className="md:p-5 md:w-2/3 mt-6">
                 {/* Inputs grid */}
                 <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
                   <div className="md:col-span-2 px-3">
                     <Label>INSPECTION DAYS</Label>
-                    <InfoPill className="relative flex items-center bg-white">
+                    <InfoPill>
                       {/* Display selected days*/}
                       <div
                         className="flex justify-between w-full py-2 cursor-pointer"
@@ -716,27 +714,24 @@ const Agentoverview: React.FC = () => {
                     SAVE CHANGES
                   </button>
                 </div>
-                <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                    --- ANALYTICS ----------------------------
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-1 md:p-3 rounded-lg">
-                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                 <div className="flex items-center gap-3 mt-10 mb-5">
+                    <Label>------- ANALYTICS --------</Label>
+                  </div>
+                <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <RiListView className="text-black" size={20} />
                     <span className="text-xs md:text-md font-semibold">
                       LISTINGS
                     </span>
                   </button>
-                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <MdOutlineBookmarkAdded className="text-black" size={20} />
                     <span className="text-xs md:text-md font-semibold">
                       BOOKINGS
                     </span>
                   </button>
 
-                  <button className="flex border-2 items-center justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <MdOutlineSupervisedUserCircle
                       className="text-black"
                       size={20}

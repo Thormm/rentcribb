@@ -88,7 +88,7 @@ function InputField({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="ml-8">{label}</Label>
+      <Label className="ml-6">{label}</Label>
       <InfoPill className="bg-white border border-black">
         <div className="inline-flex items-center justify-between w-full">
           <input

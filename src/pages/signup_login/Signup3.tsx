@@ -81,7 +81,7 @@ function InputField({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="ml-8">{label}</Label>
+      <Label className="ml-6">{label}</Label>
       <InfoPill
         className={clsx(
           "bg-white border",

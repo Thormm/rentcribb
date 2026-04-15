@@ -262,12 +262,6 @@ function PaginatedDrafts() {
         </div>
       </div>
 
-      <div className="flex items-center">
-        <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-15">
-          --- YOUR DRAFTS ------
-        </span>
-      </div>
-
       {/* Drafts List */}
       <div
         className="overflow-x-auto md:overflow-visible"
@@ -288,7 +282,10 @@ function PaginatedDrafts() {
                 className="flex gap-6 "
                 onClick={
                   item.status?.trim() === "Incomplete"
-                    ? () => navigate(`/${item.space}?id=${item.gotoid}&&uploader=agent`)
+                    ? () =>
+                        navigate(
+                          `/${item.space}?id=${item.gotoid}&&uploader=agent`,
+                        )
                     : undefined
                 }
               >
@@ -366,7 +363,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-sm md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -386,7 +383,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -545,19 +542,19 @@ function PaginatedCards() {
         }}
       >
         {currentData.map((card) => (
-          <div key={card.id} className="flex items-center gap-6 w-full">
+          <div key={card.id} className="flex items-center gap-6 w-full overflow">
             {/* LEFT PANEL */}
-            <div className="md:w-1/3 flex flex-col gap-4">
+            <div className=" flex flex-col gap-4">
               <InfoPill className="bg-white">
                 <div className="inline-flex items-center justify-between w-full ">
-                  <span className="text-md py-1 text-black">{card.name}</span>
+                  <span className="text-xs md:text-sm py-1 text-black">{card.name}</span>
                   <LuPencil size={25} className="ml-auto text-black" />
                 </div>
               </InfoPill>
 
               <InfoPill>
                 <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">
+                  <span className="text-xs md:text-sm py-1 text-black">
                     {card.bookmarks} Students
                   </span>
                   <MdOutlineBookmarkAdded
@@ -573,7 +570,7 @@ function PaginatedCards() {
                 }}
               >
                 <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">
+                  <span className="text-xs md:text-sm py-1 text-black">
                     {card.active === 1 ? "Online" : "Offline"}
                   </span>
                   {card.active === 1 ? (
@@ -586,7 +583,7 @@ function PaginatedCards() {
 
               <InfoPill className="bg-[#FFA1A1]">
                 <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">Delete</span>
+                  <span className="text-xs md:text-sm py-1 text-black">Delete</span>
                   <MdOutlineDeleteForever
                     size={25}
                     className="ml-auto text-black"
@@ -597,7 +594,7 @@ function PaginatedCards() {
               <div className="flex justify-center">
                 <button
                   onClick={() => navigate(`/${card.space}?id=${card.id}`)}
-                  className="py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg"
+                  className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
                 >
                   EDIT
                 </button>
@@ -605,7 +602,7 @@ function PaginatedCards() {
             </div>
 
             {/* RIGHT CARD */}
-            <div className="md:w-2/3 flex justify-center">
+            <div className=" flex justify-center">
               <Card item={card} />
             </div>
           </div>
@@ -647,11 +644,11 @@ const Agentlistings: React.FC = () => {
           {/* Header */}
           <SectionHeader title="Listings" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Live" && (
-              <div className="md:p-5 mt-5 space-y-6">
+              <div className="p-5 md:p-5 mt-5 space-y-6">
                 {/* LIVE tab content remains exactly as your raw code */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* Row 1 - First Name with FaPlus */}
@@ -717,12 +714,13 @@ const Agentlistings: React.FC = () => {
                   </div> */}
                 </div>
                 <div className="flex items-center gap-3 mt-8">
-                  <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-10">
-                    ------- YOUR LISTINGS -------
-                  </span>
+                  <Label> ------- YOUR LISTINGS -------</Label>
                 </div>
                 <PaginatedCards />
-                <button onClick={() => navigate("/businessrequests")} className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
@@ -730,17 +728,21 @@ const Agentlistings: React.FC = () => {
             )}
 
             {activeTab === "Drafts" && (
-              <div className="md:p-5 mt-5 space-y-6">
-                <div className="relative flex flex-col mb-10">
-                  <Label>NEW LISTING</Label>
-                  <div
-                    onClick={() => setOpen(true)}
-                    className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
-                  >
-                    <FaPlus size={20} className="text-white" />
+              <div className="p-5 md:p-5 mt-5 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
+                  <div className="relative flex flex-col mb-10">
+                    <Label>NEW LISTING</Label>
+                    <div
+                      onClick={() => setOpen(true)}
+                      className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                    >
+                      <FaPlus size={20} className="text-white" />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mt-8">
+                    <Label> ------- YOUR DRAFTS -------</Label>
                   </div>
                 </div>
-
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}
                 <PaginatedDrafts />
                 <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
@@ -820,7 +822,7 @@ const Agentlistings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="text-md font-semibold text-black text-center">
+              <div className="text-sm font-semibold text-black text-center">
                 -------- COMING SOON --------
               </div>
 

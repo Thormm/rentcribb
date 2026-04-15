@@ -17,7 +17,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className
       )}
     >
@@ -63,7 +63,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -219,11 +219,11 @@ const Payment = () => {
 
             {/* Withdrawals */}
             {activeTab === "Withdrawals" && (
-              <div className="p-5 md:mt-5">
+              <div className="p-5 md:mt-5 md:w-2/3">
                 <div className="grid mb-10 grid-cols-1 gap-6">
                   <div className="space-y-1">
                     <Label>BALANCE</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                    <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-md md:text-xl font-bold text-black">
                           {earned}
@@ -237,7 +237,7 @@ const Payment = () => {
 
                   <div className="space-y-1">
                     <Label>TOTAL EARNED</Label>
-                    <InfoPill className="max-w-md px-5 md:px-8">
+                    <InfoPill>
                       <div className="w-full">
                         <span className="text-xs md:text-sm font-medium text-black">
                           ......
@@ -271,8 +271,8 @@ const Payment = () => {
             {/* Refunds */}
             {activeTab === "Refunds" && (
               <div>
-                <div className="md:p-5">
-                  <div className="grid grid-cols-3 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                <div className="md:p-5 md:w-2/3">
+                  <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
                     {/* NEW */}
                     <button
                       onClick={() => setActiveRefund("NEW")}
@@ -280,7 +280,7 @@ const Payment = () => {
                         "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "NEW"
                           ? "bg-black text-white"
-                          : "bg-transparent text-black"
+                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
                       )}
                     >
                       <RiStickyNoteAddLine
@@ -301,7 +301,7 @@ const Payment = () => {
                         "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "ON-GOING"
                           ? "bg-black text-white"
-                          : "bg-transparent text-black"
+                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
                       )}
                     >
                       <BiRotateRight
@@ -313,7 +313,7 @@ const Payment = () => {
                         )}
                       />
                       <span className="text-[10px] md:text-lg font-semibold tracking-tight whitespace-nowrap">
-                        ON-GOING
+                        ON
                       </span>
                     </button>
 
@@ -324,7 +324,7 @@ const Payment = () => {
                         "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "SORTED"
                           ? "bg-black text-white"
-                          : "bg-transparent text-black"
+                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
                       )}
                     >
                       <MdDoubleArrow
