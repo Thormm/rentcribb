@@ -44,7 +44,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-sm md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -87,7 +87,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -551,11 +551,11 @@ const Agentbookings: React.FC = () => {
         <div className="w-full">
           <SectionHeader title="Bookings" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Bookings" && (
-              <div className="md:p-5 mt-5 space-y-6">
+              <div className="p-5 md:p-5 mt-5 space-y-6">
                 {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
                   <div className="col-span-2">
                     <div className="grid grid-cols-2 gap-4 mb-3">
@@ -656,7 +656,7 @@ const Agentbookings: React.FC = () => {
             )}
 
             {activeTab === "Requests" && (
-              <div className="md:p-5 mt-5 space-y-6">
+              <div className="p-5 md:p-5 mt-5 space-y-6">
                 <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
                   <div>
                     <Label>HOW IT WORKS</Label>

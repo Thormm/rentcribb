@@ -649,9 +649,9 @@ const Agentoverview: React.FC = () => {
                 {/* Inputs grid */}
                 <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2 px-3">
+                  <div className="md:col-span-2 px-3 relative">
                     <Label>INSPECTION DAYS</Label>
-                    <InfoPill>
+                    <InfoPill className="bg-white">
                       {/* Display selected days*/}
                       <div
                         className="flex justify-between w-full py-2 cursor-pointer"
@@ -714,9 +714,9 @@ const Agentoverview: React.FC = () => {
                     SAVE CHANGES
                   </button>
                 </div>
-                 <div className="flex items-center gap-3 mt-10 mb-5">
-                    <Label>------- ANALYTICS --------</Label>
-                  </div>
+                <div className="flex items-center gap-3 mt-10 mb-5">
+                  <Label>------- ANALYTICS --------</Label>
+                </div>
                 <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
                   <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <RiListView className="text-black" size={20} />

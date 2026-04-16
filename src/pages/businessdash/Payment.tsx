@@ -18,7 +18,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-6",
-        className
+        className,
       )}
     >
       {children}
@@ -77,7 +77,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -91,7 +91,13 @@ function Tabs({
 function PaginatedList({
   data,
 }: {
-  data: { id: number; date: string; amount: string; status: string; details: string }[];
+  data: {
+    id: number;
+    date: string;
+    amount: string;
+    status: string;
+    details: string;
+  }[];
 }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -99,7 +105,7 @@ function PaginatedList({
 
   const currentData = data.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
@@ -126,8 +132,12 @@ function PaginatedList({
                 <MdOutlinePending className="text-black w-4 h-4 md:w-7 md:h-7" />
               )}
             </div>
-            <span className="text-[9px] md:text-sm text-black">{item.date}</span>
-          <span className="text-[9px] md:text-base text-black">{item.details}</span>
+            <span className="text-[9px] md:text-sm text-black">
+              {item.date}
+            </span>
+            <span className="text-[9px] md:text-base text-black">
+              {item.details}
+            </span>
             <span className="font-semibold text-xs md:text-base text-black">
               {item.amount}
             </span>
@@ -145,7 +155,7 @@ function PaginatedList({
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -193,7 +203,7 @@ const Payment = () => {
         const data = await res.json();
 
         if (data.success) {
-          setEarned(data.earned)
+          setEarned(data.earned);
           setWithdrawals(data.withdrawals || []);
           setTopups(data.topups || []);
           setRefunds(data.refunds || { NEW: [], "ON-GOING": [], SORTED: [] });
@@ -272,48 +282,55 @@ const Payment = () => {
             {activeTab === "Refunds" && (
               <div>
                 <div className="md:p-5 md:w-2/3">
-                  <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                  <div
+                    className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+                    style={{
+                      borderStyle: "dashed",
+                      borderColor: "#0000004D",
+                      borderWidth: "1px",
+                    }}
+                  >
                     {/* NEW */}
                     <button
                       onClick={() => setActiveRefund("NEW")}
                       className={clsx(
-                        "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
+                        "border flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "NEW"
-                          ? "bg-black text-white"
-                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
                       )}
                     >
                       <RiStickyNoteAddLine
                         className={clsx(
-                          activeRefund === "NEW" ? "text-white" : "text-black",
-                          "w-5 h-5 md:w-6 md:h-6"
+                          activeRefund === "NEW"
+                            ? "text-[#D6FFC3]"
+                            : "text-black",
+                          "w-5 h-5 md:w-6 md:h-6",
                         )}
                       />
-                      <span className="text-[10px] md:text-lg font-semibold">
-                        NEW
-                      </span>
+                      <span className="text-xs md:text-lg">NEW</span>
                     </button>
 
                     {/* ON-GOING */}
                     <button
                       onClick={() => setActiveRefund("ON-GOING")}
                       className={clsx(
-                        "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
+                        "border flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "ON-GOING"
-                          ? "bg-black text-white"
-                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
                       )}
                     >
                       <BiRotateRight
                         className={clsx(
                           activeRefund === "ON-GOING"
-                            ? "text-white"
+                            ? "text-[#D6FFC3]"
                             : "text-black",
-                          "w-5 h-5 md:w-6 md:h-6"
+                          "w-5 h-5 md:w-6 md:h-6",
                         )}
                       />
-                      <span className="text-[10px] md:text-lg font-semibold tracking-tight whitespace-nowrap">
-                        ON
+                      <span className="text-xs md:text-lg tracking-tight whitespace-nowrap">
+                        ON-GOING
                       </span>
                     </button>
 
@@ -321,23 +338,21 @@ const Payment = () => {
                     <button
                       onClick={() => setActiveRefund("SORTED")}
                       className={clsx(
-                        "flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
+                        "border flex items-center justify-center gap-1 md:gap-2 rounded-lg px-1 py-2 md:px-3 md:py-3 w-full",
                         activeRefund === "SORTED"
-                          ? "bg-black text-white"
-                          : "bg-white text-black border border-gray-300 hover:bg-gray-100"
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
                       )}
                     >
                       <MdDoubleArrow
                         className={clsx(
                           activeRefund === "SORTED"
-                            ? "text-white"
+                            ? "text-[#D6FFC3]"
                             : "text-black",
-                          "w-5 h-5 md:w-6 md:h-6"
+                          "w-5 h-5 md:w-6 md:h-6",
                         )}
                       />
-                      <span className="text-[10px] md:text-lg font-semibold">
-                        SORTED
-                      </span>
+                      <span className="text-xs md:text-lg">SORTED</span>
                     </button>
                   </div>
                 </div>

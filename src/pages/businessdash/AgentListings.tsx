@@ -542,68 +542,77 @@ function PaginatedCards() {
         }}
       >
         {currentData.map((card) => (
-          <div key={card.id} className="flex items-center gap-6 w-full overflow">
-            {/* LEFT PANEL */}
-            <div className=" flex flex-col gap-4">
-              <InfoPill className="bg-white">
-                <div className="inline-flex items-center justify-between w-full ">
-                  <span className="text-xs md:text-sm py-1 text-black">{card.name}</span>
-                  <LuPencil size={25} className="ml-auto text-black" />
-                </div>
-              </InfoPill>
+          <div className="overflow-x-auto scrollbar-hide">
+            <div
+              key={card.id}
+              className="flex items-center gap-6 min-w-[400px] md:min-w-0"
+            >
+              {/* LEFT PANEL */}
+              <div className="md:w-1/3 flex flex-col gap-4">
+                <InfoPill className="bg-white">
+                  <div className="inline-flex items-center justify-between w-full ">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.name}
+                    </span>
+                    <LuPencil size={25} className="ml-auto text-black" />
+                  </div>
+                </InfoPill>
 
-              <InfoPill>
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-xs md:text-sm py-1 text-black">
-                    {card.bookmarks} Students
-                  </span>
-                  <MdOutlineBookmarkAdded
-                    size={25}
-                    className="ml-auto text-black"
-                  />
-                </div>
-              </InfoPill>
+                <InfoPill>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.bookmarks} views
+                    </span>
+                    <MdOutlineBookmarkAdded
+                      size={25}
+                      className="ml-auto text-black"
+                    />
+                  </div>
+                </InfoPill>
 
-              <InfoPill
-                style={{
-                  backgroundColor: card.active === 1 ? "#D6FFC3" : "#9D9D9D",
-                }}
-              >
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-xs md:text-sm py-1 text-black">
-                    {card.active === 1 ? "Online" : "Offline"}
-                  </span>
-                  {card.active === 1 ? (
-                    <FaToggleOn size={25} className="ml-auto text-black" />
-                  ) : (
-                    <FaToggleOff size={25} className="ml-auto text-black" />
-                  )}
-                </div>
-              </InfoPill>
-
-              <InfoPill className="bg-[#FFA1A1]">
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-xs md:text-sm py-1 text-black">Delete</span>
-                  <MdOutlineDeleteForever
-                    size={25}
-                    className="ml-auto text-black"
-                  />
-                </div>
-              </InfoPill>
-
-              <div className="flex justify-center">
-                <button
-                  onClick={() => navigate(`/${card.space}?id=${card.id}`)}
-                  className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
+                <InfoPill
+                  style={{
+                    backgroundColor: card.active === 1 ? "#D6FFC3" : "#9D9D9D",
+                  }}
                 >
-                  EDIT
-                </button>
-              </div>
-            </div>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.active === 1 ? "Online" : "Offline"}
+                    </span>
+                    {card.active === 1 ? (
+                      <FaToggleOn size={25} className="ml-auto text-black" />
+                    ) : (
+                      <FaToggleOff size={25} className="ml-auto text-black" />
+                    )}
+                  </div>
+                </InfoPill>
 
-            {/* RIGHT CARD */}
-            <div className=" flex justify-center">
-              <Card item={card} />
+                <InfoPill className="bg-[#FFA1A1]">
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      Delete
+                    </span>
+                    <MdOutlineDeleteForever
+                      size={25}
+                      className="ml-auto text-black"
+                    />
+                  </div>
+                </InfoPill>
+
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => navigate(`/${card.space}?id=${card.id}`)}
+                    className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
+                  >
+                    EDIT
+                  </button>
+                </div>
+              </div>
+
+              {/* RIGHT CARD */}
+              <div className="md:w-2/3 flex justify-center">
+                <Card item={card} />
+              </div>
             </div>
           </div>
         ))}
