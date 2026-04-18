@@ -19,7 +19,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-sm md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -61,7 +61,7 @@ function InputField({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="ml-6">{label}</Label>
+      <Label>{label}</Label>
       <InfoPill
         className={clsx(
           "bg-white border",
@@ -70,15 +70,13 @@ function InputField({
           status === "idle" && "border-black",
         )}
       >
-        <div className="inline-flex items-center justify-between w-full">
-          <input
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
-          />
-        </div>
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+        />
       </InfoPill>
     </div>
   );
@@ -93,7 +91,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">{caption}</p>
       <div
         className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
@@ -106,6 +104,18 @@ function SectionHeader({
     </div>
   );
 }
+
+const sendToWhatsApp = (senderNumber: string) => {
+  const message = encodeURIComponent(
+    `Sender: ${senderNumber}\n\nHola, I’d like to get a Passkey to Verify my number`,
+  );
+
+  const whatsappNumber = "2349028311876"; // remove + sign
+  const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+
+  // ✅ Redirect (best for external links)
+  window.location.href = whatsappURL;
+};
 
 export default function ResetPassword() {
   const [otp, setOtp] = useState("");
@@ -298,13 +308,13 @@ export default function ResetPassword() {
           backgroundPosition: "center",
         }}
       >
-        <div className="grid grid-cols-1 items-center w-full md:w-2/5 px-2 md:px-0">
+        <div className="grid grid-cols-1 items-center w-full md:w-2/5 px-2 mt-10 md:px-0">
           {!card2 ? (
             <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10 relative">
               {/* Back button */}
 
               <div
-                className="absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+                className="absolute border-2 border-white -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
                 onClick={() => navigate("/login")}
               >
                 <IoChevronBack className="text-white text-2xl" />
@@ -315,9 +325,9 @@ export default function ResetPassword() {
                 caption="Chill, Let’s setup a new one ASAP"
               />
 
-              <div className="md:px-5 pb-4 pt-3 space-y-6">
-                <Label className="ml-8">ENTER OTP / PASSKEY</Label>
-                <InfoPill className="bg-white flex items-center px-3 mb-1 border-2 border-black">
+              <div className="md:px-5 pb-4 pt-3 mt-5">
+                <Label>ENTER OTP / PASSKEY</Label>
+                <InfoPill className="bg-white flex items-center mt-1">
                   <BsClipboard2Minus
                     className="text-black text-lg md:text-3xl shrink-0 cursor-pointer"
                     onClick={handlePaste}
@@ -328,52 +338,60 @@ export default function ResetPassword() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     maxLength={6}
-                    className="flex-1 text-center text-sm md:text-xl tracking-[1em] bg-transparent outline-none"
+                    className="flex-1 text-center text-sm md:text-xl tracking-[1em] py-1 bg-transparent outline-none"
                   />
                 </InfoPill>
 
-                <div className="w-full flex pr-5 justify-end">
+                <div className="w-full flex pr-5 justify-end mt-1">
                   <span className="text-xs rounded bg-white p-1">
                     {type === "email" ? email : callNo}
                   </span>
                 </div>
 
                 {!codeSent ? (
-                  <InfoPill className="bg-black text-white">
+                  <InfoPill className="bg-black text-white mt-6">
                     <button
                       onClick={handleSendCode}
                       disabled={sending}
                       className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                     >
-                      {sending ? "Sending..." : "Send Code"}
+                      <span className="text-xl">
+                        {sending ? "Sending..." : "Send Code"}
+                      </span>
                     </button>
                   </InfoPill>
                 ) : (
-                  <InfoPill className="bg-white text-black">
+                  <InfoPill className="bg-white text-black mt-6">
                     <button
                       disabled={sending || countdown > 0}
                       onClick={handleSendCode}
                       className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                     >
-                      {sending
-                        ? "Sending..."
-                        : countdown > 0
-                          ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                              countdown % 60,
-                            ).padStart(2, "0")}`
-                          : "Re-Send Code"}
+                      <span className="text-xl">
+                        {" "}
+                        {sending
+                          ? "Sending..."
+                          : countdown > 0
+                            ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                                countdown % 60,
+                              ).padStart(2, "0")}`
+                            : "Re-Send Code"}
+                      </span>
                     </button>
                   </InfoPill>
                 )}
 
                 {codeSent && otp.length === 6 && (
-                  <InfoPill className="bg-black text-white">
+                  <InfoPill className="bg-black text-white mt-6">
                     <button
                       onClick={handleVerify}
                       disabled={loading}
                       className="inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
                     >
-                      {loading ? "Verifying..." : "Verify"}
+                      <span className="text-xl">
+                        {" "}
+                        {loading ? "Verifying..." : "Verify"}
+                      </span>
                     </button>
                   </InfoPill>
                 )}
@@ -385,7 +403,7 @@ export default function ResetPassword() {
                 )}
                 {/* Divider */}
                 <div
-                  className="md:mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  className="my-6 md:w-95 border-t-4 mx-auto text-[#0000004D]"
                   style={{
                     borderStyle: "dashed",
                     borderImage:
@@ -414,7 +432,7 @@ export default function ResetPassword() {
                 caption="Chill, Let’s setup a new one ASAP"
               />
 
-              <div className="md:px-5 pb-4 pt-3 space-y-4">
+              <div className="md:px-5 my-5 pb-4 pt-3 space-y-4">
                 <InputField
                   label="PASSWORD"
                   placeholder="Enter your password"
@@ -433,7 +451,7 @@ export default function ResetPassword() {
                 />
 
                 {/* Continue Button */}
-                <InfoPill className="mt-5 md:mt-10 bg-black text-white">
+                <InfoPill className="mt-8 md:mt-10 bg-black text-white">
                   <button
                     className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50"
                     onClick={handlechange}
@@ -451,16 +469,16 @@ export default function ResetPassword() {
 
       {/* Modal Box remains as in your raw code */}
       {open && (
-        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 px-2  items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
               <FaTimes className="text-white text-2xl" />
             </div>
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
-              New Passkey
+              Get Passkey
             </h2>
             <p className="text-sm text-black text-center mt-5">
               Chill, Let’s setup a new one ASAP
@@ -476,18 +494,21 @@ export default function ResetPassword() {
             />
 
             <div className="space-y-6">
-              <div>
-                <div
-                  onClick={() => navigate("/entirespace?uploader=agent")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#BCDFFE]"
-                >
-                  <FaTelegram className="text-black text-4xl ml-5" />
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Get PassKey on Telegram
-                  </span>
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-2xl" />
-                  </div>
+              <div
+                onClick={() =>
+                  window.open(
+                    "https://t.me/CribbAfrica_bot?start=password_reset",
+                    "_blank",
+                  )
+                }
+                className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#BCDFFE]"
+              >
+                <FaTelegram className="text-black text-4xl ml-5" />
+                <span className="flex-1 text-black text-lg text-center font-medium">
+                  Get PassKey on Telegram
+                </span>
+                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                  <FiArrowRight className="text-white text-2xl" />
                 </div>
               </div>
 
@@ -495,15 +516,16 @@ export default function ResetPassword() {
                 --------OR --------
               </div>
 
-              <div>
-                <div className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#D6FFC3]">
-                  <RiWhatsappFill className="text-black text-3xl ml-5" />
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Get PassKey on Whatsapp
-                  </span>
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
-                    <FiArrowRight className="text-white text-2xl" />
-                  </div>
+              <div
+                onClick={() => sendToWhatsApp(signupData.callNo)}
+                className="relative flex border-1 py-2 border-[black] items-center pl-3 pr-2 rounded-full bg-[#D6FFC3]"
+              >
+                <RiWhatsappFill className="text-black text-3xl ml-5" />
+                <span className="flex-1 text-black text-lg text-center font-medium">
+                  Get PassKey on Whatsapp
+                </span>
+                <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center border-white border-1">
+                  <FiArrowRight className="text-white text-2xl" />
                 </div>
               </div>
             </div>

@@ -666,10 +666,10 @@ export default function Loginpage() {
 
       {/* ==== FORGOT PROMPT MODAL ==== */}
       {showForgotPrompt && (
-        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
+        <div className="fixed inset-0 bg-black/90 z-50 py-10 p-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
             <div
-              className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full border border-white bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setShowForgotPrompt(false)}
             >
               <FaTimes className="text-white" />
@@ -685,7 +685,7 @@ export default function Loginpage() {
 
             <div className="flex justify-center">
               <button
-                className="px-4 py-2 bg-black text-white rounded-lg"
+                className="px-4 py-2 bg-black text-white rounded-lg cursor-pointer"
                 onClick={() => setShowForgotPrompt(false)}
               >
                 OK

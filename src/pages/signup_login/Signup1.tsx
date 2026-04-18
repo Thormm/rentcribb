@@ -274,7 +274,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
               caption="Let’s get you Set-Up, it’s super easy!"
             />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-4">
+            <div className="md:px-5 pb-4 pt-6  space-y-4">
               <InputField
                 label="EMAIL"
                 placeholder="Enter your email"
