@@ -9,6 +9,7 @@ import { RiListView } from "react-icons/ri";
 import termsText from "../../documents/terms.txt?raw";
 import privacyText from "../../documents/privacy.txt?raw";
 import { FaTimes } from "react-icons/fa";
+import { FiChevronDown } from "react-icons/fi";
 
 function Maincard({
   className,
@@ -58,7 +59,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-8",
+        "text-sm md:text-sm md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -220,16 +221,16 @@ export default function Signup4({ mode }: Signup4Props) {
             caption="Review, Acknowledge and Agree to Proceed"
           />
 
-          <div className="space-y-5 md:space-y-6 pt-5 md:pt-5">
+          <div className="space-y-5 md:space-y-6 pt-8 md:pt-5">
             <div className="space-y-1">
               <Label>
                 {mode === "student"
                   ? "INSTITUTION"
                   : "PRINCIPAL PLACE OF BUSINESS"}
               </Label>
-              <InfoPill>
+              <InfoPill className={`relative flex items-center`}>
                 <select
-                  className="w-full focus:outline-none  bg-transparent text-xs md:text-sm"
+                  className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                 >
@@ -250,6 +251,7 @@ export default function Signup4({ mode }: Signup4Props) {
                         </option>
                       ))}
                 </select>
+                <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
               </InfoPill>
               <div className="w-full flex justify-center md:justify-end">
                 <span className="text-xs rounded-lg bg-white p-2 md:mr-6 text-[#5B5B5B]">
@@ -267,11 +269,11 @@ export default function Signup4({ mode }: Signup4Props) {
                 className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3 cursor-pointer"
                 onClick={openTerms}
               >
-                <RiListView className="text-lg md:text-4xl -ml-2" />
-                <span className="flex-1 text-center text-md md:text-xl">
+                <RiListView className="text-2xl md:text-4xl -ml-2" />
+                <span className="flex-1 text-center text-xl">
                   Terms of Use
                 </span>
-                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
+                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-4 md:-mr-8" />
               </button>
             </InfoPill>
 
@@ -280,11 +282,11 @@ export default function Signup4({ mode }: Signup4Props) {
                 className="w-full flex items-center justify-between text-sm md:text-base h-6 md:h-8 md:px-3 cursor-pointer"
                 onClick={openPrivacy}
               >
-                <RiListView className="text-lg md:text-4xl -ml-2" />
-                <span className="flex-1 text-center text-md md:text-xl">
+                <RiListView className="text-2xl md:text-4xl -ml-2" />
+                <span className="flex-1 text-center text-xl">
                   Privacy Policy
                 </span>
-                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-6 md:-mr-8" />
+                <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-4 md:-mr-8" />
               </button>
             </InfoPill>
 
@@ -315,7 +317,7 @@ export default function Signup4({ mode }: Signup4Props) {
                 onClick={handleSubmit}
                 disabled={!agreed || !institution}
               >
-                <span className="text-md md:text-xl">Proceed</span>
+                <span className="text-xl">Proceed</span>
                 <MdDoubleArrow className="ml-2 text-2xl md:text-4xl" />
               </button>
             </InfoPill>
@@ -326,10 +328,10 @@ export default function Signup4({ mode }: Signup4Props) {
       {terms_privacy && (
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           {/* Modal Box */}
-          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+          <div className="relative mx-5 md:mx-auto my-10 md:w-2/5 bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             {/* Close */}
             <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute -top-3 border-2 border-white -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setTerms_privacy(false)}
             >
               <FaTimes className="text-white text-2xl" />
@@ -341,7 +343,7 @@ export default function Signup4({ mode }: Signup4Props) {
             </h2>
 
             <div
-              className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",
                 borderImage:

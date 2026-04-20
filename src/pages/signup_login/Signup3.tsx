@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
@@ -19,6 +19,14 @@ function Maincard({
       {children}
     </div>
   );
+}
+
+function debounce(fn: (...args: any[]) => void, delay = 2000) {
+  let timer: ReturnType<typeof setTimeout>; // ✅ works in browser & Node
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
 }
 
 function SectionHeader({
@@ -117,6 +125,9 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [referral, setReferral] = useState("");
+  const [referralStatus, setReferralStatus] = useState<
+    "idle" | "valid" | "invalid"
+  >("idle");
 
   // password match logic
   const confirmStatus =
@@ -124,7 +135,12 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
 
   // check if all fields except referral are filled
   const canContinue =
-    firstName && lastName && password && confirm && password === confirm;
+    firstName &&
+    lastName &&
+    password &&
+    confirm &&
+    password === confirm &&
+    (referral === "" || referralStatus === "valid");
 
   const handleSubmit = async () => {
     if (!canContinue) return;
@@ -155,6 +171,44 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
       alert(data.message || "Something went wrong");
     }
   };
+
+  const validateReferral = async (val: string) => {
+    try {
+      const res = await fetch("https://www.cribb.africa/apiverifysign.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          referral: val,
+          check: "referral", // 👈 important
+          mode: mode,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        return { status: "valid", error: "" };
+      } else {
+        return { status: "invalid", error: data.message };
+      }
+    } catch {
+      return { status: "invalid", error: "Server error" };
+    }
+  };
+
+  const debouncedValidateReferral = debounce(async (val: string) => {
+    if (!val) {
+      setReferralStatus("idle"); // ✅ reset properly
+      return;
+    }
+
+    const res = await validateReferral(val);
+    setReferralStatus(res.status as any);
+  }, 400);
+
+  useEffect(() => {
+    if (referral) debouncedValidateReferral(referral);
+  }, [referral]);
 
   return (
     <>
@@ -224,7 +278,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
                 placeholder="Enter Referral ID (optional)"
                 value={referral}
                 onChange={setReferral}
-                status="idle"
+                status={referralStatus}
               />
 
               {/* Continue Button */}

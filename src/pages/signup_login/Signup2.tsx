@@ -4,6 +4,8 @@ import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { IoChevronBack } from "react-icons/io5";
+import { MdOutlineAttachEmail } from "react-icons/md";
+import { FaSms } from "react-icons/fa";
 
 function Maincard({
   className,
@@ -51,7 +53,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -203,13 +205,13 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 px-3 md:px-0 items-center w-full md:w-2/5">
+      <div className="grid grid-cols-1 px-3 md:px-0 items-center w-full mt-10 md:w-2/5">
         {/* ---------- Call No. Verification ---------- */}
         {!showEmail && (
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10 relative">
             <button
               onClick={onBack}
-              className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute border-2 border-white -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
             >
               <IoChevronBack className="text-base text-white" />
             </button>
@@ -219,9 +221,9 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
               caption="Click on ‘Send Code’ and Paste the code sent here"
             />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-6">
-              <Label className="ml-8 my-1">Enter OTP</Label>
-              <InfoPill className="bg-white flex items-center px-3 mb-1 border-2 border-black">
+            <div className="md:px-5 pb-4 pt-3 mt-5">
+              <Label>ENTER OTP </Label>
+              <InfoPill className="bg-white flex items-center mt-1">
                 <BsClipboard2Minus
                   className="text-black text-lg md:text-3xl shrink-0 cursor-pointer"
                   onClick={handlePaste}
@@ -232,50 +234,58 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   maxLength={6}
-                  className="flex-1 text-center text-sm md:text-xl tracking-[1em] bg-transparent outline-none"
+                  className="flex-1 text-center text-sm md:text-xl tracking-[1em] py-1 bg-transparent outline-none"
                 />
               </InfoPill>
 
-              <div className="w-full flex pr-5 justify-end">
+              <div className="w-full flex pr-5 justify-end mt-1">
                 <span className="text-xs rounded bg-white p-1">{callNo}</span>
               </div>
 
               {!codeSent ? (
-                <InfoPill className="bg-black text-white">
+                <InfoPill className="bg-black text-white mt-6">
                   <button
                     onClick={handleSendSMS}
                     disabled={sending}
                     className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
-                    {sending ? "Sending..." : "Send Code"}
+                    <span className="text-xl">
+                      {sending ? "Sending..." : "Send Code"}
+                    </span>
                   </button>
                 </InfoPill>
               ) : (
-                <InfoPill className="bg-white text-black">
+                <InfoPill className="bg-white text-black mt-6">
                   <button
                     disabled={sending || countdown > 0}
                     onClick={handleSendSMS}
                     className="text-xl inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
-                    {sending
-                      ? "Sending..."
-                      : countdown > 0
-                        ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                            countdown % 60,
-                          ).padStart(2, "0")}`
-                        : "Re-Send Code"}
+                    <span className="text-xl">
+                      {" "}
+                      {sending
+                        ? "Sending..."
+                        : countdown > 0
+                          ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                              countdown % 60,
+                            ).padStart(2, "0")}`
+                          : "Re-Send Code"}{" "}
+                    </span>
                   </button>
                 </InfoPill>
               )}
 
               {codeSent && otp.length === 6 && (
-                <InfoPill className="bg-black text-white">
+                <InfoPill className="bg-black text-white mt-6">
                   <button
                     onClick={handleVerify}
                     disabled={loading}
                     className="text-xl inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
                   >
-                    {loading ? "Verifying..." : "Verify"}
+                    <span className="text-xl">
+                      {" "}
+                      {loading ? "Verifying..." : "Verify"}{" "}
+                    </span>
                   </button>
                 </InfoPill>
               )}
@@ -287,7 +297,7 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
               )}
 
               <div
-                className="md:mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                className="my-6 md:w-95 border-t-4 mx-auto text-[#0000004D]"
                 style={{
                   borderStyle: "dashed",
                   borderImage:
@@ -295,17 +305,19 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                 }}
               />
 
-              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
-                <span>
-                  Can’t get OTP?{" "}
-                  <span
-                    className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md  bg-white py-1 px-2"
-                    onClick={() => setShowEmail(true)}
-                  >
-                    Verify by Email
-                  </span>
+              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center items-center gap-2">
+                <span className="">Cant get OTP?</span>
+
+                <span
+                  className="flex items-center gap-1  cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
+                  onClick={() => setShowEmail(true)}
+                >
+                  <span className="text-[#0556F8]">Verify by</span>
+
+                  <MdOutlineAttachEmail className="text-lg" />
                 </span>
               </div>
+
             </div>
           </Maincard>
         )}
@@ -401,15 +413,16 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                     "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                 }}
               />
-              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
-                <span>
-                  Can’t get Email?{" "}
-                  <span
-                    className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md  bg-white py-1 px-2"
-                    onClick={() => setShowEmail(false)}
-                  >
-                    Verify by SMS
-                  </span>
+               <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center items-center gap-2">
+                <span className="">Cant get OTP?</span>
+
+                <span
+                  className="flex items-center gap-1  cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
+                  onClick={() => setShowEmail(false)}
+                >
+                  <span className="text-[#0556F8]">Verify by</span>
+
+                  <FaSms className="text-lg" />
                 </span>
               </div>
             </div>

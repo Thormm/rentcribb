@@ -77,6 +77,7 @@ function InputField({
   placeholder,
   type = "text",
   value,
+  minLength,
   onChange,
   status,
   error,
@@ -85,6 +86,7 @@ function InputField({
   placeholder: string;
   type?: string;
   value: string;
+  minLength: number;
   onChange: (val: string) => void;
   status: "idle" | "valid" | "invalid";
   error: string;
@@ -105,6 +107,7 @@ function InputField({
             type={type}
             placeholder={placeholder}
             value={value}
+            minLength={minLength}
             onChange={(e) => onChange(e.target.value)}
             className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
@@ -281,6 +284,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                 type="email"
                 value={email}
                 onChange={setEmail}
+                minLength={5}
                 status={emailStatus}
                 error={emailError}
               />
@@ -290,6 +294,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                 type="tel"
                 value={callNo}
                 onChange={setCallNo}
+                minLength={8}
                 status={callStatus}
                 error={callError}
               />
@@ -299,6 +304,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                 type="tel"
                 value={whats}
                 onChange={setWhats}
+                minLength={8}
                 status={whatsStatus}
                 error={whatsError}
               />
@@ -325,7 +331,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                 }}
               />
 
-              {/* Footer link */}
+              {/* Footer  */}
               <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                 <span>
                   Have a Cribb.Africa account?{" "}
