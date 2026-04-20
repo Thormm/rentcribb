@@ -317,17 +317,16 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   <MdOutlineAttachEmail className="text-lg" />
                 </span>
               </div>
-
             </div>
           </Maincard>
         )}
 
         {/* ---------- Email Verification ---------- */}
         {showEmail && (
-          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
+          <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10 relative">
             <button
               onClick={onBack}
-              className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute border-2 border-white -top-3 -left-3 w-10 h-10 rounded-full bg-black flex items-center justify-center cursor-pointer"
             >
               <IoChevronBack className="text-base text-white" />
             </button>
@@ -337,8 +336,10 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
               caption="Click on ‘Send Code’ and Paste the code sent here"
             />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-6">
-              <InfoPill className="bg-white flex items-center px-3 mb-1 border-2 border-black">
+            <div className="md:px-5 pb-4 pt-3 mt-5">
+              <Label>ENTER OTP </Label>
+
+              <InfoPill className="bg-white flex items-center mt-1">
                 <BsClipboard2Minus
                   className="text-black text-lg md:text-3xl shrink-0 cursor-pointer"
                   onClick={handlePaste}
@@ -349,79 +350,83 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   maxLength={6}
-                  className="flex-1 text-center text-sm md:text-xl tracking-[1em] bg-transparent outline-none"
+                  className="flex-1 text-center text-sm md:text-xl tracking-[1em] py-1 bg-transparent outline-none"
                 />
               </InfoPill>
 
-              <div className="w-full flex pr-5 justify-end">
+              <div className="w-full flex pr-5 justify-end mt-1">
                 <span className="text-xs rounded bg-white p-1">{email}</span>
               </div>
 
               {!codeSent ? (
-                <InfoPill className="bg-black text-white">
+                <InfoPill className="bg-black text-white mt-6">
                   <button
                     onClick={handleSendEmail}
                     disabled={sending}
-                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
+                    className="inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
-                    {sending ? "Sending..." : "Send Code"}
+                    <span className="text-xl">
+                      {sending ? "Sending..." : "Send Code"}
+                    </span>
                   </button>
                 </InfoPill>
               ) : (
-                <InfoPill className="bg-white text-black">
+                <InfoPill className="bg-white text-black mt-6">
                   <button
                     disabled={sending || countdown > 0}
                     onClick={handleSendEmail}
-                    className="text-xl inline-flex items-center cursor-pointer justify-center w-full disabled:opacity-50 gap-2"
+                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full disabled:opacity-50 gap-2"
                   >
-                    {sending
-                      ? "Sending..."
-                      : countdown > 0
-                        ? `Re-send in ${Math.floor(countdown / 60)}:${String(
-                            countdown % 60,
-                          ).padStart(2, "0")}`
-                        : "Re-Send Code"}
+                    <span className="text-xl">
+                      {sending
+                        ? "Sending..."
+                        : countdown > 0
+                          ? `Re-send in ${Math.floor(countdown / 60)}:${String(
+                              countdown % 60,
+                            ).padStart(2, "0")}`
+                          : "Re-Send Code"}
+                    </span>
                   </button>
                 </InfoPill>
               )}
 
               {codeSent && otp.length === 6 && (
-                <>
-                  <InfoPill className="bg-black text-white">
-                    <button
-                      onClick={handleVerify}
-                      disabled={loading}
-                      className="text-xl inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
-                    >
+                <InfoPill className="bg-black text-white mt-6">
+                  <button
+                    onClick={handleVerify}
+                    disabled={loading}
+                    className="text-xl inline-flex cursor-pointer items-center justify-center w-full gap-2 disabled:opacity-50"
+                  >
+                    <span className="text-xl">
                       {loading ? "Verifying..." : "Verify"}
-                    </button>
-                  </InfoPill>
+                    </span>
+                  </button>
+                </InfoPill>
+              )}
 
-                  {errorMessage && (
-                    <p className="text-red-600 text-center text-sm mt-2">
-                      {errorMessage}
-                    </p>
-                  )}
-                </>
+              {errorMessage && (
+                <p className="text-red-600 text-center text-sm mt-2">
+                  {errorMessage}
+                </p>
               )}
 
               <div
-                className="md:mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                className="my-6 md:w-95 border-t-4 mx-auto text-[#0000004D]"
                 style={{
                   borderStyle: "dashed",
                   borderImage:
                     "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
                 }}
               />
-               <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center items-center gap-2">
-                <span className="">Cant get OTP?</span>
+
+              <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center items-center gap-2">
+                <span>Cant get OTP?</span>
 
                 <span
-                  className="flex items-center gap-1  cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
+                  className="flex items-center gap-1 cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
                   onClick={() => setShowEmail(false)}
                 >
                   <span className="text-[#0556F8]">Verify by</span>
-
                   <FaSms className="text-lg" />
                 </span>
               </div>
