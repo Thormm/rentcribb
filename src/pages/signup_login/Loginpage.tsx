@@ -5,7 +5,7 @@ import signbg from "../../assets/signbg.png";
 import InfoPill from "../../components/Pill";
 import loginStudent from "../../assets/login1.png";
 import loginMerchant from "../../assets/login2.png"; // add a second image
-import { BiSolidBriefcase } from "react-icons/bi";
+import { BiCommentAdd, BiSolidBriefcase } from "react-icons/bi";
 import logo from "../../assets/logo.png";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
@@ -415,13 +415,13 @@ export default function Loginpage() {
         <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           {/* Modal Box */}
           <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
-            {/* Close */}
+            {/* Close 
             <div
               className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
               <FaTimes className="text-white text-2xl" />
-            </div>
+            </div>*/}
 
             {/* Header */}
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
@@ -450,8 +450,8 @@ export default function Loginpage() {
                   }}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
                 >
-                  <HiOutlineUsers className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                  <HiOutlineUsers className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
                     Find Rommate
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
@@ -459,7 +459,7 @@ export default function Loginpage() {
                   </div>
                 </div>
                 <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 mx-5 rounded-2xl text-black bg-white">
+                  <span className="inline-block text-xs md:text-sm p-2 mx-5 rounded-2xl text-black bg-white">
                     New student or Returning? Have a room or looking for one.
                     Find your perfect match faster, safer and softer on Cribb.
                   </span>
@@ -472,8 +472,8 @@ export default function Loginpage() {
                   onClick={() => navigate("/")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
-                  <PiHouse className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                  <PiHouse className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
                     Rent A Space
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
@@ -481,7 +481,7 @@ export default function Loginpage() {
                   </div>
                 </div>
                 <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
                     We are actively building Cribb/Rent to make your renting
                     experience as a Uni-student softer. Join waitlist to be
                     first to try
@@ -497,19 +497,19 @@ export default function Loginpage() {
                   }}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
                 >
-                  <CgSandClock className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    Joint Waitlist
+                  <CgSandClock className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
+                    Join Waitlist
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
                   </div>
                 </div>
                 <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
                     Join the wait list to be among the first to experience
                     Cribb/Rent <br />
-                    Share your pain points to help us build a softer life for
+                    Share your to help us build a softer life for
                     Uni-student{" "}
                   </span>
                 </div>
@@ -526,8 +526,8 @@ export default function Loginpage() {
                   onClick={() => navigate("/studentdash")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
-                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-white text-md md:text-lg text-center font-medium">
+                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-white text-xl text-center font-medium">
                     Go to Dashboard
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
@@ -554,13 +554,13 @@ export default function Loginpage() {
         <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
           {/* Modal Box */}
           <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
-            {/* Close */}
+            {/* Close 
             <div
               className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
               <FaTimes className="text-white text-2xl" />
-            </div>
+            </div>*/}
 
             {/* Header */}
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
@@ -587,8 +587,8 @@ export default function Loginpage() {
                   onClick={() => navigate("/businessonboarding")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
-                  <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                  <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
                     List Your Space
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
@@ -596,10 +596,33 @@ export default function Loginpage() {
                   </div>
                 </div>
                 <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
                     List your entire or shared space and connect to students.
                     <br />
                     Explore rent requests and reply with your available spaces.
+                  </span>
+                </div>
+              </div>
+
+              {/* Reply */}
+              <div>
+                <div
+                  onClick={() => navigate("/businessrequests")}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
+                >
+                  <BiCommentAdd className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
+                    Reply Rent Requests
+                  </span>
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                  </div>
+                </div>
+                <div className="flex justify-center mt-1">
+                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
+                    Review detailed requests from students across your state
+                    <br />
+                    and reply with your space to fill your vacancies.
                   </span>
                 </div>
               </div>
@@ -612,20 +635,19 @@ export default function Loginpage() {
                   }}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
                 >
-                  <CgSandClock className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                    Joint Waitlist
+                  <CgSandClock className="text-black text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
+                    Join Waitlist
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
                     <FiArrowRight className="text-white text-xl md:text-2xl" />
                   </div>
                 </div>
                 <div className="flex justify-center mt-1">
-                  <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
+                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
                     Join the wait list to be among the first to experience
                     Cribb/Rent <br />
-                    Share your pain points to help us build a softer life for
-                    Uni-student{" "}
+                    Share to help us build a softer life for Uni-student{" "}
                   </span>
                 </div>
               </div>
@@ -641,8 +663,8 @@ export default function Loginpage() {
                   onClick={() => navigate("/businessdash")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
-                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-white text-md md:text-lg text-center font-medium">
+                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-2" />
+                  <span className="flex-1 text-white text-xl text-center font-medium">
                     Go to Dashboard
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
