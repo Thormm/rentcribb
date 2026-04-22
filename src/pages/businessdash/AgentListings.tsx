@@ -14,12 +14,11 @@ import { TbCancel, TbHomeSpark } from "react-icons/tb";
 import {
   MdOutlinePending,
   MdOutlineBed,
-  MdCancel,
   MdOutlineDeleteForever,
   MdOutlineBookmarkAdded,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
-import { FaToggleOn, FaToggleOff, FaUserCheck, FaPlus } from "react-icons/fa";
+import { FaToggleOn, FaToggleOff, FaUserCheck, FaPlus, FaTimes } from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
@@ -769,10 +768,10 @@ const Agentlistings: React.FC = () => {
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
-              <MdCancel className="text-white text-2xl" />
+              <FaTimes className="text-white text-2xl" />
             </div>
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
               New Listing

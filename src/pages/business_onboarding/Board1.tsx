@@ -1,9 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
 import imgright from "../../assets/board1.png";
 import InfoPill from "../../components/Pill";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import { FaTimes } from "react-icons/fa";
+
+/* ---------- debounce ---------- */
+function debounce<T extends (...args: any[]) => void>(fn: T, delay = 400) {
+  let timer: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
 
 function Maincard({
   className = "",
@@ -48,7 +58,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -82,40 +92,107 @@ export default function Board1({
 }) {
   const navigate = useNavigate();
 
-  const canContinue = data.bemail && data.bNo && data.whatsapp && data.category;
-
+  /* ---------- validation helpers ---------- */
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const isValidPhone = (phone: string) => /^\+?[0-9]{8,15}$/.test(phone);
 
+  /* ---------- states ---------- */
+  const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">("idle");
+  const [callStatus, setCallStatus] = useState<"idle" | "valid" | "invalid">("idle");
+  const [whatsStatus, setWhatsStatus] = useState<"idle" | "valid" | "invalid">("idle");
+
+  const [emailError, setEmailError] = useState("");
+  const [callError, setCallError] = useState("");
+  const [whatsError, setWhatsError] = useState("");
+
+  /* ---------- debounced validators ---------- */
+  const debouncedValidateEmail = useMemo(
+    () =>
+      debounce((val: string) => {
+        if (!val) {
+          setEmailStatus("idle");
+          setEmailError("");
+          return;
+        }
+
+        if (isValidEmail(val)) {
+          setEmailStatus("valid");
+          setEmailError("");
+        } else {
+          setEmailStatus("invalid");
+          setEmailError("Enter a valid email");
+        }
+      }),
+    []
+  );
+
+  const debouncedValidateCall = useMemo(
+    () =>
+      debounce((val: string) => {
+        if (!val) {
+          setCallStatus("idle");
+          setCallError("");
+          return;
+        }
+
+        if (isValidPhone(val)) {
+          setCallStatus("valid");
+          setCallError("");
+        } else {
+          setCallStatus("invalid");
+          setCallError("Enter a valid number");
+        }
+      }),
+    []
+  );
+
+  const debouncedValidateWhats = useMemo(
+    () =>
+      debounce((val: string) => {
+        if (!val) {
+          setWhatsStatus("idle");
+          setWhatsError("");
+          return;
+        }
+
+        if (isValidPhone(val)) {
+          setWhatsStatus("valid");
+          setWhatsError("");
+        } else {
+          setWhatsStatus("invalid");
+          setWhatsError("Enter a valid number");
+        }
+      }),
+    []
+  );
+
+  /* ---------- effects ---------- */
+  useEffect(() => {
+    debouncedValidateEmail(data.bemail);
+  }, [data.bemail]);
+
+  useEffect(() => {
+    debouncedValidateCall(data.bNo);
+  }, [data.bNo]);
+
+  useEffect(() => {
+    debouncedValidateWhats(data.whatsapp);
+  }, [data.whatsapp]);
+
+  /* ---------- continue logic ---------- */
+  const canContinue =
+    emailStatus === "valid" &&
+    callStatus === "valid" &&
+    whatsStatus === "valid" &&
+    data.category;
+
   const handleSave = () => {
-    if (!canContinue) {
-      alert("All fields are required.");
-      return;
-    }
-
-    if (!isValidEmail(data.bemail)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
-    if (!isValidPhone(data.bNo)) {
-      alert(
-        "Please enter a valid business call number (only digits, optional +, 8–15 digits).",
-      );
-      return;
-    }
-
-    if (!isValidPhone(data.whatsapp)) {
-      alert(
-        "Please enter a valid WhatsApp number (only digits, optional +, 8–15 digits).",
-      );
-      return;
-    }
+    if (!canContinue) return;
 
     const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    login_data.category = data.category; // keep prefilled or selected category
+    login_data.category = data.category;
     login_data.email = data.bemail;
     sessionStorage.setItem("login_data", JSON.stringify(login_data));
 
@@ -126,7 +203,7 @@ export default function Board1({
     <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
-        <div className="min-w-0 flex items-center justify-center">
+        <div className="min-w-0 flex items-center justify-center mb-0 md:-mb-20">
           <div className="flex gap-2 flex-wrap justify-center max-w-full">
             <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
             <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
@@ -136,11 +213,7 @@ export default function Board1({
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
         <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
-          <img
-            src={imgright}
-            alt="Traveler with suitcase"
-            className="h-full w-full object-cover"
-          />
+          <img src={imgright} alt="" className="h-full w-full object-cover" />
           <button
             onClick={() => navigate("/businessdash")}
             className="cursor-pointer absolute top-5 left-5 md:right-15 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
@@ -156,15 +229,13 @@ export default function Board1({
               caption="Few Details to help us Tailor your Experience"
             />
 
-            <div className="md:px-5 pb-4 pt-3 space-y-4">
-              {/* ✅ Category: Read-only if prefilled, dropdown if empty */}
+            <div className="md:px-5 pb-4 pt-6 space-y-4">
+              {/* Category */}
               <div>
-                <Label className="ml-8">Business Category</Label>
-                <InfoPill className="bg-white">
+                <Label>Business Category</Label>
+                <InfoPill className="bg-white border border-black">
                   {lockedCategory ? (
-                    <span className="text-xs text-gray-600">
-                      {data.category}
-                    </span>
+                    <span className="text-xs text-gray-600">{data.category}</span>
                   ) : (
                     <select
                       value={data.category}
@@ -181,9 +252,17 @@ export default function Board1({
                 </InfoPill>
               </div>
 
+              {/* Email */}
               <div>
-                <Label className="ml-8">Business Email</Label>
-                <InfoPill className="bg-white">
+                <Label>Business Email</Label>
+                <InfoPill
+                  className={clsx(
+                    "bg-white",
+                    emailStatus === "valid" && "border border-green-600",
+                    emailStatus === "invalid" && "border border-red-600",
+                    emailStatus === "idle" && "border border-black"
+                  )}
+                >
                   <input
                     value={data.bemail}
                     onChange={(e) =>
@@ -192,14 +271,24 @@ export default function Board1({
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter your business email"
                     type="email"
-                    inputMode="email"
                   />
                 </InfoPill>
+                {emailError && (
+                  <p className="text-red-600 text-[11px] ml-6">{emailError}</p>
+                )}
               </div>
 
+              {/* Call */}
               <div>
-                <Label className="ml-8">Business Call No.</Label>
-                <InfoPill className="bg-white">
+                <Label>Business Call No.</Label>
+                <InfoPill
+                  className={clsx(
+                    "bg-white",
+                    callStatus === "valid" && "border border-green-600",
+                    callStatus === "invalid" && "border border-red-600",
+                    callStatus === "idle" && "border border-black"
+                  )}
+                >
                   <input
                     value={data.bNo}
                     onChange={(e) => {
@@ -209,14 +298,24 @@ export default function Board1({
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business call number"
                     type="tel"
-                    inputMode="tel"
                   />
                 </InfoPill>
+                {callError && (
+                  <p className="text-red-600 text-[11px] ml-6">{callError}</p>
+                )}
               </div>
 
+              {/* WhatsApp */}
               <div>
-                <Label className="ml-8">Whatsapp No.</Label>
-                <InfoPill className="bg-white">
+                <Label>Whatsapp No.</Label>
+                <InfoPill
+                  className={clsx(
+                    "bg-white",
+                    whatsStatus === "valid" && "border border-green-600",
+                    whatsStatus === "invalid" && "border border-red-600",
+                    whatsStatus === "idle" && "border border-black"
+                  )}
+                >
                   <input
                     value={data.whatsapp}
                     onChange={(e) => {
@@ -226,11 +325,16 @@ export default function Board1({
                     className="w-full appearance-none bg-transparent text-xs outline-none"
                     placeholder="Enter business whatsapp number"
                     type="tel"
-                    inputMode="tel"
                   />
                 </InfoPill>
+                {whatsError && (
+                  <p className="text-red-600 text-[11px] ml-6">
+                    {whatsError}
+                  </p>
+                )}
               </div>
 
+              {/* Button */}
               <div className="pt-2 w-full flex items-center justify-center">
                 <InfoPill className="mt-2 bg-black text-white">
                   <button

@@ -412,279 +412,271 @@ export default function Loginpage() {
 
       {/* Modal Box 1*/}
       {open && mode === "student" && (
-        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
-          {/* Modal Box */}
-          <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
-            {/* Close 
-            <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-              onClick={() => setOpen(false)}
-            >
-              <FaTimes className="text-white text-2xl" />
-            </div>*/}
+  <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+    <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
 
-            {/* Header */}
-            <h2 className="text-3xl mt-5 font-medium text-center text-black">
-              What Next
-            </h2>
-            <p className="text-xs md:text-sm text-black text-center mt-5">
-              Hola, What would you like to do on Cribb
-            </p>
+      <div
+        className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+        onClick={() => setOpen(false)}
+      >
+        <FaTimes className="text-white text-2xl" />
+      </div>
 
-            <div
-              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
+      <h2 className="text-3xl mt-5 font-medium text-center text-black">
+        What Next
+      </h2>
+      <p className="text-sm text-black text-center mt-5">
+        Hola, What would you like to do on Cribb
+      </p>
 
-            {/* Pills */}
-            <div className="space-y-6">
-              {/* Roommate */}
-              <div>
-                <div
-                  onClick={() => {
-                    window.location.href = "https://www.cribb.africa/homepage";
-                  }}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
-                >
-                  <HiOutlineUsers className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    Find Rommate
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 mx-5 rounded-2xl text-black bg-white">
-                    New student or Returning? Have a room or looking for one.
-                    Find your perfect match faster, safer and softer on Cribb.
-                  </span>
-                </div>
-              </div>
+      <div
+        className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
 
-              {/* Space */}
-              <div>
-                <div
-                  onClick={() => navigate("/")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
-                >
-                  <PiHouse className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    Rent A Space
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
-                    We are actively building Cribb/Rent to make your renting
-                    experience as a Uni-student softer. Join waitlist to be
-                    first to try
-                  </span>
-                </div>
-              </div>
-
-              {/* Waitlist Space */}
-              <div>
-                <div
-                  onClick={() => {
-                    window.location.href = "https://www.cribb.africa/waitlist";
-                  }}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
-                >
-                  <CgSandClock className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    Join Waitlist
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
-                    Join the wait list to be among the first to experience
-                    Cribb/Rent <br />
-                    Share your to help us build a softer life for
-                    Uni-student{" "}
-                  </span>
-                </div>
-              </div>
-
-              {/* Coming Soon */}
-              <div className="text-xs md:text-md font-semibold text-black text-center">
-                ----------------- OR -----------------
-              </div>
-
-              {/* Student Dash */}
-              <div>
-                <div
-                  onClick={() => navigate("/studentdash")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
-                >
-                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-white text-xl text-center font-medium">
-                    Go to Dashboard
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-              </div>
+      <div className="space-y-6">
+        {/* Roommate */}
+        <div>
+          <div
+            onClick={() => {
+              window.location.href = "https://www.cribb.africa/homepage";
+            }}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
+          >
+            <HiOutlineUsers className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              Find Rommate
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
             </div>
-
-            <div
-              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              New student or Returning? Have a room or looking for one.
+              Find your perfect match faster, safer and softer on Cribb.
+            </span>
           </div>
         </div>
-      )}
+
+        {/* Space */}
+        <div>
+          <div
+            onClick={() => navigate("/")}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
+          >
+            <PiHouse className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              Rent A Space
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              We are actively building Cribb/Rent to make your renting
+              experience as a Uni-student softer. Join waitlist to be
+              first to try
+            </span>
+          </div>
+        </div>
+
+        {/* Waitlist */}
+        <div>
+          <div
+            onClick={() => {
+              window.location.href = "https://www.cribb.africa/waitlist";
+            }}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
+          >
+            <CgSandClock className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              Join Waitlist
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              Join the wait list to be among the first to experience
+              Cribb/Rent <br />
+              Share your to help us build a softer life for
+              Uni-student{" "}
+            </span>
+          </div>
+        </div>
+
+        <div className="text-sm font-semibold text-black text-center">
+          ----------------- OR -----------------
+        </div>
+
+        {/* Dashboard */}
+        <div>
+          <div
+            onClick={() => navigate("/studentdash")}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
+          >
+            <MdOutlineDashboard className="text-white text-4xl ml-5" />
+            <span className="flex-1 text-white text-lg text-center font-medium">
+              Go to Dashboard
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
+    </div>
+  </div>
+)}
 
       {/* Modal Box 2*/}
       {open && mode === "merchant" && (
-        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
-          {/* Modal Box */}
-          <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
-            {/* Close 
-            <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-              onClick={() => setOpen(false)}
-            >
-              <FaTimes className="text-white text-2xl" />
-            </div>*/}
+  <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+    <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
 
-            {/* Header */}
-            <h2 className="text-3xl mt-5 font-medium text-center text-black">
-              What Next
-            </h2>
-            <p className="text-xs md:text-sm text-black text-center mt-5">
-              Hola, What would you like to do on Cribb
-            </p>
+      <div
+        className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+        onClick={() => setOpen(false)}
+      >
+        <FaTimes className="text-white text-2xl" />
+      </div>
 
-            <div
-              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
+      <h2 className="text-3xl mt-5 font-medium text-center text-black">
+        What Next
+      </h2>
+      <p className="text-sm text-black text-center mt-5">
+        Hola, What would you like to do on Cribb
+      </p>
 
-            {/* Pills */}
-            <div className="space-y-6">
-              {/* listing */}
-              <div>
-                <div
-                  onClick={() => navigate("/businessonboarding")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
-                >
-                  <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    List Your Space
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
-                    List your entire or shared space and connect to students.
-                    <br />
-                    Explore rent requests and reply with your available spaces.
-                  </span>
-                </div>
-              </div>
+      <div
+        className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
 
-              {/* Reply */}
-              <div>
-                <div
-                  onClick={() => navigate("/businessrequests")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
-                >
-                  <BiCommentAdd className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    Reply Rent Requests
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
-                    Review detailed requests from students across your state
-                    <br />
-                    and reply with your space to fill your vacancies.
-                  </span>
-                </div>
-              </div>
-
-              {/* Waitlist */}
-              <div>
-                <div
-                  onClick={() => {
-                    window.location.href = "https://www.cribb.africa/waitlist";
-                  }}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
-                >
-                  <CgSandClock className="text-black text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-black text-xl text-center font-medium">
-                    Join Waitlist
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs md:text-sm p-2 rounded-2xl mx-5 text-black bg-white">
-                    Join the wait list to be among the first to experience
-                    Cribb/Rent <br />
-                    Share to help us build a softer life for Uni-student{" "}
-                  </span>
-                </div>
-              </div>
-
-              {/* Coming Soon */}
-              <div className="text-xs md:text-md font-semibold text-black text-center">
-                ----------------- OR -----------------
-              </div>
-
-              {/* Business dash */}
-              <div>
-                <div
-                  onClick={() => navigate("/businessdash")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
-                >
-                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-2" />
-                  <span className="flex-1 text-white text-xl text-center font-medium">
-                    Go to Dashboard
-                  </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
-                  </div>
-                </div>
-              </div>
+      <div className="space-y-6">
+        {/* listing */}
+        <div>
+          <div
+            onClick={() => navigate("/businessonboarding")}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
+          >
+            <MdOutlinePostAdd className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              List Your Space
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
             </div>
-
-            <div
-              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              List your entire or shared space and connect to students.
+              <br />
+              Explore rent requests and reply with your available spaces.
+            </span>
           </div>
         </div>
-      )}
+
+        {/* Reply */}
+        <div>
+          <div
+            onClick={() => navigate("/businessrequests")}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
+          >
+            <BiCommentAdd className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              Reply Rent Requests
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              Review detailed requests from students across your state
+              <br />
+              and reply with your space to fill your vacancies.
+            </span>
+          </div>
+        </div>
+
+        {/* Waitlist */}
+        <div>
+          <div
+            onClick={() => {
+              window.location.href = "https://www.cribb.africa/waitlist";
+            }}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
+          >
+            <CgSandClock className="text-black text-4xl ml-5" />
+            <span className="flex-1 text-black text-lg text-center font-medium">
+              Join Waitlist
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+          <div className="flex justify-center mt-1">
+            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+              Join the wait list to be among the first to experience
+              Cribb/Rent <br />
+              Share to help us build a softer life for Uni-student{" "}
+            </span>
+          </div>
+        </div>
+
+        <div className="text-sm font-semibold text-black text-center">
+          ----------------- OR -----------------
+        </div>
+
+        {/* Dashboard */}
+        <div>
+          <div
+            onClick={() => navigate("/businessdash")}
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
+          >
+            <MdOutlineDashboard className="text-white text-4xl ml-5" />
+            <span className="flex-1 text-white text-lg text-center font-medium">
+              Go to Dashboard
+            </span>
+            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <FiArrowRight className="text-white text-2xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
+    </div>
+  </div>
+)}
 
       {/* ==== FORGOT PROMPT MODAL ==== */}
       {showForgotPrompt && (
