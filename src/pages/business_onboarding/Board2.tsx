@@ -58,8 +58,8 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -237,6 +237,12 @@ export default function Board2({
     }
   };
 
+  const getListingRoute = () => {
+    if (category === "Agent") return "agentlistings";
+    if (category === "Landlord") return "landlordlistings";
+    return "listings"; // fallback safety
+  };
+
   return (
     <>
       <section className="mx-1 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
@@ -304,7 +310,7 @@ export default function Board2({
                 )}
 
                 <div>
-                  <Label className="ml-8">Business Name</Label>
+                  <Label>Business Name</Label>
                   <InfoPill className="bg-white">
                     <input
                       value={data.bname}
@@ -319,7 +325,7 @@ export default function Board2({
                 </div>
 
                 <div>
-                  <Label className="ml-8">About</Label>
+                  <Label>About</Label>
                   <InfoPill className="bg-white">
                     <input
                       value={data.bAbout}
@@ -333,7 +339,7 @@ export default function Board2({
                 </div>
 
                 <div>
-                  <Label className="ml-8">Business Address</Label>
+                  <Label>Business Address</Label>
                   <InfoPill className="bg-white">
                     <input
                       value={data.bAddress}
@@ -351,12 +357,12 @@ export default function Board2({
                   disabled={!canContinue || loading}
                   className="w-full cursor-pointer mt-10 relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC] disabled:opacity-60"
                 >
-                  <MdOutlinePostAdd className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                  <MdOutlinePostAdd className="ml-2 text-3xl md:text-4xl" />
+                  <span className="flex-1 text-black text-xl text-center font-medium">
                     Start Listing
                   </span>
                   <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                    <FiArrowRight className="text-white text-2xl md:text-4xl" />
                   </div>
                 </button>
               </div>
@@ -366,11 +372,10 @@ export default function Board2({
       </section>
 
       {openmodal && (
-        <div className="fixed inset-0 bg-black/90 z-50 py-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
-          {/* Modal Box */}
-          <div className="relative mx-2 md:mx-auto my-auto md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
               <FaTimes className="text-white text-2xl" />
@@ -380,7 +385,7 @@ export default function Board2({
               Plan
             </h2>
 
-            <p className="text-xs md:text-sm text-black text-center mt-5">
+            <p className="text-sm text-black text-center mt-5">
               Simple, Transparent Plan based on your need
             </p>
 
@@ -394,60 +399,62 @@ export default function Board2({
             />
 
             <div className="space-y-6">
+              {/* Paid Plan */}
               <div>
                 <div
                   onClick={() => navigate("/businessplan")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-black items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
-                  <MdWallet className="text-black text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
+                  <MdWallet className="text-black text-4xl ml-5" />
+                  <span className="flex-1 text-black text-lg text-center font-medium">
                     Choose a Paid Plan
                   </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
                   </div>
                 </div>
               </div>
 
+              {/* Free Trial */}
               {!hasPlan && (
                 <div>
                   <div
                     onClick={freeplan}
-                    className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
+                    className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-black items-center pr-2 rounded-full bg-white"
                   >
-                    <MdOutlineCreditCardOff className="text-black text-2xl md:text-4xl ml-5" />
-                    <span className="flex-1 text-black text-md md:text-lg text-center font-medium">
-                      Start 14-days Free Trial
+                    <MdOutlineCreditCardOff className="text-black text-4xl ml-5" />
+                    <span className="flex-1 text-black text-lg text-center font-medium">
+                      14-days Free Trial
                     </span>
-                    <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                      <FiArrowRight className="text-white text-xl md:text-2xl" />
+                    <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                      <FiArrowRight className="text-white text-2xl" />
                     </div>
                   </div>
 
                   <div className="flex justify-center mt-1">
-                    <span className="inline-block text-[7px] md:text-xs p-2 rounded-2xl mx-5 text-black bg-white">
-                      Up to 1 listing : Unlimited bookings : Reply requests for
-                      free
+                    <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
+                      1 listing : Unlimited bookings : Reply requests for free
                     </span>
                   </div>
                 </div>
               )}
 
-              <div className="text-xs md:text-md font-semibold text-black text-center">
+              <div className="text-sm font-semibold text-black text-center">
                 ----------------- OR -----------------
               </div>
 
+              {/* Dashboard */}
               <div>
                 <div
                   onClick={() => navigate("/businessdash")}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-black items-center pr-2 rounded-full bg-black"
                 >
-                  <MdOutlineDashboard className="text-white text-2xl md:text-4xl ml-5" />
-                  <span className="flex-1 text-white text-md md:text-lg text-center font-medium">
+                  <MdOutlineDashboard className="text-white text-4xl ml-5" />
+                  <span className="flex-1 text-white text-lg text-center font-medium">
                     Go to Dashboard
                   </span>
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-xl md:text-2xl" />
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
                   </div>
                 </div>
               </div>
@@ -476,7 +483,9 @@ export default function Board2({
             <div className="flex justify-center">
               <button
                 className="px-4 py-2 bg-black text-white rounded-lg"
-                onClick={() => navigate("/businessdash?goto=listings")}
+                onClick={() =>
+                  navigate(`/businessdash?goto=${getListingRoute()}`)
+                }
               >
                 OK
               </button>

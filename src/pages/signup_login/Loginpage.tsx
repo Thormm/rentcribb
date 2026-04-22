@@ -12,7 +12,7 @@ import { HiOutlineUsers } from "react-icons/hi2";
 import { LuLogIn } from "react-icons/lu";
 import { PiHouse } from "react-icons/pi";
 import { FiArrowRight } from "react-icons/fi";
-import { MdOutlineDashboard, MdOutlinePostAdd } from "react-icons/md";
+import { MdOutlineDashboard } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
 import { CgSandClock } from "react-icons/cg";
 
@@ -574,34 +574,12 @@ export default function Loginpage() {
       />
 
       <div className="space-y-6">
-        {/* listing */}
-        <div>
-          <div
-            onClick={() => navigate("/businessonboarding")}
-            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
-          >
-            <MdOutlinePostAdd className="text-black text-4xl ml-5" />
-            <span className="flex-1 text-black text-lg text-center font-medium">
-              List Your Space
-            </span>
-            <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-              <FiArrowRight className="text-white text-2xl" />
-            </div>
-          </div>
-          <div className="flex justify-center mt-1">
-            <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-              List your entire or shared space and connect to students.
-              <br />
-              Explore rent requests and reply with your available spaces.
-            </span>
-          </div>
-        </div>
-
+       
         {/* Reply */}
         <div>
           <div
             onClick={() => navigate("/businessrequests")}
-            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#F3EDFE]"
+            className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
           >
             <BiCommentAdd className="text-black text-4xl ml-5" />
             <span className="flex-1 text-black text-lg text-center font-medium">
@@ -613,9 +591,7 @@ export default function Loginpage() {
           </div>
           <div className="flex justify-center mt-1">
             <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-              Review detailed requests from students across your state
-              <br />
-              and reply with your space to fill your vacancies.
+              Review detailed requests from students across your state and reply with your space to fill your vacancies.
             </span>
           </div>
         </div>
@@ -638,8 +614,6 @@ export default function Loginpage() {
           </div>
           <div className="flex justify-center mt-1">
             <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-              Join the wait list to be among the first to experience
-              Cribb/Rent <br />
               Share to help us build a softer life for Uni-student{" "}
             </span>
           </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Info } from "lucide-react";
+import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
 import { BiWorld } from "react-icons/bi";
 import { HiOutlineUserCircle } from "react-icons/hi";
@@ -19,9 +20,7 @@ function Maincard({
   children,
 }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div
-      className={["rounded-4xl md:px-5 border-4 shadow", className].join(" ")}
-    >
+    <div className={["rounded-4xl px-5 border-4 shadow", className].join(" ")}>
       {children}
     </div>
   );
@@ -35,8 +34,8 @@ function SectionHeader({
   caption?: string;
 }) {
   return (
-    <div className="px-5 pt-10 pb-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+    <div className="pt-8 md:px-5">
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
@@ -57,8 +56,8 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -218,9 +217,9 @@ const BusinessPlan = () => {
   };
 
   return (
-    <div className="bg-[#F3EDFE] pb-10 min-h-screen">
+    <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
       {/* Navbar */}
-      <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
             <img
@@ -252,7 +251,7 @@ const BusinessPlan = () => {
       </nav>
 
       {/* Header Section */}
-      <div className="w-full bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
+      <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
         <div className="mx-auto w-full max-w-6xl px-4">
           <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
             PRICING
@@ -281,53 +280,69 @@ const BusinessPlan = () => {
       </div>
 
       {/* Pricing Section */}
-      <section className="justify-center my-10 md:my-20 flex">
-        <div className="mx-2 md:mx-30 justify-center w-full md:w-1/2 grid grid-cols-1">
+      <section className=" justify-center w-full px-4 md:w-4/5 my-10 md:my-20 flex">
+        <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
+          <div
+            className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+            onClick={() => navigate("/businessdash?goto=subscriptions")}
+          >
+            <IoIosArrowBack className="text-white text-2xl" />
+          </div>
           <Maincard className="bg-[#F4F6F5] pb-5">
             <SectionHeader
               title="Plan"
               caption="Simple, Transparent Plans based on your need"
             />
 
-            <div>
-              <div className="grid m-2 md:m-0 grid-cols-3 gap-4 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
-                {Object.keys(currentPlans).map((plan) => (
+            <div
+              className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+              style={{
+                borderStyle: "dashed",
+                borderColor: "#0000004D",
+                borderWidth: "1px",
+              }}
+            >
+              {Object.keys(currentPlans).map((plan) => {
+                const isActive = activePlan === plan;
+
+                return (
                   <button
                     key={plan}
                     onClick={() =>
                       setActivePlan(plan as keyof typeof currentPlans)
                     }
                     className={clsx(
-                      "w-full flex items-center justify-center gap-1 md:gap-2 p-1 md:p-3 rounded-lg",
-                      activePlan === plan
-                        ? "bg-black text-white"
-                        : "bg-transparent text-black"
+                      "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
+                      isActive
+                        ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                        : "bg-white text-black border-gray-300 hover:bg-gray-100",
                     )}
                   >
+                    {/* ICONS */}
                     {plan === "INSTANT" && (
-                      <MdOutlineFlashOn className="text-md md:text-4xl" />
+                      <MdOutlineFlashOn className="text-md md:text-2xl" />
                     )}
                     {plan === "EXPLORE" && (
-                      <BiWorld className="text-md md:text-4xl" />
+                      <BiWorld className="text-md md:text-2xl" />
                     )}
                     {plan === "GO PRO" && (
-                      <MdDoubleArrow className="text-md md:text-4xl" />
+                      <MdDoubleArrow className="text-md md:text-2xl" />
                     )}
-                    <span className="text-xs md:text-2xl">{plan}</span>
+
+                    {/* TEXT */}
+                    <span className="text-xs md:text-lg">{plan}</span>
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
             {/* Plan Details */}
-            <div className="px-5 pt-5 pb-4 space-y-4">
+            <div className="pt-5 pb-4 space-y-4">
               <div className="space-y-1">
-                <Label className="ml-8">Service Amount</Label>
+                <Label>SERVICE AMOUNT</Label>
                 <InfoPill>
                   <div className="inline-flex items-center justify-between w-full">
-                    <span className="font-bold text-lg py-1">
-                      {current.price}
-                    </span>
+                    <span className="font-bold py-1">{current.price}</span>
                     {current.discount > 0 && (
                       <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
                         <AiOutlineTag className="text-lg md:text-2xl" />
@@ -347,12 +362,12 @@ const BusinessPlan = () => {
               </div>
 
               <div className="space-y-1">
-                <Label className="ml-8">Features</Label>
+                <Label>FEATURES</Label>
                 <div className="rounded-2xl bg-white mx-1 border-1 p-3">
                   {current.features.map(([label, value]) => (
                     <div
                       key={label}
-                      className="flex items-center text-xs justify-between py-2 px-4 md:text-base"
+                      className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
                     >
                       <span>{label}</span>
                       <span className="inline-flex text-xs md:text-base items-center gap-2">
@@ -373,7 +388,7 @@ const BusinessPlan = () => {
               />
 
               <div className="space-y-1">
-                <Label className="ml-8">Email</Label>
+                <Label>EMAIL</Label>
                 <InfoPill className="bg-white">
                   <input
                     type="email"
@@ -390,7 +405,7 @@ const BusinessPlan = () => {
               </div>
             </div>
 
-            <div
+           {/*  <div
               className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",
@@ -398,6 +413,7 @@ const BusinessPlan = () => {
                   "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
               }}
             />
+            
             <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
               <span
                 className="text-[#0556F8] cursor-pointer shadow rounded-md bg-white py-1 px-2"
@@ -405,7 +421,7 @@ const BusinessPlan = () => {
               >
                 Continue to Dashboard{" "}
               </span>
-            </div>
+            </div>*/}
           </Maincard>
         </div>
       </section>
