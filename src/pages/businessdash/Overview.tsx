@@ -40,7 +40,7 @@ function Label({ children, className }: LabelProps) {
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-6",
-        className
+        className,
       )}
     >
       {children}
@@ -575,28 +575,33 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>STATE</Label>
                     <InfoPill
-                      className={`relative flex items-center ${
-                        isProfileLocked ? "bg-transparent" : "bg-white"
-                      }`}
+                      className={`${isProfileLocked ? "bg-transparent" : "bg-white"}`}
                     >
-                      <select
-                        value={stateValue}
-                        onChange={(e) => setStateValue(e.target.value)}
-                        disabled={isProfileLocked}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
-                      >
-                        <option value="">Around where?</option>
-                        {statesAndLgas.map((s) => (
-                          <optgroup label={s.state} key={s.state}>
-                            {s.lgas.map((l) => (
-                              <option key={l} value={`${s.state} - ${l}`}>
-                                {l}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
-                      <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
+                      <div className="flex items-center justify-between w-full">
+                        <select
+                          value={stateValue}
+                          onChange={(e) => setStateValue(e.target.value)}
+                          disabled={isProfileLocked}
+                          className={`w-full appearance-none ${
+                            isProfileLocked ? "text-black" : "text-gray-500"
+                          } text-xs md:text-sm leading-4  outline-none cursor-pointer py-1`}
+                        >
+                          <option value="">Select State</option>
+                          {statesAndLgas.map((s) => (
+                            <optgroup label={s.state} key={s.state}>
+                              {s.lgas.map((l) => (
+                                <option key={l} value={`${s.state} - ${l}`}>
+                                  {l}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+
+                        {!isProfileLocked && (
+                          <FiChevronDown className="ml-2 text-gray-500" />
+                        )}
+                      </div>
                     </InfoPill>
                   </div>
 
