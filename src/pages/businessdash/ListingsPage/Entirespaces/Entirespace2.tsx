@@ -73,7 +73,7 @@ function StarRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-1 mt-1 mb:mt-0 text-yellow-500 cursor-pointer ${className}`}
+      className={`flex items-center gap-1 mt-1 mb:mt-0 ml-6 text-yellow-500 cursor-pointer ${className}`}
     >
       {Array.from({ length: 5 }).map((_, i) =>
         i < value ? (

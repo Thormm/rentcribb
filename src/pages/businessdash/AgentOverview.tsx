@@ -4,12 +4,10 @@ import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
 import {
-  MdOutlineBookmarkAdded,
   MdOutlinePending,
-  MdOutlineSupervisedUserCircle,
-  MdVerified,
+  MdVerified, 
 } from "react-icons/md";
-import { RiInformationLine, RiListView } from "react-icons/ri";
+import { RiInformationLine } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
@@ -431,9 +429,9 @@ const Agentoverview: React.FC = () => {
                 </div>
 
                 {/* Info grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6">
                   {/* Row - Business Name */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS NAME</Label>
                     <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
@@ -443,7 +441,7 @@ const Agentoverview: React.FC = () => {
                   </div>
 
                   {/* Row - About */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>ABOUT</Label>
                     <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
@@ -453,7 +451,7 @@ const Agentoverview: React.FC = () => {
                   </div>
 
                   {/* Row - Call Number */}
-                  <div>
+                  <div className="col-span-1">
                     <Label>CALL NUMBER</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
@@ -465,7 +463,7 @@ const Agentoverview: React.FC = () => {
                   </div>
 
                   {/* Row - WhatsApp Number */}
-                  <div>
+                  <div className="col-span-1">
                     <Label>WHATSAPP NO</Label>
                     <InfoPill>
                       <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
@@ -475,7 +473,7 @@ const Agentoverview: React.FC = () => {
                   </div>
 
                   {/* Row - Email */}
-                  <div className="md:col-span-2">
+                 <div className="col-span-2">
                     <Label>BUSINESS EMAIL</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
@@ -487,7 +485,7 @@ const Agentoverview: React.FC = () => {
                   </div>
 
                   {/* Row - Address */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS ADDRESS</Label>
                     <InfoPill>
                       <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
@@ -556,7 +554,7 @@ const Agentoverview: React.FC = () => {
                 {/* Features 1 */}
                 <div className="md:col-span-2 mt-6">
                   <div className="flex items-center gap-3 mt-10 mb-5">
-                    <Label>------- REQUIREMENTS --------</Label>
+                    <Label>--- REQUIREMENTS --------</Label>
                   </div>
 
                   {/* Features 2 (only for TIER1) */}
@@ -654,7 +652,7 @@ const Agentoverview: React.FC = () => {
                     <InfoPill className="bg-white">
                       {/* Display selected days*/}
                       <div
-                        className="flex justify-between w-full py-2 cursor-pointer"
+                        className="flex justify-between w-full py-1 cursor-pointer"
                         onClick={() => setOpen(!open)}
                       >
                         <span className="text-black text-xs md:text-sm">
@@ -714,8 +712,9 @@ const Agentoverview: React.FC = () => {
                     SAVE CHANGES
                   </button>
                 </div>
-                <div className="flex items-center gap-3 mt-10 mb-5">
-                  <Label>------- ANALYTICS --------</Label>
+
+                {/*   <div className="flex items-center gap-3 mt-10 mb-5">
+                  <Label>--- ANALYTICS --------</Label>
                 </div>
                 <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
                   <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
@@ -741,7 +740,7 @@ const Agentoverview: React.FC = () => {
                     </span>
                   </button>
                 </div>
-
+*/}
                 <div className="my-10">
                   <div className="flex flex-col p-5 gap-8 bg-transparent">
                     {/* Coming Soon */}
@@ -865,9 +864,7 @@ const Agentoverview: React.FC = () => {
 
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 my-8 md:w-2/3">
-                  <span className="text-xs md:text-md font-semibold text-black tracking-wide">
-                    --- REVIEWS --------------------------
-                  </span>
+                  <Label>--- REVIEWS ------------------</Label>
                 </div>
 
                 {/* --- REVIEWS LIST + PAGINATION --- */}

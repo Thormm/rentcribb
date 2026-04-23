@@ -600,7 +600,7 @@ function PaginatedCards() {
 
                 <div className="flex justify-center">
                   <button
-                    onClick={() => navigate(`/${card.space}?id=${card.id}`)}
+                    onClick={() => navigate(`/${card.space}?id=${card.id}&&uploader=agent`)}
                     className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
                   >
                     EDIT
@@ -670,7 +670,7 @@ const Agentlistings: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5 col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="mt-5 col-span-2 grid grid-cols-2 gap-4">
                     <div>
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
@@ -722,7 +722,7 @@ const Agentlistings: React.FC = () => {
                   </div> */}
                 </div>
                 <div className="flex items-center gap-3 mt-8">
-                  <Label> ------- YOUR LISTINGS -------</Label>
+                  <Label> --- YOUR LISTINGS -------</Label>
                 </div>
                 <PaginatedCards />
                 <button
@@ -768,10 +768,10 @@ const Agentlistings: React.FC = () => {
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full border border-white bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
-              <FaTimes className="text-white text-2xl" />
+              <FaTimes className="text-white" />
             </div>
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
               New Listing

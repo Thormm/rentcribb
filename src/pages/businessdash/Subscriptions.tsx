@@ -437,8 +437,8 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-semibold text-black tracking-wide">
-                    --- HISTORY ----------------
+                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList
