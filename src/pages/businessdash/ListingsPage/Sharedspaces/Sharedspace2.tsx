@@ -8,35 +8,34 @@ import { LuStar, LuStarOff } from "react-icons/lu";
 import React, { useState, useEffect } from "react";
 import { FaMale, FaFemale, FaMoon, FaCross, FaBan } from "react-icons/fa";
 
+const genderOptions: OptionItem[] = [
+  { id: "male", icon: <FaMale /> },
+  { id: "female", icon: <FaFemale /> },
+];
 
-  const genderOptions: OptionItem[] = [
-    { id: "male", icon: <FaMale /> },
-    { id: "female", icon: <FaFemale /> },
-  ];
+const religionOptions: OptionItem[] = [
+  { id: "christian", icon: <FaCross /> },
+  { id: "muslim", icon: <FaMoon /> },
+  { id: "none", icon: <FaBan /> },
+];
 
-  const religionOptions: OptionItem[] = [
-    { id: "christian", icon: <FaCross /> },
-    { id: "muslim", icon: <FaMoon /> },
-    { id: "none", icon: <FaBan /> },
-  ];
+const yearOptions = [
+  { value: "", label: "Choose preference" },
+  { value: "100 level", label: "100 Level" },
+  { value: "200 level", label: "200 Level" },
+  { value: "300 level", label: "300 Level" },
+  { value: "400 level", label: "400 Level" },
+  { value: "postgrad", label: "Postgraduate" },
+];
 
-  const yearOptions = [
-    { value: "", label: "Choose preference" },
-    { value: "100 level", label: "100 Level" },
-    { value: "200 level", label: "200 Level" },
-    { value: "300 level", label: "300 Level" },
-    { value: "400 level", label: "400 Level" },
-    { value: "postgrad", label: "Postgraduate" },
-  ];
-
-  const facultyOptions = [
-    { value: "", label: "Choose preference" },
-    { value: "engineering", label: "Engineering" },
-    { value: "sciences", label: "Sciences" },
-    { value: "arts", label: "Arts" },
-    { value: "management", label: "Management" },
-    { value: "law", label: "Law" },
-  ];
+const facultyOptions = [
+  { value: "", label: "Choose preference" },
+  { value: "engineering", label: "Engineering" },
+  { value: "sciences", label: "Sciences" },
+  { value: "arts", label: "Arts" },
+  { value: "management", label: "Management" },
+  { value: "law", label: "Law" },
+];
 
 type OptionItem = {
   id: string;
@@ -48,15 +47,13 @@ function IconOptionGroup({
   options,
   value,
   onChange,
-  columns = 2,
 }: {
   options: OptionItem[];
   value?: string | null;
   onChange: (id: string) => void;
-  columns?: number;
 }) {
   return (
-    <div className={`grid grid-cols-${columns} gap-3 items-center `}>
+    <div className={`flex items-center gap-3 ml-6`}>
       {options.map((opt) => {
         const selected = value === opt.id;
         return (
@@ -144,7 +141,7 @@ function StarRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-1 mt-1 mb:mt-0 text-yellow-500 cursor-pointer ${className}`}
+      className={`flex items-center gap-1 mt-1 mb:mt-0 ml-6 text-yellow-500 cursor-pointer ${className}`}
     >
       {Array.from({ length: 5 }).map((_, i) =>
         i < value ? (
@@ -258,8 +255,6 @@ export default function Sharedspace2({
 
     updateField(field, next);
   };
-
- 
 
   /* ---------------- SAVE ---------------- */
 
@@ -390,22 +385,20 @@ export default function Sharedspace2({
                 {/* ---- REPLACED ROWS: Four preference controls ---- */}
 
                 <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Pref. Gender</Label>
+                  <Label>Pref. Gender</Label>
                   <IconOptionGroup
                     options={genderOptions}
                     value={formData.pref_gender ?? ""}
                     onChange={(id) => updateField("pref_gender", id)}
-                    columns={2}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="ml-2 md:ml-8">Pref. Religion</Label>
+                  <Label> Pref. Religion</Label>
                   <IconOptionGroup
                     options={religionOptions}
                     value={formData.pref_religion ?? ""}
                     onChange={(id) => updateField("pref_religion", id)}
-                    columns={3}
                   />
                 </div>
 
@@ -507,7 +500,7 @@ export default function Sharedspace2({
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label >Power Supply</Label>
+                  <Label>Power Supply</Label>
                   <StarRow
                     value={formData.power_supply ?? 0}
                     onChange={(v) => updateField("power_supply", v)}
@@ -515,7 +508,7 @@ export default function Sharedspace2({
                 </div>
 
                 <div>
-                  <Label >Network </Label>
+                  <Label>Network </Label>
                   <StarRow
                     value={formData.network_strength ?? 0}
                     onChange={(v) => updateField("network_strength", v)}
@@ -523,7 +516,7 @@ export default function Sharedspace2({
                 </div>
 
                 <div>
-                  <Label >Compound</Label>
+                  <Label>Compound</Label>
                   <StarRow
                     value={formData.compound ?? 0}
                     onChange={(v) => updateField("compound", v)}
@@ -531,7 +524,7 @@ export default function Sharedspace2({
                 </div>
 
                 <div>
-                  <Label >Access Road</Label>
+                  <Label>Access Road</Label>
                   <StarRow
                     value={formData.access_road ?? 0}
                     onChange={(v) => updateField("access_road", v)}

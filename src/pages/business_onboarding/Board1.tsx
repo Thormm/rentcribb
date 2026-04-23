@@ -5,6 +5,7 @@ import InfoPill from "../../components/Pill";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import { FaTimes } from "react-icons/fa";
+import { FiChevronDown } from "react-icons/fi";
 
 /* ---------- debounce ---------- */
 function debounce<T extends (...args: any[]) => void>(fn: T, delay = 400) {
@@ -206,14 +207,11 @@ export default function Board1({
   };
 
   return (
-    <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
-      <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
-        <div></div>
-        <div className="min-w-0 flex items-center justify-center mb-0 md:-mb-20">
-          <div className="flex gap-2 flex-wrap justify-center max-w-full">
-            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
-            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
-          </div>
+    <section className="px-1 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+      <div className="min-w-0 flex md:hidden items-center justify-center">
+        <div className="flex gap-2 flex-wrap justify-center max-w-full">
+          <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
+          <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
         </div>
       </div>
 
@@ -229,6 +227,11 @@ export default function Board1({
         </div>
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
+          <div className="hidden md:flex gap-2 flex-wrap -mt-5 mb-5 justify-center max-w-full">
+            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
+            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
+          </div>
+
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
               title="Know Your Business"
@@ -239,23 +242,27 @@ export default function Board1({
               {/* Category */}
               <div>
                 <Label>Business Category</Label>
-                <InfoPill className="bg-white">
+                <InfoPill className="relative flex items-center bg-white">
                   {lockedCategory ? (
-                    <span className="text-xs text-gray-600">
+                    <span className="py-1 text-xs text-gray-600">
                       {data.category}
                     </span>
                   ) : (
-                    <select
-                      value={data.category}
-                      onChange={(e) =>
-                        setData((p) => ({ ...p, category: e.target.value }))
-                      }
-                      className="w-full bg-transparent text-xs text-gray-500 outline-none"
-                    >
-                      <option value="">Select your Business Category</option>
-                      <option value="Agent">Agent</option>
-                      <option value="Landlord">Landlord</option>
-                    </select>
+                    <>
+                      {" "}
+                      <select
+                        value={data.category}
+                        onChange={(e) =>
+                          setData((p) => ({ ...p, category: e.target.value }))
+                        }
+                        className="appearance-none  cursor-pointer w-full bg-transparent py-1 text-xs text-gray-500 outline-none"
+                      >
+                        <option value="">Select your Business Category</option>
+                        <option value="Agent">Agent</option>
+                        <option value="Landlord">Landlord</option>
+                      </select>
+                      <FiChevronDown className="pointer-events-none absolute right-3 text-gray-500" />
+                    </>
                   )}
                 </InfoPill>
               </div>

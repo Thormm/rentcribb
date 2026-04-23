@@ -245,24 +245,17 @@ export default function Board2({
 
   return (
     <>
-      <section className="mx-1 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
-        <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
-          <div></div>
-          <div className="min-w-0 flex items-center justify-center">
-            <div className="flex gap-2 flex-wrap justify-center max-w-full">
-              <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
-              <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
-            </div>
+      <section className="px-1 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+        <div className="min-w-0 flex md:hidden items-center justify-center">
+          <div className="flex gap-2 flex-wrap justify-center max-w-full">
+            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
+            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
           <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
-            <img
-              src={imgright}
-              alt="Traveler with suitcase"
-              className="h-full w-full object-cover"
-            />
+            <img src={imgright} alt="" className="h-full w-full object-cover" />
             <button
               onClick={onBack}
               className="cursor-pointer absolute top-5 right-5 md:right-15 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
@@ -272,6 +265,10 @@ export default function Board2({
           </div>
 
           <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
+            <div className="hidden md:flex gap-2 flex-wrap -mt-5 mb-5 justify-center max-w-full">
+              <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
+              <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
+            </div>
             <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
               <SectionHeader
                 title="Know Your Business"
