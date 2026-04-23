@@ -53,7 +53,7 @@ function IconOptionGroup({
   onChange: (id: string) => void;
 }) {
   return (
-    <div className={`flex items-center gap-3 ml-6`}>
+    <div className={`flex items-center gap-1`}>
       {options.map((opt) => {
         const selected = value === opt.id;
         return (
