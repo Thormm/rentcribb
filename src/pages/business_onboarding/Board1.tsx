@@ -99,9 +99,15 @@ export default function Board1({
   const isValidPhone = (phone: string) => /^\+?[0-9]{8,15}$/.test(phone);
 
   /* ---------- states ---------- */
-  const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">("idle");
-  const [callStatus, setCallStatus] = useState<"idle" | "valid" | "invalid">("idle");
-  const [whatsStatus, setWhatsStatus] = useState<"idle" | "valid" | "invalid">("idle");
+  const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">(
+    "idle",
+  );
+  const [callStatus, setCallStatus] = useState<"idle" | "valid" | "invalid">(
+    "idle",
+  );
+  const [whatsStatus, setWhatsStatus] = useState<"idle" | "valid" | "invalid">(
+    "idle",
+  );
 
   const [emailError, setEmailError] = useState("");
   const [callError, setCallError] = useState("");
@@ -125,7 +131,7 @@ export default function Board1({
           setEmailError("Enter a valid email");
         }
       }),
-    []
+    [],
   );
 
   const debouncedValidateCall = useMemo(
@@ -145,7 +151,7 @@ export default function Board1({
           setCallError("Enter a valid number");
         }
       }),
-    []
+    [],
   );
 
   const debouncedValidateWhats = useMemo(
@@ -165,7 +171,7 @@ export default function Board1({
           setWhatsError("Enter a valid number");
         }
       }),
-    []
+    [],
   );
 
   /* ---------- effects ---------- */
@@ -233,9 +239,11 @@ export default function Board1({
               {/* Category */}
               <div>
                 <Label>Business Category</Label>
-                <InfoPill className="bg-white border border-black">
+                <InfoPill className="bg-white">
                   {lockedCategory ? (
-                    <span className="text-xs text-gray-600">{data.category}</span>
+                    <span className="text-xs text-gray-600">
+                      {data.category}
+                    </span>
                   ) : (
                     <select
                       value={data.category}
@@ -260,7 +268,7 @@ export default function Board1({
                     "bg-white",
                     emailStatus === "valid" && "border border-green-600",
                     emailStatus === "invalid" && "border border-red-600",
-                    emailStatus === "idle" && "border border-black"
+                    emailStatus === "idle" && "",
                   )}
                 >
                   <input
@@ -286,7 +294,7 @@ export default function Board1({
                     "bg-white",
                     callStatus === "valid" && "border border-green-600",
                     callStatus === "invalid" && "border border-red-600",
-                    callStatus === "idle" && "border border-black"
+                    callStatus === "idle" && "",
                   )}
                 >
                   <input
@@ -313,11 +321,12 @@ export default function Board1({
                     "bg-white",
                     whatsStatus === "valid" && "border border-green-600",
                     whatsStatus === "invalid" && "border border-red-600",
-                    whatsStatus === "idle" && "border border-black"
+                    whatsStatus === "idle" && "",
                   )}
                 >
                   <input
                     value={data.whatsapp}
+                    minLength={11}
                     onChange={(e) => {
                       const val = e.target.value.replace(/[^0-9+]/g, "");
                       setData((p) => ({ ...p, whatsapp: val }));
@@ -328,9 +337,7 @@ export default function Board1({
                   />
                 </InfoPill>
                 {whatsError && (
-                  <p className="text-red-600 text-[11px] ml-6">
-                    {whatsError}
-                  </p>
+                  <p className="text-red-600 text-[11px] ml-6">{whatsError}</p>
                 )}
               </div>
 
