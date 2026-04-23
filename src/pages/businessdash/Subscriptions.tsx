@@ -488,7 +488,7 @@ const Subscriptions = () => {
                       </div>
                       <div className="space-y-1 col-span-2 md:col-span-1">
                         <Label>VALID UNTIL</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm text-black">
                               {landlordPlan.expires_at
@@ -501,7 +501,7 @@ const Subscriptions = () => {
                       </div>
                       <div>
                         <Label>LISTING LIMIT</Label>
-                        <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
+                        <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
                               {LANDLORD_PLAN_DETAILS[
@@ -554,8 +554,8 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY -------------------
+                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList

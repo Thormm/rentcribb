@@ -3,10 +3,7 @@ import { FiCamera, FiChevronDown, FiMail } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
-import {
-  MdOutlinePending,
-  MdVerified, 
-} from "react-icons/md";
+import { MdOutlinePending, MdVerified } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
@@ -434,9 +431,12 @@ const Agentoverview: React.FC = () => {
                   <div className="col-span-2">
                     <Label>BUSINESS NAME</Label>
                     <InfoPill>
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {agentDetails.bname_agent || "-"}
-                      </span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.bname_agent || "-"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
@@ -444,9 +444,12 @@ const Agentoverview: React.FC = () => {
                   <div className="col-span-2">
                     <Label>ABOUT</Label>
                     <InfoPill>
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {agentDetails.babout_agent || "—"}
-                      </span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.babout_agent || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
@@ -454,11 +457,12 @@ const Agentoverview: React.FC = () => {
                   <div className="col-span-1">
                     <Label>CALL NUMBER</Label>
                     <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1">
-                          {agentDetails.agent_callno || "—"}
-                        </span>
-                      </div>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.agent_callno || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
@@ -466,21 +470,25 @@ const Agentoverview: React.FC = () => {
                   <div className="col-span-1">
                     <Label>WHATSAPP NO</Label>
                     <InfoPill>
-                      <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
-                        {agentDetails.agent_whats || "—"}
-                      </span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.agent_whats || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - Email */}
-                 <div className="col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS EMAIL</Label>
                     <InfoPill>
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1">
-                          {agentDetails.agent_email || "—"}
-                        </span>
-                      </div>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.agent_email || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
@@ -488,9 +496,12 @@ const Agentoverview: React.FC = () => {
                   <div className="col-span-2">
                     <Label>BUSINESS ADDRESS</Label>
                     <InfoPill>
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {agentDetails.baddress_agent || "—"}
-                      </span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={agentDetails.baddress_agent || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
                 </div>
