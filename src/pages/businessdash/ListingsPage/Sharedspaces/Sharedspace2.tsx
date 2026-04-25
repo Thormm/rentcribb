@@ -46,14 +46,16 @@ type OptionItem = {
 function IconOptionGroup({
   options,
   value,
+  className,
   onChange,
 }: {
   options: OptionItem[];
   value?: string | null;
   onChange: (id: string) => void;
+  className?: string;
 }) {
   return (
-    <div className={`flex items-center gap-1`}>
+    <div className={clsx("flex items-center gap-1", className)}>
       {options.map((opt) => {
         const selected = value === opt.id;
         return (
@@ -390,6 +392,7 @@ export default function Sharedspace2({
                     options={genderOptions}
                     value={formData.pref_gender ?? ""}
                     onChange={(id) => updateField("pref_gender", id)}
+                    className="ml-6"
                   />
                 </div>
 
