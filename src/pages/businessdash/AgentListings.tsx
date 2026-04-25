@@ -747,8 +747,8 @@ const Agentlistings: React.FC = () => {
                       <FaPlus size={20} className="text-white" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 mt-8">
-                    <Label> ------- YOUR DRAFTS -------</Label>
+                  <div className="flex items-center mt-8">
+                    <Label> --- YOUR DRAFTS -------</Label>
                   </div>
                 </div>
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}

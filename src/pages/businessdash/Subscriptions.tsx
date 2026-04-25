@@ -358,7 +358,7 @@ const Subscriptions = () => {
                   {hasAgentPlan && (
                     <>
                       {" "}
-                      <div className="space-y-1 col-span-2 md:col-span-1">
+                      <div>
                         <Label>CURRENT PLAN</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
@@ -369,7 +369,7 @@ const Subscriptions = () => {
                           </div>
                         </InfoPill>
                       </div>
-                      <div className="space-y-1 col-span-2 md:col-span-1">
+                      <div>
                         <Label>VALID UNTIL</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
@@ -475,7 +475,7 @@ const Subscriptions = () => {
                   {hasLandlordPlan && (
                     <>
                       {" "}
-                      <div className="space-y-1 col-span-2 md:col-span-1">
+                      <div>
                         <Label>CURRENT PLAN</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
@@ -486,7 +486,7 @@ const Subscriptions = () => {
                           </div>
                         </InfoPill>
                       </div>
-                      <div className="space-y-1 col-span-2 md:col-span-1">
+                      <div>
                         <Label>VALID UNTIL</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
