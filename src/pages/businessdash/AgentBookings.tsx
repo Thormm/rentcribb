@@ -555,7 +555,7 @@ const Agentbookings: React.FC = () => {
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Bookings" && (
-              <div className="p-5 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
                   <div className="col-span-2">
                     <div className="grid grid-cols-2 gap-4 mb-3">
@@ -656,7 +656,7 @@ const Agentbookings: React.FC = () => {
             )}
 
             {activeTab === "Requests" && (
-              <div className="p-5 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
                   <div>
                     <Label>HOW IT WORKS</Label>

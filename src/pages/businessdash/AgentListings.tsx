@@ -18,7 +18,13 @@ import {
   MdOutlineBookmarkAdded,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
-import { FaToggleOn, FaToggleOff, FaUserCheck, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaToggleOn,
+  FaToggleOff,
+  FaUserCheck,
+  FaPlus,
+  FaTimes,
+} from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
@@ -544,10 +550,10 @@ function PaginatedCards() {
           <div className="overflow-x-auto scrollbar-hide">
             <div
               key={card.id}
-              className="flex items-center gap-6 min-w-[400px] md:min-w-0"
+              className="flex items-center gap-6 min-w-[422px] md:min-w-0"
             >
               {/* LEFT PANEL */}
-              <div className="md:w-1/3 flex flex-col gap-4">
+              <div className="w-[35%] flex flex-col gap-4">
                 <InfoPill className="bg-white">
                   <div className="inline-flex items-center justify-between w-full ">
                     <span className="text-xs md:text-sm py-1 text-black">
@@ -560,7 +566,7 @@ function PaginatedCards() {
                 <InfoPill>
                   <div className="inline-flex items-center justify-between w-full">
                     <span className="text-xs md:text-sm py-1 text-black">
-                      {card.bookmarks} views
+                      {card.bookmarks} students
                     </span>
                     <MdOutlineBookmarkAdded
                       size={25}
@@ -600,7 +606,9 @@ function PaginatedCards() {
 
                 <div className="flex justify-center">
                   <button
-                    onClick={() => navigate(`/${card.space}?id=${card.id}&&uploader=agent`)}
+                    onClick={() =>
+                      navigate(`/${card.space}?id=${card.id}&&uploader=agent`)
+                    }
                     className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
                   >
                     EDIT
@@ -609,7 +617,7 @@ function PaginatedCards() {
               </div>
 
               {/* RIGHT CARD */}
-              <div className="md:w-2/3 flex justify-center">
+              <div className="w-[60%] flex justify-center">
                 <Card item={card} />
               </div>
             </div>
@@ -656,7 +664,7 @@ const Agentlistings: React.FC = () => {
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Live" && (
-              <div className="p-5 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 {/* LIVE tab content remains exactly as your raw code */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* Row 1 - First Name with FaPlus */}
@@ -721,8 +729,10 @@ const Agentlistings: React.FC = () => {
                     </div>
                   </div> */}
                 </div>
-                <div className="flex items-center gap-3 mt-8">
-                  <Label> --- YOUR LISTINGS -------</Label>
+                <div className="flex items-center mt-10">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
+                    --- YOUR LISTINGS -------------
+                  </span>
                 </div>
                 <PaginatedCards />
                 <button
@@ -736,7 +746,7 @@ const Agentlistings: React.FC = () => {
             )}
 
             {activeTab === "Drafts" && (
-              <div className="p-5 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   <div className="relative flex flex-col mb-10">
                     <Label>NEW LISTING</Label>
@@ -747,8 +757,10 @@ const Agentlistings: React.FC = () => {
                       <FaPlus size={20} className="text-white" />
                     </div>
                   </div>
-                  <div className="flex items-center mt-8">
-                    <Label> --- YOUR DRAFTS -------</Label>
+                  <div className="flex items-center mt-10">
+                    <span className="text-sm md:text-md font-semibold text-black tracking-wide">
+                      --- YOUR DRAFTS -------------
+                    </span>
                   </div>
                 </div>
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}

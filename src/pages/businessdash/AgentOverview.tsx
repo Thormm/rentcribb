@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FiCamera, FiChevronDown, FiMail } from "react-icons/fi";
+import { FiCamera, FiChevronDown } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
@@ -418,7 +418,7 @@ const Agentoverview: React.FC = () => {
 
             {/* Content */}
             {activeTab === "Profile" && (
-              <div className="p-5 md:p-5 md:w-2/3 mt-5">
+              <div className="p-2 md:p-5 md:w-2/3 mt-5">
                 <div className="flex justify-start mb-10 pl-5">
                   <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
                     <FiCamera className="text-black" size={35} />
@@ -510,8 +510,8 @@ const Agentoverview: React.FC = () => {
 
             {/* Verify Business Tab */}
             {activeTab === "Verify Business" && (
-              <div className="p-2 md:p-5 md:w-2/3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Current Verification Level */}
                   <div className="md:col-span-2">
                     <Label>CURRENT VERIFICATION LEVEL</Label>
@@ -654,11 +654,11 @@ const Agentoverview: React.FC = () => {
             )}
 
             {activeTab === "Operations" && (
-              <div className="md:p-5 md:w-2/3 mt-6">
+              <div className="p-2 md:p-5 md:w-2/3 mt-5">
                 {/* Inputs grid */}
-                <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2 px-3 relative">
+                  <div className="md:col-span-2 relative">
                     <Label>INSPECTION DAYS</Label>
                     <InfoPill className="bg-white">
                       {/* Display selected days*/}
@@ -752,26 +752,11 @@ const Agentoverview: React.FC = () => {
                   </button>
                 </div>
 */}
-                <div className="my-10">
-                  <div className="flex flex-col p-5 gap-8 bg-transparent">
-                    {/* Coming Soon */}
-                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
-                      <MdOutlinePending className="w-8 h-8" />
-                      Coming Soon ...
-                    </button>
-
-                    {/* Join Waitlist */}
-                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
-                      <FiMail className="w-8 h-8" />
-                      Join Waitlist &gt;&gt;
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
 
             {activeTab === "Reviews" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* --- STATS ROW (TOTAL + TOP BOOKINGS) --- */}
                   <div className="col-span-2">

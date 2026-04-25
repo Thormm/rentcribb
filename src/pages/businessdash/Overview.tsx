@@ -442,9 +442,9 @@ const Overview = () => {
 
             {/* Content */}
             {activeTab === "Profile" && (
-              <div className="p-2 md:p-5 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Avatar Upload - left aligned */}
-                <div className="flex justify-start my-5 md:my-10 pl-5">
+                <div className="flex justify-start mb-5 md:mb-10 pl-5">
                   {/* Image upload */}
                   <div
                     onClick={!isProfileLocked ? onAvatarClick : undefined}
@@ -640,8 +640,8 @@ const Overview = () => {
 
             {/* Verify ID */}
             {activeTab === "Verify ID" && (
-              <div className="my-10 md:w-2/3">
-                <div className="flex flex-col p-5 gap-8 bg-transparent">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="flex flex-col gap-3 bg-transparent">
                   {/* Coming Soon */}
                   <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-white px-4 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
@@ -772,11 +772,11 @@ const Overview = () => {
 
             {/* Feedback tab (un changed) */}
             {activeTab === "Feedback" && (
-              <div className="md:w-2/3 p-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Header with dashed line */}
-                <div className="flex items-center gap-3 my-4 md:my-8">
+                <div className="flex items-center mb-4 md:my-8">
                   <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                    -- GIVE REVIEWS -------------
+                    --- GIVE REVIEWS -------------
                   </span>
                 </div>
 

@@ -229,7 +229,7 @@ const Payment = () => {
 
             {/* Withdrawals */}
             {activeTab === "Withdrawals" && (
-              <div className="p-5 md:mt-5 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 <div className="grid mb-10 grid-cols-1 gap-6">
                   <div className="space-y-1">
                     <Label>BALANCE</Label>
@@ -268,8 +268,8 @@ const Payment = () => {
 
             {/* Top ups */}
             {activeTab === "Top ups" && (
-              <div className="p-5">
-                <div className="flex items-center gap-3 mt-5 mb-5">
+              <div className="p-2 md:p-5 mt-5">
+                <div className="flex items-center gap-3 mb-5">
                   <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- HISTORY --------------------
                   </span>
@@ -281,9 +281,9 @@ const Payment = () => {
             {/* Refunds */}
             {activeTab === "Refunds" && (
               <div>
-                <div className="md:p-5 md:w-2/3">
+                <div className="p-2 md:p-5 md:w-2/3 mt-5">
                   <div
-                    className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+                    className="grid grid-cols-3 gap-4 bg-white p-3 rounded-lg"
                     style={{
                       borderStyle: "dashed",
                       borderColor: "#0000004D",

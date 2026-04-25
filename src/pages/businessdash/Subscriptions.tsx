@@ -337,10 +337,11 @@ const Subscriptions = () => {
 
             {/* Agent Tab */}
             {activeTab === "Agent" && (
-              <div className="px-2 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mt-5 md:mt-1 mb-5 bg-transparent">
-                  {/* show button only if there's no running agent plan */}
-                  {!hasAgentPlan && (
+              <div className="p-2 md:p-5 mt-5">
+                {!hasAgentPlan && (
+                  <div className="flex flex-col mb-5 bg-transparent">
+                    {/* show button only if there's no running agent plan */}
+
                     <button
                       onClick={() => handleClickRole("agent")}
                       className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
@@ -350,10 +351,10 @@ const Subscriptions = () => {
                         ? "Become an Agent >>"
                         : "Get an Agent Plan >>"}
                     </button>
-                  )}
 
-                  {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
-                </div>
+                    {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
+                  </div>
+                )}
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
                   {hasAgentPlan && (
                     <>
@@ -455,10 +456,11 @@ const Subscriptions = () => {
 
             {/* Landlord Tab */}
             {activeTab === "Landlord" && (
-              <div className="px-2 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mt-5 md:mt-1 mb-5 bg-transparent">
-                  {/* show button only if there's no running landlord plan */}
-                  {!hasLandlordPlan && (
+              <div className="p-2 md:p-5 mt-5">
+                {!hasLandlordPlan && (
+                  <div className="flex flex-col mb-5 bg-transparent">
+                    {/* show button only if there's no running landlord plan */}
+
                     <button
                       onClick={() => handleClickRole("landlord")}
                       className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
@@ -468,8 +470,8 @@ const Subscriptions = () => {
                         ? "Become a Landlord >>"
                         : "Get a Landlord Plan >>"}
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
                   {hasLandlordPlan && (
@@ -572,8 +574,8 @@ const Subscriptions = () => {
 
             {/* Vendor Tab */}
             {activeTab === "Vendor" && (
-              <div className="my-10 md:w-2/3">
-                <div className="flex flex-col p-5 gap-8 bg-transparent">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="flex flex-col gap-8 bg-transparent">
                   {/* Coming Soon */}
                   <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
