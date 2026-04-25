@@ -362,7 +362,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-sm md:my-3 font-semibold ml-6",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
