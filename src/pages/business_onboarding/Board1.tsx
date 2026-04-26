@@ -97,7 +97,7 @@ export default function Board1({
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const isValidPhone = (phone: string) => /^\+?[0-9]{8,15}$/.test(phone);
+  const isValidPhone = (phone: string) => /^\+?[0-9]{11,13}$/.test(phone);
 
   /* ---------- states ---------- */
   const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">(

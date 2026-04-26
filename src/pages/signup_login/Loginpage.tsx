@@ -585,8 +585,8 @@ export default function Loginpage() {
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    List your entire or shared space and connect to students.
-                    Explore rent requests and reply with your available
+                    List entire or shared space and connect to students.<br/>
+                    Explore rent requests and reply with your
                     spaces.{" "}
                   </span>
                 </div>
