@@ -757,15 +757,18 @@ const Agentlistings: React.FC = () => {
                       <FaPlus size={20} className="text-white" />
                     </div>
                   </div>
-                  <div className="flex items-center mt-10">
-                    <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                      --- YOUR DRAFTS -------------
-                    </span>
-                  </div>
+                </div>
+                <div className="flex items-start mt-15">
+                  <span className="text-sm md:text-md font-semibold text-black ">
+                    --- YOUR DRAFTS -------------
+                  </span>
                 </div>
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}
                 <PaginatedDrafts />
-                <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>

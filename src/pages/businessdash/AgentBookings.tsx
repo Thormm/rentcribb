@@ -630,9 +630,9 @@ const Agentbookings: React.FC = () => {
                 */}
 
                 <div className="flex items-center gap-3 mb-8">
-                  <Label>
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- YOUR BOOKINGS ----------
-                  </Label>
+                  </span>
                 </div>
 
                 <PaginatedBookings />
@@ -687,10 +687,10 @@ const Agentbookings: React.FC = () => {
                     </InfoPill>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Label>
+                <div className="flex items-center mt-10">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- REPLIES --------
-                  </Label>
+                  </span>
                 </div>
                 <PaginatedRequests />
 

@@ -35,7 +35,7 @@ function SectionHeader({
 }) {
   return (
     <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
