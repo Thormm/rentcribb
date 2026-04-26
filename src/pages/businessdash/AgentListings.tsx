@@ -686,7 +686,7 @@ const Agentlistings: React.FC = () => {
                         type="text"
                         readOnly
                         value={12}
-                        className="w-full text-xs md:text-sm outline-none rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     
                         <GrStatusGood className="pointer-events-none absolute right-5  text-[black]" />
