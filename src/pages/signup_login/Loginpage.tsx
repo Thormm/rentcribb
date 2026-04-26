@@ -610,7 +610,7 @@ export default function Loginpage() {
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    Be among the first to experience our products. Share pain
+              Be among the first to experience our products. Share😘<br/>pain
                     points to help us build a soft life for Uni students.
                   </span>
                 </div>
