@@ -683,14 +683,14 @@ const Agentlistings: React.FC = () => {
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
                         12
-                        <GrStatusGood className="pointer-events-none absolute right-5 text-[black]" />
+                        <GrStatusGood className="pointer-events-none absolute right-5 py-1 text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
                       <Label>MAX ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
                         TIER 2 &raquo; 15
-                        <RiInformationLine className="pointer-events-none absolute right-5  text-[black] " />
+                        <RiInformationLine className="pointer-events-none absolute right-5 py-1 text-[black] " />
                       </InfoPill>
                     </div>
                   </div>
