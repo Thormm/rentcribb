@@ -689,7 +689,7 @@ const Agentlistings: React.FC = () => {
                         className="w-full text-xs md:text-sm outline-none rounded-md text-black"
                       />
                     
-                        <GrStatusGood className="pointer-events-none absolute right-5 py-1 text-[black]" />
+                        <GrStatusGood className="pointer-events-none absolute right-5  text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
