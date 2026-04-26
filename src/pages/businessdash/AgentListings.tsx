@@ -682,15 +682,28 @@ const Agentlistings: React.FC = () => {
                     <div>
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                        12
+                          <input
+                        type="text"
+                        readOnly
+                        value={12}
+                        className="w-full text-xs md:text-sm outline-none rounded-md text-black"
+                      />
+                    
                         <GrStatusGood className="pointer-events-none absolute right-5 py-1 text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
                       <Label>MAX ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                        TIER 2 &raquo; 15
-                        <RiInformationLine className="pointer-events-none absolute right-5 py-1 text-[black] " />
+                          <input
+                        type="text"
+                        readOnly
+                        value={"TIER 2 - 15"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
+                    
+                        
+                        <RiInformationLine className="pointer-events-none absolute right-5 text-[black] " />
                       </InfoPill>
                     </div>
                   </div>
