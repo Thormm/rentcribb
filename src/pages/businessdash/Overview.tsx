@@ -117,6 +117,7 @@ const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
   const [feedback, setFeedback] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showStateModal, setShowStateModal] = useState(false);
 
   // Controls read-only + save button visibility
   const [isProfileLocked, setIsProfileLocked] = useState(false);
@@ -142,6 +143,15 @@ const Overview = () => {
   const [kinWhats, setKinWhats] = useState("");
   const [kinEmail, setKinEmail] = useState("");
 
+  const [stateSearch, setStateSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (showStateModal) {
+      setTimeout(() => searchRef.current?.focus(), 100);
+    }
+  }, [showStateModal]);
+
   // feedback / UI
   const [expanded, setExpanded] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [key: number]: number }>(
@@ -166,6 +176,11 @@ const Overview = () => {
         return [];
       }
     }, []);
+
+  //
+  const filteredStates = statesAndLgas.filter((s) =>
+    s.state.toLowerCase().startsWith(stateSearch.toLowerCase()),
+  );
 
   // fetch data on mount
   useEffect(() => {
@@ -575,33 +590,22 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>STATE</Label>
                     <InfoPill
-                      className={`${isProfileLocked ? "bg-transparent" : "bg-white"}`}
+                      onClick={() =>
+                        !isProfileLocked && setShowStateModal(true)
+                      }
+                      className={`${isProfileLocked ? "bg-transparent" : "bg-white"} relative flex items-center justify-between cursor-pointer`}
                     >
-                      <div className="flex items-center justify-between w-full">
-                        <select
-                          value={stateValue}
-                          onChange={(e) => setStateValue(e.target.value)}
-                          disabled={isProfileLocked}
-                          className={`w-full appearance-none ${
-                            isProfileLocked ? "text-black" : "text-gray-500"
-                          } text-xs md:text-sm leading-4  outline-none cursor-pointer py-1`}
-                        >
-                          <option value="">Select State</option>
-                          {statesAndLgas.map((s) => (
-                            <optgroup label={s.state} key={s.state}>
-                              {s.lgas.map((l) => (
-                                <option key={l} value={`${s.state} - ${l}`}>
-                                  {l}
-                                </option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </select>
+                      <input
+                        type="text"
+                        value={stateValue}
+                        placeholder="Select State"
+                        readOnly
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent cursor-pointer"
+                      />
 
-                        {!isProfileLocked && (
-                          <FiChevronDown className="ml-2 text-gray-500" />
-                        )}
-                      </div>
+                      {!isProfileLocked && (
+                        <FiChevronDown className="ml-2 text-gray-500" />
+                      )}
                     </InfoPill>
                   </div>
 
@@ -898,6 +902,96 @@ const Overview = () => {
           </div>
         </div>
       </section>
+
+      {showStateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Select State</h3>
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Close
+              </button>
+            </div>
+
+            {/* 🔍 SEARCH BAR */}
+            <div className="mb-3">
+              <input
+                ref={searchRef}
+                type="text"
+                value={stateSearch}
+                onChange={(e) => setStateSearch(e.target.value)}
+                placeholder="Search state (e.g. Kwara)"
+                className="w-full px-3 py-2 border rounded-lg text-sm outline-none"
+              />
+            </div>
+
+            {/* Options */}
+            <div className="max-h-64 overflow-y-auto space-y-3 pb-4">
+              {filteredStates.map((s) => (
+                <div key={s.state}>
+                  {/* 🧠 Sticky State Header */}
+                  <p className="sticky top-0 bg-white text-xs font-semibold text-gray-500 py-1">
+                    {s.state}
+                  </p>
+
+                  {s.lgas.map((lga) => {
+                    const value = `${s.state} - ${lga}`;
+                    const isSelected = stateValue === value;
+
+                    return (
+                      <label
+                        key={value}
+                        className={`flex items-center gap-3 text-sm cursor-pointer py-1 px-2 rounded-md ${
+                          isSelected ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          checked={isSelected}
+                          onChange={() => {
+                            setStateValue(value);
+                            setShowStateModal(false);
+                            setStateSearch(""); // reset after selection
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span>{lga}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ))}
+
+              {/* Empty state */}
+              {filteredStates.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-3">
+                  No state found
+                </p>
+              )}
+            </div>
+
+            {/* Done button */}
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
