@@ -139,7 +139,7 @@ export default function Sharedspace1({
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
   const counter = (field: string, value: number, min = 0) => (
-    <InfoPill className="bg-white">
+    <InfoPill className="bg-white px-2">
       <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
         <FaMinus
           className="cursor-pointer"
@@ -148,7 +148,7 @@ export default function Sharedspace1({
           }
         />
 
-        <span>{value}{" "}bdspace</span>
+        <span>{value}{" "}bedspace</span>
 
         <FaPlus
           className="cursor-pointer"
