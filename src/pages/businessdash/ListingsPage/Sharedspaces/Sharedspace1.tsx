@@ -148,7 +148,7 @@ export default function Sharedspace1({
           }
         />
 
-        <span>{value}{" "}bedspace(s)</span>
+        <span>{value}{" "}bdspace</span>
 
         <FaPlus
           className="cursor-pointer"
@@ -347,7 +347,7 @@ export default function Sharedspace1({
                 </div>
 
                 <div className="space-y-1">
-                  <Label>No. of Roommate</Label>
+                  <Label>Roommate(s)</Label>
                   {counter("units", formData.units ?? 2,2)}
                 </div>
               </div>
