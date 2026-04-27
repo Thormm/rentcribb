@@ -148,7 +148,7 @@ export default function Sharedspace1({
           }
         />
 
-        <span>{value}</span>
+        <span>{value}{" "}bedspace(s)</span>
 
         <FaPlus
           className="cursor-pointer"

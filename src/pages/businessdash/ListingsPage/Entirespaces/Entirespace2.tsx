@@ -341,17 +341,17 @@ export default function Entirespace2({
 
                 <div className="space-y-1">
                   <Label>No. of Ensuite</Label>
-                  {counter("ensuite", formData.ensuite ?? 0)}
+                  {counter("ensuite", formData.ensuite ?? 0, 0)}
                 </div>
 
                 <div className="space-y-1">
                   <Label>No. of Bathroom</Label>
-                  {counter("bathrooms", formData.bathrooms ?? 0)}
+                  {counter("bathrooms", formData.bathrooms ?? 1, 1)}
                 </div>
 
                 <div className="space-y-1">
                   <Label>No. of Toilets</Label>
-                  {counter("toilets", formData.toilets ?? 0)}
+                  {counter("toilets", formData.toilets ?? 1, 1)}
                 </div>
               </div>
 

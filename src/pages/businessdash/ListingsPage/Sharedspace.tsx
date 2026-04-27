@@ -57,7 +57,7 @@ const Sharedspace: React.FC = () => {
     spaceName: "",
     fullAddress: "",
     selectedType: "",
-    units: 1,
+    units: 2,
     selectedLocation: "",
     selectedMonth: "",
     selectedRules: [],

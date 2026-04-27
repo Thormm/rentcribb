@@ -61,10 +61,10 @@ const Entirespace: React.FC = () => {
     selectedMonth: "",
     selectedRules: [],
 
-    bedrooms: 0,
+    bedrooms: 1,
     ensuite: 0,
-    bathrooms: 0,
-    toilets: 0,
+    bathrooms: 1,
+    toilets: 1,
     security: "",
     water: "",
     power_supply: 0,

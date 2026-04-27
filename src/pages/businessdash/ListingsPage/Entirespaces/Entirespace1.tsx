@@ -348,7 +348,7 @@ export default function Entirespace1({
 
                 <div className="space-y-1">
                   <Label>No. of Units</Label>
-                  {counter("units", formData.units ?? 0)}
+                  {counter("units", formData.units ?? 1, 1)}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-6">
