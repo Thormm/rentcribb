@@ -240,6 +240,8 @@ export default function Sharedspace2({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [showWaterModal, setShowWaterModal] = useState(false);
+  const [showYearModal, setShowYearModal] = useState(false);
+  const [showFacultyModal, setShowFacultyModal] = useState(false);
 
   const security = normalizeArray(formData.security);
   const water = normalizeArray(formData.water);
@@ -407,21 +409,21 @@ export default function Sharedspace2({
 
                 <div className="space-y-1">
                   <Label className="ml-2 md:ml-8">Pref. Year</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                        value={formData.pref_year ?? ""}
-                        onChange={(e) =>
-                          updateField("pref_year", e.target.value)
+
+                  <InfoPill
+                    className="bg-white cursor-pointer"
+                    onClick={() => setShowYearModal(true)}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          formData.pref_year
+                            ? limitDisplay(formData.pref_year, 15)
+                            : "Choose preference"
                         }
-                      >
-                        {yearOptions.map((o) => (
-                          <option key={o.value} value={o.value}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                      />
                       <IoIosArrowDown />
                     </div>
                   </InfoPill>
@@ -429,21 +431,21 @@ export default function Sharedspace2({
 
                 <div className="space-y-1">
                   <Label className="ml-2 md:ml-8">Pref. Faculty</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <select
-                        className="w-full appearance-none bg-transparent text-xs text-gray-500 outline-none cursor-pointer"
-                        value={formData.pref_faculty ?? ""}
-                        onChange={(e) =>
-                          updateField("pref_faculty", e.target.value)
+
+                  <InfoPill
+                    className="bg-white cursor-pointer"
+                    onClick={() => setShowFacultyModal(true)}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <input
+                        value={
+                          formData.pref_faculty
+                            ? limitDisplay(formData.pref_faculty, 15)
+                            : "Choose preference"
                         }
-                      >
-                        {facultyOptions.map((o) => (
-                          <option key={o.value} value={o.value}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
+                        readOnly
+                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                      />
                       <IoIosArrowDown />
                     </div>
                   </InfoPill>
@@ -612,6 +614,84 @@ export default function Sharedspace2({
             <button
               className="w-full mt-4 py-2 bg-black text-white rounded"
               onClick={() => setShowWaterModal(false)}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showYearModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">Select Preferred Year</h3>
+              <button onClick={() => setShowYearModal(false)}>Close</button>
+            </div>
+
+            <div className="space-y-2">
+              {yearOptions
+                .filter((o) => o.value) // remove empty option
+                .map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-3 py-1"
+                  >
+                    <input
+                      type="radio"
+                      checked={formData.pref_year === opt.value}
+                      onChange={() => {
+                        updateField("pref_year", opt.value);
+                        setShowYearModal(false); // auto close
+                      }}
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+            </div>
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setShowYearModal(false)}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showFacultyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">Select Preferred Faculty</h3>
+              <button onClick={() => setShowFacultyModal(false)}>Close</button>
+            </div>
+
+            <div className="space-y-2">
+              {facultyOptions
+                .filter((o) => o.value)
+                .map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-3 py-1"
+                  >
+                    <input
+                      type="radio"
+                      checked={formData.pref_faculty === opt.value}
+                      onChange={() => {
+                        updateField("pref_faculty", opt.value);
+                        setShowFacultyModal(false);
+                      }}
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+            </div>
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setShowFacultyModal(false)}
             >
               Done
             </button>

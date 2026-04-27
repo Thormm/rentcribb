@@ -5,7 +5,7 @@ import InfoPill from "../../../../components/Pill";
 import clsx from "clsx";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import LGAS_DATA from "../../../../components/localgovt.json";
 
 function Maincard({
@@ -123,6 +123,17 @@ export default function Sharedspace1({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [showHouseModal, setShowHouseModal] = useState(false);
 
+  const [showStateModal, setShowStateModal] = useState(false);
+
+  const [stateSearch, setStateSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (showStateModal) {
+      setTimeout(() => searchRef.current?.focus(), 100);
+    }
+  }, [showStateModal]);
+
   const statesAndLgas: { state: string; lgas: string[] }[] =
     React.useMemo(() => {
       try {
@@ -138,6 +149,9 @@ export default function Sharedspace1({
   const updateField = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
+  const filteredStates = statesAndLgas.filter((s) =>
+    s.state.toLowerCase().startsWith(stateSearch.toLowerCase()),
+  );
   const counter = (field: string, value: number, min = 0) => (
     <InfoPill className="bg-white px-2">
       <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
@@ -148,7 +162,7 @@ export default function Sharedspace1({
           }
         />
 
-        <span>{value}{" "}bedspace</span>
+        <span className="text-gray-500 ">{value} bedspace</span>
 
         <FaPlus
           className="cursor-pointer"
@@ -291,7 +305,7 @@ export default function Sharedspace1({
                       onChange={(e) =>
                         setFormData({ ...formData, spaceName: e.target.value })
                       }
-                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
+                      className="w-full appearance-none text-gray-500  bg-transparent text-xs leading-5 outline-none py-1"
                       placeholder="Give your shared unit a name"
                     />
                   </InfoPill>
@@ -311,7 +325,7 @@ export default function Sharedspace1({
                           fullAddress: e.target.value,
                         })
                       }
-                      className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
+                      className="w-full appearance-none text-gray-500 bg-transparent text-xs leading-5 outline-none py-1"
                       placeholder="Enter Space address"
                     />
                   </InfoPill>
@@ -348,38 +362,25 @@ export default function Sharedspace1({
 
                 <div className="space-y-1">
                   <Label>Roommate(s)</Label>
-                  {counter("units", formData.units ?? 2,2)}
+                  {counter("units", formData.units ?? 2, 2)}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 {/* LOCATION */}
                 <div className="space-y-1">
                   <Label>Location</Label>
-                  <InfoPill className="bg-white">
-                    <div className="flex items-center justify-between w-full">
-                      <select
-                        value={formData.selectedLocation}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            selectedLocation: e.target.value,
-                          })
-                        }
-                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
-                      >
-                        <option value="">Around where?</option>
-                        {statesAndLgas.map((s) => (
-                          <optgroup label={s.state} key={s.state}>
-                            {s.lgas.map((l) => (
-                              <option key={l} value={`${s.state} - ${l}`}>
-                                {l}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
-                      <IoIosArrowDown className="ml-2" />
-                    </div>
+                  <InfoPill
+                    onClick={() => setShowStateModal(true)}
+                    className="bg-white relative flex items-center justify-between cursor-pointer"
+                  >
+                    <input
+                      type="text"
+                      value={formData.selectedLocation}
+                      placeholder="Select State"
+                      readOnly
+                      className="w-full text-xs md:text-sm outline-none py-1 text-gray-500  bg-transparent cursor-pointer"
+                    />
+                    <IoIosArrowDown className="ml-2" />
                   </InfoPill>
                 </div>
 
@@ -490,6 +491,99 @@ export default function Sharedspace1({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl p-6 w-72 text-center shadow-lg">
             <p className="text-sm md:text-md">{statusMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {showStateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Select State</h3>
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Close
+              </button>
+            </div>
+
+            {/* 🔍 SEARCH BAR */}
+            <div className="mb-3">
+              <input
+                ref={searchRef}
+                type="text"
+                value={stateSearch}
+                onChange={(e) => setStateSearch(e.target.value)}
+                placeholder="Search state (e.g. Kwara)"
+                className="w-full px-3 py-2 border rounded-lg text-sm outline-none"
+              />
+            </div>
+
+            {/* Options */}
+            <div className="max-h-64 overflow-y-auto space-y-3 pb-4">
+              {filteredStates.map((s) => (
+                <div key={s.state}>
+                  {/* 🧠 Sticky State Header */}
+                  <p className="sticky top-0 bg-white text-xs font-semibold text-gray-500 py-1">
+                    {s.state}
+                  </p>
+
+                  {s.lgas.map((lga) => {
+                    const value = `${s.state} - ${lga}`;
+                    const isSelected = formData.selectedLocation === value;
+
+                    return (
+                      <label
+                        key={value}
+                        className={`flex items-center gap-3 text-sm cursor-pointer py-1 px-2 rounded-md ${
+                          isSelected ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          checked={isSelected}
+                          onChange={() => {
+                            setFormData((prev: any) => ({
+                              ...prev,
+                              selectedLocation: value,
+                            }));
+                            setShowStateModal(false);
+                            setStateSearch(""); // reset after selection
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span>{lga}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ))}
+
+              {/* Empty state */}
+              {filteredStates.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-3">
+                  No state found
+                </p>
+              )}
+            </div>
+
+            {/* Done button */}
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}
