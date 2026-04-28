@@ -280,7 +280,7 @@ const BusinessPlan = () => {
       </div>
 
       {/* Pricing Section */}
-      <section className=" justify-center w-full px-4 md:w-3/4 my-10 md:my-20 flex">
+      <section className=" justify-center w-full px-4 md:w-[1000px] my-10 md:my-20 flex">
         <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
           <div
             className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
