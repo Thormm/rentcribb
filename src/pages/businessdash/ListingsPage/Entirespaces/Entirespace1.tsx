@@ -376,9 +376,9 @@ export default function Entirespace1({
                     <input
                       type="text"
                       value={formData.selectedLocation}
-                      placeholder="Select State"
+                      placeholder="Select Location"
                       readOnly
-                      className="w-full text-xs md:text-sm outline-none py-1 text-gray-500  bg-transparent cursor-pointer"
+                      className="w-full appearance-none bg-transparent text-gray-500  text-xs leading-5 outline-none py-1"
                     />
                     <IoIosArrowDown className="ml-2" />
                   </InfoPill>
@@ -500,7 +500,7 @@ export default function Entirespace1({
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Select State</h3>
+              <h3 className="text-lg font-semibold">Select Location</h3>
               <button
                 className="text-sm text-gray-600"
                 onClick={() => {

@@ -305,7 +305,7 @@ export default function Sharedspace1({
                       onChange={(e) =>
                         setFormData({ ...formData, spaceName: e.target.value })
                       }
-                      className="w-full appearance-none text-gray-500  bg-transparent text-xs leading-5 outline-none py-1"
+                      className="w-full appearance-none text-gray-500  bg-white text-xs leading-5 outline-none py-1"
                       placeholder="Give your shared unit a name"
                     />
                   </InfoPill>
@@ -325,7 +325,7 @@ export default function Sharedspace1({
                           fullAddress: e.target.value,
                         })
                       }
-                      className="w-full appearance-none text-gray-500 bg-transparent text-xs leading-5 outline-none py-1"
+                      className="w-full appearance-none text-gray-500 bg-white text-xs leading-5 outline-none py-1"
                       placeholder="Enter Space address"
                     />
                   </InfoPill>
@@ -346,7 +346,7 @@ export default function Sharedspace1({
                             selectedType: e.target.value,
                           })
                         }
-                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                        className="w-full appearance-none bg-white text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Space Type</option>
                         {spaceTypes.map((t) => (
@@ -376,9 +376,9 @@ export default function Sharedspace1({
                     <input
                       type="text"
                       value={formData.selectedLocation}
-                      placeholder="Select State"
+                      placeholder="Select Location"
                       readOnly
-                      className="w-full text-xs md:text-sm outline-none py-1 text-gray-500  bg-transparent cursor-pointer"
+                      className="w-full appearance-none bg-white text-gray-500 cursor-pointer text-xs leading-5 outline-none py-1"
                     />
                     <IoIosArrowDown className="ml-2" />
                   </InfoPill>
@@ -397,7 +397,7 @@ export default function Sharedspace1({
                             selectedMonth: e.target.value,
                           })
                         }
-                        className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                        className="w-full appearance-none bg-white text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Available from?</option>
                         {availabilityMonths.map((m) => (
@@ -425,7 +425,7 @@ export default function Sharedspace1({
                       <input
                         value={houseRulesDisplay}
                         readOnly
-                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+                        className="w-full appearance-none bg-white text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
                         placeholder="Select house rules"
                       />
                       <IoIosArrowDown className="ml-2" />
@@ -500,7 +500,7 @@ export default function Sharedspace1({
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Select State</h3>
+              <h3 className="text-lg font-semibold">Select Location</h3>
               <button
                 className="text-sm text-gray-600"
                 onClick={() => {
