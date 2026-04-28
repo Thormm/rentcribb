@@ -189,7 +189,7 @@ function PaginatedBookings() {
         {currentData.map((item) => (
           <div
             key={item.id}
-            className="flex gap-6 w-[450px] md:w-full items-center"
+            className="flex gap-6 w-[450px] md:w-2/3 items-center"
           >
             {/* Left card */}
             <div
