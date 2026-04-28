@@ -187,19 +187,25 @@ function PaginatedBookings() {
         }}
       >
         {currentData.map((item) => (
-          <div
-            key={item.id}
-            className="flex gap-6 w-[450px] md:w-2/3 items-center"
-          >
+          <div key={item.id} className="flex gap-6 md:w-2/3 items-center">
             {/* Left card */}
             <div
               className={clsx(
                 "flex-1 border-black rounded-4xl border shadow-sm",
-                "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center", // <--- add self-start
+                "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center cursor-pointer", // <--- add self-start
               )}
+              onClick={() =>
+                setExpandedLeft((prev) => ({
+                  ...prev,
+                  [item.id]: !prev[item.id],
+                }))
+              }
             >
               {/* Header row */}
-              <div className="flex items-center px-4 py-3">
+              <div
+                className="flex items-center px-4 py-3 
+                  "
+              >
                 <div className="w-6 h-6 flex items-center justify-center text-black">
                   <HiOutlineUserCircle className="w-7 h-7" />
                 </div>
@@ -220,21 +226,15 @@ function PaginatedBookings() {
                   </span>
                 </div>
 
-                <button
+                <span
                   className="ml-auto w-6 h-6 flex items-center justify-center"
-                  onClick={() =>
-                    setExpandedLeft((prev) => ({
-                      ...prev,
-                      [item.id]: !prev[item.id],
-                    }))
-                  }
                 >
                   {expandedLeft[item.id] ? (
                     <IoIosArrowUp className="w-7 h-7 text-black" />
                   ) : (
                     <IoIosArrowDown className="w-7 h-7 text-black" />
                   )}
-                </button>
+                </span>
               </div>
 
               {/* Row 2 icons */}
@@ -313,25 +313,31 @@ function PaginatedBookings() {
             </div>
 
             {/* Right status card */}
-            <div className="min-h-[40px] md:min-h-[60px] w-[150px] md:w-[200px] flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center">
+            <div
+              className="min-h-[40px] cursor-pointer md:min-h-[60px] flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center"
+              onClick={() =>
+                setExpandedRight((prev) => ({
+                  ...prev,
+                  [item.id]: !prev[item.id],
+                }))
+              }
+            >
               {/* Header row */}
               <div
-                className="flex items-center justify-between  px-6 py-4 cursor-pointer"
-                onClick={() =>
-                  setExpandedRight((prev) => ({
-                    ...prev,
-                    [item.id]: !prev[item.id],
-                  }))
-                }
+                className="flex items-center px-4 py-3  
+                  "
               >
-                <span className="text-xs md:text-sm text-black">
-                  {item.status == "Inspection" && (<span>Waiting...</span>)}
-                </span>
-                <span>
+                <div className="flex items-center gap-5 px-4">
+                  <span className="text-xs md:text-sm text-black font-normal truncate">
+                    {item.status == "Inspection" && <>Waiting...</>}
+                  </span>
+                </div>
+
+                <span className="ml-auto w-6 h-6 flex items-center justify-center">
                   {expandedRight[item.id] ? (
-                    <IoIosArrowUp className="w-5 h-5 text-black" />
+                    <IoIosArrowUp className="w-7 h-7 text-black" />
                   ) : (
-                    <IoIosArrowDown className="w-5 h-5 text-black" />
+                    <IoIosArrowDown className="w-7 h-7 text-black" />
                   )}
                 </span>
               </div>
