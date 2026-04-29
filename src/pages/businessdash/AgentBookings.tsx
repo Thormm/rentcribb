@@ -187,182 +187,189 @@ function PaginatedBookings() {
         }}
       >
         {currentData.map((item) => (
-          <div key={item.id} className="flex gap-6 md:w-2/3 items-center">
-            {/* Left card */}
-            <div
-              className={clsx(
-                "flex-1 border-black rounded-4xl border shadow-sm",
-                "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center cursor-pointer", // <--- add self-start
-              )}
-              onClick={() =>
-                setExpandedLeft((prev) => ({
-                  ...prev,
-                  [item.id]: !prev[item.id],
-                }))
-              }
-            >
-              {/* Header row */}
+          <div
+            key={item.id}
+            className="flex gap-6 min-w-[400px] md:w-2/3 items-center"
+          >
+            <div className="grid grid-cols-[65%_35%] gap-3 w-full">
+              {/* Left card */}
               <div
-                className="flex items-center px-4 py-3 
-                  "
+                className={clsx(
+                  "flex-1 border-black rounded-4xl border shadow-sm",
+                  "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center cursor-pointer", // <--- add self-start
+                )}
               >
-                <div className="w-6 h-6 flex items-center justify-center text-black">
-                  <HiOutlineUserCircle className="w-7 h-7" />
-                </div>
+                {/* Header row */}
+                <div className="grid grid-cols-[auto_1fr_1fr_auto] items-center min-w-[250px] px-3 py-3 gap-3">
+                  <div className="flex justify-center">
+                    <HiOutlineUserCircle className="w-7 h-7 text-black" />
+                  </div>
 
-                <div className="flex items-center gap-5 px-4">
-                  <span className="text-xs md:text-sm text-black font-normal truncate">
+                  <div className="truncate text-xs md:text-sm text-black">
                     {item.space_name?.length > 7
                       ? item.space_name.slice(0, 7) + "…"
                       : item.space_name}
-                  </span>
-                </div>
+                  </div>
 
-                <div className="flex items-center gap-5 px-4">
-                  <span className="text-xs md:text-sm text-black font-normal truncate">
+                  <div className="truncate text-xs md:text-sm text-black">
                     {item.name?.length > 7
                       ? item.name.slice(0, 7) + "…"
                       : item.name}
+                  </div>
+
+                  <span
+                    className="flex justify-center cursor-pointer"
+                    onClick={() =>
+                      setExpandedLeft((prev) => ({
+                        ...prev,
+                        [item.id]: !prev[item.id],
+                      }))
+                    }
+                  >
+                    {expandedLeft[item.id] ? (
+                      <IoIosArrowUp className="w-7 h-7 text-black" />
+                    ) : (
+                      <IoIosArrowDown className="w-7 h-7 text-black" />
+                    )}
                   </span>
                 </div>
 
-                <span
-                  className="ml-auto w-6 h-6 flex items-center justify-center"
-                >
-                  {expandedLeft[item.id] ? (
-                    <IoIosArrowUp className="w-7 h-7 text-black" />
-                  ) : (
-                    <IoIosArrowDown className="w-7 h-7 text-black" />
-                  )}
-                </span>
-              </div>
+                {/* Row 2 icons */}
+                {expandedLeft[item.id] && (
+                  <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
+                    <span className="text-xs">{item.date}</span>
 
-              {/* Row 2 icons */}
-              {expandedLeft[item.id] && (
-                <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
-                  <span className="text-xs">{item.date}</span>
-
-                  <div className="flex gap-2 md:gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
-                      onClick={() =>
-                        (window.location.href = `mailto:${item.email}`)
-                      }
-                    >
-                      <HiOutlineMail className="w-4 h-4" />
-                    </div>
-
-                    <div
-                      className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
-                      onClick={() =>
-                        (window.location.href = `tel:${item.call}`)
-                      }
-                    >
-                      <MdOutlineCall className="w-4 h-4" />
-                    </div>
-
-                    <div
-                      className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
-                      onClick={() =>
-                        window.open(`https://wa.me/${item.whatsapp}`, "_blank")
-                      }
-                    >
-                      <RiWhatsappLine className="w-4 h-4" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Expanded contact info */}
-              {expandedLeft[item.id] && (
-                <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
-                  <div className="space-y-4">
-                    {[
-                      { label: "Email", value: item.email },
-                      { label: "Call no.", value: item.call },
-                      { label: "Whatsapp", value: item.whatsapp },
-                    ].map((field, idx) => (
+                    <div className="flex gap-2 md:gap-3">
                       <div
-                        key={idx}
-                        className="flex items-center justify-between relative"
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `mailto:${item.email}`)
+                        }
                       >
-                        <span className="text-xs md:text-base font-semibold">
-                          {field.label}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs md:text-base truncate">
-                            {field.value?.length > 15
-                              ? field.value.slice(0, 15) + "…"
-                              : field.value}
-                          </span>
-                          <FiCopy
-                            className="w-4 h-4 cursor-pointer"
-                            onClick={() => handleCopy(field.label, field.value)}
-                          />
-                        </div>
-                        {copiedField === field.label && (
-                          <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
-                            Copied!
-                          </div>
-                        )}
+                        <HiOutlineMail className="w-4 h-4" />
                       </div>
-                    ))}
+
+                      <div
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `tel:${item.call}`)
+                        }
+                      >
+                        <MdOutlineCall className="w-4 h-4" />
+                      </div>
+
+                      <div
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          window.open(
+                            `https://wa.me/${item.whatsapp}`,
+                            "_blank",
+                          )
+                        }
+                      >
+                        <RiWhatsappLine className="w-4 h-4" />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
 
-            {/* Right status card */}
-            <div
-              className="min-h-[40px] cursor-pointer md:min-h-[60px] flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center"
-              onClick={() =>
-                setExpandedRight((prev) => ({
-                  ...prev,
-                  [item.id]: !prev[item.id],
-                }))
-              }
-            >
-              {/* Header row */}
-              <div
-                className="flex items-center px-4 py-3  
-                  "
-              >
-                <div className="flex items-center gap-5 px-4">
-                  <span className="text-xs md:text-sm text-black font-normal truncate">
-                    {item.status == "Inspection" && <>Waiting...</>}
-                  </span>
-                </div>
-
-                <span className="ml-auto w-6 h-6 flex items-center justify-center">
-                  {expandedRight[item.id] ? (
-                    <IoIosArrowUp className="w-7 h-7 text-black" />
-                  ) : (
-                    <IoIosArrowDown className="w-7 h-7 text-black" />
-                  )}
-                </span>
+                {/* Expanded contact info */}
+                {expandedLeft[item.id] && (
+                  <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
+                    <div className="space-y-4">
+                      {[
+                        { label: "Email", value: item.email },
+                        { label: "Call no.", value: item.call },
+                        { label: "Whatsapp", value: item.whatsapp },
+                      ].map((field, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between relative"
+                        >
+                          <span className="text-xs md:text-base font-semibold">
+                            {field.label}
+                          </span>
+                          <div className="flex items-center pl-4">
+                            <span className="text-xs md:text-base truncate">
+                              {field.value?.length > 14
+                                ? field.value.slice(0, 14) + "…"
+                                : field.value}
+                            </span>
+                            <FiCopy
+                              className="w-4 h-4 cursor-pointer"
+                              onClick={() =>
+                                handleCopy(field.label, field.value)
+                              }
+                            />
+                          </div>
+                          {copiedField === field.label && (
+                            <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
+                              Copied!
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Expanded right card buttons */}
-              {expandedRight[item.id] && (
-                <div className="flex flex-col px-3 md:px-6 gap-3 pb-4">
-                  {item.status == "Inspection" && (
+              {/* Right status card */}
+              <div className={`items-center h-full cursor-pointer flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center ${
+                      item.status === "Declined"
+                        ? "bg-[#FFA1A1]"
+                        : item.status === "Completed"
+                          ? "bg-[#D6FFC3]"
+                          : ""
+                    }`}>
+                {/* Header row */}
+                <div
+                    className="flex justify-center items-center px-8 gap-3 w-full py-3"
+                  >
+                  <div className="flex justify-center  items-center">
+                    <span className="text-xs h-6 flex items-center justify-center md:text-sm text-black font-normal truncate">
+                      {item.status}
+                    </span>
+                  </div>
+
+                  {item.status === "Waiting" && (
+                    <span
+                      className="ml-auto w-6 h-6 flex items-center justify-center cursor-pointer"
+                      onClick={() =>
+                        setExpandedRight((prev) => ({
+                          ...prev,
+                          [item.id]: !prev[item.id],
+                        }))
+                      }
+                    >
+                      {expandedRight[item.id] ? (
+                        <IoIosArrowUp className="w-7 h-7 text-black" />
+                      ) : (
+                        <IoIosArrowDown className="w-7 h-7 text-black" />
+                      )}
+                    </span>
+                  )}
+                </div>
+
+                {/* Expanded right card buttons */}
+                {expandedRight[item.id] && (
+                  <div className="flex flex-col px-3 md:px-6 gap-3 pb-4">
                     <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
                       <span className="text-xs md:text-sm text-black">
                         Decline
                       </span>
                       <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
                     </div>
-                  )}
-                  {item.status == "Inspection" && (
+
                     <div className="flex items-center justify-between bg-[#D6FFC3] p-2 rounded-md">
                       <span className="text-xs md:text-sm text-black">
                         Completed
                       </span>
                       <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full  border-2 shadow-md" />
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -666,9 +673,9 @@ const Agentbookings: React.FC = () => {
                 <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
                   <div>
                     <Label>HOW IT WORKS</Label>
-                    <InfoPill className="relative flex items-center bg-white">
-                      <span className="text-xs md:text-sm">Info</span>
-                      <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
+                    <InfoPill className="relative flex items-center text-gray-500 bg-white">
+                      <span className="text-xs py-1 md:text-sm">Info</span>
+                      <MdLightbulbOutline className="pointer-events-none absoluteight-5 text-lg text-black" />
                     </InfoPill>
                   </div>
 
@@ -678,7 +685,7 @@ const Agentbookings: React.FC = () => {
                       <select
                         value={stateValue}
                         onChange={(e) => setStateValue(e.target.value)}
-                        className="appearance-none w-full bg-transparent outline-none text-xs md:text-sm text-black"
+                        className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                       >
                         <option value="">{states[0].label}</option>
                         {states
