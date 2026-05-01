@@ -135,7 +135,7 @@ function PaginatedBookings() {
           body: JSON.stringify({
             action: "get_bookings",
             user: user,
-            uploader: "agent",
+            uploader: "landlord",
           }),
         });
 
@@ -202,7 +202,7 @@ function PaginatedBookings() {
       if (data.success) {
         showAlert(`Booking marked as ${status}`, "success", true);
         setTimeout(() => {
-          window.location.href = "/businessdash?goto=agentbookings";
+          window.location.href = "/businessdash?goto=landlordbookings";
         }, 3000);
       } else {
         showAlert(data.message || "Update failed", "info");
@@ -456,7 +456,7 @@ function PaginatedRequests() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "get_agent_requests",
+          action: "get_landlord_requests",
           user: user,
         }),
       });
@@ -595,7 +595,7 @@ function PaginatedRequests() {
 }
 
 // ----------------------- Page -----------------------
-const Agentbookings: React.FC = () => {
+const Landlordbookings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Bookings");
   const [stateValue, setStateValue] = useState("");
   const navigate = useNavigate();
@@ -701,7 +701,7 @@ const Agentbookings: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate("/agentlistings")}
+                  onClick={() => navigate("/landlordlistings")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
@@ -751,7 +751,7 @@ const Agentbookings: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate("/agentlistings")}
+                  onClick={() => navigate("/landlordlistings")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
@@ -766,4 +766,4 @@ const Agentbookings: React.FC = () => {
   );
 };
 
-export default Agentbookings;
+export default Landlordbookings;

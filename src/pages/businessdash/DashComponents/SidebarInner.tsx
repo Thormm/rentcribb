@@ -166,7 +166,7 @@ export default function SidebarInner({
         tab: "landlordlistings",
       },
       {
-        label: "Bookings",
+        label: "Bookings & Requests",
         icon: <MdOutlineBookmarkAdded className={baseIcon} />,
         tab: "landlordbookings",
       },

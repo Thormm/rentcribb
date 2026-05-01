@@ -1,15 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FiCamera, FiChevronDown, FiMail } from "react-icons/fi";
+import { FiCamera, FiChevronDown } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
 import { BsQuestionCircle } from "react-icons/bs";
-import {
-  MdOutlineBookmarkAdded,
-  MdOutlinePending,
-  MdOutlineSupervisedUserCircle,
-  MdVerified,
-} from "react-icons/md";
-import { RiInformationLine, RiListView } from "react-icons/ri";
+import { MdOutlinePending, MdVerified } from "react-icons/md";
+import { RiInformationLine } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
@@ -24,6 +19,7 @@ const days = [
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];
 
 // Reusable Label
@@ -32,7 +28,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -94,7 +90,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -134,23 +130,11 @@ interface LandlordDetails {
 }
 
 const Landlordoverview: React.FC = () => {
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [activeTab, setActiveTabPage] = useState<string>("Profile");
-  // Note: original code referenced `plans` in the useState initializer.
-  // To keep identical behavior to your original file, we keep this line as-is.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activePlan, setActivePlan] = useState<any>("TIER1");
-  const [open, setOpen] = useState(false);
-
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-
-  const toggleDay = (day: string) => {
-    setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
-    );
-  };
-
   const [landlordDetails, setLandlordDetails] = useState<LandlordDetails>({
     landlord_callno: "",
     landlord_email: "",
@@ -171,6 +155,14 @@ const Landlordoverview: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<FilterValue>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 4; // per your instruction
+
+  const [open, setOpen] = useState(false);
+
+  const toggleDay = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
 
   // derived values (computed from reviews)
   const filterCounts = useMemo(() => {
@@ -334,14 +326,8 @@ const Landlordoverview: React.FC = () => {
           ],
         ],
         features2: [
-          [
-            "Email Verification",
-            landlordDetails.landlord_email ? "Good" : "Pending",
-          ],
-          [
-            "Call no. Verification",
-            landlordDetails.call_no ? "Good" : "Pending",
-          ],
+          ["Email Verification", landlordDetails.landlord_email ? "Good" : "Pending"],
+          ["Call no. Verification", landlordDetails.call_no ? "Good" : "Pending"],
           ["Next of Kin", landlordDetails.kin ? "Good" : "Pending"],
           ["Residential Address", landlordDetails.address ? "Good" : "Pending"],
         ],
@@ -432,7 +418,7 @@ const Landlordoverview: React.FC = () => {
 
             {/* Content */}
             {activeTab === "Profile" && (
-              <div className="p-5 md:p-5 md:w-2/3 mt-5">
+              <div className="p-2 md:p-5 md:w-2/3 mt-5">
                 <div className="flex justify-start mb-10 pl-5">
                   <div className="h-24 w-24 rounded-full border border-black bg-white flex items-center justify-center">
                     <FiCamera className="text-black" size={35} />
@@ -440,68 +426,82 @@ const Landlordoverview: React.FC = () => {
                 </div>
 
                 {/* Info grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6">
                   {/* Row - Business Name */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {landlordDetails.bname_landlord || "-"}
-                      </span>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.bname_landlord || "-"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - About */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>ABOUT</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {landlordDetails.babout_landlord || "—"}
-                      </span>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.babout_landlord || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - Call Number */}
-                  <div>
+                  <div className="col-span-1">
                     <Label>CALL NUMBER</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1">
-                          {landlordDetails.landlord_callno || "—"}
-                        </span>
-                      </div>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.landlord_callno || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - WhatsApp Number */}
-                  <div>
+                  <div className="col-span-1">
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
-                      <span className="flex-1 text-xs md:text-sm py-1 rounded-md text-black">
-                        {landlordDetails.landlord_whats || "—"}
-                      </span>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.landlord_whats || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - Email */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS EMAIL</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1">
-                          {landlordDetails.landlord_email || "—"}
-                        </span>
-                      </div>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.landlord_email || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row - Address */}
-                  <div className="md:col-span-2">
+                  <div className="col-span-2">
                     <Label>BUSINESS ADDRESS</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <span className="w-full text-xs md:text-sm py-1 rounded-md text-black">
-                        {landlordDetails.baddress_landlord || "—"}
-                      </span>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={landlordDetails.baddress_landlord || "—"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black bg-transparent"
+                      />
                     </InfoPill>
                   </div>
                 </div>
@@ -510,12 +510,12 @@ const Landlordoverview: React.FC = () => {
 
             {/* Verify Business Tab */}
             {activeTab === "Verify Business" && (
-              <div className="p-2 md:p-5 md:w-2/3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Current Verification Level */}
                   <div className="md:col-span-2">
                     <Label>CURRENT VERIFICATION LEVEL</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-xs md:text-sm py-1">
                           {current.tag}
@@ -565,9 +565,7 @@ const Landlordoverview: React.FC = () => {
                 {/* Features 1 */}
                 <div className="md:col-span-2 mt-6">
                   <div className="flex items-center gap-3 mt-10 mb-5">
-                    <span className="text-md font-semibold text-black tracking-wide">
-                      --- REQUIREMENTS ----------------------------
-                    </span>
+                    <Label>--- REQUIREMENTS --------</Label>
                   </div>
 
                   {/* Features 2 (only for TIER1) */}
@@ -656,16 +654,16 @@ const Landlordoverview: React.FC = () => {
             )}
 
             {activeTab === "Operations" && (
-              <div className="md:p-5 md:w-2/3 mt-5">
+              <div className="p-2 md:p-5 md:w-2/3 mt-5">
                 {/* Inputs grid */}
-                <div className="m-2 md:m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Row 4 - Full Address */}
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2 relative">
                     <Label>INSPECTION DAYS</Label>
-                    <InfoPill className="relative flex items-center bg-white">
+                    <InfoPill className="bg-white">
                       {/* Display selected days*/}
                       <div
-                        className="flex justify-between w-full py-2 cursor-pointer"
+                        className="flex justify-between w-full py-1 cursor-pointer"
                         onClick={() => setOpen(!open)}
                       >
                         <span className="text-black text-xs md:text-sm">
@@ -702,9 +700,7 @@ const Landlordoverview: React.FC = () => {
                   <div>
                     <Label>INSPECTION</Label>
                     <InfoPill className="relative flex items-center bg-white">
-                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black">
-                        <option value="">Select days available for Inspection</option>  
-                      </select>
+                      <select className="appearance-none w-full bg-transparent outline-none py-1 text-black"></select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-gray-500" />
                     </InfoPill>
                   </div>
@@ -714,7 +710,8 @@ const Landlordoverview: React.FC = () => {
                       <input className="appearance-none w-full bg-transparent outline-none py-1 text-black" />
                       <FaPlus className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>
-                  </div>*/}
+                  </div>
+                  */}
                 </div>
 
                 {/* Save Changes */}
@@ -726,27 +723,25 @@ const Landlordoverview: React.FC = () => {
                     SAVE CHANGES
                   </button>
                 </div>
-                <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                    --- ANALYTICS ----------------------------
-                  </span>
-                </div>
 
-                <div className="grid grid-cols-3 gap-2 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-1 md:p-3 rounded-lg">
-                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                {/*   <div className="flex items-center gap-3 mt-10 mb-5">
+                  <Label>--- ANALYTICS --------</Label>
+                </div>
+                <div className="grid grid-cols-3 gap-1 md:gap-4 mt-5 border border-dashed border-gray-40 bg-white p-3 rounded-lg">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <RiListView className="text-black" size={20} />
                     <span className="text-xs md:text-md font-semibold">
                       LISTINGS
                     </span>
                   </button>
-                  <button className="flex items-center border-2 justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <MdOutlineBookmarkAdded className="text-black" size={20} />
                     <span className="text-xs md:text-md font-semibold">
                       BOOKINGS
                     </span>
                   </button>
 
-                  <button className="flex border-2 items-center justify-center md:gap-2 py-1 md:py-0 md:p-3 rounded-lg bg-transparent text-black">
+                  <button className="flex items-center border-2 justify-center md:gap-2 px-1 py-2 md:px-3 md:py-3 rounded-lg bg-transparent text-black">
                     <MdOutlineSupervisedUserCircle
                       className="text-black"
                       size={20}
@@ -756,27 +751,12 @@ const Landlordoverview: React.FC = () => {
                     </span>
                   </button>
                 </div>
-
-                <div className="my-10">
-                  <div className="flex flex-col p-5 gap-8 bg-transparent">
-                    {/* Coming Soon */}
-                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
-                      <MdOutlinePending className="w-8 h-8" />
-                      Coming Soon ...
-                    </button>
-
-                    {/* Join Waitlist */}
-                    <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
-                      <FiMail className="w-8 h-8" />
-                      Join Waitlist &gt;&gt;
-                    </button>
-                  </div>
-                </div>
+*/}
               </div>
             )}
 
             {activeTab === "Reviews" && (
-              <div className="p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* --- STATS ROW (TOTAL + TOP BOOKINGS) --- */}
                   <div className="col-span-2">
@@ -880,9 +860,7 @@ const Landlordoverview: React.FC = () => {
 
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 my-8 md:w-2/3">
-                  <span className="text-xs md:text-md font-semibold text-black tracking-wide">
-                    --- REVIEWS --------------------------
-                  </span>
+                  <Label>--- REVIEWS ------------------</Label>
                 </div>
 
                 {/* --- REVIEWS LIST + PAGINATION --- */}

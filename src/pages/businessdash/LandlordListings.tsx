@@ -14,12 +14,17 @@ import { TbCancel, TbHomeSpark } from "react-icons/tb";
 import {
   MdOutlinePending,
   MdOutlineBed,
-  MdCancel,
   MdOutlineDeleteForever,
   MdOutlineBookmarkAdded,
 } from "react-icons/md";
 import { LuPencil } from "react-icons/lu";
-import { FaToggleOn, FaToggleOff, FaUserCheck, FaPlus } from "react-icons/fa";
+import {
+  FaToggleOn,
+  FaToggleOff,
+  FaUserCheck,
+  FaPlus,
+  FaTimes,
+} from "react-icons/fa";
 import { FiChevronDown, FiArrowRight } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
@@ -230,7 +235,7 @@ function PaginatedDrafts() {
   return (
     <div>
       {/* Filters */}
-      <div className=" grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3 hidden">
+      <div className="grid-cols-1 md:grid-cols-2 gap-4 mt-5 md:mt:0 mb-4 md:w-2/3 hidden">
         <div>
           <Label>FILTER</Label>
           <InfoPill className="relative flex items-center bg-white">
@@ -262,12 +267,6 @@ function PaginatedDrafts() {
         </div>
       </div>
 
-      <div className="flex items-center">
-        <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-15">
-          --- YOUR DRAFTS ------
-        </span>
-      </div>
-
       {/* Drafts List */}
       <div
         className="overflow-x-auto md:overflow-visible"
@@ -288,7 +287,10 @@ function PaginatedDrafts() {
                 className="flex gap-6 "
                 onClick={
                   item.status?.trim() === "Incomplete"
-                    ? () => navigate(`/${item.space}?id=${item.gotoid}`)
+                    ? () =>
+                        navigate(
+                          `/${item.space}?id=${item.gotoid}&&uploader=landlord`,
+                        )
                     : undefined
                 }
               >
@@ -366,7 +368,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -386,7 +388,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -545,68 +547,79 @@ function PaginatedCards() {
         }}
       >
         {currentData.map((card) => (
-          <div key={card.id} className="flex items-center gap-6 w-full">
-            {/* LEFT PANEL */}
-            <div className="md:w-1/3 flex flex-col gap-4">
-              <InfoPill className="bg-white">
-                <div className="inline-flex items-center justify-between w-full ">
-                  <span className="text-md py-1 text-black">{card.name}</span>
-                  <LuPencil size={25} className="ml-auto text-black" />
-                </div>
-              </InfoPill>
+          <div className="overflow-x-auto scrollbar-hide">
+            <div
+              key={card.id}
+              className="flex items-center gap-6 min-w-[422px] md:min-w-0"
+            >
+              {/* LEFT PANEL */}
+              <div className="w-[35%] flex flex-col gap-4">
+                <InfoPill className="bg-white">
+                  <div className="inline-flex items-center justify-between w-full ">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.name}
+                    </span>
+                    <LuPencil size={25} className="ml-auto text-black" />
+                  </div>
+                </InfoPill>
 
-              <InfoPill>
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">
-                    {card.bookmarks} Students
-                  </span>
-                  <MdOutlineBookmarkAdded
-                    size={25}
-                    className="ml-auto text-black"
-                  />
-                </div>
-              </InfoPill>
+                <InfoPill>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.bookmarks} students
+                    </span>
+                    <MdOutlineBookmarkAdded
+                      size={25}
+                      className="ml-auto text-black"
+                    />
+                  </div>
+                </InfoPill>
 
-              <InfoPill
-                style={{
-                  backgroundColor: card.active === 1 ? "#D6FFC3" : "#9D9D9D",
-                }}
-              >
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">
-                    {card.active === 1 ? "Online" : "Offline"}
-                  </span>
-                  {card.active === 1 ? (
-                    <FaToggleOn size={25} className="ml-auto text-black" />
-                  ) : (
-                    <FaToggleOff size={25} className="ml-auto text-black" />
-                  )}
-                </div>
-              </InfoPill>
-
-              <InfoPill className="bg-[#FFA1A1]">
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-md py-1 text-black">Delete</span>
-                  <MdOutlineDeleteForever
-                    size={25}
-                    className="ml-auto text-black"
-                  />
-                </div>
-              </InfoPill>
-
-              <div className="flex justify-center">
-                <button
-                  onClick={() => navigate(`/${card.space}?id=${card.id}`)}
-                  className="py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg"
+                <InfoPill
+                  style={{
+                    backgroundColor: card.active === 1 ? "#D6FFC3" : "#9D9D9D",
+                  }}
                 >
-                  EDIT
-                </button>
-              </div>
-            </div>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      {card.active === 1 ? "Online" : "Offline"}
+                    </span>
+                    {card.active === 1 ? (
+                      <FaToggleOn size={25} className="ml-auto text-black" />
+                    ) : (
+                      <FaToggleOff size={25} className="ml-auto text-black" />
+                    )}
+                  </div>
+                </InfoPill>
 
-            {/* RIGHT CARD */}
-            <div className="md:w-2/3 flex justify-center">
-              <Card item={card} />
+                <InfoPill className="bg-[#FFA1A1]">
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-xs md:text-sm py-1 text-black">
+                      Delete
+                    </span>
+                    <MdOutlineDeleteForever
+                      size={25}
+                      className="ml-auto text-black"
+                    />
+                  </div>
+                </InfoPill>
+
+                <div className="flex justify-center">
+                  <button
+                    onClick={() =>
+                      navigate(`/${card.space}?id=${card.id}&&uploader=landlord`)
+                    }
+                    className="py-3 text-sm w-30 font-medium bg-black text-white shadow-lg rounded-lg"
+                  >
+                    EDIT
+                  </button>
+                </div>
+              </div>
+
+              {/* RIGHT CARD */}
+              <div className="w-[60%] flex justify-center">
+                <Card item={card} />
+              </div>
             </div>
           </div>
         ))}
@@ -647,11 +660,11 @@ const Landlordlistings: React.FC = () => {
           {/* Header */}
           <SectionHeader title="Listings" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-5 bg-[#F4F6F5]">
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {activeTab === "Live" && (
-              <div className="md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 {/* LIVE tab content remains exactly as your raw code */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                   {/* Row 1 - First Name with FaPlus */}
@@ -665,19 +678,32 @@ const Landlordlistings: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5 col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="mt-5 col-span-2 grid grid-cols-2 gap-4">
                     <div>
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                        12
-                        <GrStatusGood className="pointer-events-none absolute right-5 text-[black]" />
+                          <input
+                        type="text"
+                        readOnly
+                        value={12}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
+                    
+                        <GrStatusGood className="pointer-events-none absolute right-5  text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
                       <Label>MAX ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                        TIER 2 &raquo; 15
-                        <RiInformationLine className="pointer-events-none absolute right-5  text-[black] " />
+                          <input
+                        type="text"
+                        readOnly
+                        value={"TIER 2 - 15"}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
+                    
+                        
+                        <RiInformationLine className="pointer-events-none absolute right-5 text-[black] " />
                       </InfoPill>
                     </div>
                   </div>
@@ -716,13 +742,16 @@ const Landlordlistings: React.FC = () => {
                     </div>
                   </div> */}
                 </div>
-                <div className="flex items-center gap-3 mt-8">
-                  <span className="text-sm md:text-lg font-semibold text-black tracking-wide mt-10">
-                    ------- YOUR LISTINGS -------
+                <div className="flex items-center mt-10">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
+                    --- YOUR LISTINGS -------------
                   </span>
                 </div>
                 <PaginatedCards />
-                <button className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
@@ -730,20 +759,29 @@ const Landlordlistings: React.FC = () => {
             )}
 
             {activeTab === "Drafts" && (
-              <div className="md:p-5 mt-5 space-y-6">
-                <div className="relative flex flex-col mb-10">
-                  <Label>NEW LISTING</Label>
-                  <div
-                    onClick={() => setOpen(true)}
-                    className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
-                  >
-                    <FaPlus size={20} className="text-white" />
+              <div className="p-2 md:p-5 mt-5 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
+                  <div className="relative flex flex-col mb-10">
+                    <Label>NEW LISTING</Label>
+                    <div
+                      onClick={() => setOpen(true)}
+                      className="absolute md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                    >
+                      <FaPlus size={20} className="text-white" />
+                    </div>
                   </div>
                 </div>
-
+                <div className="flex items-start mt-15">
+                  <span className="text-sm md:text-md font-semibold text-black ">
+                    --- YOUR DRAFTS -------------
+                  </span>
+                </div>
                 {/* DRAFTS tab now uses upgraded PaginatedDrafts */}
                 <PaginatedDrafts />
-                <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button
+                  onClick={() => navigate("/businessrequests")}
+                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
@@ -758,10 +796,10 @@ const Landlordlistings: React.FC = () => {
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="absolute -top-3 -right-3 w-10 h-10 rounded-full border border-white bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setOpen(false)}
             >
-              <MdCancel className="text-white text-2xl" />
+              <FaTimes className="text-white" />
             </div>
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
               New Listing
@@ -820,7 +858,7 @@ const Landlordlistings: React.FC = () => {
                 </div>
               </div>
 
-              <div className="text-md font-semibold text-black text-center">
+              <div className="text-sm font-semibold text-black text-center">
                 -------- COMING SOON --------
               </div>
 
