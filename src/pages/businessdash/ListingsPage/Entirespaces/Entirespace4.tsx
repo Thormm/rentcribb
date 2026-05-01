@@ -1,3 +1,4 @@
+import { useAlert } from "../../../../App";
 import { useState } from "react";
 import imgright from "../../../../../src/assets/list4.png";
 import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
@@ -75,9 +76,9 @@ export default function Entirespace4({
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const user = login?.user || "";
   const signup_key = login?.signup_key || "";
+  const { showAlert } = useAlert();
 
   const durationOptions = [
     "Per Year",
@@ -91,7 +92,7 @@ export default function Entirespace4({
 
   const handleSave = async () => {
     setLoading(true);
-    setStatusMessage("Saving...");
+    showAlert(`Saving...`, "info", true);
     try {
       const payload = {
         action: "entire_space4",
@@ -116,18 +117,13 @@ export default function Entirespace4({
 
       const data = await response.json();
       if (data.success) {
-        setStatusMessage("Saved successfully!");
-        setTimeout(() => {
-          setStatusMessage(null);
-        }, 1000);
+        showAlert(`Saved successfully!`, "success", true);
         navigate(`/businessdash?goto=${uploader}listings`);
       } else {
-        setStatusMessage("Error: " + (data.message || "Unknown"));
-        setTimeout(() => setStatusMessage(null), 2000);
+        showAlert(`Uploading Failed`, "warning", true);
       }
     } catch (err) {
-      setStatusMessage("Network error");
-      setTimeout(() => setStatusMessage(null), 2000);
+      showAlert(`Uploading Failed`, "warning", true);
     } finally {
       setLoading(false);
     }
@@ -290,14 +286,6 @@ export default function Entirespace4({
           </Maincard>
         </div>
       </div>
-      {/* STATUS MODAL */}
-      {statusMessage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl p-6 w-72 text-center shadow-lg">
-            <p className="text-sm md:text-md">{statusMessage}</p>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
