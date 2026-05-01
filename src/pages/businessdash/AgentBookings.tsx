@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -5,7 +6,6 @@ import InfoPill from "../../components/Pill";
 import Card from "../../components/Cards";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiOutlineUserCircle } from "react-icons/hi2";
-import { GrCheckmark } from "react-icons/gr";
 import {
   MdOutlineCall,
   MdOutlinePostAdd,
@@ -13,19 +13,15 @@ import {
 } from "react-icons/md";
 import { FiChevronDown, FiCopy } from "react-icons/fi";
 //import { IoIosArrowForward } from "react-icons/io";
-import { TbCancel } from "react-icons/tb";
+import { MdOutlineCancel } from "react-icons/md";
 import { BiComment } from "react-icons/bi";
 import { RiWhatsappLine } from "react-icons/ri";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import {
+  IoIosArrowDown,
+  IoIosArrowUp,
+  IoMdCheckmarkCircleOutline,
+} from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-
-// ----------------------- States -----------------------
-const states = [
-  { value: "", label: "Sort by" },
-  { value: "lagos", label: "Lagos" },
-  { value: "abuja", label: "Abuja" },
-  { value: "rivers", label: "Rivers" },
-];
 
 interface DraftItem {
   id: number | string;
@@ -176,6 +172,45 @@ function PaginatedBookings() {
     setTimeout(() => setCopiedField(null), 1500);
   };
 
+  const { showAlert } = useAlert();
+
+  const handleStatusUpdate = async (
+    id: string | number,
+    status: "Declined" | "Completed",
+  ) => {
+    try {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (!login) return;
+
+      const user = login?.user || "";
+      const signup_key = login?.signup_key || "";
+
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_booking_status",
+          id,
+          status,
+          user,
+          signup_key,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert(`Booking marked as ${status}`, "success", true);
+        window.location.href = "/businessdash?goto=agentbookings";
+      } else {
+        showAlert(data.message || "Update failed", "info");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Something went wrong", "info");
+    }
+  };
+
   return (
     <div>
       <div
@@ -315,17 +350,17 @@ function PaginatedBookings() {
               </div>
 
               {/* Right status card */}
-              <div className={`items-center h-full cursor-pointer flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center ${
-                      item.status === "Declined"
-                        ? "bg-[#FFA1A1]"
-                        : item.status === "Completed"
-                          ? "bg-[#D6FFC3]"
-                          : ""
-                    }`}>
+              <div
+                className={`items-center h-full cursor-pointer flex-shrink-0 border border-black rounded-4xl shadow-sm flex flex-col justify-center self-center ${
+                  item.status === "Declined"
+                    ? "bg-[#FFA1A1]"
+                    : item.status === "Completed"
+                      ? "bg-[#D6FFC3]"
+                      : ""
+                }`}
+              >
                 {/* Header row */}
-                <div
-                    className="flex justify-center items-center px-8 gap-3 w-full py-3"
-                  >
+                <div className="flex justify-center items-center px-6 gap-3 w-full py-3">
                   <div className="flex justify-center  items-center">
                     <span className="text-xs h-6 flex items-center justify-center md:text-sm text-black font-normal truncate">
                       {item.status}
@@ -353,19 +388,25 @@ function PaginatedBookings() {
 
                 {/* Expanded right card buttons */}
                 {expandedRight[item.id] && (
-                  <div className="flex flex-col px-3 md:px-6 gap-3 pb-4">
-                    <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md">
+                  <div className="flex flex-col px-1 md:px-6 gap-3 pb-4">
+                    <div
+                      className="flex items-center justify-between bg-[#FFA1A1] p-2 gap-3 rounded-md cursor-pointer"
+                      onClick={() => handleStatusUpdate(item.id, "Declined")}
+                    >
                       <span className="text-xs md:text-sm text-black">
                         Decline
                       </span>
-                      <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
+                      <MdOutlineCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
                     </div>
 
-                    <div className="flex items-center justify-between bg-[#D6FFC3] p-2 rounded-md">
+                    <div
+                      className="flex items-center justify-between bg-[#D6FFC3] gap-3 p-2 rounded-md"
+                      onClick={() => handleStatusUpdate(item.id, "Completed")}
+                    >
                       <span className="text-xs md:text-sm text-black">
                         Completed
                       </span>
-                      <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full  border-2 shadow-md" />
+                      <IoMdCheckmarkCircleOutline className="text-black w-4 h-4 md:h-6 md:w-6" />
                     </div>
                   </div>
                 )}
@@ -400,7 +441,6 @@ function PaginatedBookings() {
 function PaginatedRequests() {
   const [page, setPage] = useState(1);
   const [requests, setRequests] = useState<any[]>([]);
-
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -675,7 +715,7 @@ const Agentbookings: React.FC = () => {
                     <Label>HOW IT WORKS</Label>
                     <InfoPill className="relative flex items-center text-gray-500 bg-white">
                       <span className="text-xs py-1 md:text-sm">Info</span>
-                      <MdLightbulbOutline className="pointer-events-none absoluteight-5 text-lg text-black" />
+                      <MdLightbulbOutline className="ml-auto pointer-events-none absoluteight-5 text-lg text-black" />
                     </InfoPill>
                   </div>
 
@@ -687,14 +727,7 @@ const Agentbookings: React.FC = () => {
                         onChange={(e) => setStateValue(e.target.value)}
                         className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
                       >
-                        <option value="">{states[0].label}</option>
-                        {states
-                          .filter((s) => s.value !== "")
-                          .map((s) => (
-                            <option key={s.value} value={s.value}>
-                              {s.label}
-                            </option>
-                          ))}
+                        <option value="">None</option>
                       </select>
                       <FiChevronDown className="pointer-events-none absolute right-5 text-black" />
                     </InfoPill>

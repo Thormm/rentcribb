@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -121,8 +122,7 @@ export default function Loginpage() {
   const [open, setOpen] = useState(false);
 
   // NEW: forgot password modal states
-  const [showForgotPrompt, setShowForgotPrompt] = useState(false); // shows modal asking for email/phone if username empty
-
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function Loginpage() {
       }
     } else {
       // just show a modal telling user to enter email/phone
-      setShowForgotPrompt(true);
+      showAlert("Please enter your email or phone number in the login field above before requesting a password reset.", "info")
     }
   };
 
@@ -585,9 +585,9 @@ export default function Loginpage() {
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    List entire or shared space and connect to students.<br/>
-                    Explore rent requests and reply with your
-                    spaces.{" "}
+                    List entire or shared space and connect to students.
+                    <br />
+                    Explore rent requests and reply with your spaces.{" "}
                   </span>
                 </div>
               </div>
@@ -610,8 +610,8 @@ export default function Loginpage() {
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-              Be among the first to experience our products.  <br/> Share pain
-                    points to help us build a soft life for Uni students.
+                    Be among the first to experience our products. <br /> Share
+                    pain points to help us build a soft life for Uni students.
                   </span>
                 </div>
               </div>
@@ -649,36 +649,6 @@ export default function Loginpage() {
         </div>
       )}
 
-      {/* ==== FORGOT PROMPT MODAL ==== */}
-      {showForgotPrompt && (
-        <div className="fixed inset-0 bg-black/90 z-50 py-10 p-10 items-center flex justify-center scrollbar-hide overflow-y-scroll no-scrollbar">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
-            <div
-              className="absolute -top-3 -right-3 w-10 h-10 rounded-full border border-white bg-black flex items-center justify-center cursor-pointer"
-              onClick={() => setShowForgotPrompt(false)}
-            >
-              <FaTimes className="text-white" />
-            </div>
-
-            <h3 className="text-xl font-semibold text-center mb-2">
-              Reset Password
-            </h3>
-            <p className="text-sm text-center text-gray-600 mb-4">
-              Please enter your email or phone number in the login field above
-              before requesting a password reset.
-            </p>
-
-            <div className="flex justify-center">
-              <button
-                className="px-4 py-2 bg-black text-white rounded-lg cursor-pointer"
-                onClick={() => setShowForgotPrompt(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

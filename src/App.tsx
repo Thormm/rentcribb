@@ -4,8 +4,16 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
-import { useState } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
+
 import Navbar from "./components/Navbar";
+import AlertBox from "./components/AlertBox";
+
 import Home from "./pages/home/Home";
 import StudentListing from "./pages/listingpage/StudentListing";
 import BusinessRequests from "./pages/listingpage/BusinessRequestListing";
@@ -24,21 +32,48 @@ import Loginpage from "./pages/signup_login/Loginpage";
 import ForgotPassword from "./pages/signup_login/ResetPassword";
 import Board from "./pages/business_onboarding/Board";
 
-// Layout with conditional Navbar
+/* ---------------- ALERT GLOBAL CONTEXT ---------------- */
+
+type AlertType = "warning" | "info" | "success";
+
+type AlertContextType = {
+  showAlert: (
+    message: string,
+    alertType?: AlertType,
+    timer?: boolean
+  ) => void;
+};
+
+const AlertContext = createContext<AlertContextType | null>(null);
+
+export const useAlert = () => {
+  const ctx = useContext(AlertContext);
+  if (!ctx) throw new Error("useAlert must be used inside App");
+  return ctx;
+};
+
+/* ---------------- LAYOUT ---------------- */
+
 function Layout() {
   const location = useLocation();
 
-  // Explicitly list only pages where you WANT the navbar
-  const showNavbarOn = ["/", "/studentlisting", "/businesslisting", "/businessrequests", "/request", "/hostelview", "/connected"];
+  const showNavbarOn = [
+    "/",
+    "/studentlisting",
+    "/businesslisting",
+    "/businessrequests",
+    "/request",
+    "/hostelview",
+    "/connected",
+  ];
 
-  // Check for exact matches, not just prefix matches
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
-  // ✅ shared state between Navbar and /home
+
   const [loginModal, setLoginModal] = useState(false);
 
   return (
     <>
-       {shouldShowNavbar && (
+      {shouldShowNavbar && (
         <Navbar setLoginModal={setLoginModal} />
       )}
 
@@ -47,6 +82,7 @@ function Layout() {
   );
 }
 
+/* ---------------- ROUTER ---------------- */
 
 const router = createBrowserRouter([
   {
@@ -73,6 +109,48 @@ const router = createBrowserRouter([
   },
 ]);
 
+/* ---------------- APP (GLOBAL ALERT LOGIC) ---------------- */
+
 export default function App() {
-  return <RouterProvider router={router} />;
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    alertType: "info" as AlertType,
+    timer: false,
+  });
+
+  const showAlert = useCallback(
+    (
+      message: string,
+      alertType: AlertType = "info",
+      timer = false
+    ) => {
+      setAlert({
+        open: true,
+        message,
+        alertType,
+        timer,
+      });
+    },
+    []
+  );
+
+  const closeAlert = () => {
+    setAlert((prev) => ({ ...prev, open: false }));
+  };
+
+  return (
+    <AlertContext.Provider value={{ showAlert }}>
+      <RouterProvider router={router} />
+
+      {/* GLOBAL ALERT (ONLY ONCE) */}
+      <AlertBox
+        open={alert.open}
+        onClose={closeAlert}
+        message={alert.message}
+        alertType={alert.alertType}
+        timer={alert.timer}
+      />
+    </AlertContext.Provider>
+  );
 }
