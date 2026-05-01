@@ -201,7 +201,9 @@ function PaginatedBookings() {
 
       if (data.success) {
         showAlert(`Booking marked as ${status}`, "success", true);
-        window.location.href = "/businessdash?goto=agentbookings";
+        setTimeout(() => {
+          window.location.href = "/businessdash?goto=agentbookings";
+        }, 3000);
       } else {
         showAlert(data.message || "Update failed", "info");
       }

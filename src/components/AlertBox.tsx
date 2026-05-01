@@ -23,7 +23,7 @@ const AlertBox: React.FC<AlertBoxProps> = ({
     if (open && timer) {
       const timeout = setTimeout(() => {
         onClose();
-      }, 8000);
+      }, 3000);
 
       return () => clearTimeout(timeout);
     }

@@ -121,7 +121,7 @@ export default function Card<T extends CardItemBase>({
           user,
           signup_key,
           space,
-          request_id
+          request_id,
         }),
       });
 
@@ -129,7 +129,9 @@ export default function Card<T extends CardItemBase>({
 
       if (data.success) {
         showAlert(`Response updated`, "success", true);
-        window.location.href = "/businessdash?goto=agentbookings";
+        setTimeout(() => {
+          window.location.href = "/businessdash?goto=agentbookings";
+        }, 3000);
       } else {
         showAlert(data.message || "Update failed", "info");
       }
@@ -291,10 +293,12 @@ export default function Card<T extends CardItemBase>({
                   </div>
                 )}
                 {item.pending && (
-                  <div className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                   onClick={() =>
+                  <div
+                    className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
+                    onClick={() =>
                       handleStatusUpdate(item.id, item.space, item.request_id)
-                    }>
+                    }
+                  >
                     <span className="text-xs md:text-sm text-black">
                       Unsend
                     </span>
