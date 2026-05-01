@@ -7,6 +7,7 @@ import { HiOutlineUserCircle } from "react-icons/hi";
 import { GrSearch } from "react-icons/gr";
 
 type CardItemA = {
+  id: string;
   background: string;
   tier: number;
   rating: number;
@@ -22,7 +23,7 @@ type CardItemA = {
 
 const cards: CardItemA[] = [
   {
-    tier: 1,
+    id: "3",
     rating: 4.2,
     reviews: 527,
     title: "A room and parlor (New) is available",
@@ -33,8 +34,10 @@ const cards: CardItemA[] = [
     space: "100 sq ft",
     duration: "Yearly",
     type: "Self-contained",
+    tier:1,
   },
   {
+    id:"3",
     tier: 2,
     rating: 3.2,
     reviews: 27,
@@ -48,6 +51,7 @@ const cards: CardItemA[] = [
     type: "Self-contained",
   },
   {
+    id:"4",
     tier: 3,
     rating: 4.2,
     reviews: 527,
