@@ -694,15 +694,15 @@ const Agentbookings: React.FC = () => {
 
                 <button
                   onClick={() => navigate("/businessrequests")}
-                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                  className="cursor-pointer w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                 >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
 
                 <button
-                  onClick={() => navigate("/agentlistings")}
-                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                  onClick={() => navigate("/businessdash?goto=agentlistings")}
+                  className="cursor-pointer w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings
@@ -744,15 +744,15 @@ const Agentbookings: React.FC = () => {
 
                 <button
                   onClick={() => navigate("/businessrequests")}
-                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                  className="cursor-pointer w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                 >
                   <BiComment className="w-8 h-8" />
                   View Rent Requests
                 </button>
 
                 <button
-                  onClick={() => navigate("/agentlistings")}
-                  className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                 onClick={() => navigate("/businessdash?goto=agentlistings")}
+                  className="cursor-pointer w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Post New Listings

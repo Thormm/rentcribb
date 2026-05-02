@@ -25,11 +25,21 @@ export default function BusinessDash() {
   useEffect(() => {
     const goto = searchParams.get("goto");
 
-    if (goto) {
-      setActiveTab(goto);
-      localStorage.setItem("dashboard:tab", goto);
+    if (!goto) return;
+
+    setActiveTab(goto);
+    localStorage.setItem("dashboard:tab", goto);
+
+    // ✅ OPEN the correct section
+    if (goto.startsWith("agent")) {
+      setOpenSection("AGENT");
+    } else if (goto.startsWith("landlord")) {
+      setOpenSection("LANDLORD");
     }
-  }, [searchParams]);
+
+    // ✅ clean URL
+    navigate("/businessdash", { replace: true });
+  }, []);
 
   useEffect(() => {
     const loginData = sessionStorage.getItem("login_data");
