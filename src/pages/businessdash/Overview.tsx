@@ -517,7 +517,7 @@ const Overview = () => {
 
                   {/* Row 2 – Call Number & WhatsApp */}
                   <div className="space-y-1">
-                    <Label>CALL NUMBER</Label>
+                    <Label>CALL NO</Label>
                     <InfoPill>
                       <input
                         type="text"
@@ -536,7 +536,7 @@ const Overview = () => {
                         value={whatsapp}
                         readOnly
                         onChange={(e) => setWhatsapp(e.target.value)}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -665,7 +665,7 @@ const Overview = () => {
             {activeTab === "Next of Kin" && (
               <div className="p-2 md:p-5 w-full md:w-2/3">
                 {/* Inputs grid */}
-                <div className="grid mt-5 mb-10 grid-cols-2 md:grid-cols-2 gap-6">
+                <div className="grid mt-5 mb-10 grid-cols-2 md:grid-cols-2 gap-4">
                   {/* Row 1 — First & Last Name */}
                   <div className="space-y-1">
                     <Label>FIRST NAME</Label>
@@ -705,7 +705,7 @@ const Overview = () => {
 
                   {/* Row 2 — Call No. & WhatsApp No. */}
                   <div className="space-y-1">
-                    <Label>CALL NO.</Label>
+                    <Label>CALL NO</Label>
                     <InfoPill
                       className={`flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
@@ -717,7 +717,7 @@ const Overview = () => {
                         onChange={(e) => setKinCall(e.target.value)}
                         placeholder="Call No."
                         readOnly={isKinLocked}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -735,7 +735,7 @@ const Overview = () => {
                         onChange={(e) => setKinWhats(e.target.value)}
                         placeholder="Whatsapp No."
                         readOnly={isKinLocked}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
