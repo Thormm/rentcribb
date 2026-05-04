@@ -229,7 +229,7 @@ const Subscriptions = () => {
     fetch(`https://cribb.africa/apigets.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "getplans", user }),
+      body: JSON.stringify({ action: "getmerchantplans", user }),
     })
       .then((r) => r.json())
       .then((res) => {

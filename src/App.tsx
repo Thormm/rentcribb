@@ -21,7 +21,8 @@ import Hostelview from "./pages/hostelview/Hostelview";
 import Connected from "./pages/connected/Connected";
 import Request from "./pages/connected/Request";
 import Hostpage from "./pages/hostpage/Hostpage";
-import StudentPlan from "./pages/plans/StudentPlan";
+import RoommatePlan from "./pages/plans/RoommatePlan"
+import RentPlan from "./pages/plans/RentPlan";
 import BusinessPlan from "./pages/plans/BusinessPlan";
 import BusinessDash from "./pages/businessdash/BusinessDash";
 import StudentDash from "./pages/studentdash/StudentDash";
@@ -95,7 +96,8 @@ const router = createBrowserRouter([
       { path: "/connected", element: <Connected /> },
       { path: "/request", element: <Request /> },
       { path: "/hostpage", element: <Hostpage /> },
-      { path: "/studentplan", element: <StudentPlan /> },
+      { path: "/roommateplan", element: <RoommatePlan /> },
+      { path: "/rentplan", element: <RentPlan /> },
       { path: "/businessplan", element: <BusinessPlan /> },
       { path: "/businessdash", element: <BusinessDash /> },
       { path: "/studentdash", element: <StudentDash /> },

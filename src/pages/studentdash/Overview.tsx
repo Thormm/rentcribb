@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiCamera, FiChevronDown, FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
 import InfoPill from "../../components/Pill"; // pill component
@@ -8,6 +8,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FiMail } from "react-icons/fi";
 import { MdOutlinePending } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import LGAS_DATA from "../../components/localgovt.json";
 
 // === Helper to get login info from sessionStorage ===
 const getLoginData = () => {
@@ -29,17 +30,16 @@ type Review = {
 };
 
 const reviews: Review[] = [
-  { id: 1, date: "6th Jan, 2025", name: "Zarken Christian", type: "home" },
+  //{ id: 1, date: "6th Jan, 2025", name: "Zarken Christian", type: "home" },
 ];
 
-// Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -86,7 +86,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{
         borderStyle: "dashed",
         borderColor: "#0000004D",
@@ -100,7 +100,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -110,53 +110,14 @@ function Tabs({
   );
 }
 
-// Full list of Nigerian states + FCT
-const NIGERIA_STATES = [
-  { value: "", label: "Select State" },
-  { value: "abia", label: "Abia" },
-  { value: "adamawa", label: "Adamawa" },
-  { value: "akwa_ibom", label: "Akwa Ibom" },
-  { value: "anambra", label: "Anambra" },
-  { value: "bauchi", label: "Bauchi" },
-  { value: "benue", label: "Benue" },
-  { value: "borno", label: "Borno" },
-  { value: "cross_river", label: "Cross River" },
-  { value: "delta", label: "Delta" },
-  { value: "ebonyi", label: "Ebonyi" },
-  { value: "edo", label: "Edo" },
-  { value: "ekiti", label: "Ekiti" },
-  { value: "enugu", label: "Enugu" },
-  { value: "gombe", label: "Gombe" },
-  { value: "imo", label: "Imo" },
-  { value: "jigawa", label: "Jigawa" },
-  { value: "kaduna", label: "Kaduna" },
-  { value: "kano", label: "Kano" },
-  { value: "katsina", label: "Katsina" },
-  { value: "kebbi", label: "Kebbi" },
-  { value: "kogi", label: "Kogi" },
-  { value: "kwara", label: "Kwara" },
-  { value: "lagos", label: "Lagos" },
-  { value: "nasarawa", label: "Nasarawa" },
-  { value: "niger", label: "Niger" },
-  { value: "ogun", label: "Ogun" },
-  { value: "ondo", label: "Ondo" },
-  { value: "oshun", label: "Oshun" },
-  { value: "oyo", label: "Oyo" },
-  { value: "plateau", label: "Plateau" },
-  { value: "rivers", label: "Rivers" },
-  { value: "sokoto", label: "Sokoto" },
-  { value: "taraba", label: "Taraba" },
-  { value: "yobe", label: "Yobe" },
-  { value: "zamfara", label: "Zamfara" },
-  { value: "fct", label: "FCT (Abuja)" },
-];
-
 const PROFILE_FETCH_URL = "https://www.cribb.africa/apigets.php";
 const SAVE_URL = "https://www.cribb.africa/api_save.php";
 const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
   const [feedback, setFeedback] = useState("");
   const [isSending, setIsSending] = useState(false);
+
+  const [showStateModal, setShowStateModal] = useState(false);
 
   // Controls read-only + save button visibility
   const [isProfileLocked, setIsProfileLocked] = useState(false);
@@ -172,7 +133,7 @@ const Overview = () => {
   const [email, setEmail] = useState("");
   const [callNo, setCallNo] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [institution, setInstitution] = useState<string | null>(null);
+  const [institution, setInstitution] = useState<any | null>(null);
   const [localImageFile, setLocalImageFile] = useState<File | null>(null);
 
   // next of kin
@@ -182,13 +143,22 @@ const Overview = () => {
   const [kinWhats, setKinWhats] = useState("");
   const [kinEmail, setKinEmail] = useState("");
 
+  const [stateSearch, setStateSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (showStateModal) {
+      setTimeout(() => searchRef.current?.focus(), 100);
+    }
+  }, [showStateModal]);
+
   // feedback / UI
   const [expanded, setExpanded] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [key: number]: number }>(
-    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.rating || 0 }), {})
+    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.rating || 0 }), {}),
   );
   const [feedbackTexts, setFeedbackTexts] = useState<{ [key: number]: string }>(
-    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.text || "" }), {})
+    reviews.reduce((acc, r) => ({ ...acc, [r.id]: r.text || "" }), {}),
   );
 
   // refs
@@ -455,6 +425,24 @@ const Overview = () => {
     }
   };
 
+  const statesAndLgas: { state: string; lgas: string[] }[] =
+    React.useMemo(() => {
+      try {
+        if (Array.isArray(LGAS_DATA as any)) return LGAS_DATA as any;
+        return Object.keys(LGAS_DATA as any).map((s) => ({
+          state: s,
+          lgas: (LGAS_DATA as any)[s],
+        }));
+      } catch (e) {
+        return [];
+      }
+    }, []);
+
+  //
+  const filteredStates = statesAndLgas.filter((s) =>
+    s.state.toLowerCase().startsWith(stateSearch.toLowerCase()),
+  );
+
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
@@ -469,9 +457,9 @@ const Overview = () => {
 
             {/* Content */}
             {activeTab === "Profile" && (
-              <div className="p-2 md:p-5 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Avatar Upload - left aligned */}
-                <div className="flex justify-start my-5 md:my-10 pl-5">
+                <div className="flex justify-start mb-5 md:mb-10 pl-5">
                   {/* Image upload */}
                   <div
                     onClick={!isProfileLocked ? onAvatarClick : undefined}
@@ -503,7 +491,7 @@ const Overview = () => {
                   {/* Row 1 – First & Last Name */}
                   <div className="space-y-1">
                     <Label>FIRST NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -516,7 +504,7 @@ const Overview = () => {
 
                   <div className="space-y-1">
                     <Label>LAST NAME</Label>
-                    <InfoPill className="px-5 md:px-8">
+                    <InfoPill>
                       <input
                         type="text"
                         readOnly
@@ -529,25 +517,26 @@ const Overview = () => {
 
                   {/* Row 2 – Call Number & WhatsApp */}
                   <div className="space-y-1">
-                    <Label>CALL NUMBER</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1 text-black">
-                          {callNo}
-                        </span>
-                      </div>
+                    <Label>CALL NO</Label>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={callNo}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
                     </InfoPill>
                   </div>
 
                   <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
-                    <InfoPill className="px-5 md:px-8 flex items-center justify-between">
+                    <InfoPill>
                       <input
                         type="tel"
                         value={whatsapp}
                         readOnly
                         onChange={(e) => setWhatsapp(e.target.value)}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -555,24 +544,26 @@ const Overview = () => {
                   {/* Row 3 – Email (Full Width) */}
                   <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm py-1 text-black">
-                          {email}
-                        </span>
-                      </div>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={email}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
                     </InfoPill>
                   </div>
 
                   {/* Row 4 – School (Full Width) */}
                   <div className="col-span-2 space-y-1">
                     <Label>UNIVERSITY</Label>
-                    <InfoPill className="px-5 md:px-8">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm truncate py-1 text-black">
-                          {institution}
-                        </span>
-                      </div>
+                    <InfoPill>
+                      <input
+                        type="text"
+                        readOnly
+                        value={institution}
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                      />
                     </InfoPill>
                   </div>
 
@@ -580,7 +571,7 @@ const Overview = () => {
                   <div className="col-span-2 space-y-1">
                     <Label>FULL ADDRESS</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isProfileLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -599,23 +590,22 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>STATE</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 relative flex items-center ${
-                        isProfileLocked ? "bg-transparent" : "bg-white"
-                      }`}
+                      onClick={() =>
+                        !isProfileLocked && setShowStateModal(true)
+                      }
+                      className={`${isProfileLocked ? "bg-transparent" : "bg-white"} relative flex items-center justify-between cursor-pointer`}
                     >
-                      <select
+                      <input
+                        type="text"
                         value={stateValue}
-                        onChange={(e) => setStateValue(e.target.value)}
-                        disabled={isProfileLocked}
-                        className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
-                      >
-                        {NIGERIA_STATES.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                      <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
+                        placeholder="Select State"
+                        readOnly
+                        className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent cursor-pointer"
+                      />
+
+                      {!isProfileLocked && (
+                        <FiChevronDown className="ml-2 text-gray-500" />
+                      )}
                     </InfoPill>
                   </div>
 
@@ -643,7 +633,7 @@ const Overview = () => {
                   <div className="flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
+                      className="cursor-pointer py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
                     >
                       SAVE CHANGES
                     </button>
@@ -654,16 +644,16 @@ const Overview = () => {
 
             {/* Verify ID */}
             {activeTab === "Verify ID" && (
-              <div className="my-10 md:w-2/3">
-                <div className="flex flex-col p-5 gap-8 bg-transparent">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="flex flex-col gap-3 bg-transparent">
                   {/* Coming Soon */}
-                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-white px-4 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
 
                   {/* Join Waitlist */}
-                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
                   </button>
@@ -675,12 +665,12 @@ const Overview = () => {
             {activeTab === "Next of Kin" && (
               <div className="p-2 md:p-5 w-full md:w-2/3">
                 {/* Inputs grid */}
-                <div className="grid mt-5 mb-10 grid-cols-2 md:grid-cols-2 gap-6">
+                <div className="grid mt-5 mb-10 grid-cols-2 md:grid-cols-2 gap-4">
                   {/* Row 1 — First & Last Name */}
                   <div className="space-y-1">
                     <Label>FIRST NAME</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -698,7 +688,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>LAST NAME</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -715,9 +705,9 @@ const Overview = () => {
 
                   {/* Row 2 — Call No. & WhatsApp No. */}
                   <div className="space-y-1">
-                    <Label>CALL NO.</Label>
+                    <Label>CALL NO</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 flex items-center justify-between ${
+                      className={`flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -727,7 +717,7 @@ const Overview = () => {
                         onChange={(e) => setKinCall(e.target.value)}
                         placeholder="Call No."
                         readOnly={isKinLocked}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -735,7 +725,7 @@ const Overview = () => {
                   <div className="space-y-1">
                     <Label>WHATSAPP NO</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 flex items-center justify-between ${
+                      className={`flex items-center justify-between ${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -745,7 +735,7 @@ const Overview = () => {
                         onChange={(e) => setKinWhats(e.target.value)}
                         placeholder="Whatsapp No."
                         readOnly={isKinLocked}
-                        className="flex-1 text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                       />
                     </InfoPill>
                   </div>
@@ -754,7 +744,7 @@ const Overview = () => {
                   <div className="col-span-2 space-y-1">
                     <Label>EMAIL</Label>
                     <InfoPill
-                      className={`px-5 md:px-8 ${
+                      className={`${
                         isKinLocked ? "bg-transparent" : "bg-white"
                       }`}
                     >
@@ -772,10 +762,10 @@ const Overview = () => {
 
                 {/* Save Changes */}
                 {!isKinLocked && (
-                  <div className="mt-10 flex justify-center">
+                  <div className="mt-10 mb-2 flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="py-3 text-md px-4 font-medium bg-black text-white shadow-lg rounded-lg"
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
                     >
                       SAVE CHANGES
                     </button>
@@ -786,11 +776,11 @@ const Overview = () => {
 
             {/* Feedback tab (un changed) */}
             {activeTab === "Feedback" && (
-              <div className="md:w-2/3 p-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Header with dashed line */}
-                <div className="flex items-center gap-3 my-4 md:my-8">
-                  <span className="text-md font-semibold text-black tracking-wide">
-                    -- GIVE REVIEWS -------------
+                <div className="flex items-center mb-4 md:my-8">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
+                    --- GIVE REVIEWS -------------
                   </span>
                 </div>
 
@@ -857,7 +847,7 @@ const Overview = () => {
                                         className="w-7 h-7 text-gray-300 cursor-pointer"
                                         onClick={() => handleStarClick(r.id, i)}
                                       />
-                                    )
+                                    ),
                                   )}
                                 </div>
 
@@ -893,7 +883,7 @@ const Overview = () => {
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
                     placeholder="Hola, Cribb ..."
-                    className="w-full min-h-[110px] py-3 px-5 md:px-10 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
+                    className="w-full min-h-[110px] py-3 px-6 text-[#00000080] rounded-2xl border border-black bg-white focus:outline-none resize-none text-sm placeholder-gray-400"
                   />
                 </div>
 
@@ -902,7 +892,7 @@ const Overview = () => {
                   <button
                     onClick={handleSendFeedback}
                     disabled={isSending}
-                    className="py-3 text-md px-8 font-medium bg-black shadow-lg rounded-lg text-white"
+                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
                   >
                     {isSending ? "SENDING..." : "SEND"}
                   </button>
@@ -912,6 +902,96 @@ const Overview = () => {
           </div>
         </div>
       </section>
+
+      {showStateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Select State</h3>
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Close
+              </button>
+            </div>
+
+            {/* 🔍 SEARCH BAR */}
+            <div className="mb-3">
+              <input
+                ref={searchRef}
+                type="text"
+                value={stateSearch}
+                onChange={(e) => setStateSearch(e.target.value)}
+                placeholder="Search state (e.g. Kwara)"
+                className="w-full px-3 py-2 border rounded-lg text-sm outline-none"
+              />
+            </div>
+
+            {/* Options */}
+            <div className="max-h-64 overflow-y-auto space-y-3 pb-4">
+              {filteredStates.map((s) => (
+                <div key={s.state}>
+                  {/* 🧠 Sticky State Header */}
+                  <p className="sticky top-0 bg-white text-xs font-semibold text-gray-500 py-1">
+                    {s.state}
+                  </p>
+
+                  {s.lgas.map((lga) => {
+                    const value = `${s.state} - ${lga}`;
+                    const isSelected = stateValue === value;
+
+                    return (
+                      <label
+                        key={value}
+                        className={`flex items-center gap-3 text-sm cursor-pointer py-1 px-2 rounded-md ${
+                          isSelected ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          checked={isSelected}
+                          onChange={() => {
+                            setStateValue(value);
+                            setShowStateModal(false);
+                            setStateSearch(""); // reset after selection
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span>{lga}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ))}
+
+              {/* Empty state */}
+              {filteredStates.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-3">
+                  No state found
+                </p>
+              )}
+            </div>
+
+            {/* Done button */}
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => {
+                  setShowStateModal(false);
+                  setStateSearch("");
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

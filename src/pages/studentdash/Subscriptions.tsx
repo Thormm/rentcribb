@@ -5,9 +5,10 @@ import { GrStatusGood } from "react-icons/gr";
 import InfoPill from "../../components/Pill";
 import { MdOutlinePending } from "react-icons/md";
 import { FiMail } from "react-icons/fi";
-import { TbUserSquare } from "react-icons/tb";
 import { RiInformationLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { HiOutlineUsers } from "react-icons/hi";
+import { PiHouse } from "react-icons/pi";
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -15,8 +16,8 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
-        className
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
       )}
     >
       {children}
@@ -51,7 +52,7 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 // Tabs
-const tabs = ["Agent", "Landlord", "Vendor"];
+const tabs = ["Roommate", "Rent", "Marketplace"];
 function Tabs({
   active,
   setActive,
@@ -61,7 +62,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
     >
       {tabs.map((tab) => (
@@ -72,7 +73,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -99,13 +100,13 @@ function PaginatedList({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
     <div>
       <div
-        className="space-y-4 max-h-[350px] overflow-y-auto pr-2"
+        className="space-y-4 max-h-[350px] overflow-y-auto pr-2 mb-4 md:mb-0"
         style={{
           scrollbarColor: "#FFA1A1 transparent",
           scrollbarWidth: "thin",
@@ -118,14 +119,14 @@ function PaginatedList({
           >
             <div className="flex items-center gap-3">
               {item.status === "done" ? (
-                <GrStatusGood className="text-black w-4 h-4 md:w-7 md:h-7" />
+                <GrStatusGood className="text-black w-5 h-5 md:w-7 md:h-7" />
               ) : (
-                <MdOutlinePending className="text-black w-4 h-4 md:w-7 md:h-7" />
+                <MdOutlinePending className="text-black w-5 h-5 md:w-7 md:h-7" />
               )}
-              <span className="text-[9px] md:text-sm text-black">
+              <span className="text-[11px] md:text-sm text-black">
                 {item.date}
               </span>
-              <span className="text-[9px] md:text-sm text-black">
+              <span className="text-[11px] md:text-sm text-black">
                 {item.plan}
               </span>
             </div>
@@ -146,7 +147,7 @@ function PaginatedList({
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -177,7 +178,7 @@ const formatDateTime = (dateString: string) => {
   return `${day}${suffix} ${month}, ${year}`;
 };
 
-const AGENT_PLAN_DETAILS: Record<
+const roommate_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
@@ -189,7 +190,7 @@ const AGENT_PLAN_DETAILS: Record<
   },
 };
 
-const LANDLORD_PLAN_DETAILS: Record<
+const rent_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
@@ -202,22 +203,16 @@ const LANDLORD_PLAN_DETAILS: Record<
 };
 
 const Subscriptions = () => {
-  const [agentHistory, setAgentHistory] = useState<any[]>([]);
-  const [landlordHistory, setLandlordHistory] = useState<any[]>([]);
+  const [roommateHistory, setroommateHistory] = useState<any[]>([]);
+  const [rentHistory, setrentHistory] = useState<any[]>([]);
 
-  const [agentPlan, setAgentPlan] = useState<any>({});
-  const [landlordPlan, setLandlordPlan] = useState<any>({});
+  const [roommatePlan, setroommatePlan] = useState<any>({});
+  const [rentPlan, setrentPlan] = useState<any>({});
 
-  const [showCongrats, setCongrats] = useState(false);
-  const [activeTab, setActiveTab] = useState("Agent");
-  const [agentFilled, setHasAgentEmail] = useState<boolean | undefined>(
-    undefined
-  );
-  const [landlordFilled, setHasLandlordEmail] = useState<boolean | undefined>(
-    undefined
-  );
-  const [hasAgentPlan, setHasAgentPlan] = useState(false);
-  const [hasLandlordPlan, setHasLandlordPlan] = useState(false);
+  const [activeTab, setActiveTab] = useState("Roommate");
+
+  const [hasroommatePlan, setHasroommatePlan] = useState(false);
+  const [hasrentPlan, setHasrentPlan] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -229,39 +224,35 @@ const Subscriptions = () => {
     fetch(`https://cribb.africa/apigets.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "getplans", user }),
+      body: JSON.stringify({ action: "getstudentplans", user }),
     })
       .then((r) => r.json())
       .then((res) => {
         if (res && res.success) {
-          const agentPlans = res.agent || [];
-          const landlordPlans = res.landlord || [];
+          const roommatePlans = res.roommate || [];
+          const rentPlans = res.rent || [];
 
           // ✅ Store all plans for the history lists
-          setAgentHistory(agentPlans);
-          setLandlordHistory(landlordPlans);
+          setroommateHistory(roommatePlans);
+          setrentHistory(rentPlans);
 
           // ✅ Check for active running plans
-          const activeAgent = agentPlans.find(
-            (p: any) => String(p.status).toLowerCase() === "running"
+          const activeroommate = roommatePlans.find(
+            (p: any) => String(p.status).toLowerCase() === "running",
           );
-          const activeLandlord = landlordPlans.find(
-            (p: any) => String(p.status).toLowerCase() === "running"
+          const activerent = rentPlans.find(
+            (p: any) => String(p.status).toLowerCase() === "running",
           );
 
-          const hasAgentPlan = !!activeAgent;
-          const hasLandlordPlan = !!activeLandlord;
+          const hasroommatePlan = !!activeroommate;
+          const hasrentPlan = !!activerent;
 
-          setHasAgentPlan(hasAgentPlan);
-          setHasLandlordPlan(hasLandlordPlan);
-
-          // ✅ Optional: email presence flags (if you need them)
-          setHasAgentEmail?.(res.agent_email_present);
-          setHasLandlordEmail?.(res.landlord_email_present);
+          setHasroommatePlan(hasroommatePlan);
+          setHasrentPlan(hasrentPlan);
 
           // ✅ NEW: set plan data or empty if none
-          setAgentPlan(activeAgent || {});
-          setLandlordPlan(activeLandlord || {});
+          setroommatePlan(activeroommate || {});
+          setrentPlan(activerent || {});
         } else {
           console.warn("getplans returned no data or success=false", res);
         }
@@ -271,55 +262,6 @@ const Subscriptions = () => {
       });
   }, []);
 
-  // freeplan function referenced in your modal
-  const freeplan = async (category: "Agent" | "Landlord"): Promise<void> => {
-    const login_data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-    const signup_key = login_data.signup_key;
-    const user = login_data.user;
-
-    try {
-      const response = await fetch("https://www.cribb.africa/api_save.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category,
-          freeplan: true,
-          user,
-          mode: "student",
-          signup_key,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setCongrats(true);
-      } else {
-        alert(data.message || "Failed to save data.");
-      }
-    } catch (error) {
-      console.error("Save error:", error);
-      alert("Network or server error. Please try again.");
-    }
-  };
-
-  const handleClickRole = (role: "agent" | "landlord") => {
-    if (
-      (role === "agent" && !agentFilled) ||
-      (role === "landlord" && !landlordFilled)
-    ) {
-      const loginData = JSON.parse(
-        sessionStorage.getItem("login_data") || "{}"
-      );
-      const updatedData = { ...loginData, verification: 0 };
-      // Save it back to sessionStorage
-      sessionStorage.setItem("login_data", JSON.stringify(updatedData));
-      navigate("/businessonboarding");
-      return;
-    }
-
-    // ✅ navigate with role param
-    navigate(`/businessplan?role=${role}`);
-  };
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -330,95 +272,90 @@ const Subscriptions = () => {
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
-            {/* Agent Tab */}
-            {activeTab === "Agent" && (
-              <div className="px-2 pt-5 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mb-5 bg-transparent">
-                  {/* show button only if there's no running agent plan */}
-                  {!hasAgentPlan && (
+            {/* roommate Tab */}
+            {activeTab === "Roommate" && (
+              <div className="p-2 md:p-5 mt-5">
+                {!hasroommatePlan && (
+                  <div className="flex flex-col mb-5 bg-transparent">
+                    {/* show button only if there's no running roommate plan */}
+
                     <button
-                      onClick={() => handleClickRole("agent")}
-                      className="md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-3 md:px-5 py-2 md:py-3 shadow-sm text-sm md:text-md text-white"
+                      onClick={() => navigate("/roommateplan")}
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
-                      <TbUserSquare className="w-8 h-8" />
-                      {agentFilled === false
-                        ? "Become an Agent >>"
-                        : "Get an Agent Plan >>"}
+                      <HiOutlineUsers className="w-8 h-8" />
+                      Get a roommate Plan
                     </button>
-                  )}
 
-                  {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
-                </div>
+                    {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
+                  </div>
+                )}
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>CURRENT PLAN</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {agentPlan.plan ? agentPlan.plan : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                  {hasroommatePlan && (
+                    <>
+                      {" "}
+                      <div>
+                        <Label>CURRENT PLAN</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {roommatePlan.plan ? roommatePlan.plan : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>VALID UNTIL</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {agentPlan.expires_at
-                            ? formatDateTime(agentPlan.expires_at)
-                            : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>VALID UNTIL</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {roommatePlan.expires_at
+                                ? formatDateTime(roommatePlan.expires_at)
+                                : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  {/* LISTING LIMIT and CONNECTION */}
-                  <div>
-                    <Label>LISTING LIMIT</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                            ?.listing || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      {/* LISTING LIMIT and CONNECTION */}
+                      <div>
+                        <Label>LISTING LIMIT</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {roommate_PLAN_DETAILS[
+                                roommatePlan.plan?.toLowerCase()
+                              ]?.listing || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                            ?.connection || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>CONNECTION</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {roommate_PLAN_DETAILS[
+                                roommatePlan.plan?.toLowerCase()
+                              ]?.connection || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
+                    </>
+                  )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
                     <button
-                      onClick={() => freeplan("Agent")}
-                      disabled={hasAgentPlan || !agentFilled}
-                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg
-    ${
-      hasAgentPlan || !agentFilled
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
-    }`}
-                    >
-                      FREE TRIAL
-                    </button>
-
-                    <button
-                      disabled={!hasAgentPlan || !agentFilled}
-                      className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg"
+                      disabled={!hasroommatePlan}
+                      onClick={() => navigate("/roommateplan")}
+                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg ${
+                        !hasroommatePlan
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-black text-white"
+                      }`}
                     >
                       UPGRADE
                     </button>
@@ -426,12 +363,12 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList
-                  data={agentHistory.map((plan: any, index: number) => ({
+                  data={roommateHistory.map((plan: any, index: number) => ({
                     id: plan.id || index,
                     date: formatDateTime(plan.created_at),
                     plan: plan.plan,
@@ -442,105 +379,99 @@ const Subscriptions = () => {
               </div>
             )}
 
-            {/* Landlord Tab */}
-            {activeTab === "Landlord" && (
-              <div className="px-2 pt-5 md:p-5 md:mt-5">
-                <div className="flex flex-col gap-8 mb-5 bg-transparent">
-                  {/* show button only if there's no running landlord plan */}
-                  {!hasLandlordPlan && (
+            {/* rent Tab */}
+            {activeTab === "Rent" && (
+              <div className="p-2 md:p-5 mt-5">
+                {!hasrentPlan && (
+                  <div className="flex flex-col mb-5 bg-transparent">
+                    {/* show button only if there's no running rent plan */}
+
                     <button
-                      onClick={() => handleClickRole("landlord")}
-                      className="md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-3 md:px-5 py-2 md:py-3 shadow-sm text-sm md:text-md text-white"
+                      onClick={() => navigate("/rentplan")}
+                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
-                      <TbUserSquare className="w-8 h-8" />
-                      {landlordFilled === false
-                        ? "Become a Landlord >>"
-                        : "Get a Landlord Plan >>"}
+                      <PiHouse className="w-8 h-8" />
+                      Get a rent Plan
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>CURRENT PLAN</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {landlordPlan.plan ? landlordPlan.plan : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                  {hasrentPlan && (
+                    <>
+                      {" "}
+                      <div>
+                        <Label>CURRENT PLAN</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {rentPlan.plan ? rentPlan.plan : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div className="space-y-1 col-span-2 md:col-span-1">
-                    <Label>VALID UNTIL</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm text-black">
-                          {landlordPlan.expires_at
-                            ? formatDateTime(landlordPlan.expires_at)
-                            : ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>VALID UNTIL</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm text-black">
+                              {rentPlan.expires_at
+                                ? formatDateTime(rentPlan.expires_at)
+                                : ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div>
-                    <Label>LISTING LIMIT</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {LANDLORD_PLAN_DETAILS[
-                            landlordPlan.plan?.toLowerCase()
-                          ]?.listing || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>LISTING LIMIT</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {rent_PLAN_DETAILS[rentPlan.plan?.toLowerCase()]
+                                ?.listing || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
-                  <div>
-                    <Label>CONNECTION</Label>
-                    <InfoPill className="flex items-center justify-between px-5 md:px-8 max-w-md">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:text-sm">
-                          {LANDLORD_PLAN_DETAILS[
-                            landlordPlan.plan?.toLowerCase()
-                          ]?.connection || ""}
-                        </span>
-                        <RiInformationLine size={14} className="ml-auto" />
+                      <div>
+                        <Label>CONNECTION</Label>
+                        <InfoPill>
+                          <div className="inline-flex items-center justify-between w-full">
+                            <span className="text-xs md:text-sm">
+                              {rent_PLAN_DETAILS[rentPlan.plan?.toLowerCase()]
+                                ?.connection || ""}
+                            </span>
+                            <RiInformationLine size={14} className="ml-auto" />
+                          </div>
+                        </InfoPill>
                       </div>
-                    </InfoPill>
-                  </div>
-
+                    </>
+                  )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
                     <button
-                      onClick={() => freeplan("Landlord")}
-                      disabled={!hasLandlordPlan || !landlordFilled}
-                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg
-    ${
-      hasLandlordPlan || !landlordFilled
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
-    }`}
+                      disabled={!hasrentPlan}
+                      onClick={() => navigate("/rentplan")}
+                      className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg ${
+                        !hasrentPlan
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-black text-white"
+                      }`}
                     >
-                      FREE TRIAL
-                    </button>
-                    <button className="py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium bg-black text-white shadow-lg rounded-lg">
                       UPGRADE
                     </button>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-md font-semibold text-black tracking-wide">
-                    ----- HISTORY --------------------------
+                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                    --- HISTORY --------------------
                   </span>
                 </div>
                 <PaginatedList
-                  data={landlordHistory.map((plan: any, index: number) => ({
+                  data={rentHistory.map((plan: any, index: number) => ({
                     id: plan.id || index,
                     date: formatDateTime(plan.created_at),
                     plan: plan.plan,
@@ -552,9 +483,9 @@ const Subscriptions = () => {
             )}
 
             {/* Vendor Tab */}
-            {activeTab === "Vendor" && (
-              <div className="my-10 md:w-2/3">
-                <div className="flex flex-col p-5 gap-8 bg-transparent">
+            {activeTab === "Marketplace" && (
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="flex flex-col gap-8 bg-transparent">
                   {/* Coming Soon */}
                   <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
@@ -572,25 +503,6 @@ const Subscriptions = () => {
           </div>
         </div>
       </section>
-      {showCongrats && (
-        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
-            <p className="text-sm text-center text-gray-600 mb-4">
-              Your 14-day free trial has started. You have access to all
-              features for the next 14 days. Enjoy exploring!
-            </p>
-
-            <div className="flex justify-center">
-              <button
-                className="px-4 py-2 bg-black text-white rounded-lg"
-                onClick={() => setCongrats(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

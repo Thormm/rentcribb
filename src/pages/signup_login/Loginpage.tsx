@@ -183,6 +183,7 @@ export default function Loginpage() {
             verification: data.verification,
             state: data.state,
             school: data.school,
+            email: data.email,
           };
 
           // Save to sessionStorage as JSON string

@@ -3,8 +3,6 @@ import { Info } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
 import { BiWorld } from "react-icons/bi";
-import { HiOutlineUserCircle } from "react-icons/hi";
-import { TbUserSquare } from "react-icons/tb";
 import clsx from "clsx";
 import { DfButton } from "../../components/Pill";
 import InfoPill from "../../components/Pill";
@@ -12,6 +10,8 @@ import logo from "../../assets/logo.png";
 import nigeriaflag from "../../assets/nigeriaflag.png";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineTag } from "react-icons/ai";
+import { PiHouse } from "react-icons/pi";
+import { HiOutlineUsers } from "react-icons/hi";
 
 declare const PaystackPop: any;
 
@@ -66,83 +66,46 @@ function Label({ children, className }: LabelProps) {
 }
 
 // ✅ Pricing tables
-const AgentPlans = {
+const RentPlans = {
   INSTANT: {
     price: "₦10,000",
-    tag: "For Listing a Single Space : Pay-As-You-Go",
+    tag: "For a Quick and Single Connect : Pay-As-You-Go",
     discount: 0,
     features: [
-      ["Max No. Listing", "1"],
-      ["Duration", "3 Months"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
+      ["No. of Connections", "<< Up to 1 Host "],
+      ["No. of Requests", "<< Up to 3 Posts"],
+      ["Duration", "No Limit"],
+      ["Posting Request", "Free"],
     ],
   },
   EXPLORE: {
     price: "₦20,000",
-    tag: "Monthly Plan for Full Access : Subscription",
+    tag: "Monthly Plan for Exploring your Choices",
     discount: 0,
     features: [
-      ["Max No. Listing", "Unlimited"],
-      ["Duration", "30 Days"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
+      ["No. of Connections", "Unlimited"],
+      ["No. of Requests", "<< Up to 3 Posts"],
+      ["Duration", "Monthly"],
+      ["Posting Request", "Free"],
     ],
   },
   "GO PRO": {
     price: "₦50,000",
-    tag: "Quarterly Plan for Full Access : Subscription",
+    tag: "Quarterly Plan For Discounts on your Choices",
     discount: 16,
     features: [
-      ["Max No. Listing", "Unlimited"],
+      ["No. of Connections", "Unlimited"],
+      ["No. of Requests", "<< Up to 3 Posts"],
       ["Duration", "3 Months"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
+      ["Posting Request", "Free"],
     ],
   },
 };
 
-const LandlordPlans = {
-  INSTANT: {
-    price: "₦10,000",
-    discount: 0,
-    tag: "For Listing a Single Space : Pay-As-You-Go",
-    features: [
-      ["Max No. Listing", "1"],
-      ["Duration", "3 Months"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
-    ],
-  },
-  EXPLORE: {
-    price: "₦20,000",
-    discount: 0,
-    tag: "Monthly Plan for Full Access : Subscription",
-    features: [
-      ["Max No. Listing", "Unlimited"],
-      ["Duration", "30 Days"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
-    ],
-  },
-  "GO PRO": {
-    price: "₦50,000",
-    discount: 16,
-    tag: "Quarterly Plan for Full Access : Subscription",
-    features: [
-      ["Max No. Listing", "Unlimited"],
-      ["Duration", "3 Months"],
-      ["Replying Requests", "Free"],
-      ["Max No. Connection", "Unlimited"],
-    ],
-  },
-};
-
-const BusinessPlan = () => {
+const RentPlan = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<"Agent" | "Landlord">("Agent");
   const [activePlan, setActivePlan] =
-    useState<keyof typeof AgentPlans>("INSTANT");
+    useState<keyof typeof RentPlans>("INSTANT");
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
@@ -158,29 +121,15 @@ const BusinessPlan = () => {
     }
   }, []);
 
-  // ✅ Fetch session data and set category/email/user
+  // ✅ Fetch session data and set Rent/email/user
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-
-    // ✅ Get role from URL
-    const params = new URLSearchParams(location.search);
-    const role = params.get("role"); // e.g. ?role=agent or ?role=landlord
-
-    if (role === "agent") {
-      setCategory("Agent");
-    } else if (role === "landlord") {
-      setCategory("Landlord");
-    } else if (data?.category) {
-      // fallback to session data if no URL param
-      setCategory(data.category);
-    }
 
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
 
-  const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
-  const current = currentPlans[activePlan];
+  const current = RentPlans[activePlan];
 
   const extractAmount = (price: string) =>
     parseInt(price.replace(/[^\d]/g, ""), 10);
@@ -199,7 +148,7 @@ const BusinessPlan = () => {
     }
 
     // ✅ Use new reference format
-    const ref = `cribb_${category}_${extractAmount(current.price)}_${user}`;
+    const ref = `cribb_Rent_${extractAmount(current.price)}_${user}`;
 
     const handler = PaystackPop.setup({
       key: "pk_live_e7e226db6e7b774d5fc940646959c622a606e546",
@@ -241,13 +190,25 @@ const BusinessPlan = () => {
               Cribb
             </span>
             <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
-              for Business
+              for Student
             </span>
           </div>
         </div>
 
         {/* Removed toggle button */}
-        <div></div>
+        <div className="flex justify-end col-span-1">
+          <button
+            onClick={() => navigate("/roommateplan")}
+            className="flex items-center justify-center rounded-md gap-3 font-normal bg-black px-3 py-4 shadow-sm text-lg text-white"
+          >
+            <HiOutlineUsers className="w-4 h-4 md:w-8 md:h-8" />
+            <span className="underline text-xs md:text-md">
+              PRICING FOR /ROOMMATE {" >>"}
+            </span>
+          </button>
+
+          {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
+        </div>
       </nav>
 
       {/* Header Section */}
@@ -258,23 +219,13 @@ const BusinessPlan = () => {
           </div>
           <div className="mt-1 flex items-center justify-between gap-4">
             <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
-              {category === "Agent"
-                ? "Become an Agent on"
-                : "Become a Landlord on"}{" "}
-              <span className="text-[#C2C8DA]">Cribb</span>
+              Connect Directly to{" "}
+              <span className="text-[#C2C8DA]">Landlords & Agents</span>
             </h1>
 
-            {category === "Agent" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" />{" "}
-                AGENT
-              </span>
-            )}
-            {category === "Landlord" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
-              </span>
-            )}
+            <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+              <PiHouse className="h-6 w-6 md:h-10 md:w-10" /> RENT
+            </span>
           </div>
         </div>
       </div>
@@ -284,7 +235,7 @@ const BusinessPlan = () => {
         <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
           <div
             className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-            onClick={() => navigate("/businessdash?goto=subscriptions")}
+            onClick={() => navigate("/studentdash?goto=subscriptions")}
           >
             <IoIosArrowBack className="text-white text-2xl" />
           </div>
@@ -302,14 +253,14 @@ const BusinessPlan = () => {
                 borderWidth: "1px",
               }}
             >
-              {Object.keys(currentPlans).map((plan) => {
+              {Object.keys(RentPlans).map((plan) => {
                 const isActive = activePlan === plan;
 
                 return (
                   <button
                     key={plan}
                     onClick={() =>
-                      setActivePlan(plan as keyof typeof currentPlans)
+                      setActivePlan(plan as keyof typeof RentPlans)
                     }
                     className={clsx(
                       "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
@@ -406,7 +357,7 @@ const BusinessPlan = () => {
               </div>
             </div>
 
-           {/*  <div
+            {/*  <div
               className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",
@@ -430,4 +381,4 @@ const BusinessPlan = () => {
   );
 };
 
-export default BusinessPlan;
+export default RentPlan;
