@@ -158,7 +158,7 @@ const RentPlan = () => {
       onClose: () => alert("Payment window closed."),
       callback: (response: any) => {
         alert("Payment successful! Reference: " + response.reference);
-        navigate("/businessrequests");
+        navigate("/studentplan");
       },
     });
 

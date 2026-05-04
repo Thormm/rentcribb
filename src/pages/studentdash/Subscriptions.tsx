@@ -178,27 +178,19 @@ const formatDateTime = (dateString: string) => {
   return `${day}${suffix} ${month}, ${year}`;
 };
 
-const roommate_PLAN_DETAILS: Record<
-  string,
-  { listing: string; connection: string }
-> = {
-  free: { listing: "Unlimited", connection: "Unlimited" },
-  basic: { listing: "10 Listings", connection: "20 Connections" },
-  premium: {
-    listing: "Unlimited Listings",
-    connection: "Unlimited Connections",
+const roommate_PLAN_DETAILS: Record<string, { connection: string }> = {
+  Instant: { connection: "Unlimited" },
+  Explore: { connection: "Unlimited" },
+  Go_pro: {
+    connection: "Unlimited",
   },
 };
 
-const rent_PLAN_DETAILS: Record<
-  string,
-  { listing: string; connection: string }
-> = {
-  free: { listing: "Unlimited", connection: "Unlimited" },
-  basic: { listing: "10 Listings", connection: "20 Connections" },
-  premium: {
-    listing: "Unlimited Listings",
-    connection: "Unlimited Connections",
+const rent_PLAN_DETAILS: Record<string, { connection: string }> = {
+  Instant: { connection: "Unlimited" },
+  Explore: { connection: "Unlimited" },
+  Go_pro: {
+    connection: "Unlimited",
   },
 };
 
@@ -262,7 +254,6 @@ const Subscriptions = () => {
       });
   }, []);
 
-
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
@@ -318,28 +309,13 @@ const Subscriptions = () => {
                           </div>
                         </InfoPill>
                       </div>
-                      {/* LISTING LIMIT and CONNECTION */}
-                      <div>
-                        <Label>LISTING LIMIT</Label>
-                        <InfoPill>
-                          <div className="inline-flex items-center justify-between w-full">
-                            <span className="text-xs md:text-sm">
-                              {roommate_PLAN_DETAILS[
-                                roommatePlan.plan?.toLowerCase()
-                              ]?.listing || ""}
-                            </span>
-                            <RiInformationLine size={14} className="ml-auto" />
-                          </div>
-                        </InfoPill>
-                      </div>
-                      <div>
+                      <div className="col-span-2">
                         <Label>CONNECTION</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {roommate_PLAN_DETAILS[
-                                roommatePlan.plan?.toLowerCase()
-                              ]?.connection || ""}
+                              {roommate_PLAN_DETAILS[roommatePlan.plan]
+                                ?.connection || ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>
@@ -424,25 +400,13 @@ const Subscriptions = () => {
                           </div>
                         </InfoPill>
                       </div>
-                      <div>
-                        <Label>LISTING LIMIT</Label>
-                        <InfoPill>
-                          <div className="inline-flex items-center justify-between w-full">
-                            <span className="text-xs md:text-sm">
-                              {rent_PLAN_DETAILS[rentPlan.plan?.toLowerCase()]
-                                ?.listing || ""}
-                            </span>
-                            <RiInformationLine size={14} className="ml-auto" />
-                          </div>
-                        </InfoPill>
-                      </div>
-                      <div>
+                      <div className="col-span-2">
                         <Label>CONNECTION</Label>
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {rent_PLAN_DETAILS[rentPlan.plan?.toLowerCase()]
-                                ?.connection || ""}
+                              {rent_PLAN_DETAILS[rentPlan.plan]?.connection ||
+                                ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>

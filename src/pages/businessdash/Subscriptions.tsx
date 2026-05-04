@@ -181,11 +181,12 @@ const AGENT_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
-  free: { listing: "Unlimited", connection: "Unlimited" },
-  basic: { listing: "10 Listings", connection: "20 Connections" },
-  premium: {
-    listing: "Unlimited Listings",
-    connection: "Unlimited Connections",
+  Free: { listing: "Unlimited", connection: "Unlimited" },
+  Instant: { listing: "1 Listings", connection: "Unlimited" },
+  Explore: { listing: "Unlimited", connection: "Unlimited" },
+  Go_pro: {
+    listing: "Unlimited",
+    connection: "Unlimited",
   },
 };
 
@@ -193,11 +194,12 @@ const LANDLORD_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
-  free: { listing: "Unlimited", connection: "Unlimited" },
-  basic: { listing: "10 Listings", connection: "20 Connections" },
-  premium: {
-    listing: "Unlimited Listings",
-    connection: "Unlimited Connections",
+  Free: { listing: "Unlimited", connection: "Unlimited" },
+  Instant: { listing: "1 Listings", connection: "Unlimited" },
+  Explore: { listing: "Unlimited", connection: "Unlimited" },
+  Go_pro: {
+    listing: "Unlimited",
+    connection: "Unlimited",
   },
 };
 
@@ -389,8 +391,8 @@ const Subscriptions = () => {
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                                ?.listing || ""}
+                              {AGENT_PLAN_DETAILS[agentPlan.plan]?.listing ||
+                                ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>
@@ -401,8 +403,8 @@ const Subscriptions = () => {
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {AGENT_PLAN_DETAILS[agentPlan.plan?.toLowerCase()]
-                                ?.connection || ""}
+                              {AGENT_PLAN_DETAILS[agentPlan.plan]?.connection ||
+                                ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>
@@ -506,9 +508,8 @@ const Subscriptions = () => {
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {LANDLORD_PLAN_DETAILS[
-                                landlordPlan.plan?.toLowerCase()
-                              ]?.listing || ""}
+                              {LANDLORD_PLAN_DETAILS[landlordPlan.plan]
+                                ?.listing || ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>
@@ -519,9 +520,8 @@ const Subscriptions = () => {
                         <InfoPill>
                           <div className="inline-flex items-center justify-between w-full">
                             <span className="text-xs md:text-sm">
-                              {LANDLORD_PLAN_DETAILS[
-                                landlordPlan.plan?.toLowerCase()
-                              ]?.connection || ""}
+                              {LANDLORD_PLAN_DETAILS[landlordPlan.plan]
+                                ?.connection || ""}
                             </span>
                             <RiInformationLine size={14} className="ml-auto" />
                           </div>
