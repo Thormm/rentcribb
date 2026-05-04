@@ -326,6 +326,11 @@ const Subscriptions = () => {
       );
       return;
     }
+    else {
+      navigate(
+        `/businessplan?role=${role === "landlord" ? "landlord" : "agent"}`,
+      );
+    }
   };
 
   return (
@@ -346,7 +351,7 @@ const Subscriptions = () => {
 
                     <button
                       onClick={() => handleClickRole("agent")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                      className="w-full md:w-2/3  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <TbUserSquare className="w-8 h-8" />
                       {agentFilled === false
