@@ -344,14 +344,14 @@ const Subscriptions = () => {
 
             {/* Agent Tab */}
             {activeTab === "Agent" && (
-              <div className="p-2 md:p-5 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3 ">
                 {!hasAgentPlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
                     {/* show button only if there's no running agent plan */}
 
                     <button
                       onClick={() => handleClickRole("agent")}
-                      className="w-full md:w-2/3  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                      className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <TbUserSquare className="w-8 h-8" />
                       {agentFilled === false
@@ -362,7 +362,7 @@ const Subscriptions = () => {
                     {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
                   </div>
                 )}
-                <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
+                <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasAgentPlan && (
                     <>
                       {" "}
@@ -463,14 +463,14 @@ const Subscriptions = () => {
 
             {/* Landlord Tab */}
             {activeTab === "Landlord" && (
-              <div className="p-2 md:p-5 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3 ">
                 {!hasLandlordPlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
                     {/* show button only if there's no running landlord plan */}
 
                     <button
                       onClick={() => handleClickRole("landlord")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                      className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <TbUserSquare className="w-8 h-8" />
                       {landlordFilled === false
@@ -480,7 +480,7 @@ const Subscriptions = () => {
                   </div>
                 )}
 
-                <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
+                <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasLandlordPlan && (
                     <>
                       {" "}

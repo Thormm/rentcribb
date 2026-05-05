@@ -265,14 +265,14 @@ const Subscriptions = () => {
 
             {/* roommate Tab */}
             {activeTab === "Roommate" && (
-              <div className="p-2 md:p-5 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {!hasroommatePlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
                     {/* show button only if there's no running roommate plan */}
 
                     <button
                       onClick={() => navigate("/roommateplan")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                      className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <HiOutlineUsers className="w-8 h-8" />
                       Get a roommate Plan
@@ -281,7 +281,7 @@ const Subscriptions = () => {
                     {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
                   </div>
                 )}
-                <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
+                <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasroommatePlan && (
                     <>
                       {" "}
@@ -357,14 +357,14 @@ const Subscriptions = () => {
 
             {/* rent Tab */}
             {activeTab === "Rent" && (
-              <div className="p-2 md:p-5 mt-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {!hasrentPlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
                     {/* show button only if there's no running rent plan */}
 
                     <button
                       onClick={() => navigate("/rentplan")}
-                      className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
+                      className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <PiHouse className="w-8 h-8" />
                       Get a rent Plan
@@ -372,7 +372,7 @@ const Subscriptions = () => {
                   </div>
                 )}
 
-                <div className="grid mb-10 md:w-2/3 grid-cols-2 gap-4 md:gap-6">
+                <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasrentPlan && (
                     <>
                       {" "}
