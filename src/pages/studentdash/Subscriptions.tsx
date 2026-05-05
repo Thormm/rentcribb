@@ -275,7 +275,7 @@ const Subscriptions = () => {
                       className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <HiOutlineUsers className="w-8 h-8" />
-                      Get a roommate Plan
+                      Get a Roommate Plan
                     </button>
 
                     {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
@@ -367,7 +367,7 @@ const Subscriptions = () => {
                       className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
                     >
                       <PiHouse className="w-8 h-8" />
-                      Get a rent Plan
+                      Get a Rent Plan
                     </button>
                   </div>
                 )}

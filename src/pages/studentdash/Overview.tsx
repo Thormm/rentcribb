@@ -647,13 +647,13 @@ const Overview = () => {
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 <div className="flex flex-col gap-3 bg-transparent">
                   {/* Coming Soon */}
-                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-white px-4 py-4 shadow-sm text-lg text-black">
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-4 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
 
                   {/* Join Waitlist */}
-                  <button className="w-full md:w-md flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
+                  <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
                   </button>

@@ -166,9 +166,10 @@ const RoommatePlan = () => {
   };
 
   return (
-    <div className="bg-[#F3EECE] pb-10 min-h-screen place-items-center">
-      {/* Navbar */}
-      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+
+<>
+      <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+        {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
             <img
@@ -179,6 +180,7 @@ const RoommatePlan = () => {
           </div>
         </div>
 
+        {/* Center: Logo */}
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
           <img
             src={logo}
@@ -190,26 +192,34 @@ const RoommatePlan = () => {
               Cribb
             </span>
             <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
-              for Student
+              for Students
             </span>
           </div>
         </div>
 
-        {/* Removed toggle button */}
-                <div className="flex justify-end col-span-1">
-                  <button
-                    onClick={() => navigate("/rentplan")}
-                    className="flex items-center justify-center rounded-md gap-3 font-normal bg-black px-3 py-4 shadow-sm text-lg text-white"
-                  >
-                    <PiHouse className="w-4 h-4 md:w-8 md:h-8" />
-                    <span className="underline text-xs md:text-md">
-                      PRICING FOR /RENT {" >>"}
-                    </span>
-                  </button>
-        
-                  {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
-                </div>
+        {/* Right: Toggle Button */}
+        <div className="flex justify-end md:justify-center items-center gap-2">
+          <div className="md:hidden rounded-full bg-black p-2 shrink-0">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-4 md:h-8 object-contain"
+            />
+          </div>
+          <button
+            onClick={() => navigate("/rentplan")}
+            className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
+          >
+            <PiHouse className="text-xs md:text-2xl" />
+            <span className="text-[8px] md:text-[15px] underline">
+              PRICING FOR /RENT &gt;&gt;
+            </span>
+          </button>
+        </div>
       </nav>
+
+    <div className="bg-[#F3EECE] pb-10 min-h-screen place-items-center">
+      
 
       {/* Header Section */}
       <div className="w-full  bg-[#3A2A05] md:pb-8 pt-8 text-white shadow">
@@ -220,7 +230,7 @@ const RoommatePlan = () => {
           <div className="mt-1 flex items-center justify-between gap-4">
             <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
               Connect Directly to{" "}
-              <span className="text-[#C2C8DA]">Landlords & Agents</span>
+              <span className="text-[#C2C8DA]">Roommates</span>
             </h1>
 
             <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
@@ -231,7 +241,7 @@ const RoommatePlan = () => {
       </div>
 
       {/* Pricing Section */}
-      <section className=" justify-center w-full px-4 md:w-[1000px] my-10 md:my-20 flex">
+      <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
         <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
           <div
             className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
@@ -378,7 +388,10 @@ const RoommatePlan = () => {
         </div>
       </section>
     </div>
+      </>
   );
+
+
 };
 
 export default RoommatePlan;

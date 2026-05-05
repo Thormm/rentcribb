@@ -166,9 +166,9 @@ const RentPlan = () => {
   };
 
   return (
-    <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
-      {/* Navbar */}
-      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+    <>
+      <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+        {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
             <img
@@ -179,6 +179,7 @@ const RentPlan = () => {
           </div>
         </div>
 
+        {/* Center: Logo */}
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
           <img
             src={logo}
@@ -190,174 +191,182 @@ const RentPlan = () => {
               Cribb
             </span>
             <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
-              for Student
+              for Students
             </span>
           </div>
         </div>
 
-        {/* Removed toggle button */}
-        <div className="flex justify-end col-span-1">
+        {/* Right: Toggle Button */}
+        <div className="flex justify-end md:justify-center items-center gap-2">
+          <div className="md:hidden rounded-full bg-black p-2 shrink-0">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-4 md:h-8 object-contain"
+            />
+          </div>
           <button
             onClick={() => navigate("/roommateplan")}
-            className="flex items-center justify-center rounded-md gap-3 font-normal bg-black px-3 py-4 shadow-sm text-lg text-white"
+            className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
           >
-            <HiOutlineUsers className="w-4 h-4 md:w-8 md:h-8" />
-            <span className="underline text-xs md:text-md">
-              PRICING FOR /ROOMMATE {" >>"}
+            <HiOutlineUsers className="text-xs md:text-2xl" />
+            <span className="text-[8px] md:text-[15px] underline">
+              PRICING FOR /ROOMMATE &gt;&gt;
             </span>
           </button>
-
-          {/* if they DO have an roommate plan, you may choose to show something else — left unchanged */}
         </div>
       </nav>
 
-      {/* Header Section */}
-      <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
-        <div className="mx-auto w-full max-w-6xl px-4">
-          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
-            PRICING
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-4">
-            <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
-              Connect Directly to{" "}
-              <span className="text-[#C2C8DA]">Landlords & Agents</span>
-            </h1>
+      <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
+        {/* Navbar */}
 
-            <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-              <PiHouse className="h-6 w-6 md:h-10 md:w-10" /> RENT
-            </span>
+        {/* Header Section */}
+        <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
+          <div className="mx-auto w-full max-w-6xl px-4">
+            <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
+              PRICING
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-4">
+              <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
+                Connect Directly to{" "}
+                <span className="text-[#C2C8DA]">Landlords & Agents</span>
+              </h1>
+
+              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                <PiHouse className="h-6 w-6 md:h-10 md:w-10" /> RENT
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Pricing Section */}
-      <section className=" justify-center w-full px-4 md:w-[1000px] my-10 md:my-20 flex">
-        <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
-          <div
-            className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-            onClick={() => navigate("/studentdash?goto=subscriptions")}
-          >
-            <IoIosArrowBack className="text-white text-2xl" />
-          </div>
-          <Maincard className="bg-[#F4F6F5] pb-5">
-            <SectionHeader
-              title="Plan"
-              caption="Simple, Transparent Plans based on your need"
-            />
-
+        {/* Pricing Section */}
+        <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
+          <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
             <div
-              className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
-              style={{
-                borderStyle: "dashed",
-                borderColor: "#0000004D",
-                borderWidth: "1px",
-              }}
+              className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => navigate("/studentdash?goto=subscriptions")}
             >
-              {Object.keys(RentPlans).map((plan) => {
-                const isActive = activePlan === plan;
-
-                return (
-                  <button
-                    key={plan}
-                    onClick={() =>
-                      setActivePlan(plan as keyof typeof RentPlans)
-                    }
-                    className={clsx(
-                      "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
-                      isActive
-                        ? "bg-black text-[#D6FFC3] border-black shadow-md"
-                        : "bg-white text-black border-gray-300 hover:bg-gray-100",
-                    )}
-                  >
-                    {/* ICONS */}
-                    {plan === "INSTANT" && (
-                      <MdOutlineFlashOn className="text-md md:text-2xl" />
-                    )}
-                    {plan === "EXPLORE" && (
-                      <BiWorld className="text-md md:text-2xl" />
-                    )}
-                    {plan === "GO PRO" && (
-                      <MdDoubleArrow className="text-md md:text-2xl" />
-                    )}
-
-                    {/* TEXT */}
-                    <span className="text-xs md:text-lg">{plan}</span>
-                  </button>
-                );
-              })}
+              <IoIosArrowBack className="text-white text-2xl" />
             </div>
-
-            {/* Plan Details */}
-            <div className="pt-5 pb-4 space-y-4">
-              <div className="space-y-1">
-                <Label>SERVICE AMOUNT</Label>
-                <InfoPill>
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="font-bold py-1">{current.price}</span>
-                    {current.discount > 0 && (
-                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
-                        <AiOutlineTag className="text-lg md:text-2xl" />
-                        <span className="text-xs md:text-sm">
-                          {current.discount}% - OFF
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                </InfoPill>
-
-                <div className="w-full flex justify-end mr-5 mt-2">
-                  <small className="bg-white p-2 rounded-lg text-xs md:text-md">
-                    {current.tag}
-                  </small>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <Label>FEATURES</Label>
-                <div className="rounded-2xl bg-white mx-1 border-1 p-3">
-                  {current.features.map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
-                    >
-                      <span>{label}</span>
-                      <span className="inline-flex text-xs md:text-base items-center gap-2">
-                        {value} <Info size={20} />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div
-                className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-                style={{
-                  borderStyle: "dashed",
-                  borderImage:
-                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                }}
+            <Maincard className="bg-[#F4F6F5] pb-5">
+              <SectionHeader
+                title="Plan"
+                caption="Simple, Transparent Plans based on your need"
               />
 
-              <div className="space-y-1">
-                <Label>EMAIL</Label>
-                <InfoPill className="bg-white">
-                  <input
-                    type="email"
-                    readOnly
-                    placeholder={loginEmail || "Enter your email"}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full outline-none text-md py-1"
-                  />
-                </InfoPill>
+              <div
+                className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+                style={{
+                  borderStyle: "dashed",
+                  borderColor: "#0000004D",
+                  borderWidth: "1px",
+                }}
+              >
+                {Object.keys(RentPlans).map((plan) => {
+                  const isActive = activePlan === plan;
+
+                  return (
+                    <button
+                      key={plan}
+                      onClick={() =>
+                        setActivePlan(plan as keyof typeof RentPlans)
+                      }
+                      className={clsx(
+                        "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
+                        isActive
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
+                      )}
+                    >
+                      {/* ICONS */}
+                      {plan === "INSTANT" && (
+                        <MdOutlineFlashOn className="text-md md:text-2xl" />
+                      )}
+                      {plan === "EXPLORE" && (
+                        <BiWorld className="text-md md:text-2xl" />
+                      )}
+                      {plan === "GO PRO" && (
+                        <MdDoubleArrow className="text-md md:text-2xl" />
+                      )}
+
+                      {/* TEXT */}
+                      <span className="text-xs md:text-lg">{plan}</span>
+                    </button>
+                  );
+                })}
               </div>
 
-              <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
-                <DfButton onClick={handlePaystack}>NEXT</DfButton>
-              </div>
-            </div>
+              {/* Plan Details */}
+              <div className="pt-5 pb-4 space-y-4">
+                <div className="space-y-1">
+                  <Label>SERVICE AMOUNT</Label>
+                  <InfoPill>
+                    <div className="inline-flex items-center justify-between w-full">
+                      <span className="font-bold py-1">{current.price}</span>
+                      {current.discount > 0 && (
+                        <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
+                          <AiOutlineTag className="text-lg md:text-2xl" />
+                          <span className="text-xs md:text-sm">
+                            {current.discount}% - OFF
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </InfoPill>
 
-            {/*  <div
+                  <div className="w-full flex justify-end mr-5 mt-2">
+                    <small className="bg-white p-2 rounded-lg text-xs md:text-md">
+                      {current.tag}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label>FEATURES</Label>
+                  <div className="rounded-2xl bg-white mx-1 border-1 p-3">
+                    {current.features.map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
+                      >
+                        <span>{label}</span>
+                        <span className="inline-flex text-xs md:text-base items-center gap-2">
+                          {value} <Info size={20} />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  style={{
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                  }}
+                />
+
+                <div className="space-y-1">
+                  <Label>EMAIL</Label>
+                  <InfoPill className="bg-white">
+                    <input
+                      type="email"
+                      readOnly
+                      placeholder={loginEmail || "Enter your email"}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full outline-none text-md py-1"
+                    />
+                  </InfoPill>
+                </div>
+
+                <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
+                  <DfButton onClick={handlePaystack}>NEXT</DfButton>
+                </div>
+              </div>
+
+              {/*  <div
               className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",
@@ -374,10 +383,11 @@ const RentPlan = () => {
                 Continue to Dashboard{" "}
               </span>
             </div>*/}
-          </Maincard>
-        </div>
-      </section>
-    </div>
+            </Maincard>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 
