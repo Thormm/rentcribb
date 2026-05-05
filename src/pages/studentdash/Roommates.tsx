@@ -227,7 +227,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        We’ve made it a soft experience getting a Match ...
+        Simple, Transparent Plan based on your need
       </p>
 
       <div
@@ -253,11 +253,8 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
-      style={{
-        borderStyle: "dashed",
-        borderColor: "#0000004D",
-      }}
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
+      style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
     >
       {tabs.map((tab) => (
         <button
@@ -267,7 +264,7 @@ function Tabs({
             "flex-1 pb-2 pt-2 text-xs md:text-lg relative text-black font-medium text-center",
             active === tab
               ? "after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:w-3/4 after:h-1 after:bg-[#FFA1A1]"
-              : ""
+              : "",
           )}
         >
           {tab}
@@ -285,16 +282,15 @@ const Rommates = () => {
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
-          <SectionHeader title="Rommates" />
+          <SectionHeader title="Subscriptions" />
 
-          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5] overflow-x-auto">
-            {/* Tabs */}
+          <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
 
             {/* Explore Tab */}
             {activeTab === "Explore" && (
-              <div className="p-2 md:p-5">
-                <div className="grid grid-cols-1 md:w-2/3 mt-5 gap-6">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="grid grid-cols-1 gap-6">
                   <div>
                     <Label>VISIBILITY</Label>
                     <InfoPill>
@@ -339,12 +335,12 @@ const Rommates = () => {
                   </div>
                 </div>
 
-                <button className=" md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className=" w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
                 </button>
 
-                <button className="mt-5 md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="mt-5 w-full  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
@@ -353,8 +349,8 @@ const Rommates = () => {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-2 md:p-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-2/3">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label>HOW IT WORKS</Label>
                     <InfoPill className="relative flex items-center">
@@ -378,7 +374,7 @@ const Rommates = () => {
                 </div>
                 <PaginatedCards /> 
 
-                <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
@@ -387,19 +383,18 @@ const Rommates = () => {
 
             {/* Match Tab */}
             {activeTab === "Match" && ( 
-              <div className="mb-10">
-                <div className="p-2 md:p-5 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                   <span className="text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR LISTINGS -------------------------------
                   </span>
-                </div>
+                
 
                 <MatchedCards />
-                <button className="md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
                 </button>
-                <button className="md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button className="w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
