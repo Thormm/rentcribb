@@ -265,13 +265,13 @@ const BusinessPlan = () => {
             </h1>
 
             {category === "Agent" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+              <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
                 <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" />{" "}
                 AGENT
               </span>
             )}
             {category === "Landlord" && (
-              <span className="inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+              <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
                 <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
               </span>
             )}

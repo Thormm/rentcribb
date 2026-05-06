@@ -1,20 +1,15 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
-import StudentCard from "./DashComponents/StudentCard"; 
-import {
-  MdWoman2,
-  MdOutlinePostAdd,
-  MdLightbulbOutline,
-} from "react-icons/md";
+import StudentCard from "./DashComponents/StudentCard";
+import { MdWoman2, MdOutlinePostAdd, MdLightbulbOutline } from "react-icons/md";
 import { FiChevronDown } from "react-icons/fi";
 import { FaUtensils, FaFilm, FaBook, FaToggleOff } from "react-icons/fa";
 import { CgCross } from "react-icons/cg";
 import { BiComment } from "react-icons/bi";
 import { FaToggleOn } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
-
 
 const getLoginData = () => {
   try {
@@ -30,7 +25,10 @@ type LabelProps = React.PropsWithChildren<{ className?: string }>;
 function Label({ children, className }: LabelProps) {
   return (
     <div
-      className={clsx("text-md pl-8 my-2 font-semibold text-black", className)}
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
+      )}
     >
       {children}
     </div>
@@ -57,7 +55,7 @@ function PaginatedCards() {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
- useEffect(() => {
+  useEffect(() => {
     const login = getLoginData();
     const whats = login?.user || "";
     if (!whats) return;
@@ -66,8 +64,8 @@ function PaginatedCards() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "studentmatched", whats }),
     })
-      .then(res => res.json())
-      .then(res => setData(res.data))
+      .then((res) => res.json())
+      .then((res) => setData(res.data))
       .catch((err) => {
         console.error(err);
       });
@@ -77,18 +75,22 @@ function PaginatedCards() {
 
   const currentData = data.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
     <div>
       <div
         className="space-y-3 px-5 max-h-[1000px] overflow-y-auto cards-scroll"
-        style={{ scrollbarColor: "#FFA1A1 transparent", scrollbarWidth: "thin" }}
+        style={{
+          scrollbarColor: "#FFA1A1 transparent",
+          scrollbarWidth: "thin",
+        }}
       >
-        {currentData.map(item => (
+        {currentData.map((item) => (
           <div key={item.id} className="min-w-sm md:min-w-0 flex justify-end">
-            <div className="flex gap-6 md:pt-15 items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
+            <div
+              className="flex gap-6 md:pt-15 items-center mb-10 relative bg-[#F3EDFE] rounded-3xl p-5 shadow-lg pr-8
               before:content-[''] before:absolute before:-bottom-3 before:right-10
               before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px]
               before:border-t-[12px] before:border-l-transparent before:border-r-transparent
@@ -100,15 +102,22 @@ function PaginatedCards() {
                 <div className="flex flex-col gap-4">
                   <InfoPill className="bg-[#D6FFC3]">
                     <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs md:text-md py-1 text-black">Online</span>
+                      <span className="text-xs md:text-md py-1 text-black">
+                        Online
+                      </span>
                       <FaToggleOn size={25} className="ml-auto text-black" />
                     </div>
                   </InfoPill>
 
                   <InfoPill className="bg-[#FFA1A1]">
                     <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-xs md:text-md py-1 text-black">Delete</span>
-                      <MdOutlineDeleteForever size={25} className="ml-auto text-black" />
+                      <span className="text-xs md:text-md py-1 text-black">
+                        Delete
+                      </span>
+                      <MdOutlineDeleteForever
+                        size={25}
+                        className="ml-auto text-black"
+                      />
                     </div>
                   </InfoPill>
 
@@ -138,7 +147,7 @@ function PaginatedCards() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -149,7 +158,6 @@ function PaginatedCards() {
     </div>
   );
 }
-
 
 /* ----------------------- MATCHED CARDS ----------------------- */
 function MatchedCards() {
@@ -166,8 +174,8 @@ function MatchedCards() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "studentmatched", whats }),
     })
-      .then(res => res.json())
-      .then(res => setData(res.data))
+      .then((res) => res.json())
+      .then((res) => setData(res.data))
       .catch((err) => {
         console.error(err);
       });
@@ -177,16 +185,19 @@ function MatchedCards() {
 
   const currentData = data.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   return (
     <div>
       <div
         className="grid grid-cols-2 py-15 md:grid-cols-3 gap-y-20 md:gap-x-6 max-h-[1000px] overflow-y-auto pr-2 cards-scroll"
-        style={{ scrollbarColor: "#FFA1A1 transparent", scrollbarWidth: "thin" }}
+        style={{
+          scrollbarColor: "#FFA1A1 transparent",
+          scrollbarWidth: "thin",
+        }}
       >
-        {currentData.map(item => (
+        {currentData.map((item) => (
           <div key={item.id} className="flex justify-center">
             <StudentCard item={item} />
           </div>
@@ -203,7 +214,7 @@ function MatchedCards() {
                 "px-3 py-1 rounded-md border",
                 page === i + 1
                   ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black"
+                  : "bg-white text-black border-black",
               )}
             >
               {i + 1}
@@ -214,7 +225,6 @@ function MatchedCards() {
     </div>
   );
 }
-
 
 // ----------------------- Section Header -----------------------
 function SectionHeader({ title }: { title: string }) {
@@ -295,9 +305,12 @@ const Rommates = () => {
                     <Label>VISIBILITY</Label>
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className=" text-xs md:text-sm">Active : Yes, Receiving Requests</span>
+                        <span className=" text-xs md:text-sm">
+                          Active : Yes, Receiving Requests
+                        </span>
                         <span className="bg-black space-x-1 px-4 py-2 rounded-md text-[#D6FFC3] flex items-center">
-                          <FaToggleOff /> <span className=" text-xs md:text-sm">SWITCH</span>
+                          <FaToggleOff />{" "}
+                          <span className=" text-xs md:text-sm">SWITCH</span>
                         </span>
                       </div>
                     </InfoPill>
@@ -350,7 +363,7 @@ const Rommates = () => {
             {/* Requests Tab */}
             {activeTab === "Requests" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6">
                   <div>
                     <Label>HOW IT WORKS</Label>
                     <InfoPill className="relative flex items-center">
@@ -369,10 +382,12 @@ const Rommates = () => {
 
                 <div className="flex items-center gap-3 mt-8 mb-10">
                   <span className="text-md font-semibold text-black tracking-wide mt-10">
-                    --- YOUR LISTINGS -------------------------------
+                    --- YOUR LISTINGS -------------
                   </span>
                 </div>
-                <PaginatedCards /> 
+                <div className="overflow-x-auto md:min-w-150">
+                  <PaginatedCards />
+                </div>
 
                 <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
@@ -382,14 +397,15 @@ const Rommates = () => {
             )}
 
             {/* Match Tab */}
-            {activeTab === "Match" && ( 
+            {activeTab === "Match" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
-                  <span className="text-md font-semibold text-black tracking-wide mt-10">
-                    --- YOUR LISTINGS -------------------------------
-                  </span>
-                
+                <span className="text-md font-semibold text-black tracking-wide mt-10">
+                  --- YOUR LISTINGS ----------
+                </span>
 
-                <MatchedCards />
+                <div className="overflow-x-auto md:min-w-150">
+                  <MatchedCards />
+                </div>
                 <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
