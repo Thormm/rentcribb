@@ -51,10 +51,10 @@ export default function BusinessDash() {
   }, [navigate]);
 
   const [open, setOpen] = useState<boolean>(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
   );
   const [isLarge, setIsLarge] = useState<boolean>(() =>
-    typeof window !== "undefined" ? window.innerWidth >= 1024 : true
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
   );
   const [activeTab, setActiveTab] = useState("overview");
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -112,7 +112,7 @@ export default function BusinessDash() {
       case "payments":
         return <Payment />;
       case "subscriptions":
-        return <Subscriptions />
+        return <Subscriptions />;
       case "roommates":
         return <Roommates />;
       case "rent":
@@ -128,7 +128,7 @@ export default function BusinessDash() {
     <DashboardTabContext.Provider value={{ activeTab, setActiveTab }}>
       <div className="h-screen w-screen overflow-hidden bg-neutral-950 text-neutral-100">
         {/* NAVBAR */}
-        <nav className="flex items-center justify-between px-4 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
+        <nav className="flex items-center justify-between px-4 md:px-15 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
           {/* Left side: menu (mobile) + logo (desktop) */}
           <div className="flex items-center gap-3">
             {/* Mobile Menu Toggle */}
@@ -172,9 +172,7 @@ export default function BusinessDash() {
                 <span className="text-xl font-semibold text-white leading-none">
                   Cribb
                 </span>
-                <span className="text-[8px] text-neutral-400">
-                  for Student
-                </span>
+                <span className="text-[8px] text-neutral-400">for Student</span>
               </div>
             </div>
           </div>
