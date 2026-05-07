@@ -292,7 +292,7 @@ const Rommates = () => {
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
-          <SectionHeader title="Subscriptions" />
+          <SectionHeader title="Roommates" />
 
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />

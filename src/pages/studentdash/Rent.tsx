@@ -25,7 +25,7 @@ function Label({ children, className }: LabelProps) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg pl-5 md:pl-8 md:my-3 font-semibold text-black",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -403,10 +403,10 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
 
   return (
     <div>
-      <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
+      <div className="w-full max-w-6xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {currentData.map((card) => (
-            <div key={`${card.space}-${card.id}`} className="mb-10 ...">
+            <div key={`${card.space}-${card.id}`} className="">
               <div className="w-auto flex justify-end">
                 <Card
                   item={card}
@@ -564,7 +564,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        We’ve made it a soft experience getting your Place ...
+        Simple, Transparent Plan based on your need
       </p>
 
       <div
@@ -590,7 +590,7 @@ function Tabs({
 }) {
   return (
     <div
-      className="flex mt-5 border-2 py-4 rounded-xl relative overflow-hidden"
+      className="flex md:mt-5 border-2 py-4 rounded-2xl relative overflow-hidden bg-white"
       style={{ borderStyle: "dashed", borderColor: "#0000004D" }}
     >
       {tabs.map((tab) => (
@@ -637,24 +637,23 @@ export default function Rent() {
 
             {/* Booked Tab */}
             {activeTab === "Booked" && (
-              <div className="mb-10">
-                <div className="flex items-center gap-3 w-2/3">
-                  <span className="text-md font-semibold text-black tracking-wide mt-10">
-                    --- ALL BOOKINGS -------------------------------
-                  </span>
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+                <span className="text-md font-semibold text-black tracking-wide">
+                  --- ALL BOOKINGS ------------
+                </span>
+                <div className="overflow-x-auto md:min-w-160">
+                  <PaginatedCards data={cards} />
                 </div>
-
-                <PaginatedCards data={cards} />
                 <button
                   onClick={() => navigate("/request")}
-                  className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                  className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                 >
                   <BiComment className="w-8 h-8" />
                   Post a Rent Requests
                 </button>
                 <button
                   onClick={() => navigate("/studentlisting")}
-                  className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                  className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                 >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   View Other Listings
@@ -664,10 +663,10 @@ export default function Rent() {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-1 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {showFirst ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="relative flex flex-col mb-10">
                         <Label>NEW REQUEST</Label>
                         <div
@@ -678,10 +677,10 @@ export default function Rent() {
                         </div>
                       </div>
 
-                      <div className="col-span-2 grid grid-cols-2 gap-4">
+                      <div className="col-span-2 grid grid-cols-2 gap-4 mt-5">
                         <div>
                           <Label>TOTAL ACTIVE</Label>
-                          <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
+                          <InfoPill className="relative flex items-center bg-white">
                             <span>2</span>
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
@@ -689,7 +688,7 @@ export default function Rent() {
 
                         <div>
                           <Label>MAX REQUEST</Label>
-                          <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
+                          <InfoPill className="relative flex items-center bg-white">
                             <span>3</span>
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
@@ -699,16 +698,16 @@ export default function Rent() {
 
                     <div className="flex items-center gap-3 my-8">
                       <span className="text-md font-semibold text-black tracking-wide mt-10">
-                        --- YOUR REQUESTS -----------------------
+                        --- YOUR REQUESTS -------
                       </span>
                     </div>
-
-                    <PaginatedRequests
-                      setShowFirst={setShowFirst}
-                      setSelectedResponses={setSelectedResponses}
-                    />
-
-                    <button className="md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                    <div className="overflow-x-auto md:min-w-170">
+                      <PaginatedRequests
+                        setShowFirst={setShowFirst}
+                        setSelectedResponses={setSelectedResponses}
+                      />
+                    </div>
+                    <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                       <BiComment className="w-8 h-8" />
                       View Rent Requests
                     </button>
@@ -720,10 +719,10 @@ export default function Rent() {
                       className="cursor-pointer text-white w-13 h-13 p-3 ml-8 rounded-full bg-black"
                     />
 
-                    <div className="col-span-2 grid grid-cols-2 gap-4 md:w-2/3">
+                    <div className="col-span-2 grid grid-cols-2 gap-4 mt-5">
                       <div>
                         <Label>HOW IT WORKS</Label>
-                        <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
+                        <InfoPill className="relative  flex items-center bg-white">
                           <span className="py-1">Info</span>
                           <MdLightbulbOutline className="pointer-events-none absolute right-5 text-lg text-black" />
                         </InfoPill>
@@ -731,7 +730,7 @@ export default function Rent() {
 
                       <div>
                         <Label>FILTER</Label>
-                        <InfoPill className="relative px-5 md:px-8 flex items-center bg-white">
+                        <InfoPill className="relative flex items-center bg-white">
                           <select
                             value={stateValue}
                             onChange={(e) => setStateValue(e.target.value)}
@@ -753,23 +752,23 @@ export default function Rent() {
 
                     <div className="flex items-center">
                       <span className="text-md font-semibold text-black tracking-wide mt-10">
-                        --- REPLIES ----------------------------------
+                        --- REPLIES ----------
                         {selectedResponses.length}
                       </span>
                     </div>
-
-                    <PaginatedCards2 responses={selectedResponses} />
-
+                    <div className="overflow-x-auto md:min-w-170">
+                      <PaginatedCards2 responses={selectedResponses} />
+                    </div>
                     <button
                       onClick={() => navigate("/request")}
-                      className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                      className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                     >
                       <BiComment className="w-8 h-8" />
                       Post a Rent Requests
                     </button>
                     <button
                       onClick={() => navigate("/studentlisting")}
-                      className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                      className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                     >
                       <MdOutlinePostAdd className="w-8 h-8" />
                       View Other Listings
@@ -781,11 +780,11 @@ export default function Rent() {
 
             {/* Host Tab */}
             {activeTab === "Host" && (
-              <div className="md:w-2/3 p-5">
+              <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Header with dashed line */}
-                <div className="flex items-center gap-3 my-8">
+                <div className="flex items-center gap-3 mb-8">
                   <span className="text-md font-semibold text-black tracking-wide">
-                    -- YOUR HOST --------------------------
+                    -- YOUR HOST -------------
                   </span>
                 </div>
 
@@ -827,14 +826,14 @@ export default function Rent() {
 
                   <button
                     onClick={() => navigate("/request")}
-                    className="cursor-pointer md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                    className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                   >
                     <BiComment className="w-8 h-8" />
                     Post a Rent Requests
                   </button>
                   <button
                     onClick={() => navigate("/studentlisting")}
-                    className="cursor-pointer md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                    className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                   >
                     <MdOutlinePostAdd className="w-8 h-8" />
                     View Other Listings
