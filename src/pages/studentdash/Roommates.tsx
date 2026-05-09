@@ -381,7 +381,7 @@ const Rommates = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-8 mb-10">
-                  <span className="text-md font-semibold text-black tracking-wide mt-10">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
                     --- YOUR LISTINGS -------------
                   </span>
                 </div>
@@ -399,7 +399,7 @@ const Rommates = () => {
             {/* Match Tab */}
             {activeTab === "Match" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
-                <span className="text-md font-semibold text-black tracking-wide mt-10">
+                <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
                   --- YOUR LISTINGS ----------
                 </span>
 

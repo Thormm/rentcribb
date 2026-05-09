@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -13,11 +14,13 @@ import Card from "../../components/Cards";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { FaArrowRight, FaToggleOn } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import { MdOutlineDeleteForever, MdDeleteForever } from "react-icons/md";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import { RiInformationLine } from "react-icons/ri";
+import { LuPencil } from "react-icons/lu";
+import { CgClose } from "react-icons/cg";
 
 // ----------------------- Reusable Label -----------------------
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -216,6 +219,52 @@ function PaginatedRequests({
   const [draftItems, setDraftItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const toggleModal = (id: string) => {
+    setOpenMenuId((prev) => (prev === id ? null : id));
+  };
+  const { showAlert } = useAlert();
+
+  const handleStatusUpdate = async (
+    id: string | number,
+    space: string,
+    request_id: string | number = "",
+  ) => {
+    try {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (!login) return;
+
+      const user = login?.user || "";
+      const signup_key = login?.signup_key || "";
+
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_request_status",
+          id,
+          user,
+          signup_key,
+          space,
+          request_id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert(`Response updated`, "success", true);
+        setTimeout(() => {
+          window.location.href = "/businessdash?goto=agentbookings";
+        }, 3000);
+      } else {
+        showAlert(data.message || "Update failed", "info");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Something went wrong", "info");
+    }
+  };
 
   useEffect(() => {
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -272,7 +321,7 @@ function PaginatedRequests({
       >
         {currentData.map((item, idx) => (
           <div key={item.id || idx}>
-            <div className="grid grid-cols-1 font-semibold my-5 mx-8 text-black">
+            <div className="grid grid-cols-1 text-sm md:text-md font-semibold my-5 mx-8 text-black">
               Request {(page - 1) * itemsPerPage + idx + 1}
             </div>
 
@@ -311,11 +360,60 @@ function PaginatedRequests({
 
               <div className="grid grid-cols-2 md:grid-cols-1 gap-2 w-full md:w-1/3">
                 <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-2 md:py-4 shadow-sm">
-                  <div className="flex items-center relative w-20 md:w-40 justify-between">
+                  <div
+                    className="flex items-center relative w-20 md:w-40 justify-between"
+                    onClick={() => toggleModal(item.id)}
+                  >
                     <span className="text-xs md:text-lg text-black truncate">
                       More
                     </span>
-                    <HiOutlineDotsVertical className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
+
+                    {openMenuId === item.id ? (
+                      <CgClose className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
+                    ) : (
+                      <HiOutlineDotsVertical className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
+                    )}
+
+                    {openMenuId === item.id && (
+                      <div className="absolute top-8 left-12 md:-left-5 bg-white border-2 border-black rounded-2xl shadow-lg z-10 w-[200px] p-4 flex flex-col gap-3">
+                        <div className="text-center text-xs md:text-sm font-semibold text-black">
+                          {"10 - 03 - 2023"}
+                        </div>
+                        <div className="border-t-2 border-dashed border-gray-400"></div>
+                        <div className="flex flex-col gap-4">
+                          <div
+                            className="flex items-center justify-between bg-black  p-2 rounded-md cursor-pointer"
+                            onClick={() =>
+                              handleStatusUpdate(
+                                item.id,
+                                item.space,
+                                item.request_id,
+                              )
+                            }
+                          >
+                            <span className="text-xs md:text-sm text-white">
+                              Edit
+                            </span>
+                            <LuPencil className="text-white w-4 h-4 md:h-6 md:w-6" />
+                          </div>
+                          <div
+                            className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
+                            onClick={() =>
+                              handleStatusUpdate(
+                                item.id,
+                                item.space,
+                                item.request_id,
+                              )
+                            }
+                          >
+                            <span className="text-xs md:text-sm text-black">
+                              Delete
+                            </span>
+                            <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -385,7 +483,7 @@ function PaginatedRequests({
 }
 
 // ----------------------- Live: existing paginated cards (5 per page) -----------------------
-function PaginatedCards({ data }: { data: LiveSpace[] }) {
+function BookedCards({ data }: { data: LiveSpace[] }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
   const navigate = useNavigate();
@@ -403,7 +501,7 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
 
   return (
     <div>
-      <div className="w-full max-w-6xl mx-auto px-4 pb-16">
+      <div className="w-full max-w-6xl mx-auto px-11 md:px-8 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {currentData.map((card) => (
             <div key={`${card.space}-${card.id}`} className="">
@@ -445,7 +543,7 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
 }
 
 // ----------------------- Paginated Cards -----------------------
-function PaginatedCards2({ responses }: { responses: string[] }) {
+function RequestCards({ responses }: { responses: string[] }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LiveSpace[]>([]);
   const [page, setPage] = useState(1);
@@ -638,11 +736,11 @@ export default function Rent() {
             {/* Booked Tab */}
             {activeTab === "Booked" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
-                <span className="text-md font-semibold text-black tracking-wide">
+                <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                   --- ALL BOOKINGS ------------
                 </span>
                 <div className="overflow-x-auto md:min-w-160">
-                  <PaginatedCards data={cards} />
+                  <BookedCards data={cards} />
                 </div>
                 <button
                   onClick={() => navigate("/request")}
@@ -697,7 +795,7 @@ export default function Rent() {
                     </div>
 
                     <div className="flex items-center gap-3 my-8">
-                      <span className="text-md font-semibold text-black tracking-wide mt-10">
+                      <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
                         --- YOUR REQUESTS -------
                       </span>
                     </div>
@@ -751,13 +849,13 @@ export default function Rent() {
                     </div>
 
                     <div className="flex items-center">
-                      <span className="text-md font-semibold text-black tracking-wide mt-10">
+                      <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
                         --- REPLIES ----------
                         {selectedResponses.length}
                       </span>
                     </div>
                     <div className="overflow-x-auto md:min-w-170">
-                      <PaginatedCards2 responses={selectedResponses} />
+                      <RequestCards responses={selectedResponses} />
                     </div>
                     <button
                       onClick={() => navigate("/request")}
@@ -783,7 +881,7 @@ export default function Rent() {
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 {/* Header with dashed line */}
                 <div className="flex items-center gap-3 mb-8">
-                  <span className="text-md font-semibold text-black tracking-wide">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     -- YOUR HOST -------------
                   </span>
                 </div>
