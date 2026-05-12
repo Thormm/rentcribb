@@ -12,9 +12,9 @@ import {
 import { BiComment } from "react-icons/bi";
 import Card from "../../components/Cards";
 import { HiOutlineUserCircle } from "react-icons/hi";
-import { FaArrowRight, FaToggleOn } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
-import { MdOutlineDeleteForever, MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
@@ -112,6 +112,10 @@ async function getRepliesSpaces(responses: string[]): Promise<LiveSpace[]> {
     background: item.background,
     photos: item.photos,
     user: item.user,
+    pending: true,
+    approve: true,
+    delete: true,
+    card2: true,
   }));
 
   const shared = (data.shared_spaces ?? []).map((item: any) => ({
@@ -134,6 +138,10 @@ async function getRepliesSpaces(responses: string[]): Promise<LiveSpace[]> {
     background: item.background,
     photos: item.photos,
     user: item.user,
+    pending: true,
+    approve: true,
+    delete: true,
+    card2: true,
   }));
 
   return [...entire, ...shared];
@@ -209,7 +217,7 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
   return [...entire, ...shared];
 }
 
-function PaginatedRequests({
+function RequestsCards({
   setShowFirst,
   setSelectedResponses,
 }: {
@@ -326,7 +334,7 @@ function PaginatedRequests({
             </div>
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-6">
-              <div className="flex items-center text-black px-6 text-sm flex-1 border-black rounded-4xl border py-3 shadow-sm">
+              <div className="flex items-center text-black px-6 text-sm flex-1 border-black rounded-4xl border-[1.5px] py-3 shadow-sm">
                 <p className="text-xs md:text-base">
                   A {item.gender} Student needs a{" "}
                   <b>
@@ -359,19 +367,19 @@ function PaginatedRequests({
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-1 gap-2 w-full md:w-1/3">
-                <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border py-2 md:py-4 shadow-sm">
+                <div className="flex items-center justify-center gap-3 w-full border-black rounded-4xl border-[1.5px] py-2 md:py-4 shadow-sm">
                   <div
                     className="flex items-center relative w-20 md:w-40 justify-between"
                     onClick={() => toggleModal(item.id)}
                   >
-                    <span className="text-xs md:text-lg text-black truncate">
+                    <span className="text-xs md:text-lg py-1 text-black truncate">
                       More
                     </span>
 
                     {openMenuId === item.id ? (
-                      <CgClose className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
+                      <CgClose className="absolute -right-7 md:-right-5 text-white w-10 h-10 md:w-14 md:h-14 p-2 md:p-3 rounded-full bg-black" />
                     ) : (
-                      <HiOutlineDotsVertical className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-black" />
+                      <HiOutlineDotsVertical className="absolute -right-7 md:-right-5 text-white w-10 h-10 md:w-14 md:h-14 p-2 md:p-3 rounded-full bg-black" />
                     )}
 
                     {openMenuId === item.id && (
@@ -435,7 +443,7 @@ function PaginatedRequests({
                   className="flex items-center justify-center bg-black gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
                 >
                   <div className="flex items-center relative w-20 md:w-40 justify-between">
-                    <span className="text-xs md:text-lg text-white truncate">
+                    <span className="text-xs py-1 md:text-lg text-white truncate">
                       {(() => {
                         try {
                           const list =
@@ -451,7 +459,7 @@ function PaginatedRequests({
                       Replies
                     </span>
 
-                    <FaArrowRight className="absolute -right-3 md:-right-5 text-white w-8 h-8 md:w-12 md:h-12 p-1 md:p-3 rounded-full bg-[#202020]" />
+                    <FaArrowRight className="absolute -right-7 md:-right-5 text-white w-10 h-10 md:w-14 md:h-14 p-2 md:p-3 rounded-full bg-[#202020]" />
                   </div>
                 </div>
               </div>
@@ -543,7 +551,7 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
 }
 
 // ----------------------- Paginated Cards -----------------------
-function RequestCards({ responses }: { responses: string[] }) {
+function RequestsResponses({ responses }: { responses: string[] }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LiveSpace[]>([]);
   const [page, setPage] = useState(1);
@@ -569,64 +577,50 @@ function RequestCards({ responses }: { responses: string[] }) {
   }, [responses]);
 
   return (
-    <div>
-      <div
-        className="space-y-3 max-h-[1000px] overflow-y-auto pr-3 md:pr-12 cards-scroll"
-        style={{
-          scrollbarColor: "#FFA1A1 transparent",
-          scrollbarWidth: "thin",
-        }}
-      >
-        {loading && (
-          <div className="text-sm text-gray-500">Loading replies...</div>
-        )}
+    <div
+      className="space-y-8"
+      style={{
+        scrollbarColor: "#FFA1A1 transparent",
+        scrollbarWidth: "thin",
+      }}
+    >
+      {loading && (
+        <div className="text-sm text-gray-500">Loading replies...</div>
+      )}
 
-        {!responses.length && data.length === 0 && (
-          <div className="text-sm text-gray-500">
-            No replies found for this request.
-          </div>
-        )}
+      {!responses.length && data.length === 0 && (
+        <div className="text-sm text-gray-500">
+          No replies found for this request.
+        </div>
+      )}
 
-        {currentData.map((card) => (
-          <div
-            key={`${card.space}-${card.id}`}
-            className="mb-10 relative items-center flex flex-col md:flex-row w-full gap-10 bg-[#F3EDFE] rounded-3xl p-2 md:p-5 pt-0 md:pt-0 shadow-lg md:pr-8
-  before:content-[''] before:absolute before:-bottom-3 before:left-10 
-  before:w-0 before:h-0 before:border-l-[10px] before:border-r-[10px] before:border-t-[12px] 
-  before:border-l-transparent before:border-r-transparent before:border-t-[#F3EDFE]"
-          >
-            <div className="w-auto flex justify-end">
-              <Card item={card} />
-            </div>
-            <div className="md:w-1/3 grid md:h-56 content-between gap-5 md:gap-15">
-              <div className="grid grid-cols-3 items-center justify-content-center md:grid-cols-1 gap-1 md:gap-8">
-                <InfoPill className="bg-[#D6FFC3] md:rounded-full rounded-2xl py-2 px-2 md:px-8">
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-xs md:text-lg py-1 text-black">
-                      Online
-                    </span>
-                    <FaToggleOn className="ml-auto md:text-2xl text-black" />
-                  </div>
-                </InfoPill>
-                <InfoPill className="bg-[#FFA1A1] md:rounded-full rounded-2xl py-2 px-2 md:px-8">
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-xs md:text-lg py-1 text-black">
-                      Delete
-                    </span>
-                    <MdOutlineDeleteForever className="ml-auto md:text-2xl text-black" />
-                  </div>
-                </InfoPill>
-                <div className="flex justify-center">
-                  <button className="py-2 md:py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg">
-                    EDIT
-                  </button>
-                </div>
+      {responses.length > 0 && data.length > 0 && (
+        <div className="space-y-4">
+          {/* REQUEST 
+          <div className="flex justify-end">
+            <div className="flex items-stretch w-full md:w-[60%]">
+              <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
+                <p className="text-xs md:text-sm">
+                  HEllo the card stuff will be here and we would finish it
+                </p>
               </div>
-              <div className="text-black text-center">11-12-2009</div>
+
+              <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
+            </div>
+          </div>*/}
+
+          {/* REPLIED SPACES */}
+          <div className="overflow-x-auto">
+            <div className="flex gap-4 min-w-max">
+              {currentData.map((card: any) => (
+                <div key={`${card.space}-${card.id}`} className="shrink-0">
+                  <Card item={card} />
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-5">
@@ -725,7 +719,7 @@ export default function Rent() {
   }, []);
 
   return (
-    <div className="bg-white md:py-10 mb-20">
+    <div className="bg-white md:py-10 mb-10">
       <section className="px-3 md:px-10 flex justify-center">
         <div className="w-full">
           <SectionHeader title="Rent" />
@@ -761,7 +755,7 @@ export default function Rent() {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-2 md:p-5 mt-5 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 space-y-6">
                 {showFirst ? (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -779,7 +773,12 @@ export default function Rent() {
                         <div>
                           <Label>TOTAL ACTIVE</Label>
                           <InfoPill className="relative flex items-center bg-white">
-                            <span>2</span>
+                            <input
+                              type="text"
+                              readOnly
+                              value={12}
+                              className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                            />
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
                         </div>
@@ -787,7 +786,12 @@ export default function Rent() {
                         <div>
                           <Label>MAX REQUEST</Label>
                           <InfoPill className="relative flex items-center bg-white">
-                            <span>3</span>
+                            <input
+                              type="text"
+                              readOnly
+                              value={12}
+                              className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                            />
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
                           </InfoPill>
                         </div>
@@ -800,14 +804,14 @@ export default function Rent() {
                       </span>
                     </div>
                     <div className="overflow-x-auto md:min-w-170">
-                      <PaginatedRequests
+                      <RequestsCards
                         setShowFirst={setShowFirst}
                         setSelectedResponses={setSelectedResponses}
                       />
                     </div>
                     <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                       <BiComment className="w-8 h-8" />
-                      View Rent Requests
+                      View Other Listings
                     </button>
                   </>
                 ) : (
@@ -849,14 +853,12 @@ export default function Rent() {
                     </div>
 
                     <div className="flex items-center">
-                      <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
+                      <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10 mb-5">
                         --- REPLIES ----------
                         {selectedResponses.length}
                       </span>
                     </div>
-                    <div className="overflow-x-auto md:min-w-170">
-                      <RequestCards responses={selectedResponses} />
-                    </div>
+                    <RequestsResponses responses={selectedResponses} />
                     <button
                       onClick={() => navigate("/request")}
                       className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"

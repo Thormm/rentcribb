@@ -17,16 +17,15 @@ import { FaRegBell } from "react-icons/fa";
 export default function BusinessDash() {
   const navigate = useNavigate(); // ✅ initialize router navigation
 
-  // Detect ?goto=listings or any tab name
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const goto = params.get("goto");
+  const params = new URLSearchParams(window.location.search);
+  const goto = params.get("goto");
 
-    if (goto) {
-      setActiveTab(goto); // change tab
-      localStorage.setItem("dashboard:tab", goto); // store preference
-    }
-  }, []);
+  if (goto) {
+    setActiveTab(goto);
+    localStorage.setItem("dashboard:tab", goto);
+  }
+}, []);
 
   useEffect(() => {
     const loginData = sessionStorage.getItem("login_data");
@@ -257,7 +256,7 @@ export default function BusinessDash() {
           )}
 
           {/* Main content */}
-          <main className="flex-1 pb-20 min-w-0 h-full overflow-auto bg-white text-black lg:ml-56 transition-all duration-300">
+          <main className="flex-1 min-w-0 h-full overflow-auto bg-white text-black lg:ml-56 transition-all duration-300">
             {renderTab()}
           </main>
         </div>
