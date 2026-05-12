@@ -220,9 +220,11 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
 function RequestsCards({
   setShowFirst,
   setSelectedResponses,
+  setSelectedItemDetails,
 }: {
   setShowFirst: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedResponses: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedItemDetails: React.Dispatch<React.SetStateAction<any>>;
 }) {
   const [draftItems, setDraftItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -437,7 +439,12 @@ function RequestsCards({
                     } catch {
                       list = [];
                     }
+
                     setSelectedResponses(list);
+
+                    // ✅ save the request item
+                    setSelectedItemDetails(item);
+
                     setShowFirst(false);
                   }}
                   className="flex items-center justify-center bg-black gap-3 w-full border-black rounded-4xl border py-4 shadow-sm cursor-pointer"
@@ -551,7 +558,13 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
 }
 
 // ----------------------- Paginated Cards -----------------------
-function RequestsResponses({ responses }: { responses: string[] }) {
+function RequestsResponses({
+  responses,
+  item,
+}: {
+  responses: string[];
+  item: any;
+}) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LiveSpace[]>([]);
   const [page, setPage] = useState(1);
@@ -578,7 +591,7 @@ function RequestsResponses({ responses }: { responses: string[] }) {
 
   return (
     <div
-      className="space-y-8"
+      className="space-y-8 md:min-w-150"
       style={{
         scrollbarColor: "#FFA1A1 transparent",
         scrollbarWidth: "thin",
@@ -596,18 +609,44 @@ function RequestsResponses({ responses }: { responses: string[] }) {
 
       {responses.length > 0 && data.length > 0 && (
         <div className="space-y-4">
-          {/* REQUEST 
+          {/* REQUEST */}
           <div className="flex justify-end">
             <div className="flex items-stretch w-full md:w-[60%]">
               <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
-                <p className="text-xs md:text-sm">
-                  HEllo the card stuff will be here and we would finish it
+                <p className="text-xs md:text-base">
+                  A {item.gender} Student needs a{" "}
+                  <b>
+                    {item.category === "Shared Space" ? "SHARED " : ""}
+                    {item.type}
+                  </b>{" "}
+                  with{" "}
+                  {Array.isArray(item.features) && item.features.length
+                    ? item.features.join(", ")
+                    : "basic facilities"}{" "}
+                  around{" "}
+                  {[item.preferred_location_1, item.preferred_location_2]
+                    .filter(Boolean)
+                    .join(", ")}
+                  .
+                  <br />
+                  Budget: <b>({item.budget})</b>
+                  <br />
+                  {item.move_in_date?.toLowerCase() === "urgently" ? (
+                    <>
+                      Looking to Move in <b>URGENTLY</b>
+                    </>
+                  ) : (
+                    <>
+                      Looking to Move-in on or before <b>{item.move_in_date}</b>
+                      .
+                    </>
+                  )}
                 </p>
               </div>
 
               <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
             </div>
-          </div>*/}
+          </div>
 
           {/* REPLIED SPACES */}
           <div className="overflow-x-auto">
@@ -706,6 +745,7 @@ function Tabs({
 // ----------------------- Main Component -----------------------
 export default function Rent() {
   const [selectedResponses, setSelectedResponses] = useState<string[]>([]);
+  const [selectedItemDetails, setSelectedItemDetails] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("Booked");
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
@@ -755,7 +795,7 @@ export default function Rent() {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-2 md:p-5 mt-5 space-y-6">
+              <div className="p-2 md:p-5 mt-5 space-y-6 md:w-2/3">
                 {showFirst ? (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -807,6 +847,7 @@ export default function Rent() {
                       <RequestsCards
                         setShowFirst={setShowFirst}
                         setSelectedResponses={setSelectedResponses}
+                        setSelectedItemDetails={setSelectedItemDetails}
                       />
                     </div>
                     <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
@@ -858,7 +899,10 @@ export default function Rent() {
                         {selectedResponses.length}
                       </span>
                     </div>
-                    <RequestsResponses responses={selectedResponses} />
+                    <RequestsResponses
+                      responses={selectedResponses}
+                      item={selectedItemDetails}
+                    />
                     <button
                       onClick={() => navigate("/request")}
                       className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
