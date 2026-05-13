@@ -80,7 +80,7 @@ interface LiveSpace {
   background: string;
 }
 
-async function getRepliesSpaces(responses: string[]): Promise<LiveSpace[]> {
+async function getRepliesSpaces(responses: string[]) {
   const res = await fetch("https://www.cribb.africa/apigets.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -92,59 +92,7 @@ async function getRepliesSpaces(responses: string[]): Promise<LiveSpace[]> {
 
   const data = await res.json();
 
-  const entire = (data.entire_spaces ?? []).map((item: any) => ({
-    id: item.id,
-    space: "entirespace",
-    name: item.name,
-    type: item.type,
-    location: item.location,
-    price: Number(item.price),
-    duration: item.duration,
-    availability_month: item.availability_month,
-    power_supply: item.power_supply,
-    security: item.security,
-    status: item.status,
-    active: item.active,
-    rating: item.rating,
-    reviews: item.reviews,
-    tier: item.tier,
-    bookmarks: item.bookmarks,
-    background: item.background,
-    photos: item.photos,
-    user: item.user,
-    pending: true,
-    approve: true,
-    delete: true,
-    card2: true,
-  }));
-
-  const shared = (data.shared_spaces ?? []).map((item: any) => ({
-    id: item.id,
-    space: "sharedspace",
-    name: item.name,
-    type: item.type,
-    location: item.location,
-    price: Number(item.price),
-    duration: item.duration,
-    availability_month: item.availability_month,
-    power_supply: item.power_supply,
-    security: item.security,
-    status: item.status,
-    active: item.active,
-    rating: item.rating,
-    reviews: item.reviews,
-    tier: item.tier,
-    bookmarks: item.bookmarks,
-    background: item.background,
-    photos: item.photos,
-    user: item.user,
-    pending: true,
-    approve: true,
-    delete: true,
-    card2: true,
-  }));
-
-  return [...entire, ...shared];
+  return data.groups || [];
 }
 
 async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
@@ -566,7 +514,7 @@ function RequestsResponses({
   item: any;
 }) {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<LiveSpace[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -610,9 +558,10 @@ function RequestsResponses({
       {responses.length > 0 && data.length > 0 && (
         <div className="space-y-4">
           {/* REQUEST */}
+
           <div className="flex justify-end">
             <div className="flex items-stretch w-full md:w-[60%]">
-              <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
+              <div className="flex-1 border-black border-[1.5px] rounded-3xl p-4 shadow-sm text-black">
                 <p className="text-xs md:text-base">
                   A {item.gender} Student needs a{" "}
                   <b>
@@ -648,16 +597,30 @@ function RequestsResponses({
             </div>
           </div>
 
-          {/* REPLIED SPACES */}
-          <div className="overflow-x-auto">
-            <div className="flex gap-4 min-w-max">
-              {currentData.map((card: any) => (
-                <div key={`${card.space}-${card.id}`} className="shrink-0">
-                  <Card item={card} />
+          {currentData.map((group: any, idx: number) => (
+            <div
+              key={`${group.uploader}-${group.user}-${idx}`}
+            >
+              {/* GROUP TITLE */}
+              <div className="flex justify-center items-center mt-5">
+                <span className="text-xs p-2 bg-white text-[#5B5B5B] rounded-md">
+                  {group.uploader === "agent" ? "An agent" : "A landlord"}{" "}
+                  replied ..
+                </span>
+              </div>
+
+              {/* HORIZONTAL CARDS */}
+              <div className="overflow-x-auto">
+                <div className="flex gap-4 md:min-w-max">
+                  {(group.spaces || []).map((card: any) => (
+                    <div key={`${card.space}-${card.id}`} className="shrink-0">
+                      <Card item={card} />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       )}
 
