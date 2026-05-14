@@ -174,6 +174,7 @@ function RequestsCards({
   setSelectedResponses: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedItemDetails: React.Dispatch<React.SetStateAction<any>>;
 }) {
+  const navigate = useNavigate();
   const [draftItems, setDraftItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -183,11 +184,7 @@ function RequestsCards({
   };
   const { showAlert } = useAlert();
 
-  const handleStatusUpdate = async (
-    id: string | number,
-    space: string,
-    request_id: string | number = "",
-  ) => {
+  const handleStatusUpdate = async (id: string | number) => {
     try {
       const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
       if (!login) return;
@@ -199,12 +196,10 @@ function RequestsCards({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "update_request_status",
+          action: "update_student_request_status",
           id,
           user,
           signup_key,
-          space,
-          request_id,
         }),
       });
 
@@ -213,7 +208,7 @@ function RequestsCards({
       if (data.success) {
         showAlert(`Response updated`, "success", true);
         setTimeout(() => {
-          window.location.href = "/businessdash?goto=agentbookings";
+          window.location.href = "/studentdash?goto=rent";
         }, 3000);
       } else {
         showAlert(data.message || "Update failed", "info");
@@ -339,36 +334,52 @@ function RequestsCards({
                         </div>
                         <div className="border-t-2 border-dashed border-gray-400"></div>
                         <div className="flex flex-col gap-4">
-                          <div
-                            className="flex items-center justify-between bg-black  p-2 rounded-md cursor-pointer"
-                            onClick={() =>
-                              handleStatusUpdate(
-                                item.id,
-                                item.space,
-                                item.request_id,
-                              )
+                          {(() => {
+                            let responsesCount = 0;
+
+                            try {
+                              const list =
+                                typeof item.responses === "string"
+                                  ? JSON.parse(item.responses)
+                                  : item.responses;
+
+                              responsesCount = Array.isArray(list)
+                                ? list.length
+                                : 0;
+                            } catch {
+                              responsesCount = 0;
                             }
-                          >
-                            <span className="text-xs md:text-sm text-white">
-                              Edit
-                            </span>
-                            <LuPencil className="text-white w-4 h-4 md:h-6 md:w-6" />
-                          </div>
-                          <div
-                            className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                            onClick={() =>
-                              handleStatusUpdate(
-                                item.id,
-                                item.space,
-                                item.request_id,
-                              )
-                            }
-                          >
-                            <span className="text-xs md:text-sm text-black">
-                              Delete
-                            </span>
-                            <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
-                          </div>
+
+                            return (
+                              <>
+                                {/* ONLY SHOW EDIT IF NO RESPONSES */}
+                                {responsesCount === 0 && (
+                                  <div
+                                    className="flex items-center justify-between bg-black p-2 rounded-md cursor-pointer"
+                                    onClick={() => navigate(`/request?edit=${item.id}`)}
+                                  >
+                                    <span className="text-xs md:text-sm text-white">
+                                      Edit
+                                    </span>
+
+                                    <LuPencil className="text-white w-4 h-4 md:h-6 md:w-6" />
+                                  </div>
+                                )}
+
+                                {/* DELETE ALWAYS SHOWS */}
+                                <div
+                                  className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
+                                  onClick={() => handleStatusUpdate(item.id)}
+                                >
+                                  <span className="text-xs md:text-sm text-black">
+                                    Delete
+                                  </span>
+
+                                  <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
+                                </div>
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     )}
@@ -598,9 +609,7 @@ function RequestsResponses({
           </div>
 
           {currentData.map((group: any, idx: number) => (
-            <div
-              key={`${group.uploader}-${group.user}-${idx}`}
-            >
+            <div key={`${group.uploader}-${group.user}-${idx}`}>
               {/* GROUP TITLE */}
               <div className="flex justify-center items-center mt-5">
                 <span className="text-xs p-2 bg-white text-[#5B5B5B] rounded-md">

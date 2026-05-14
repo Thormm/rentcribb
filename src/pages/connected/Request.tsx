@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import clsx from "clsx";
 import InfoPill, { DfButton } from "../../components/Pill";
 import imgright from "../../assets/request.png";
@@ -86,8 +86,6 @@ function Label({ children }: React.PropsWithChildren) {
   return <div className="text-md my-3 font-semibold ml-8">{children}</div>;
 }
 
-
-
 /* ---------- REUSABLE COMPONENTS ---------- */
 
 function IconButton({ active, children, onClick }: any) {
@@ -95,9 +93,11 @@ function IconButton({ active, children, onClick }: any) {
     <button
       onClick={onClick}
       className={clsx(
-                    "w-10 h-10 md:w-14 md:h-14 flex flex-col items-center justify-center gap-1 rounded-lg p-3 border transition-all",
-                    active ? "bg-[#CCAC13] border-[#CCAC13] text-white" : "bg-white border-black text-black"
-                  )}
+        "w-10 h-10 md:w-14 md:h-14 flex flex-col items-center justify-center gap-1 rounded-lg p-3 border transition-all",
+        active
+          ? "bg-[#CCAC13] border-[#CCAC13] text-white"
+          : "bg-white border-black text-black",
+      )}
     >
       {children}
     </button>
@@ -242,6 +242,65 @@ function SectionHeader({
 
 export default function Request() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEdit = Boolean(editId);
+
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const fetchRequest = async () => {
+      try {
+        const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+
+        const res = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "get_request_for_edit",
+            request_id: editId,
+            user: login?.user,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          alert(data.message);
+          navigate("/studentdash");
+          return;
+        }
+
+        if (!data.editable) {
+          alert("This request already has responses.");
+         navigate("/studentdash");
+          return;
+        }
+
+        const req = data.request;
+
+        setGender(req.gender);
+        setReligion(req.religion);
+
+        setCategory(req.category);
+        setType(req.type);
+
+        setLocation1(req.preferred_locations?.[0] || "");
+        setLocation2(req.preferred_locations?.[1] || "");
+
+        setFeatures(req.should_have || []);
+
+        setMoveInDate(req.move_in_date);
+        setBudget(req.budget);
+      } catch {
+        alert("Failed to load request");
+      }
+    };
+
+    fetchRequest();
+  }, [editId, isEdit, navigate]);
 
   /* ---------- AUTH GUARD ---------- */
   useEffect(() => {
@@ -269,8 +328,6 @@ export default function Request() {
   /* ---------- SUBMIT ---------- */
 
   const handleSubmit = async () => {
-
-
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     const user = login?.user || "";
     const signup_key = login?.signup_key || "";
@@ -289,7 +346,8 @@ export default function Request() {
     }
 
     const payload = {
-      action: "post_request",
+      action: "post_student_request",
+      request_id: isEdit ? editId : 0,
       user,
       signup_key,
       gender,
@@ -311,7 +369,7 @@ export default function Request() {
       });
 
       if (!res.ok) throw new Error("Request failed");
-      navigate("/studentdash");
+      navigate("/studentdash?goto=rent");
     } catch {
       alert("Something went wrong");
     } finally {
@@ -438,7 +496,13 @@ export default function Request() {
 
               <div className="flex justify-center pt-4">
                 <DfButton onClick={handleSubmit} disabled={loading}>
-                  {loading ? "Posting..." : "POST"}
+                  {loading
+                    ? isEdit
+                      ? "Updating..."
+                      : "Posting..."
+                    : isEdit
+                      ? "UPDATE"
+                      : "POST"}
                 </DfButton>
               </div>
             </div>
