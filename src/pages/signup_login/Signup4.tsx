@@ -241,7 +241,7 @@ export default function Signup4({ mode }: Signup4Props) {
                   </option>
                   {mode === "student"
                     ? institutes.map((inst) => (
-                        <option key={inst.id} value={inst.id}>
+                        <option key={inst.id} value={inst.institution}>
                           {inst.institution}
                         </option>
                       ))
