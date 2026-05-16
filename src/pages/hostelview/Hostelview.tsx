@@ -477,7 +477,7 @@ export default function Hostelview() {
               <h1 className="text-4xl my-4 font-extrabold ">
                 Available Hostels in{" "}
                 <span className="text-[#C2C8DA]">
-                  {hostel?.target_university?.split(" - ")?.[0] ?? ""}
+                  {login?.school?.split(" - ")?.[0] ?? ""}
                 </span>
               </h1>
             </div>
@@ -1085,7 +1085,7 @@ export default function Hostelview() {
                     disabled={!agreed}
                     onClick={() => navigate(`/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`)}
                     className={clsx(
-                      "text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                      "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
                       agreed
                         ? "bg-black text-white"
                         : "bg-gray-400 text-white cursor-not-allowed",

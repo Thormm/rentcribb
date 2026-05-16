@@ -1,4 +1,3 @@
-import { useAlert } from "../App";
 import { useState, useEffect } from "react";
 import { Medal, Star, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
@@ -33,6 +32,14 @@ function Rating({ value, reviews }: { value: number; reviews: number }) {
   );
 }
 
+type CardActions<T> = {
+  onApprove?: (item: T) => void;
+  onPendingAction?: (item: T) => void;
+  onDecline?: (item: T) => void;
+  onViewInfo?: (item: T) => void;
+  onReject?: (item: T) => void;
+};
+
 type CardItemBase = {
   id: string;
   background: string;
@@ -52,16 +59,19 @@ type CardItemBase = {
   approve?: boolean;
   pending?: boolean;
   decline?: boolean;
+  reject?: boolean;
 };
 
 type CardProps<T extends CardItemBase> = {
   item: T;
   onView?: () => void;
+  actions?: CardActions<T>;
 };
 
 export default function Card<T extends CardItemBase>({
   item,
   onView,
+  actions,
 }: CardProps<T>) {
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -98,48 +108,6 @@ export default function Card<T extends CardItemBase>({
   useEffect(() => {
     setLoading(true);
   }, [currentUrl]);
-  const { showAlert } = useAlert();
-
-  const handleStatusUpdate = async (
-    id: string | number,
-    space: string,
-    request_id: string | number = "",
-  ) => {
-    try {
-      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-      if (!login) return;
-
-      const user = login?.user || "";
-      const signup_key = login?.signup_key || "";
-
-      const res = await fetch("https://www.cribb.africa/api_save.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "update_request_status",
-          id,
-          user,
-          signup_key,
-          space,
-          request_id,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        showAlert(`Response updated`, "success", true);
-        setTimeout(() => {
-          window.location.href = "/businessdash?goto=agentbookings";
-        }, 3000);
-      } else {
-        showAlert(data.message || "Update failed", "info");
-      }
-    } catch (err) {
-      console.error(err);
-      showAlert("Something went wrong", "info");
-    }
-  };
 
   function BaseCard({ isCard2 }: { isCard2: boolean }) {
     return (
@@ -160,7 +128,7 @@ export default function Card<T extends CardItemBase>({
               )}
 
               <img
-                key={currentUrl} // ✅ FIX: force re-render for cache issues
+                key={currentUrl}
                 src={currentUrl}
                 alt={item.name ?? "space image"}
                 className={`w-full h-full object-contain transition-opacity duration-300 ${
@@ -292,12 +260,12 @@ export default function Card<T extends CardItemBase>({
                     <AiOutlineLoading3Quarters className="text-black w-4 h-4 md:h-6 md:w-6" />
                   </div>
                 )}
+                
+                {/*Pending?. UNSEND*/}
                 {item.pending && (
                   <div
                     className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                    onClick={() =>
-                      handleStatusUpdate(item.id, item.space, item.request_id)
-                    }
+                    onClick={() => actions?.onPendingAction?.(item)}
                   >
                     <span className="text-xs md:text-sm text-black">
                       Unsend
@@ -305,6 +273,7 @@ export default function Card<T extends CardItemBase>({
                     <TbArrowBack className="text-black w-4 h-4 md:h-6 md:w-6" />
                   </div>
                 )}
+
                 {item.approve && (
                   <div className="flex items-center justify-between p-2">
                     <span className="text-xs md:text-sm text-black">
@@ -313,14 +282,19 @@ export default function Card<T extends CardItemBase>({
                     <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full  border-2 shadow-md" />
                   </div>
                 )}
+                {/*Approved?. View info*/}
                 {item.approve && (
-                  <div className="flex items-center justify-between bg-black p-2 rounded-md">
+                  <div
+                    className="flex items-center justify-between bg-black p-2 rounded-md cursor-pointer"
+                    onClick={() => actions?.onViewInfo?.(item)}
+                  >
                     <span className="text-xs md:text-sm text-white">
                       View Info
                     </span>
                     <FaArrowRight className="text-white w-4 h-4 md:h-6 md:w-6" />
                   </div>
                 )}
+
                 {item.decline && (
                   <div className="flex items-center justify-between p-2">
                     <span className="text-xs md:text-sm text-black">
@@ -329,17 +303,40 @@ export default function Card<T extends CardItemBase>({
                     <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
                   </div>
                 )}
+
+
+                {/*Declined?. DELETE*/}
                 {item.decline && (
                   <div
                     className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                    onClick={() =>
-                      handleStatusUpdate(item.id, item.space, item.request_id)
-                    }
+                    onClick={() => actions?.onDecline?.(item)}
                   >
                     <span className="text-xs md:text-sm text-black">
                       Delete
                     </span>
                     <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+
+                {/*Pending?. REJECT/DECLINE*/}
+                {item.reject && (
+                  <div className="flex items-center justify-between p-2">
+                    <span className="text-xs md:text-sm text-black">
+                      Pending
+                    </span>
+                    <AiOutlineLoading3Quarters className="text-black w-4 h-4 md:h-6 md:w-6" />
+                  </div>
+                )}
+
+                {item.reject && (
+                  <div
+                    className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
+                    onClick={() => actions?.onReject?.(item)}
+                  >
+                    <span className="text-xs md:text-sm text-black">
+                      Decline
+                    </span>
+                    <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
                   </div>
                 )}
               </div>
@@ -349,10 +346,12 @@ export default function Card<T extends CardItemBase>({
           {item.pending && (
             <AiOutlineLoading3Quarters className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-white shadow-md" />
           )}
+          {item.reject && (
+            <AiOutlineLoading3Quarters className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-white shadow-md" />
+          )}
           {item.approve && (
             <GrCheckmark className="w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-[#D6FFC3] border-2 shadow-md" />
           )}
-
           {item.decline && (
             <TbCancel className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-[#FFA1A1] shadow-md" />
           )}

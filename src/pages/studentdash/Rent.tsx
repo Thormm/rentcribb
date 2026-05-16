@@ -80,13 +80,19 @@ interface LiveSpace {
   background: string;
 }
 
-async function getRepliesSpaces(responses: string[]) {
+async function getRepliesSpaces(
+  responses: string[],
+  declined: string[] = [],
+  accepted: string[] = [],
+) {
   const res = await fetch("https://www.cribb.africa/apigets.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       action: "get_request_replies_spaces",
       responses,
+      declined,
+      accepted,
     }),
   });
 
@@ -356,7 +362,9 @@ function RequestsCards({
                                 {responsesCount === 0 && (
                                   <div
                                     className="flex items-center justify-between bg-black p-2 rounded-md cursor-pointer"
-                                    onClick={() => navigate(`/request?edit=${item.id}`)}
+                                    onClick={() =>
+                                      navigate(`/request?edit=${item.id}`)
+                                    }
                                   >
                                     <span className="text-xs md:text-sm text-white">
                                       Edit
@@ -519,9 +527,13 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
 // ----------------------- Paginated Cards -----------------------
 function RequestsResponses({
   responses,
+  declined,
+  accepted,
   item,
 }: {
   responses: string[];
+  declined: string[];
+  accepted: string[];
   item: any;
 }) {
   const [loading, setLoading] = useState(false);
@@ -535,6 +547,50 @@ function RequestsResponses({
     page * itemsPerPage,
   );
 
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
+
+  const handleResponseUpdate = async (
+    id: string | number,
+    space?: string,
+    request_id?: string | number,
+    update?: string,
+  ) => {
+    try {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (!login?.user) return;
+
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_student_response",
+          id,
+          user: login.user,
+          signup_key: login.signup_key,
+          space,
+          request_id,
+          update,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert("Response updated", "success", true);
+
+        setTimeout(() => {
+          window.location.href = "/studentdash?goto=rent";
+        }, 1500);
+      } else {
+        showAlert(data.message || "Update failed", "info");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Something went wrong", "info");
+    }
+  };
+
   useEffect(() => {
     if (!responses.length) {
       setData([]);
@@ -543,7 +599,7 @@ function RequestsResponses({
 
     setLoading(true);
 
-    getRepliesSpaces(responses)
+    getRepliesSpaces(responses, declined, accepted)
       .then(setData)
       .finally(() => setLoading(false));
   }, [responses]);
@@ -623,7 +679,39 @@ function RequestsResponses({
                 <div className="flex gap-4 md:min-w-max">
                   {(group.spaces || []).map((card: any) => (
                     <div key={`${card.space}-${card.id}`} className="shrink-0">
-                      <Card item={card} />
+                      <Card
+                        onView={() => {
+                          navigate("/hostelview", {
+                            state: { space: [card.id, card.space] },
+                          });
+                        }}
+                        item={card}
+                        actions={{
+                          onDecline: (card) => {
+                            handleResponseUpdate(
+                              card.id,
+                              card.space,
+                              item.id,
+                              "delete",
+                            );
+                          },
+
+                          onReject: (card) => {
+                            handleResponseUpdate(
+                              card.id,
+                              card.space,
+                              item.id,
+                              "reject",
+                            );
+                          },
+
+                          onViewInfo: (card) => {
+                            navigate("/hostelview", {
+                              state: { space: [card.id, card.space] },
+                            });
+                          },
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -873,6 +961,8 @@ export default function Rent() {
                     </div>
                     <RequestsResponses
                       responses={selectedResponses}
+                      declined={selectedItemDetails?.declined || []}
+                      accepted={selectedItemDetails?.accepted || []}
                       item={selectedItemDetails}
                     />
                     <button

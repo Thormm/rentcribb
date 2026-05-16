@@ -445,6 +445,8 @@ function PaginatedRequests() {
   const [requests, setRequests] = useState<any[]>([]);
   const itemsPerPage = 5;
 
+  const { showAlert } = useAlert();
+
   useEffect(() => {
     const loginData = sessionStorage.getItem("login_data");
     if (!loginData) return;
@@ -452,40 +454,87 @@ function PaginatedRequests() {
     const user = JSON.parse(loginData)?.user;
 
     const fetchData = async () => {
-      const res = await fetch("https://www.cribb.africa/apigets.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "get_landlord_requests",
-          user: user,
-        }),
-      });
+      try {
+        const res = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_landlord_requests",
+            user,
+          }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (data.success) {
-        const requestsWithPhotos = (data.requests || []).map((req: any) => ({
-          ...req,
-          spaces: (req.spaces || []).map((space: any) => ({
-            ...space,
-            user: space.user || req.user || user, // keep user if needed
-            photos: Array.isArray(space.photos_full)
-              ? space.photos_full.map((url: string) => {
-                  const parts = url.split("/");
-                  return parts[parts.length - 1];
-                })
-              : [],
-          })),
-        }));
+        if (data.success) {
+          const requestsWithPhotos = (data.requests || []).map((req: any) => ({
+            ...req,
+            spaces: (req.spaces || []).map((space: any) => ({
+              ...space,
+              user: space.user || req.user || user,
+              photos: Array.isArray(space.photos_full)
+                ? space.photos_full.map((url: string) => {
+                    const parts = url.split("/");
+                    return parts[parts.length - 1];
+                  })
+                : [],
+            })),
+          }));
 
-        setRequests(requestsWithPhotos);
+          setRequests(requestsWithPhotos);
+        } else {
+          showAlert(data.message || "Failed to load requests", "info");
+        }
+      } catch (err) {
+        console.error(err);
+        showAlert("Something went wrong fetching requests", "info");
       }
     };
 
     fetchData();
   }, []);
 
+  const handleStatusUpdate = async (
+    id: string | number,
+    space?: string,
+    request_id?: string | number,
+  ) => {
+    try {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (!login?.user) return;
+
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_request_status",
+          id,
+          user: login.user,
+          signup_key: login.signup_key,
+          space,
+          request_id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert("Response updated", "success", true);
+
+        setTimeout(() => {
+          window.location.href = "/businessdash?goto=landlordbookings";
+        }, 1500);
+      } else {
+        showAlert(data.message || "Update failed", "info");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Something went wrong", "info");
+    }
+  };
+
   const totalPages = Math.ceil(requests.length / itemsPerPage);
+
   const currentData = requests.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage,
@@ -514,17 +563,16 @@ function PaginatedRequests() {
     >
       {currentData.map((item: any, idx: number) => (
         <div key={item.id || idx} className="space-y-4">
-          {/* ---------------- TITLE ---------------- */}
+          {/* TITLE */}
           <div className="flex justify-end">
             <span className="bg-white text-[#5B5B5B] text-xs md:text-sm rounded-xl p-2">
               You replied...
             </span>
           </div>
 
-          {/* ---------------- ROW 1 → REQUEST (RIGHT) --------------- */}
+          {/* REQUEST TEXT */}
           <div className="flex justify-end">
             <div className="flex items-stretch w-full md:w-[60%]">
-              {/* TEXT BOX */}
               <div className="flex-1 border-black rounded-3xl border p-4 shadow-sm text-black">
                 <p className="text-xs md:text-sm">
                   A {item.gender} {item.category === "Student" ? "Student" : ""}{" "}
@@ -537,8 +585,7 @@ function PaginatedRequests() {
                   {[item.preferred_location_1, item.preferred_location_2]
                     .filter(Boolean)
                     .join(", ")}
-                  .
-                  <br />
+                  .<br />
                   Budget: <b>{item.budget}</b>
                   <br />
                   {item.move_in_date?.toLowerCase() === "urgently" ? (
@@ -553,17 +600,44 @@ function PaginatedRequests() {
                 </p>
               </div>
 
-              {/* VERTICAL LINE */}
-              <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
+              <div className="w-[4px] bg-black ml-3 my-3 rounded" />
             </div>
           </div>
 
-          {/* ---------------- ROW 2 → CARDS (LEFT + SCROLL) ---------------- */}
+          {/* CARDS */}
           <div className="overflow-x-auto">
             <div className="flex gap-4 min-w-max">
               {(item.spaces || []).map((card: any) => (
                 <div key={card.id} className="shrink-0">
-                  <Card item={card} />
+                  <Card
+                    item={card}
+                    actions={{
+                      onPendingAction: (item) => {
+                        handleStatusUpdate(
+                          item.id,
+                          item.space,
+                          item.request_id,
+                        );
+                      },
+
+                      onDecline: (item) => {
+                        handleStatusUpdate(item.id);
+                      },
+
+                      onApprove: (item) => {
+                        handleStatusUpdate(
+                          item.id,
+                          item.space,
+                          item.request_id,
+                        );
+                      },
+
+                      onViewInfo: (item) => {
+                        console.log("View info:", item.id);
+                        // later route or modal
+                      },
+                    }}
+                  />
                 </div>
               ))}
             </div>
@@ -571,7 +645,7 @@ function PaginatedRequests() {
         </div>
       ))}
 
-      {/* ---------------- PAGINATION ---------------- */}
+      {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
