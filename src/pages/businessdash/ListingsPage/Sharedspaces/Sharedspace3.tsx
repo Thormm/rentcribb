@@ -461,7 +461,7 @@ export default function Sharedspace3({
           <img
             src={imgright}
             alt="Traveler with suitcase"
-            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
+            className="h-full w-full object-cover"
           />
 
           <button

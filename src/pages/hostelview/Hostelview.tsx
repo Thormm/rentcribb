@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import React from "react";
 import {
   FaStar,
@@ -242,6 +243,7 @@ export default function Hostelview() {
   const space = location.state?.space;
   const id = space?.[0];
   const space_type = space?.[1];
+  const request_id = space?.[2];
   const [cards, setCards] = useState<LiveSpace[]>([]);
   const [host, setHost] = useState<any>(null);
   const [openModal, setOpenModal] = React.useState<
@@ -249,14 +251,13 @@ export default function Hostelview() {
   >(null);
   const [agreed, setAgreed] = useState(false);
   const [booking, setBooking] = useState(false);
-  const [bookMsg, setBookMsg] = useState("");
+  const { showAlert } = useAlert();
 
   const handleBookInspection = async () => {
     if (!agreed) return;
 
     try {
       setBooking(true);
-      setBookMsg("");
 
       const res = await fetch("https://www.cribb.africa/api_save.php", {
         method: "POST",
@@ -269,26 +270,19 @@ export default function Hostelview() {
           agent_landlord: hostel?.user,
           space_type: space_type,
           uploader: hostel?.uploader,
+          request_id: request_id,
         }),
       });
 
       const data = await res.json();
 
       if (data?.status === "success" || data?.success) {
-        setBookMsg("Booked successfully");
-
-        setTimeout(() => {
-          setBookMsg("");
-        }, 3000); // 5 seconds
+        showAlert("Booked successfully", "success", true)
       } else {
-        setBookMsg(data?.message || "Unable to book inspection");
-
-        setTimeout(() => {
-          setBookMsg("");
-        }, 3000); // 5 seconds
+        showAlert(data?.message || "Unable to book inspection", "warning");
       }
     } catch (e) {
-      setBookMsg("Network error");
+      showAlert("Network error", "warning");
     } finally {
       setBooking(false);
     }
@@ -423,7 +417,6 @@ export default function Hostelview() {
 
       if (data.data) {
         setHostel(data.data);
-        console.log("Fetched hostel data:", data.data);
       } else {
         console.log(data.message);
       }
@@ -449,7 +442,6 @@ export default function Hostelview() {
 
       if (data.data) {
         setHost(data.data);
-        console.log("Host summary:", data.data);
       }
     };
 
@@ -1049,11 +1041,6 @@ export default function Hostelview() {
                       {booking ? "Booking..." : "Book Inspection"}
                     </span>
                   </button>
-                  {bookMsg && (
-                    <div className="text-center text-sm mt-2 text-[#044832]">
-                      {bookMsg}
-                    </div>
-                  )}
                 </div>
 
                 {/* Terms */}

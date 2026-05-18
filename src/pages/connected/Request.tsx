@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAlert } from "../../App";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import clsx from "clsx";
+import { IoIosArrowBack } from "react-icons/io";
 import InfoPill, { DfButton } from "../../components/Pill";
 import imgright from "../../assets/request.png";
-import { Check } from "lucide-react";
-
-import { FaMale, FaFemale, FaMoon, FaCross, FaBan } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { FaMale, FaFemale, FaMoon, FaCross } from "react-icons/fa";
 
 /* ---------- CONSTANT OPTIONS ---------- */
 
@@ -22,22 +23,47 @@ const TYPE_OPTIONS = [
   "5 bedroom apartment",
 ];
 
+
 const SHOULD_HAVE_OPTIONS = [
   "Parking Space",
-  "Fence",
-  "Gate",
+  "Fenced",
+  "Gated",
   "POP",
   "PVC",
   "Balcony",
   "WiFi",
   "AC",
+  "Netflix",
+  "PS4 Console",
   "TV",
   "Dstv",
+  "Cable",
+  "Desk lamp",
+  "Ceiling Fan",
+  "Cushion Chair",
+  "Table",
+  "Desk",
   "Workspace",
   "Bed",
+  "Double bed",
+  "Bed Frame",
+  "Side drawer",
+  "Bedsheet",
+  "Mirror",
+  "Vanity table",
+  "Lock on bedroom door",
+  "Pillow",
   "Wardrobe",
-  "Ensuite Bathroom",
+  "Hanger",
+  "Standing Fan",
+  "Bathroom",
+  "Ensuite",
+  "Shower-room",
+  "Basin",
+  "Running water",
+  "Treated water",
   "Kitchen Cabinet",
+  "Sink",
   "Fridge",
 ];
 
@@ -55,6 +81,16 @@ const MOVE_IN_OPTIONS = [
   "October",
   "November",
   "December",
+];
+
+const genderOptions = [
+  { id: "male", icon: <FaMale /> },
+  { id: "female", icon: <FaFemale /> },
+];
+
+const religionOptions = [
+  { id: "christian", icon: <FaCross /> },
+  { id: "muslim", icon: <FaMoon /> },
 ];
 
 const BUDGET_OPTIONS = [
@@ -82,46 +118,159 @@ function Maincard({
   );
 }
 
-function Label({ children }: React.PropsWithChildren) {
-  return <div className="text-md my-3 font-semibold ml-8">{children}</div>;
+function SectionHeader({
+  title,
+  caption,
+}: {
+  title: string;
+  caption?: string;
+}) {
+  return (
+    <div className="pt-8 md:px-5">
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
+
+      <p className="text-center text-xs md:text-md pt-3">
+        {caption ?? "Check out the Features of this Hostel"}
+      </p>
+
+      <div
+        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+        style={{
+          borderStyle: "dashed",
+          borderImage:
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+        }}
+      />
+    </div>
+  );
+}
+
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
+  return (
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 /* ---------- REUSABLE COMPONENTS ---------- */
 
-function IconButton({ active, children, onClick }: any) {
+type OptionItem = {
+  id: string;
+  icon?: React.ReactNode;
+};
+
+function IconOptionGroup({
+  options,
+  value,
+  onChange,
+  className,
+}: {
+  options: OptionItem[];
+  value?: string;
+  onChange: (id: string) => void;
+  className?: string;
+}) {
   return (
-    <button
-      onClick={onClick}
-      className={clsx(
-        "w-10 h-10 md:w-14 md:h-14 flex flex-col items-center justify-center gap-1 rounded-lg p-3 border transition-all",
-        active
-          ? "bg-[#CCAC13] border-[#CCAC13] text-white"
-          : "bg-white border-black text-black",
-      )}
-    >
-      {children}
-    </button>
+    <div className={clsx("flex items-center gap-1", className)}>
+      {options.map((opt) => {
+        const selected = value === opt.id;
+
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            className={clsx(
+              "w-10 h-10 md:w-14 md:h-14 flex flex-col items-center justify-center gap-1 rounded-lg p-3 border transition-all",
+              selected
+                ? "bg-[#CCAC13] border-[#CCAC13] text-white"
+                : "bg-white border-black text-black",
+            )}
+          >
+            <div className="text-md md:text-2xl">{opt.icon}</div>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
-function Select({ label, value, setValue, options, placeholder }: any) {
+function SelectPill({
+  label,
+  value,
+  options,
+  placeholder,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  placeholder?: string;
+  onChange: (val: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div>
-      <Label>{label}</Label>
-      <InfoPill className="bg-white">
-        <select
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-full bg-transparent text-xs outline-none cursor-pointer"
-        >
-          <option value="">{placeholder}</option>
-          {options.map((opt: string) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+    <div className="space-y-1 relative">
+      <Label className="ml-2 md:ml-6">{label}</Label>
+
+      <InfoPill
+        className="bg-white cursor-pointer"
+        onClick={() => setOpen(true)}
+      >
+        <div className="flex items-center justify-between w-full">
+          <input
+            value={value || placeholder || "Select option"}
+            readOnly
+            className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 text-gray-500"
+          />
+          <IoIosArrowDown />
+        </div>
       </InfoPill>
+
+      {/* MODAL */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">{label}</h3>
+              <button onClick={() => setOpen(false)}>Close</button>
+            </div>
+
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {options.map((opt) => (
+                <label key={opt} className="flex items-center gap-3 py-1">
+                  <input
+                    type="radio"
+                    checked={value === opt}
+                    onChange={() => {
+                      onChange(opt);
+                      setOpen(false); // auto close
+                    }}
+                  />
+                  {opt}
+                </label>
+              ))}
+            </div>
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setOpen(false)}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -143,7 +292,7 @@ function TextInput({
           disabled={disabled}
           placeholder={placeholder}
           onChange={(e) => setValue(e.target.value)}
-          className="w-full bg-transparent text-xs outline-none"
+          className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1"
         />
       </InfoPill>
     </div>
@@ -152,88 +301,98 @@ function TextInput({
 
 /* ---------- MULTI SELECT (MAX 3, COLLAPSING) ---------- */
 
-function MultiSelect({ label, options, value, setValue }: any) {
+function MultiSelectPill({
+  label,
+  options,
+  value,
+  setValue,
+}: {
+  label: string;
+  options: string[];
+  value: string[];
+  setValue: (val: string[]) => void;
+}) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const close = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
 
   const toggle = (opt: string) => {
-    setValue((prev: string[]) => {
-      if (prev.includes(opt)) return prev.filter((o) => o !== opt);
-      if (prev.length >= 3) return prev;
-      return [...prev, opt];
-    });
+    if (value.includes(opt)) {
+      setValue(value.filter((o) => o !== opt));
+    } else {
+      if (value.length >= 3) return;
+      setValue([...value, opt]);
+    }
+  };
+
+  const limitDisplay = (text: string, max = 15) => {
+    if (text.length <= max) return text;
+    return text.slice(0, max) + "...";
   };
 
   return (
-    <div ref={ref} className="relative">
+    <div className="space-y-1">
       <Label>{label}</Label>
+
+      {/* PILL */}
       <InfoPill
         className="bg-white cursor-pointer"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(true)}
       >
-        <div className="text-xs">
-          {value.length === 0 ? "Priority features?" : value.join(", ")}
+        <div className="flex items-center justify-between w-full">
+          <input
+            value={
+              value.length
+                ? limitDisplay(value.join(", "), 20)
+                : "Select options"
+            }
+            readOnly
+            className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
+          />
+          <IoIosArrowDown className="ml-2" />
         </div>
       </InfoPill>
 
+      {/* MODAL */}
       {open && (
-        <div className="absolute z-20 mt-2 w-full bg-white border rounded-xl shadow max-h-48 overflow-y-auto">
-          {options.map((opt: string) => {
-            const selected = value.includes(opt);
-            const disabled = !selected && value.length >= 3;
-            return (
-              <button
-                key={opt}
-                disabled={disabled}
-                onClick={() => toggle(opt)}
-                className={clsx(
-                  "w-full flex items-center justify-between px-4 py-2 text-xs hover:bg-gray-100",
-                  selected && "font-semibold",
-                  disabled && "opacity-40 cursor-not-allowed",
-                )}
-              >
-                {opt}
-                {selected && <Check size={14} />}
-              </button>
-            );
-          })}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-semibold">{label}</h3>
+              <button onClick={() => setOpen(false)}>Close</button>
+            </div>
+
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {options.map((opt) => {
+                const selected = value.includes(opt);
+                const disabled = !selected && value.length >= 3;
+
+                return (
+                  <label
+                    key={opt}
+                    className={`flex items-center gap-3 py-1 ${
+                      disabled ? "opacity-40" : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      disabled={disabled}
+                      onChange={() => toggle(opt)}
+                    />
+                    {opt}
+                  </label>
+                );
+              })}
+            </div>
+
+            <button
+              className="w-full mt-4 py-2 bg-black text-white rounded"
+              onClick={() => setOpen(false)}
+            >
+              Done
+            </button>
+          </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function SectionHeader({
-  title,
-  caption,
-}: {
-  title: string;
-  caption?: string;
-}) {
-  return (
-    <div className="pt-8 md:px-5">
-      <h3 className="text-xl md:text-3xl font-medium text-center">{title}</h3>
-      <p className="text-center text-xs md:text-md pt-3">
-        {caption ?? "Check out the Features of this Hostel"}
-      </p>
-      <div
-        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-        style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-        }}
-      />
     </div>
   );
 }
@@ -275,7 +434,7 @@ export default function Request() {
 
         if (!data.editable) {
           alert("This request already has responses.");
-         navigate("/studentdash");
+          navigate("/studentdash");
           return;
         }
 
@@ -322,15 +481,19 @@ export default function Request() {
   const [features, setFeatures] = useState<string[]>([]);
   const [moveInDate, setMoveInDate] = useState("");
   const [budget, setBudget] = useState("");
-
   const [loading, setLoading] = useState(false);
-
+  const { showAlert } = useAlert();
   /* ---------- SUBMIT ---------- */
 
   const handleSubmit = async () => {
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     const user = login?.user || "";
     const signup_key = login?.signup_key || "";
+
+    if (!user || !signup_key) {
+      showAlert("Session expired. Please login again.", "warning", true);
+      return;
+    }
 
     if (
       !gender ||
@@ -341,7 +504,7 @@ export default function Request() {
       !budget ||
       !location1
     ) {
-      alert("Please complete all required fields");
+      showAlert("Please complete all required fields", "warning");
       return;
     }
 
@@ -362,16 +525,30 @@ export default function Request() {
     };
 
     try {
+      setLoading(true);
+
       const res = await fetch("https://www.cribb.africa/api_save.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Request failed");
-      navigate("/studentdash?goto=rent");
-    } catch {
-      alert("Something went wrong");
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert(
+          data.message || (isEdit ? "Request updated" : "Request posted"),
+          "success",
+          true,
+        );
+
+        navigate("/studentdash?goto=rent");
+      } else {
+        showAlert(data.message || "Action failed", "warning");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Network error. Please try again.", "warning");
     } finally {
       setLoading(false);
     }
@@ -381,8 +558,19 @@ export default function Request() {
   return (
     <section className="mx-1 md:mx-0 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
-        <div className="-mb-20 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
-          <img src={imgright} className="rounded-tl-4xl rounded-bl-4xl" />
+        <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
+          <img
+            src={imgright}
+            alt="Traveler"
+            className="h-full w-full object-cover"
+          />
+
+          <button
+            onClick={() => navigate("/studentdash?goto=rent")}
+            className="absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white"
+          >
+            <IoIosArrowBack size={14} />
+          </button>
         </div>
 
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
@@ -392,67 +580,43 @@ export default function Request() {
               caption="Post Request and Get Hostel Offers from Hosts"
             />
 
-            <div className="px-5 pt-6 space-y-4">
+            <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 md:mt-0">
               {/* Gender & Religion */}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Gender</Label>
-                  <div className="flex gap-2">
-                    <IconButton
-                      active={gender === "male"}
-                      onClick={() => setGender("male")}
-                    >
-                      <FaMale />
-                    </IconButton>
-                    <IconButton
-                      active={gender === "female"}
-                      onClick={() => setGender("female")}
-                    >
-                      <FaFemale />
-                    </IconButton>
-                  </div>
+                <div className="space-y-1">
+                  <Label>Pref. Gender</Label>
+                  <IconOptionGroup
+                    options={genderOptions}
+                    value={gender}
+                    onChange={(id) => setGender(id as "male" | "female")}
+                    className="ml-6"
+                  />
                 </div>
 
-                <div>
-                  <Label>Religion</Label>
-                  <div className="flex gap-2">
-                    <IconButton
-                      active={religion === "christian"}
-                      onClick={() => setReligion("christian")}
-                    >
-                      <FaCross />
-                    </IconButton>
-                    <IconButton
-                      active={religion === "muslim"}
-                      onClick={() => setReligion("muslim")}
-                    >
-                      <FaMoon />
-                    </IconButton>
-                    <IconButton
-                      active={religion === "none"}
-                      onClick={() => setReligion("none")}
-                    >
-                      <FaBan />
-                    </IconButton>
-                  </div>
+                <div className="space-y-1">
+                  <Label> Pref. Religion</Label>
+                  <IconOptionGroup
+                    options={religionOptions}
+                    value={religion}
+                    onChange={(id) => setReligion(id as "christian" | "muslim")}
+                    className="ml-6"
+                  />
                 </div>
-              </div>
 
-              {/* Selects */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Select
+                <SelectPill
                   label="Category"
                   value={category}
-                  setValue={setCategory}
                   options={CATEGORY_OPTIONS}
                   placeholder="Select Space category"
+                  onChange={setCategory}
                 />
-                <Select
+
+                <SelectPill
                   label="Type"
                   value={type}
-                  setValue={setType}
                   options={TYPE_OPTIONS}
                   placeholder="Select Space type"
+                  onChange={setType}
                 />
 
                 <TextInput
@@ -470,28 +634,28 @@ export default function Request() {
                   disabled={!location1}
                 />
 
-                <MultiSelect
+                <MultiSelectPill
                   label="Should Have"
                   options={SHOULD_HAVE_OPTIONS}
                   value={features}
                   setValue={setFeatures}
                 />
 
-                <Select
+                <SelectPill
                   label="Move In Date"
                   value={moveInDate}
-                  setValue={setMoveInDate}
                   options={MOVE_IN_OPTIONS}
                   placeholder="How soon?"
+                  onChange={setMoveInDate}
                 />
               </div>
 
-              <Select
+              <SelectPill
                 label="Budget"
                 value={budget}
-                setValue={setBudget}
                 options={BUDGET_OPTIONS}
                 placeholder="Select budget range"
+                onChange={setBudget}
               />
 
               <div className="flex justify-center pt-4">

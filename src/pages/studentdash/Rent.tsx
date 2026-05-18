@@ -5,7 +5,6 @@ import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
 import { useNavigate } from "react-router-dom";
 import {
-  MdOutlinePending,
   MdOutlinePostAdd,
   MdLightbulbOutline,
 } from "react-icons/md";
@@ -18,9 +17,13 @@ import { MdDeleteForever } from "react-icons/md";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
-import { RiInformationLine } from "react-icons/ri";
+import { RiInformationLine, RiWhatsappLine } from "react-icons/ri";
 import { LuPencil } from "react-icons/lu";
 import { CgClose } from "react-icons/cg";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
+import { HiOutlineMail } from "react-icons/hi";
+import { MdOutlineCall } from "react-icons/md";
+import { FiCopy } from "react-icons/fi";
 
 // ----------------------- Reusable Label -----------------------
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -45,19 +48,6 @@ const states = [
   { value: "rivers", label: "Rivers" },
 ];
 
-// ----------------------- Mock Reviews (10 Records) -----------------------
-const reviews = [
-  { id: 1, date: "2025-09-01", name: "John Doe" },
-  { id: 2, date: "2025-09-03", name: "Mary Johnson" },
-  { id: 3, date: "2025-09-05", name: "David Smith" },
-  { id: 4, date: "2025-09-07", name: "Sophia Williams" },
-  { id: 5, date: "2025-09-10", name: "James Brown" },
-  { id: 6, date: "2025-09-12", name: "Emily Davis" },
-  { id: 7, date: "2025-09-14", name: "Michael Miller" },
-  { id: 8, date: "2025-09-16", name: "Olivia Wilson" },
-  { id: 9, date: "2025-09-18", name: "Daniel Taylor" },
-  { id: 10, date: "2025-09-20", name: "Ava Martinez" },
-];
 
 interface LiveSpace {
   id: string;
@@ -175,10 +165,12 @@ function RequestsCards({
   setShowFirst,
   setSelectedResponses,
   setSelectedItemDetails,
+  setRequestsCount, // 👈 add this
 }: {
   setShowFirst: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedResponses: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedItemDetails: React.Dispatch<React.SetStateAction<any>>;
+  setRequestsCount: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const navigate = useNavigate();
   const [draftItems, setDraftItems] = useState<any[]>([]);
@@ -247,7 +239,11 @@ function RequestsCards({
     })
       .then((res) => res.json())
       .then((res) => {
-        setDraftItems(Array.isArray(res.data) ? res.data : []);
+        const data = Array.isArray(res.data) ? res.data : [];
+        setDraftItems(data);
+
+        // 👇 update global count
+        setRequestsCount(data.length);
       })
       .catch(() => setDraftItems([]))
       .finally(() => setLoading(false));
@@ -483,7 +479,7 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
 
   return (
     <div>
-      <div className="w-full max-w-6xl mx-auto px-11 md:px-8 pb-16">
+      <div className="w-full max-w-6xl mx-auto px-6 md:px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {currentData.map((card) => (
             <div key={`${card.space}-${card.id}`} className="">
@@ -606,7 +602,7 @@ function RequestsResponses({
 
   return (
     <div
-      className="space-y-8 md:min-w-150"
+      className="space-y-8 "
       style={{
         scrollbarColor: "#FFA1A1 transparent",
         scrollbarWidth: "thin",
@@ -623,11 +619,15 @@ function RequestsResponses({
       )}
 
       {responses.length > 0 && data.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* REQUEST */}
 
-          <div className="flex justify-end">
-            <div className="flex items-stretch w-full md:w-[60%]">
+          <div className="flex md:justify-start">
+            {" "}
+            <Label>REQUEST</Label>
+          </div>
+          <div className="flex">
+            <div className="flex items-stretch w-full">
               <div className="flex-1 border-black border-[1.5px] rounded-3xl p-4 shadow-sm text-black">
                 <p className="text-xs md:text-base">
                   A {item.gender} Student needs a{" "}
@@ -664,8 +664,15 @@ function RequestsResponses({
             </div>
           </div>
 
+          <div className="flex items-center">
+            <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10 mb-5">
+              --- REPLIES ----------
+              {responses.length}
+            </span>
+          </div>
+
           {currentData.map((group: any, idx: number) => (
-            <div key={`${group.uploader}-${group.user}-${idx}`}>
+            <div key={`${group.uploader}-${group.user}-${idx}`} className="md:min-w-150">
               {/* GROUP TITLE */}
               <div className="flex justify-center items-center mt-5">
                 <span className="text-xs p-2 bg-white text-[#5B5B5B] rounded-md">
@@ -675,17 +682,20 @@ function RequestsResponses({
               </div>
 
               {/* HORIZONTAL CARDS */}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto -mt-4">
                 <div className="flex gap-4 md:min-w-max">
                   {(group.spaces || []).map((card: any) => (
-                    <div key={`${card.space}-${card.id}`} className="shrink-0">
-                      <Card
+                    <div
+                      key={`${card.space}-${card.id}`}
+                      className="shrink-0 mt-0 px-0"
+                    >
+                      <Card                  
+                        item={card}
                         onView={() => {
                           navigate("/hostelview", {
-                            state: { space: [card.id, card.space] },
+                            state: { space: [card.id, card.space,item.id] },
                           });
                         }}
-                        item={card}
                         actions={{
                           onDecline: (card) => {
                             handleResponseUpdate(
@@ -802,9 +812,243 @@ function Tabs({
   );
 }
 
+interface DraftItem {
+  id: number | string;
+  name: string;
+  date: string;
+  email: string;
+  call: string;
+  whatsapp: string;
+  status: string;
+  space_name: string;
+}
+
+// ----------------------- Paginated Drafts -----------------------
+function PaginatedHost() {
+  const [page, setPage] = useState(1);
+  const [expandedLeft, setExpandedLeft] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+  const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const loginData = sessionStorage.getItem("login_data");
+    if (!loginData) return;
+
+    const user = JSON.parse(loginData)?.user;
+
+    const fetchBookings = async () => {
+      try {
+        const res = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_hosts",
+            user: user,
+          }),
+        });
+
+        const data = await res.json();
+        setDraftItems(
+          data.map((b: any) => ({
+            id: b.id,
+            name: b.name ?? "Unknown",
+            email: b.email ?? "",
+            call: b.call ?? "",
+            whatsapp: b.whatsapp ?? "",
+          })),
+        );
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const totalPages = Math.ceil(draftItems.length / itemsPerPage);
+  const currentData = draftItems.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage,
+  );
+
+  const handleCopy = (label: string, value: string) => {
+    navigator.clipboard.writeText(value);
+    setCopiedField(label);
+    setTimeout(() => setCopiedField(null), 1500);
+  };
+
+ 
+
+  return (
+    <div>
+      <div
+        className="space-y-6 pb-4 draft-scroll overflow-y-auto overflow-x-auto pr-2"
+        style={{
+          maxHeight: "420px",
+          scrollbarColor: "#FFA1A1 transparent",
+          scrollbarWidth: "thin",
+        }}
+      >
+        {currentData.map((item) => (
+          <div
+            key={item.id}
+            className="flex gap-6 md:w-2/3 md:min-w-2/3 items-center"
+          >
+            <div className="grid  w-full">
+              {/* Left card */}
+              <div
+                className={clsx(
+                  "flex-1 border-black rounded-4xl border shadow-sm",
+                  "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center cursor-pointer", // <--- add self-start
+                )}
+              >
+                {/* Header row */}
+                <div className="grid grid-cols-[auto_1fr_auto] items-center min-w-[250px] px-3 py-3 gap-3">
+                  <div className="flex justify-center">
+                    <HiOutlineUserCircle className="w-7 h-7 text-black" />
+                  </div>
+
+
+                  <div className="truncate text-xs md:text-sm text-black">
+                    {item.name?.length > 20
+                      ? item.name.slice(0, 20) + "…"
+                      : item.name}
+                  </div>
+
+                  <span
+                    className="flex justify-center cursor-pointer"
+                    onClick={() =>
+                      setExpandedLeft((prev) => ({
+                        ...prev,
+                        [item.id]: !prev[item.id],
+                      }))
+                    }
+                  >
+                    {expandedLeft[item.id] ? (
+                      <IoIosArrowUp className="w-7 h-7 text-black" />
+                    ) : (
+                      <IoIosArrowDown className="w-7 h-7 text-black" />
+                    )}
+                  </span>
+                </div>
+
+                {/* Row 2 icons */}
+                {expandedLeft[item.id] && (
+                  <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
+                    
+
+                    <div className="flex gap-2 md:gap-3">
+                      <div
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `mailto:${item.email}`)
+                        }
+                      >
+                        <HiOutlineMail className="w-4 h-4" />
+                      </div>
+
+                      <div
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `tel:${item.call}`)
+                        }
+                      >
+                        <MdOutlineCall className="w-4 h-4" />
+                      </div>
+
+                      <div
+                        className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          window.open(
+                            `https://wa.me/${item.whatsapp}`,
+                            "_blank",
+                          )
+                        }
+                      >
+                        <RiWhatsappLine className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Expanded contact info */}
+                {expandedLeft[item.id] && (
+                  <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
+                    <div className="space-y-4">
+                      {[
+                        { label: "Email", value: item.email },
+                        { label: "Call no.", value: item.call },
+                        { label: "Whatsapp", value: item.whatsapp },
+                      ].map((field, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between relative"
+                        >
+                          <span className="text-xs md:text-base font-semibold">
+                            {field.label}
+                          </span>
+                          <div className="flex items-center pl-4">
+                            <span className="text-xs md:text-base truncate">
+                              {field.value?.length > 14
+                                ? field.value.slice(0, 14) + "…"
+                                : field.value}
+                            </span>
+                            <FiCopy
+                              className="w-4 h-4 cursor-pointer"
+                              onClick={() =>
+                                handleCopy(field.label, field.value)
+                              }
+                            />
+                          </div>
+                          {copiedField === field.label && (
+                            <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
+                              Copied!
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-5">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 rounded-md border ${
+                page === i + 1
+                  ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
+                  : "bg-white text-black border-black"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ----------------------- Main Component -----------------------
 export default function Rent() {
   const [selectedResponses, setSelectedResponses] = useState<string[]>([]);
+  const [requestsCount, setRequestsCount] = useState(0);
+  const isMaxReached = requestsCount >= 3;
   const [selectedItemDetails, setSelectedItemDetails] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("Booked");
   const [stateValue, setStateValue] = useState("");
@@ -862,8 +1106,17 @@ export default function Rent() {
                       <div className="relative flex flex-col mb-10">
                         <Label>NEW REQUEST</Label>
                         <div
-                          onClick={() => navigate("/request")}
-                          className="absolute left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full bg-black cursor-pointer"
+                          onClick={() => {
+                            if (!isMaxReached) {
+                              navigate("/request");
+                            }
+                          }}
+                          className={clsx(
+                            "absolute disable md:mt-5 left-8 top-9 flex items-center justify-center w-12 h-12 rounded-full",
+                            isMaxReached
+                              ? "bg-gray-400 cursor-not-allowed opacity-60"
+                              : "bg-black cursor-pointer",
+                          )}
                         >
                           <FaPlus size={20} className="text-white" />
                         </div>
@@ -876,7 +1129,7 @@ export default function Rent() {
                             <input
                               type="text"
                               readOnly
-                              value={12}
+                              value={requestsCount}
                               className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                             />
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
@@ -889,7 +1142,7 @@ export default function Rent() {
                             <input
                               type="text"
                               readOnly
-                              value={12}
+                              value={3}
                               className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                             />
                             <RiInformationLine className="pointer-events-none absolute right-3 text-gray-500" />
@@ -908,10 +1161,15 @@ export default function Rent() {
                         setShowFirst={setShowFirst}
                         setSelectedResponses={setSelectedResponses}
                         setSelectedItemDetails={setSelectedItemDetails}
+                        setRequestsCount={setRequestsCount} // 👈 add this
                       />
                     </div>
-                    <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
-                      <BiComment className="w-8 h-8" />
+
+                    <button
+                      onClick={() => navigate("/studentlisting")}
+                      className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                    >
+                      <MdOutlinePostAdd className="w-8 h-8" />
                       View Other Listings
                     </button>
                   </>
@@ -953,12 +1211,6 @@ export default function Rent() {
                       </div>
                     </div>
 
-                    <div className="flex items-center">
-                      <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10 mb-5">
-                        --- REPLIES ----------
-                        {selectedResponses.length}
-                      </span>
-                    </div>
                     <RequestsResponses
                       responses={selectedResponses}
                       declined={selectedItemDetails?.declined || []}
@@ -972,6 +1224,7 @@ export default function Rent() {
                       <BiComment className="w-8 h-8" />
                       Post a Rent Requests
                     </button>
+
                     <button
                       onClick={() => navigate("/studentlisting")}
                       className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
@@ -994,57 +1247,7 @@ export default function Rent() {
                   </span>
                 </div>
 
-                {/* Reviews list */}
-                <div className="space-y-8">
-                  {reviews.map((r) => {
-                    return (
-                      <div
-                        key={r.id}
-                        className="border-black rounded-4xl border px-2 md:px-6 py-4 shadow-sm "
-                      >
-                        {/* Row 1 */}
-                        <div className="flex items-center">
-                          {/* Left icon (PiHouse) */}
-                          <div className="w-6 h-6 flex items-center justify-center text-black">
-                            <HiOutlineUserCircle className="w-6 h-6" />
-                          </div>
-
-                          {/* Date + name */}
-                          <div className="flex flex-grow items-center gap-5 px-4">
-                            <span className="text-xs md:text-lg font-normal text-black whitespace-nowrap">
-                              {r.date}
-                            </span>
-                            <span className="text-xs md:text-lg text-black font-normal truncate">
-                              {r.name.length > 13
-                                ? r.name.slice(0, 13) + "…"
-                                : r.name}
-                            </span>
-                          </div>
-
-                          {/* Right dropdown toggle */}
-                          <div className="w-6 h-6 flex items-center justify-center cursor-pointer">
-                            <MdOutlinePending className="w-6 h-6 text-black" />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  <button
-                    onClick={() => navigate("/request")}
-                    className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
-                  >
-                    <BiComment className="w-8 h-8" />
-                    Post a Rent Requests
-                  </button>
-                  <button
-                    onClick={() => navigate("/studentlisting")}
-                    className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
-                  >
-                    <MdOutlinePostAdd className="w-8 h-8" />
-                    View Other Listings
-                  </button>
-                </div>
+                <PaginatedHost />
               </div>
             )}
           </div>

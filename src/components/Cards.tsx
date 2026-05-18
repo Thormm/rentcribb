@@ -134,6 +134,7 @@ export default function Card<T extends CardItemBase>({
                 className={`w-full h-full object-contain transition-opacity duration-300 ${
                   loading ? "opacity-0" : "opacity-100"
                 }`}
+                onClick={onView}
                 onLoad={() => setLoading(false)}
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";

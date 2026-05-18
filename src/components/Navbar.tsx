@@ -38,7 +38,7 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
 
   // ---- Navbar visibility configuration (nothing hidden yet) ----
   const navbarVisibility = {
-    leftLinks1: [] as string[],
+    leftLinks1: ["/request"] as string[],
     leftLinks2: ["/request",] as string[], 
     productsButton: ["/request"] as string[],
     authButtons: [] as string[], // GET STARTED / DASHBOARD

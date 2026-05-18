@@ -518,7 +518,7 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
   return [...entire, ...shared];
 }
 
-function PaginatedCards() {
+function LiveCards() {
   const [cards, setCards] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -747,7 +747,7 @@ const Agentlistings: React.FC = () => {
                     --- YOUR LISTINGS -------------
                   </span>
                 </div>
-                <PaginatedCards />
+                <LiveCards />
                 <button
                   onClick={() => navigate("/businessrequests")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
