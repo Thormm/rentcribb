@@ -4,10 +4,7 @@ import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../components/Pill";
 import { useNavigate } from "react-router-dom";
-import {
-  MdOutlinePostAdd,
-  MdLightbulbOutline,
-} from "react-icons/md";
+import { MdOutlinePostAdd, MdLightbulbOutline } from "react-icons/md";
 import { BiComment } from "react-icons/bi";
 import Card from "../../components/Cards";
 import { HiOutlineUserCircle } from "react-icons/hi";
@@ -47,7 +44,6 @@ const states = [
   { value: "abuja", label: "Abuja" },
   { value: "rivers", label: "Rivers" },
 ];
-
 
 interface LiveSpace {
   id: string;
@@ -479,20 +475,21 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
 
   return (
     <div>
-      <div className="w-full max-w-6xl mx-auto px-6 md:px-4 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center overflow-x-auto">
           {currentData.map((card) => (
-            <div key={`${card.space}-${card.id}`} className="">
-              <div className="w-auto flex justify-end">
-                <Card
-                  item={card}
-                  onView={() =>
-                    navigate("/hostelview", {
-                      state: { space: [card.id, card.space] },
-                    })
-                  }
-                />
-              </div>
+            <div
+              key={`${card.space}-${card.id}`}
+              className="shrink-0 mt-0 px-0 justify-center flex"
+            >
+              <Card
+                item={card}
+                onView={() =>
+                  navigate("/hostelview", {
+                    state: { space: [card.id, card.space] },
+                  })
+                }
+              />
             </div>
           ))}
         </div>
@@ -626,42 +623,39 @@ function RequestsResponses({
             {" "}
             <Label>REQUEST</Label>
           </div>
-          <div className="flex">
-            <div className="flex items-stretch w-full">
-              <div className="flex-1 border-black border-[1.5px] rounded-3xl p-4 shadow-sm text-black">
-                <p className="text-xs md:text-base">
-                  A {item.gender} Student needs a{" "}
-                  <b>
-                    {item.category === "Shared Space" ? "SHARED " : ""}
-                    {item.type}
-                  </b>{" "}
-                  with{" "}
-                  {Array.isArray(item.features) && item.features.length
-                    ? item.features.join(", ")
-                    : "basic facilities"}{" "}
-                  around{" "}
-                  {[item.preferred_location_1, item.preferred_location_2]
-                    .filter(Boolean)
-                    .join(", ")}
-                  .
-                  <br />
-                  Budget: <b>({item.budget})</b>
-                  <br />
-                  {item.move_in_date?.toLowerCase() === "urgently" ? (
-                    <>
-                      Looking to Move in <b>URGENTLY</b>
-                    </>
-                  ) : (
-                    <>
-                      Looking to Move-in on or before <b>{item.move_in_date}</b>
-                      .
-                    </>
-                  )}
-                </p>
-              </div>
-
-              <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
+          <div className="flex items-stretch w-full md:w-2/3">
+            <div className="flex-1 border-black border-[1.5px] rounded-3xl p-4 shadow-sm text-black">
+              <p className="text-xs md:text-base">
+                A {item.gender} Student needs a{" "}
+                <b>
+                  {item.category === "Shared Space" ? "SHARED " : ""}
+                  {item.type}
+                </b>{" "}
+                with{" "}
+                {Array.isArray(item.features) && item.features.length
+                  ? item.features.join(", ")
+                  : "basic facilities"}{" "}
+                around{" "}
+                {[item.preferred_location_1, item.preferred_location_2]
+                  .filter(Boolean)
+                  .join(", ")}
+                .
+                <br />
+                Budget: <b>({item.budget})</b>
+                <br />
+                {item.move_in_date?.toLowerCase() === "urgently" ? (
+                  <>
+                    Looking to Move in <b>URGENTLY</b>
+                  </>
+                ) : (
+                  <>
+                    Looking to Move-in on or before <b>{item.move_in_date}</b>.
+                  </>
+                )}
+              </p>
             </div>
+
+            <div className="w-[4px] bg-black ml-3 my-3 rounded"></div>
           </div>
 
           <div className="flex items-center">
@@ -672,7 +666,10 @@ function RequestsResponses({
           </div>
 
           {currentData.map((group: any, idx: number) => (
-            <div key={`${group.uploader}-${group.user}-${idx}`} className="md:min-w-150">
+            <div
+              key={`${group.uploader}-${group.user}-${idx}`}
+              className="md:min-w-150"
+            >
               {/* GROUP TITLE */}
               <div className="flex justify-center items-center mt-5">
                 <span className="text-xs p-2 bg-white text-[#5B5B5B] rounded-md">
@@ -689,11 +686,11 @@ function RequestsResponses({
                       key={`${card.space}-${card.id}`}
                       className="shrink-0 mt-0 px-0"
                     >
-                      <Card                  
+                      <Card
                         item={card}
                         onView={() => {
                           navigate("/hostelview", {
-                            state: { space: [card.id, card.space,item.id] },
+                            state: { space: [card.id, card.space, item.id] },
                           });
                         }}
                         actions={{
@@ -881,8 +878,6 @@ function PaginatedHost() {
     setTimeout(() => setCopiedField(null), 1500);
   };
 
- 
-
   return (
     <div>
       <div
@@ -912,7 +907,6 @@ function PaginatedHost() {
                     <HiOutlineUserCircle className="w-7 h-7 text-black" />
                   </div>
 
-
                   <div className="truncate text-xs md:text-sm text-black">
                     {item.name?.length > 20
                       ? item.name.slice(0, 20) + "…"
@@ -939,8 +933,6 @@ function PaginatedHost() {
                 {/* Row 2 icons */}
                 {expandedLeft[item.id] && (
                   <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
-                    
-
                     <div className="flex gap-2 md:gap-3">
                       <div
                         className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
@@ -1015,8 +1007,6 @@ function PaginatedHost() {
                   </div>
                 )}
               </div>
-
-              
             </div>
           </div>
         ))}
@@ -1077,7 +1067,7 @@ export default function Rent() {
                 <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                   --- ALL BOOKINGS ------------
                 </span>
-                <div className="overflow-x-auto md:min-w-160">
+                <div className="md:overflow-x-auto md:min-w-160">
                   <BookedCards data={cards} />
                 </div>
                 <button
@@ -1099,10 +1089,10 @@ export default function Rent() {
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
-              <div className="p-2 md:p-5 mt-5 space-y-6 md:w-2/3">
+              <div className="p-2 md:p-5 mt-5 space-y-6 ">
                 {showFirst ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:w-2/3">
                       <div className="relative flex flex-col mb-10">
                         <Label>NEW REQUEST</Label>
                         <div
@@ -1151,12 +1141,12 @@ export default function Rent() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 my-8">
+                    <div className="flex items-center gap-3 my-8 md:w-2/3">
                       <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
                         --- YOUR REQUESTS -------
                       </span>
                     </div>
-                    <div className="overflow-x-auto md:min-w-170">
+                    <div className="overflow-x-auto md:w-2/3 md:min-w-170">
                       <RequestsCards
                         setShowFirst={setShowFirst}
                         setSelectedResponses={setSelectedResponses}
@@ -1167,7 +1157,7 @@ export default function Rent() {
 
                     <button
                       onClick={() => navigate("/studentlisting")}
-                      className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                      className="cursor-pointer w-full md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                     >
                       <MdOutlinePostAdd className="w-8 h-8" />
                       View Other Listings
@@ -1180,7 +1170,7 @@ export default function Rent() {
                       className="cursor-pointer text-white w-13 h-13 p-3 ml-8 rounded-full bg-black"
                     />
 
-                    <div className="col-span-2 grid grid-cols-2 gap-4 mt-5">
+                    <div className="md:w-2/3 col-span-2 grid grid-cols-2 gap-4 mt-5">
                       <div>
                         <Label>HOW IT WORKS</Label>
                         <InfoPill className="relative  flex items-center bg-white">
@@ -1219,7 +1209,7 @@ export default function Rent() {
                     />
                     <button
                       onClick={() => navigate("/request")}
-                      className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                      className="cursor-pointer w-full md:w-2/3 mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
                     >
                       <BiComment className="w-8 h-8" />
                       Post a Rent Requests
@@ -1227,7 +1217,7 @@ export default function Rent() {
 
                     <button
                       onClick={() => navigate("/studentlisting")}
-                      className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                      className="cursor-pointer w-full md:w-2/3 mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
                     >
                       <MdOutlinePostAdd className="w-8 h-8" />
                       View Other Listings

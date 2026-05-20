@@ -113,7 +113,7 @@ export default function Card<T extends CardItemBase>({
     return (
       <div
         className={`${
-          isCard2 ? "relative overflow-visible mb-5" : "w-full md:w-80"
+          isCard2 ? "relative overflow-visible mb-5" : "w-60 md:w-80"
         } rounded-4xl border-4 p-3 mt-10 shadow-[10px_10px_24px_rgba(0,0,0,0.08)] ${
           item.background
         } border-black`}
