@@ -1,4 +1,4 @@
-import { Search, SquarePlus } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 import React, { useState, useEffect, useMemo } from "react";
 import Footer from "../../components/Footer";
 import Card from "../../components/Cards";
@@ -145,7 +145,9 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
               <Card
                 item={card}
                 onView={() =>
-                  navigate("/hostelview", { state: { space: [card.id, card.space] } })
+                  navigate("/hostelview", {
+                    state: { space: [card.id, card.space] },
+                  })
                 }
               />
             </div>
@@ -257,20 +259,6 @@ export default function StudentListing() {
     });
   }, [cards, filters]);
 
-  const clearFilters = () => {
-    setFilters({
-      space: "",
-      type: "",
-      location: "",
-      priceMin: "",
-      priceMax: "",
-      availability_month: "",
-      duration: "",
-      power_supply: "",
-      security: "",
-    });
-  };
-
   useEffect(() => {
     if (!login.school) return;
     getLiveSpaces(login.school).then(setCards);
@@ -279,39 +267,66 @@ export default function StudentListing() {
   return (
     <div className="bg-[#F3EDFE]">
       <section className="min-h-screen w-full">
-        <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
-          <div className="mx-auto w-full max-w-6xl px-4">
-            <div className="text-md font-semibold text-[#FFA1A1]">LISTINGS</div>
+        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-10 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+          {/* LEFT SIDE */}
+          <div className="w-full">
+            <div className="grid grid-cols-[1fr_auto] items-center gap-1">
+              {/* LEFT SIDE */}
+              <div>
+                <div className="text-md font-semibold text-[#FFA1A1]">
+                  LISTINGS
+                </div>
 
-            <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
-              <h1 className="text-4xl my-4 font-extrabold">
-                Available Hostels in{" "}
-                <span className="text-[#C2C8DA]">
-                  {login?.school?.split(" - ")?.[0] ?? ""}
-                </span>
-              </h1>
+                <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center gap-4">
+                  <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
+                    Available Hostels in{" "}
+                    <span className="text-[#C2C8DA]">
+                      {login?.school?.split(" - ")?.[0] ?? ""}
+                    </span>
+                  </h1>
+                </div>
+              </div>
+              {/* RIGHT SIDE */}
+              <div className="flex flex-col items-end md:hidden  space-y-3">
+                <button
+                  onClick={() => navigate("/request")}
+                  className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white"
+                >
+                  <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
+                  POST A REQUEST
+                </button>
 
-              <button
-                onClick={() => navigate("/request")}
-                className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
-              >
-                <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
-                POST A REQUEST
-              </button>
+                <button
+                  className="inline-flex items-end gap-1 mt-3 cursor-pointer"
+                  onClick={() => setShowAllFilters((v) => !v)}
+                >
+                  <span className="text-xs md:text-md text-[blue]">
+                    {showAllFilters ? "Hide filters" : "Show all Filter"}
+                  </span>
+
+                  <span className="text-xs md:text-md text-[blue] leading-none">
+                    ›
+                  </span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-[80%_20%] items-end mt-5 md:mt-0">
+            <div className="mt-5 md:mt-0">
               <div>
                 {/* MAIN FILTERS */}
                 <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
                   {/* Category */}
                   <div className="space-y-1">
                     <Label className="ml-8 text-white">Category</Label>
+
                     <InfoPill className="bg-white">
                       <select
                         value={filters.space}
                         onChange={(e) =>
-                          setFilters({ ...filters, space: e.target.value })
+                          setFilters({
+                            ...filters,
+                            space: e.target.value,
+                          })
                         }
                         className="w-full bg-transparent text-xs md:text-sm outline-none"
                       >
@@ -325,13 +340,17 @@ export default function StudentListing() {
                   {/* Type */}
                   <div className="space-y-1">
                     <Label className="ml-8 text-white">Type</Label>
+
                     <InfoPill className="bg-white">
                       <select
                         value={filters.type}
                         onChange={(e) =>
-                          setFilters({ ...filters, type: e.target.value })
+                          setFilters({
+                            ...filters,
+                            type: e.target.value,
+                          })
                         }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none "
+                        className="w-full bg-transparent text-xs md:text-sm outline-none"
                       >
                         <option value="">Select Space type...</option>
                         <option value="A room">A room</option>
@@ -363,15 +382,20 @@ export default function StudentListing() {
                   {/* Location */}
                   <div className="space-y-1">
                     <Label className="ml-8 text-white">Location</Label>
+
                     <InfoPill className="bg-white">
                       <select
                         value={filters.location}
                         onChange={(e) =>
-                          setFilters({ ...filters, location: e.target.value })
+                          setFilters({
+                            ...filters,
+                            location: e.target.value,
+                          })
                         }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none "
+                        className="w-full bg-transparent text-xs md:text-sm outline-none"
                       >
                         <option value="">Around Where?</option>
+
                         {statesAndLgas.map((s) => (
                           <optgroup label={s.state} key={s.state}>
                             {s.lgas.map((l) => (
@@ -388,6 +412,7 @@ export default function StudentListing() {
                   {/* Price */}
                   <div className="space-y-1">
                     <Label className="ml-8 text-white">Price</Label>
+
                     <InfoPill className="bg-white">
                       <select
                         value={
@@ -397,22 +422,26 @@ export default function StudentListing() {
                         }
                         onChange={(e) => {
                           const v = e.target.value;
+
                           if (!v) {
                             setFilters({
                               ...filters,
                               priceMin: "",
                               priceMax: "",
                             });
+
                             return;
                           }
+
                           const [min, max] = v.split("-");
+
                           setFilters({
                             ...filters,
                             priceMin: min,
                             priceMax: max,
                           });
                         }}
-                        className="w-full bg-transparent text-xs md:text-sm outline-none "
+                        className="w-full bg-transparent text-xs md:text-sm outline-none"
                       >
                         <option value="">Select price range</option>
                         <option value="50000-100000">50k – 100k</option>
@@ -430,6 +459,7 @@ export default function StudentListing() {
                     {/* Move in Date */}
                     <div className="space-y-1">
                       <Label className="ml-8 text-white">Move in Date</Label>
+
                       <InfoPill className="bg-white">
                         <select
                           value={filters.availability_month}
@@ -439,7 +469,7 @@ export default function StudentListing() {
                               availability_month: e.target.value,
                             })
                           }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none "
+                          className="w-full bg-transparent text-xs md:text-sm outline-none"
                         >
                           <option value="">How soon?</option>
                           <option value="Currently">Currently</option>
@@ -462,13 +492,17 @@ export default function StudentListing() {
                     {/* Duration */}
                     <div className="space-y-1">
                       <Label className="ml-8 text-white">Duration</Label>
+
                       <InfoPill className="bg-white">
                         <select
                           value={filters.duration}
                           onChange={(e) =>
-                            setFilters({ ...filters, duration: e.target.value })
+                            setFilters({
+                              ...filters,
+                              duration: e.target.value,
+                            })
                           }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none "
+                          className="w-full bg-transparent text-xs md:text-sm outline-none"
                         >
                           <option value="">For how long?</option>
                           <option value="Per Year">Per Year</option>
@@ -485,6 +519,7 @@ export default function StudentListing() {
                     {/* Power */}
                     <div className="space-y-1">
                       <Label className="ml-8 text-white">Power</Label>
+
                       <InfoPill className="bg-white">
                         <select
                           value={filters.power_supply}
@@ -494,7 +529,7 @@ export default function StudentListing() {
                               power_supply: e.target.value,
                             })
                           }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none "
+                          className="w-full bg-transparent text-xs md:text-sm outline-none"
                         >
                           <option value="">How good is supply?</option>
                           <option value="1">1</option>
@@ -509,13 +544,17 @@ export default function StudentListing() {
                     {/* Security */}
                     <div className="space-y-1">
                       <Label className="ml-8 text-white">Security</Label>
+
                       <InfoPill className="bg-white">
                         <select
                           value={filters.security}
                           onChange={(e) =>
-                            setFilters({ ...filters, security: e.target.value })
+                            setFilters({
+                              ...filters,
+                              security: e.target.value,
+                            })
                           }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none "
+                          className="w-full bg-transparent text-xs md:text-sm outline-none"
                         >
                           <option value="">How good is security?</option>
                           <option value="Low">Low</option>
@@ -527,34 +566,31 @@ export default function StudentListing() {
                   </div>
                 )}
               </div>
-
-              <div className="flex items-center justify-center mt-4 md:mt-0 md:justify-end gap-4">
-                <div className="grid grid-cols-1">
-                  <button
-                    onClick={clearFilters}
-                    className="text-[red] text-xs md:text-md cursor-pointer"
-                  >
-                    Clear Filter <span>›</span>
-                  </button>
-
-                  <button
-                    className="inline-flex items-center gap-1 mt-3 cursor-pointer"
-                    onClick={() => setShowAllFilters((v) => !v)}
-                  >
-                    <span className="text-xs md:text-md text-[blue]">
-                      {showAllFilters ? "Hide filters" : "Show all Filter"}
-                    </span>
-                    <span className="text-xs md:text-md text-[blue] leading-none">
-                      ›
-                    </span>
-                  </button>
-                </div>
-
-                <button className="grid h-15 w-15 md:h-20 md:w-20 place-items-center rounded-full border-white border-2 bg-gradient-to-tr from-[#C6B0EF] to-[#4600C8] shadow-lg ring-1 ring-white/20">
-                  <Search className="h-5 w-5" />
-                </button>
-              </div>
             </div>
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="flex-col hidden md:flex items-end space-y-8">
+            <button
+              onClick={() => navigate("/request")}
+              className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
+            >
+              <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
+              POST A REQUEST
+            </button>
+
+            <button
+              className="inline-flex items-end gap-1 mt-3 cursor-pointer"
+              onClick={() => setShowAllFilters((v) => !v)}
+            >
+              <span className="text-xs md:text-md text-[blue]">
+                {showAllFilters ? "Hide filters" : "Show all Filter"}
+              </span>
+
+              <span className="text-xs md:text-md text-[blue] leading-none">
+                ›
+              </span>
+            </button>
           </div>
         </div>
 
