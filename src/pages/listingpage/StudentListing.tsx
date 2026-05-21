@@ -424,7 +424,7 @@ export default function StudentListing() {
   return (
     <div className="bg-[#F3EDFE]">
       <section className="min-h-screen w-full">
-        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-12 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-35 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
           {/* LEFT SIDE */}
           <div className="w-full">
             <div className="grid grid-cols-[1fr_auto] items-center gap-1">
