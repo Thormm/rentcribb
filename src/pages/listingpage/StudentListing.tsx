@@ -296,9 +296,9 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
   return (
     <div>
       <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
-        <div className="flex flex-wrap justify-center gap-10">
+        <div className="flex flex-wrap justify-center gap-6">
           {currentData.map((card) => (
-            <div key={`${card.space}-${card.id}`} className="md:w-[30%]">
+            <div key={`${card.space}-${card.id}`}>
               <Card
                 item={card}
                 onView={() =>
