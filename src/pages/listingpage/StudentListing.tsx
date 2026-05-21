@@ -454,7 +454,7 @@ export default function StudentListing() {
                 </button>
 
                 <button
-                  className="inline-flex items-end gap-1 mt-3 cursor-pointer"
+                  className="inline-flex items-center gap-1 mt-3 cursor-pointer"
                   onClick={() => setShowAllFilters((v) => !v)}
                 >
                   <span className="text-xs md:text-md text-[blue]">
@@ -587,7 +587,7 @@ export default function StudentListing() {
             </button>
 
             <button
-              className="inline-flex items-end gap-1 mt-3 cursor-pointer"
+              className="inline-flex items-center gap-1 mt-3 cursor-pointer"
               onClick={() => setShowAllFilters((v) => !v)}
             >
               <span className="text-xs md:text-md text-[blue]">
