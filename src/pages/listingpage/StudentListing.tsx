@@ -296,9 +296,9 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
   return (
     <div>
       <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-10">
           {currentData.map((card) => (
-            <div key={`${card.space}-${card.id}`}>
+            <div key={`${card.space}-${card.id}`} className="md:w-[27%]">
               <Card
                 item={card}
                 onView={() =>
@@ -457,11 +457,11 @@ export default function StudentListing() {
                   className="inline-flex items-center gap-1 mt-3 cursor-pointer"
                   onClick={() => setShowAllFilters((v) => !v)}
                 >
-                  <span className="text-xs md:text-md text-[blue]">
+                  <span className="text-sm md:text-md text-[blue]">
                     {showAllFilters ? "Hide filters" : "Show all Filter"}
                   </span>
 
-                  <span className="text-xs md:text-md text-[blue] leading-none">
+                  <span className="text-sm md:text-md text-[blue] leading-none">
                     ›
                   </span>
                 </button>
@@ -590,11 +590,11 @@ export default function StudentListing() {
               className="inline-flex items-center gap-1 mt-3 cursor-pointer"
               onClick={() => setShowAllFilters((v) => !v)}
             >
-              <span className="text-xs md:text-md text-[blue]">
+              <span className="text-sm md:text-md text-[blue]">
                 {showAllFilters ? "Hide filters" : "Show all Filter"}
               </span>
 
-              <span className="text-xs md:text-md text-[blue] leading-none">
+              <span className="text-sm md:text-md text-[blue] leading-none">
                 ›
               </span>
             </button>
