@@ -66,17 +66,17 @@ const mainFilters = [
   {
     label: "Category",
     key: "space",
-    placeholder: "Select as applied",
+    placeholder: "All Categories",
     options: [
-      { value: "entirespace", label: "entirespace" },
-      { value: "sharedspace", label: "sharedspace" },
+      { value: "entirespace", label: "Entirespace" },
+      { value: "sharedspace", label: "Sharedspace" },
     ],
   },
 
   {
     label: "Type",
     key: "type",
-    placeholder: "Select Space type...",
+    placeholder: "All Space Type",
     options: [
       { value: "A room", label: "A room" },
       { value: "A room in a flat", label: "A room in a flat" },
@@ -92,7 +92,7 @@ const mainFilters = [
   {
     label: "Price",
     key: "price",
-    placeholder: "Select price range",
+    placeholder: "All Price Ranges",
     options: [
       { value: "50000-100000", label: "50k – 100k" },
       { value: "100000-200000", label: "100k – 200k" },
@@ -106,7 +106,7 @@ const extraFilters = [
   {
     label: "Move in Date",
     key: "availability_month",
-    placeholder: "How soon?",
+    placeholder: "Any Date?",
     options: [
       { value: "Currently", label: "Currently" },
       { value: "January", label: "January" },
@@ -127,7 +127,7 @@ const extraFilters = [
   {
     label: "Duration",
     key: "duration",
-    placeholder: "For how long?",
+    placeholder: "All Duration?",
     options: [
       { value: "Per Year", label: "Per Year" },
       { value: "Per Session", label: "Per Session" },
@@ -295,7 +295,7 @@ function PaginatedCards({ data }: { data: LiveSpace[] }) {
 
   return (
     <div>
-      <div className="w-full mx-auto px-4 pb-16 pt-6">
+      <div className="w-full max-w-6xl mx-auto px-4 pb-16 pt-6">
         <div className="flex flex-wrap justify-center gap-6">
           {currentData.map((card) => (
             <div key={`${card.space}-${card.id}`}>

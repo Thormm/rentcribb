@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import React, { useState, useEffect, useMemo } from "react";
 import Footer from "../../components/Footer";
 import clsx from "clsx";
@@ -12,6 +11,139 @@ import {
 import { CgCross } from "react-icons/cg";
 import { MdIosShare } from "react-icons/md";
 import { FaRegCircle, FaMosque } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+
+type FilterSelectProps = {
+  label: string;
+  value: string;
+  placeholder: string;
+  options?: { value: string; label: string }[];
+  children?: React.ReactNode;
+  onChange: (value: string) => void;
+};
+
+function FilterSelect({
+  label,
+  value,
+  placeholder,
+  options,
+  children,
+  onChange,
+}: FilterSelectProps) {
+  return (
+    <div className="space-y-1">
+      <Label className=" text-white">{label}</Label>
+
+      <InfoPill className="bg-white">
+        <div className="flex items-center justify-between w-full">
+          <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+          >
+            <option value="">{placeholder}</option>
+
+            {options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+
+            {children}
+          </select>
+
+          <IoIosArrowDown className="ml-2" />
+        </div>
+      </InfoPill>
+    </div>
+  );
+}
+
+const extraFilters = [
+  {
+    key: "moveIn",
+    label: "Move in date",
+    placeholder: "Any time",
+    options: [
+      {
+        label: "Urgently",
+        value: "Urgently",
+      },
+      {
+        label: "January",
+        value: "January",
+      },
+      {
+        label: "February",
+        value: "February",
+      },
+      {
+        label: "March",
+        value: "March",
+      },
+      {
+        label: "April",
+        value: "April",
+      },
+      {
+        label: "May",
+        value: "May",
+      },
+      {
+        label: "June",
+        value: "June",
+      },
+      {
+        label: "July",
+        value: "July",
+      },
+      {
+        label: "August",
+        value: "August",
+      },
+      {
+        label: "September",
+        value: "September",
+      },
+      {
+        label: "October",
+        value: "October",
+      },
+      {
+        label: "November",
+        value: "November",
+      },
+      {
+        label: "December",
+        value: "December",
+      },
+    ],
+  },
+  {
+    key: "features",
+    label: "Special features",
+    placeholder: "Select...",
+  },
+  {
+    key: "religion",
+    label: "Religion",
+    placeholder: "All Religions",
+    options: [
+      {
+        label: "Christianity",
+        value: "christian",
+      },
+      {
+        label: "Islam",
+        value: "muslim",
+      },
+      {
+        label: "None",
+        value: "none",
+      },
+    ],
+  },
+];
 
 // ----------------------- TYPES -----------------------
 
@@ -80,7 +212,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -292,6 +424,87 @@ export default function StudentListing() {
     { id: number; institution: string }[]
   >([]);
 
+  const mainFilters = [
+    {
+      key: "school",
+      label: "Institution",
+      placeholder: "All schools",
+      options: institutes.map((inst) => ({
+        label: inst.institution,
+        value: inst.institution,
+      })),
+    },
+    {
+      key: "category",
+      label: "Category",
+      placeholder: "All categories",
+      options: [
+        {
+          label: "Entire Space",
+          value: "Entire Space",
+        },
+        {
+          label: "Shared Space",
+          value: "Shared Space",
+        },
+      ],
+    },
+    {
+      key: "type",
+      label: "Type",
+      placeholder: "All Space Type",
+      options: [
+        {
+          label: "A room",
+          value: "Room",
+        },
+        {
+          label: "A room in a flat",
+          value: "Room in a flat",
+        },
+        {
+          label: "Self-contained room",
+          value: "Self-contained room",
+        },
+        {
+          label: "A room and parlor",
+          value: "Room and parlor",
+        },
+        {
+          label: "2 bedroom apartment",
+          value: "2 bedroom apartment",
+        },
+        {
+          label: "3 bedroom apartment",
+          value: "3 bedroom apartment",
+        },
+        {
+          label: "4 bedroom apartment",
+          value: "4 bedroom apartment",
+        },
+        {
+          label: "5 bedroom apartment",
+          value: "5 bedroom apartment",
+        },
+      ],
+    },
+    {
+      key: "gender",
+      label: "Gender",
+      placeholder: "Any",
+      options: [
+        {
+          label: "Male",
+          value: "male",
+        },
+        {
+          label: "Female",
+          value: "female",
+        },
+      ],
+    },
+  ];
+
   async function getMySpacesForReply(
     user: string,
     school: string,
@@ -435,18 +648,6 @@ export default function StudentListing() {
     });
   }, [cards, filters]);
 
-  const clearFilters = () => {
-    setFilters({
-      school: login.school || "", // reset to default login school
-      category: "",
-      type: "",
-      gender: "",
-      moveIn: "",
-      features: [],
-      religion: "",
-    });
-  };
-
   useEffect(() => {
     getRequests().then(setCards);
   }, [login.school]);
@@ -454,284 +655,208 @@ export default function StudentListing() {
   return (
     <div className="bg-[#F3EDFE]">
       <section className="min-h-screen w-full">
-        <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
-          <div className="mx-auto w-full max-w-6xl px-4">
-            <div className="text-md font-semibold text-[#FFA1A1]">REQUESTS</div>
-
-            <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">
-              <h1 className="text-4xl my-4 font-extrabold">
-                Available Requests in{" "}
-                <span className="text-[#C2C8DA]">
-                  {filters.school
-                    ? filters.school.split(" - ")[0] // abbreviation
-                    : "All"}
-                </span>
-              </h1>
-
-              <button
-                onClick={() => navigate("/request")}
-                className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
-              >
-                <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
-                LIST SPACE
-              </button>
-            </div>
-
-            <div className="grid md:grid-cols-[80%_20%] items-end mt-5 md:mt-0">
+        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-33 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+          {/* LEFT SIDE */}
+          <div className="w-full">
+            <div className="grid grid-cols-[1fr_auto] items-center gap-1">
+              {/* LEFT SIDE */}
               <div>
-                <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
-                  {/* School / Institution */}
-                  {/* School / Institution */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Institution</Label>
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.school}
-                        onChange={(e) =>
-                          setFilters({ ...filters, school: e.target.value })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">All schools</option>
-                        {institutes.map((inst) => (
-                          <option key={inst.id} value={inst.institution}>
-                            {inst.institution}
-                          </option>
-                        ))}
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Category */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Category</Label>
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.category}
-                        onChange={(e) =>
-                          setFilters({ ...filters, category: e.target.value })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">All categories</option>
-                        <option value="Entire Space">Entire Space</option>
-                        <option value="Shared Space">Shared Space</option>
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Type */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Type</Label>
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.type}
-                        onChange={(e) =>
-                          setFilters({ ...filters, type: e.target.value })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Select Space type...</option>
-                        <option value="Room">A room</option>
-                        <option value="Room in a flat">A room in a flat</option>
-                        <option value="Self-contained room">
-                          Self-contained room
-                        </option>
-                        <option value="Room and parlor">
-                          A room and parlor
-                        </option>
-                        <option value="2 bedroom apartment">
-                          2 bedroom apartment
-                        </option>
-                        <option value="3 bedroom apartment">
-                          3 bedroom apartment
-                        </option>
-                        <option value="4 bedroom apartment">
-                          4 bedroom apartment
-                        </option>
-                        <option value="5 bedroom apartment">
-                          5 bedroom apartment
-                        </option>
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Gender */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Gender</Label>
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.gender}
-                        onChange={(e) =>
-                          setFilters({ ...filters, gender: e.target.value })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Any</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
-                    </InfoPill>
-                  </div>
+                <div className="text-md font-semibold text-[#FFA1A1]">
+                  REQUESTS
                 </div>
 
-                {/* EXTRA FILTERS */}
-                {showAllFilters && (
-                  <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
-                    {/* Move-in date */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Move in date</Label>
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.moveIn}
-                          onChange={(e) =>
-                            setFilters({ ...filters, moveIn: e.target.value })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">Any time</option>
-                          <option value="Urgently">Urgently</option>
-                          <option value="January">January</option>
-                          <option value="February">February</option>
-                          <option value="March">March</option>
-                          <option value="April">April</option>
-                          <option value="May">May</option>
-                          <option value="June">June</option>
-                          <option value="July">July</option>
-                          <option value="August">August</option>
-                          <option value="September">September</option>
-                          <option value="October">October</option>
-                          <option value="November">November</option>
-                          <option value="December">December</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-
-                    {/* Special Features - Fullscreen Dropdown Style */}
-                    <div className="space-y-1 relative">
-                      <Label className="ml-8 text-white">
-                        Special features
-                      </Label>
-
-                      {/* InfoPill triggers the overlay */}
-                      <InfoPill
-                        className="bg-white cursor-pointer"
-                        onClick={() => setShowFeatures((v: boolean) => !v)}
-                      >
-                        <span className="text-xs md:text-sm truncate  block">
-                          {filters.features.length === 0
-                            ? "Select..."
-                            : filters.features.join(", ")}
-                        </span>
-                      </InfoPill>
-
-                      {/* Fullscreen overlay */}
-                      {showFeatures && (
-                        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4">
-                          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-lg max-h-[80vh] overflow-y-auto">
-                            {/* Close button */}
-                            <button
-                              onClick={() => setShowFeatures(false)}
-                              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
-                            >
-                              ×
-                            </button>
-
-                            <div className="p-4 py-10 space-y-2">
-                              {[
-                                ...new Set(
-                                  cards.flatMap((c) => c.features || []),
-                                ),
-                              ].map((feature) => {
-                                const selected =
-                                  filters.features.includes(feature);
-                                return (
-                                  <label
-                                    key={feature}
-                                    className={`flex items-center justify-between px-4 py-2 text-sm text-black cursor-pointer rounded hover:bg-gray-100 ${
-                                      selected ? "bg-[#F0EEFF]" : ""
-                                    }`}
-                                  >
-                                    <span>{feature}</span>
-                                    <input
-                                      type="checkbox"
-                                      checked={selected}
-                                      onChange={() => {
-                                        if (selected) {
-                                          setFilters({
-                                            ...filters,
-                                            features: filters.features.filter(
-                                              (f) => f !== feature,
-                                            ),
-                                          });
-                                        } else {
-                                          setFilters({
-                                            ...filters,
-                                            features: [
-                                              ...filters.features,
-                                              feature,
-                                            ],
-                                          });
-                                        }
-                                      }}
-                                    />
-                                  </label>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Religion */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Religion</Label>
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.religion}
-                          onChange={(e) =>
-                            setFilters({ ...filters, religion: e.target.value })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">All Religions</option>
-                          <option value="christian">Christianity</option>
-                          <option value="muslim">Islam</option>
-                          <option value="none">None</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-                  </div>
-                )}
+                <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center gap-4">
+                  <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
+                    Available Requests in{" "}
+                    <span className="text-[#C2C8DA]">
+                      {filters.school ? filters.school.split(" - ")[0] : "All"}
+                    </span>
+                  </h1>
+                </div>
               </div>
 
-              <div className="flex items-center justify-center mt-4 md:mt-0 md:justify-end gap-4">
-                <div className="grid grid-cols-1">
-                  <button
-                    onClick={clearFilters}
-                    className="text-[red] text-xs md:text-md cursor-pointer"
-                  >
-                    Clear Filter <span>›</span>
-                  </button>
+              {/* RIGHT SIDE MOBILE */}
+              <div className="flex flex-col items-end md:hidden space-y-3">
+                <button
+                  onClick={() => navigate("/request")}
+                  className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
+                >
+                  <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
+                  LIST SPACE
+                </button>
 
+                <div className="grid grid-cols-1 items-end">
                   <button
-                    className="inline-flex items-center gap-1 mt-3 cursor-pointer"
+                    className="inline-flex items-center justify-end gap-1 mt-3 cursor-pointer"
                     onClick={() => setShowAllFilters((v) => !v)}
                   >
-                    <span className="text-xs md:text-md text-[blue]">
+                    <span className="text-sm md:text-md text-[blue]">
                       {showAllFilters ? "Hide filters" : "Show all Filter"}
                     </span>
-                    <span className="text-xs md:text-md text-[blue] leading-none">
+
+                    <span className="text-sm md:text-md text-[blue] leading-none">
                       ›
                     </span>
                   </button>
                 </div>
-
-                <button className="grid h-15 w-15 md:h-20 md:w-20 place-items-center rounded-full border-white border-2 bg-gradient-to-tr from-[#C6B0EF] to-[#4600C8] shadow-lg ring-1 ring-white/20">
-                  <Search className="h-5 w-5" />
-                </button>
               </div>
+            </div>
+
+            <div className="mt-5 md:mt-0">
+              {/* MAIN FILTERS */}
+              <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
+                {mainFilters.map((field) => (
+                  <FilterSelect
+                    key={field.key}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    value={filters[field.key as keyof typeof filters] as string}
+                    options={field.options}
+                    onChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        [field.key]: value,
+                      })
+                    }
+                  />
+                ))}
+              </div>
+
+              {/* EXTRA FILTERS */}
+              {showAllFilters && (
+                <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
+                  {extraFilters.map((field) => {
+                    // SPECIAL FEATURES CUSTOM CASE
+                    if (field.key === "features") {
+                      return (
+                        <div className="space-y-1 relative" key={field.key}>
+                          <Label className="text-white">{field.label}</Label>
+
+                          <InfoPill
+                            className="bg-white cursor-pointer"
+                            onClick={() => setShowFeatures((v: boolean) => !v)}
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <input
+                                className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+                                value={
+                                  filters.features.length === 0
+                                    ? field.placeholder
+                                    : filters.features.join(", ")
+                                }
+                              />
+                              <IoIosArrowDown className="ml-2" />
+                            </div>
+                          </InfoPill>
+
+                          {showFeatures && (
+                            <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4">
+                              <div className="relative w-full max-w-md bg-white rounded-2xl shadow-lg max-h-[80vh] overflow-y-auto">
+                                <button
+                                  onClick={() => setShowFeatures(false)}
+                                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+                                >
+                                  ×
+                                </button>
+
+                                <div className="p-4 py-10 space-y-2">
+                                  {[
+                                    ...new Set(
+                                      cards.flatMap((c) => c.features || []),
+                                    ),
+                                  ].map((feature) => {
+                                    const selected =
+                                      filters.features.includes(feature);
+
+                                    return (
+                                      <label
+                                        key={feature}
+                                        className={`flex items-center justify-between px-4 py-2 text-sm text-black cursor-pointer rounded hover:bg-gray-100 ${
+                                          selected ? "bg-[#F0EEFF]" : ""
+                                        }`}
+                                      >
+                                        <span>{feature}</span>
+
+                                        <input
+                                          type="checkbox"
+                                          checked={selected}
+                                          onChange={() => {
+                                            if (selected) {
+                                              setFilters({
+                                                ...filters,
+                                                features:
+                                                  filters.features.filter(
+                                                    (f) => f !== feature,
+                                                  ),
+                                              });
+                                            } else {
+                                              setFilters({
+                                                ...filters,
+                                                features: [
+                                                  ...filters.features,
+                                                  feature,
+                                                ],
+                                              });
+                                            }
+                                          }}
+                                        />
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <FilterSelect
+                        key={field.key}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        value={
+                          filters[field.key as keyof typeof filters] as string
+                        }
+                        options={field.options}
+                        onChange={(value) =>
+                          setFilters({
+                            ...filters,
+                            [field.key]: value,
+                          })
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* RIGHT SIDE DESKTOP */}
+          <div className="hidden md:flex flex-col items-end space-y-8">
+            <button
+              onClick={() => navigate("/request")}
+              className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
+            >
+              <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
+              LIST SPACE
+            </button>
+
+            <div className="grid grid-cols-1 items-end">
+              <button
+                className="inline-flex items-center justify-end gap-1 mt-3 cursor-pointer"
+                onClick={() => setShowAllFilters((v) => !v)}
+              >
+                <span className="text-xs md:text-md text-[blue]">
+                  {showAllFilters ? "Hide filters" : "Show all Filter"}
+                </span>
+
+                <span className="text-xs md:text-md text-[blue] leading-none">
+                  ›
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -812,8 +937,8 @@ export default function StudentListing() {
                     >
                       <div className="space-y-1">
                         <div className="">
-                          
-                          <span className="text-sm">{s.space_name}</span>{'  '}
+                          <span className="text-sm">{s.space_name}</span>
+                          {"  "}
                           <span
                             className={clsx(
                               "px-2 py-0.5 rounded-full capitalize text-xs",
@@ -832,8 +957,6 @@ export default function StudentListing() {
 
                         {/* nice shared / entire badge + unit */}
                         <div className="flex items-center gap-2 text-[11px] mt-1">
-                          
-
                           <span className="text-gray-600">
                             {s.units} unit{s.units === "1" ? "" : "s"}
                           </span>
