@@ -6,6 +6,163 @@ import clsx from "clsx";
 import InfoPill from "../../components/Pill";
 import LGAS_DATA from "../../components/localgovt.json";
 import { useNavigate } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+
+// ==========================
+// REUSABLE FILTER COMPONENT
+// ==========================
+
+type FilterSelectProps = {
+  label: string;
+  value: string;
+  placeholder: string;
+  options?: { value: string; label: string }[];
+  children?: React.ReactNode;
+  onChange: (value: string) => void;
+};
+
+function FilterSelect({
+  label,
+  value,
+  placeholder,
+  options,
+  children,
+  onChange,
+}: FilterSelectProps) {
+  return (
+    <div className="space-y-1">
+      <Label className=" text-white">{label}</Label>
+
+      <InfoPill className="bg-white">
+        <div className="flex items-center justify-between w-full">
+          <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
+          >
+            <option value="">{placeholder}</option>
+
+            {options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+
+            {children}
+          </select>
+
+          <IoIosArrowDown className="ml-2" />
+        </div>
+      </InfoPill>
+    </div>
+  );
+}
+
+// ==========================
+// FILTER CONFIG
+// ==========================
+
+const mainFilters = [
+  {
+    label: "Category",
+    key: "space",
+    placeholder: "Select as applied",
+    options: [
+      { value: "entirespace", label: "entirespace" },
+      { value: "sharedspace", label: "sharedspace" },
+    ],
+  },
+
+  {
+    label: "Type",
+    key: "type",
+    placeholder: "Select Space type...",
+    options: [
+      { value: "A room", label: "A room" },
+      { value: "A room in a flat", label: "A room in a flat" },
+      { value: "A room self-contain", label: "A room self-contain" },
+      { value: "A room and parlor", label: "A room and parlor" },
+      { value: "2 bedroom apartment", label: "2 bedroom apartment" },
+      { value: "3 bedroom apartment", label: "3 bedroom apartment" },
+      { value: "4 bedroom apartment", label: "4 bedroom apartment" },
+      { value: "5 bedroom apartment", label: "5 bedroom apartment" },
+    ],
+  },
+
+  {
+    label: "Price",
+    key: "price",
+    placeholder: "Select price range",
+    options: [
+      { value: "50000-100000", label: "50k – 100k" },
+      { value: "100000-200000", label: "100k – 200k" },
+      { value: "200000-500000", label: "200k – 500k" },
+      { value: "500000-1000000", label: "500k – 1M" },
+    ],
+  },
+];
+
+const extraFilters = [
+  {
+    label: "Move in Date",
+    key: "availability_month",
+    placeholder: "How soon?",
+    options: [
+      { value: "Currently", label: "Currently" },
+      { value: "January", label: "January" },
+      { value: "February", label: "February" },
+      { value: "March", label: "March" },
+      { value: "April", label: "April" },
+      { value: "May", label: "May" },
+      { value: "June", label: "June" },
+      { value: "July", label: "July" },
+      { value: "August", label: "August" },
+      { value: "September", label: "September" },
+      { value: "October", label: "October" },
+      { value: "November", label: "November" },
+      { value: "December", label: "December" },
+    ],
+  },
+
+  {
+    label: "Duration",
+    key: "duration",
+    placeholder: "For how long?",
+    options: [
+      { value: "Per Year", label: "Per Year" },
+      { value: "Per Session", label: "Per Session" },
+      { value: "Per 9months", label: "Per 9months" },
+      { value: "Per 6months", label: "Per 6months" },
+      { value: "Per Semester", label: "Per Semester" },
+      { value: "Per 3months", label: "Per 3months" },
+      { value: "Per month", label: "Per month" },
+    ],
+  },
+
+  {
+    label: "Power",
+    key: "power_supply",
+    placeholder: "How good is supply?",
+    options: [
+      { value: "1", label: "1" },
+      { value: "2", label: "2" },
+      { value: "3", label: "3" },
+      { value: "4", label: "4" },
+      { value: "5", label: "5" },
+    ],
+  },
+
+  {
+    label: "Security",
+    key: "security",
+    placeholder: "How good is security?",
+    options: [
+      { value: "Low", label: "Low" },
+      { value: "Moderate", label: "Moderate" },
+      { value: "High", label: "High" },
+    ],
+  },
+];
 
 // ----------------------- TYPES -----------------------
 
@@ -109,7 +266,7 @@ function Label({
   return (
     <div
       className={clsx(
-        "text-sm md:text-md md:my-3 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -312,118 +469,24 @@ export default function StudentListing() {
             </div>
 
             <div className="mt-5 md:mt-0">
-              <div>
-                {/* MAIN FILTERS */}
-                <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
-                  {/* Category */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Category</Label>
-
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.space}
-                        onChange={(e) =>
-                          setFilters({
-                            ...filters,
-                            space: e.target.value,
-                          })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Select as applied</option>
-                        <option value="entirespace">entirespace</option>
-                        <option value="sharedspace">sharedspace</option>
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Type */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Type</Label>
-
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.type}
-                        onChange={(e) =>
-                          setFilters({
-                            ...filters,
-                            type: e.target.value,
-                          })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Select Space type...</option>
-                        <option value="A room">A room</option>
-                        <option value="A room in a flat">
-                          A room in a flat
-                        </option>
-                        <option value="A room self-contain">
-                          A room self-contain
-                        </option>
-                        <option value="A room and parlor">
-                          A room and parlor
-                        </option>
-                        <option value="2 bedroom apartment">
-                          2 bedroom apartment
-                        </option>
-                        <option value="3 bedroom apartment">
-                          3 bedroom apartment
-                        </option>
-                        <option value="4 bedroom apartment">
-                          4 bedroom apartment
-                        </option>
-                        <option value="5 bedroom apartment">
-                          5 bedroom apartment
-                        </option>
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Location */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Location</Label>
-
-                    <InfoPill className="bg-white">
-                      <select
-                        value={filters.location}
-                        onChange={(e) =>
-                          setFilters({
-                            ...filters,
-                            location: e.target.value,
-                          })
-                        }
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Around Where?</option>
-
-                        {statesAndLgas.map((s) => (
-                          <optgroup label={s.state} key={s.state}>
-                            {s.lgas.map((l) => (
-                              <option key={l} value={`${s.state} - ${l}`}>
-                                {l}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
-                    </InfoPill>
-                  </div>
-
-                  {/* Price */}
-                  <div className="space-y-1">
-                    <Label className="ml-8 text-white">Price</Label>
-
-                    <InfoPill className="bg-white">
-                      <select
+              {/* MAIN FILTERS */}
+              <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
+                {mainFilters.map((field) => {
+                  // PRICE SPECIAL CASE
+                  if (field.key === "price") {
+                    return (
+                      <FilterSelect
+                        key={field.key}
+                        label={field.label}
+                        placeholder={field.placeholder}
                         value={
                           filters.priceMin && filters.priceMax
                             ? `${filters.priceMin}-${filters.priceMax}`
                             : ""
                         }
-                        onChange={(e) => {
-                          const v = e.target.value;
-
-                          if (!v) {
+                        options={field.options}
+                        onChange={(value) => {
+                          if (!value) {
                             setFilters({
                               ...filters,
                               priceMin: "",
@@ -433,7 +496,7 @@ export default function StudentListing() {
                             return;
                           }
 
-                          const [min, max] = v.split("-");
+                          const [min, max] = value.split("-");
 
                           setFilters({
                             ...filters,
@@ -441,131 +504,75 @@ export default function StudentListing() {
                             priceMax: max,
                           });
                         }}
-                        className="w-full bg-transparent text-xs md:text-sm outline-none"
-                      >
-                        <option value="">Select price range</option>
-                        <option value="50000-100000">50k – 100k</option>
-                        <option value="100000-200000">100k – 200k</option>
-                        <option value="200000-500000">200k – 500k</option>
-                        <option value="500000-1000000">500k – 1M</option>
-                      </select>
-                    </InfoPill>
-                  </div>
-                </div>
+                      />
+                    );
+                  }
 
-                {/* EXTRA FILTERS */}
-                {showAllFilters && (
-                  <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
-                    {/* Move in Date */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Move in Date</Label>
+                  return (
+                    <FilterSelect
+                      key={field.key}
+                      label={field.label}
+                      placeholder={field.placeholder}
+                      value={
+                        filters[field.key as keyof typeof filters] as string
+                      }
+                      options={field.options}
+                      onChange={(value) =>
+                        setFilters({
+                          ...filters,
+                          [field.key]: value,
+                        })
+                      }
+                    />
+                  );
+                })}
 
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.availability_month}
-                          onChange={(e) =>
-                            setFilters({
-                              ...filters,
-                              availability_month: e.target.value,
-                            })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">How soon?</option>
-                          <option value="Currently">Currently</option>
-                          <option value="January">January</option>
-                          <option value="February">February</option>
-                          <option value="March">March</option>
-                          <option value="April">April</option>
-                          <option value="May">May</option>
-                          <option value="June">June</option>
-                          <option value="July">July</option>
-                          <option value="August">August</option>
-                          <option value="September">September</option>
-                          <option value="October">October</option>
-                          <option value="November">November</option>
-                          <option value="December">December</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-
-                    {/* Duration */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Duration</Label>
-
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.duration}
-                          onChange={(e) =>
-                            setFilters({
-                              ...filters,
-                              duration: e.target.value,
-                            })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">For how long?</option>
-                          <option value="Per Year">Per Year</option>
-                          <option value="Per Session">Per Session</option>
-                          <option value="Per 9months">Per 9months</option>
-                          <option value="Per 6months">Per 6months</option>
-                          <option value="Per Semester">Per Semester</option>
-                          <option value="Per 3months">Per 3months</option>
-                          <option value="Per month">Per month</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-
-                    {/* Power */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Power</Label>
-
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.power_supply}
-                          onChange={(e) =>
-                            setFilters({
-                              ...filters,
-                              power_supply: e.target.value,
-                            })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">How good is supply?</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-
-                    {/* Security */}
-                    <div className="space-y-1">
-                      <Label className="ml-8 text-white">Security</Label>
-
-                      <InfoPill className="bg-white">
-                        <select
-                          value={filters.security}
-                          onChange={(e) =>
-                            setFilters({
-                              ...filters,
-                              security: e.target.value,
-                            })
-                          }
-                          className="w-full bg-transparent text-xs md:text-sm outline-none"
-                        >
-                          <option value="">How good is security?</option>
-                          <option value="Low">Low</option>
-                          <option value="Moderate">Moderate</option>
-                          <option value="High">High</option>
-                        </select>
-                      </InfoPill>
-                    </div>
-                  </div>
-                )}
+                {/* LOCATION SPECIAL CASE */}
+                <FilterSelect
+                  label="Location"
+                  placeholder="Around Where?"
+                  value={filters.location}
+                  onChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      location: value,
+                    })
+                  }
+                >
+                  {statesAndLgas.map((s) => (
+                    <optgroup label={s.state} key={s.state}>
+                      {s.lgas.map((l) => (
+                        <option key={l} value={`${s.state} - ${l}`}>
+                          {l}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </FilterSelect>
               </div>
+
+              {/* EXTRA FILTERS */}
+              {showAllFilters && (
+                <div className="mt-5 grid gap-3 grid-cols-2 md:grid-cols-4">
+                  {extraFilters.map((field) => (
+                    <FilterSelect
+                      key={field.key}
+                      label={field.label}
+                      placeholder={field.placeholder}
+                      value={
+                        filters[field.key as keyof typeof filters] as string
+                      }
+                      options={field.options}
+                      onChange={(value) =>
+                        setFilters({
+                          ...filters,
+                          [field.key]: value,
+                        })
+                      }
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
