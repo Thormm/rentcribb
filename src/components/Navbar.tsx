@@ -33,13 +33,13 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
     mode === "student"
       ? "/studentdash"
       : mode === "merchant"
-      ? "/businessdash"
-      : "/dashboard";
+        ? "/businessdash"
+        : "/dashboard";
 
   // ---- Navbar visibility configuration (nothing hidden yet) ----
   const navbarVisibility = {
     leftLinks1: ["/request"] as string[],
-    leftLinks2: ["/request",] as string[], 
+    leftLinks2: ["/request"] as string[],
     productsButton: ["/request"] as string[],
     authButtons: [] as string[], // GET STARTED / DASHBOARD
   };
@@ -54,19 +54,21 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
   return (
     <>
       {/* Navbar */}
-      <nav className="sticky border-4 top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-2 md:px-6 py-3 md:py-6 shadow-sm bg-white z-50">
+      <nav className="sticky border-4 top-0 grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-3 md:px-10 py-3 md:py-6 shadow-sm bg-white z-50">
         {/* Left: Flag / Links */}
-        
-          <div className="hidden md:flex justify-center gap-6">
-           {showLeftLinks1 && ( <span className="text-[8px] md:text-[18px] font-semibold">
+
+        <div className="hidden md:flex justify-start gap-6">
+          {showLeftLinks1 && (
+            <span className="text-[8px] md:text-[18px] font-semibold">
               Find a Roommate
             </span>
-        )}
-           {showLeftLinks2 && ( <span className="text-[8px] md:text-[18px] font-semibold">
+          )}
+          {showLeftLinks2 && (
+            <span className="text-[8px] md:text-[18px] font-semibold">
               List your Space
             </span>
-        )}
-          </div>
+          )}
+        </div>
 
         {/* Center: Logo */}
         <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
@@ -97,7 +99,7 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
         </div>
 
         {/* Right: Buttons */}
-        <div className="flex justify-end md:justify-center items-center gap-2">
+        <div className="flex justify-end items-center gap-2">
           <div className="rounded-full bg-black hidden md:flex">
             <img
               src={nigeriaflag}
@@ -132,9 +134,7 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
                   className="px-2 cursor-pointer border-black md:px-5 border-2 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
                 >
                   <MdOutlineDashboard className="text-xs md:text-2xl" />
-                  <span className="text-[10px] md:text-[15px]">
-                    DASHBOARD
-                  </span>
+                  <span className="text-[10px] md:text-[15px]">DASHBOARD</span>
                 </button>
               )}
             </>

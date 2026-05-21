@@ -267,7 +267,7 @@ export default function StudentListing() {
   return (
     <div className="bg-[#F3EDFE]">
       <section className="min-h-screen w-full">
-        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-10 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+        <div className="grid md:grid-cols-[1fr_auto] items-center gap-1 px-5 md:px-12 bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
           {/* LEFT SIDE */}
           <div className="w-full">
             <div className="grid grid-cols-[1fr_auto] items-center gap-1">
@@ -290,7 +290,7 @@ export default function StudentListing() {
               <div className="flex flex-col items-end md:hidden  space-y-3">
                 <button
                   onClick={() => navigate("/request")}
-                  className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white"
+                  className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
                 >
                   <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
                   POST A REQUEST
@@ -573,7 +573,7 @@ export default function StudentListing() {
           <div className="flex-col hidden md:flex items-end space-y-8">
             <button
               onClick={() => navigate("/request")}
-              className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-4 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
+              className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
             >
               <SquarePlus className="h-6 w-6 md:h-10 md:w-10" />
               POST A REQUEST
