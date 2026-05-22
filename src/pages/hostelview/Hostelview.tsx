@@ -121,36 +121,42 @@ function Maincard({
   );
 }
 
-function SectionHeader({ title }: { title: string }) {
+function SectionHeader({
+  title,
+  caption,
+}: {
+  title: string;
+  caption?: string;
+}) {
   return (
-    <div className="px-5 pt-10">
-      <h2 className="text-center text-2xl md:text-4xl font-extrabold">
-        {title}
-      </h2>
-      <p className="text-center text-xs md:text-sm pt-1 md:pt-5">
-        Check out the Features of this Hostel
+    <div className="pt-8 md:px-5">
+      <h3 className="text-3xl font-medium text-center">{title}</h3>
+
+      <p className="text-center text-xs md:text-md pt-3">
+        {caption ?? "Check out the Features of this Hostel"}
       </p>
+
       <div
-        className="mt-2 w-full border-t-4"
+        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
         style={{
           borderStyle: "dashed",
           borderImage:
-            "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
         }}
       />
     </div>
   );
 }
 
-type LabelProps = React.PropsWithChildren<{
-  className?: string;
-}>;
 
-function Label({ children, className }: LabelProps) {
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
   return (
     <div
       className={clsx(
-        "text-sm md:text-lg md:my-2 font-semibold ml-0",
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
         className,
       )}
     >
@@ -277,7 +283,7 @@ export default function Hostelview() {
       const data = await res.json();
 
       if (data?.status === "success" || data?.success) {
-        showAlert("Booked successfully", "success", true)
+        showAlert("Booked successfully", "success", true);
       } else {
         showAlert(data?.message || "Unable to book inspection", "warning");
       }
@@ -477,7 +483,7 @@ export default function Hostelview() {
         </div>
       </section>
 
-      <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0 bg-[#f5f5f7]">
+      <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0">
         {/* Left Section */}
         <section className="relative w-full h-full">
           <img
@@ -608,7 +614,7 @@ export default function Hostelview() {
                 <div className="space-y-1">
                   <Label className="ml-8">Description</Label>
 
-                  <InfoPill className="text-xs md:text-base">
+                  <InfoPill className="text-xs">
                     {hostel && (
                       <>
                         {hostel.units} unit{Number(hostel.units) > 1 ? "s" : ""}{" "}
@@ -649,7 +655,7 @@ export default function Hostelview() {
                 {isEntire && (
                   <div className="space-y-1">
                     <Label className="ml-8">Bedrooms and Toilets</Label>
-                    <InfoPill className="text-xs md:text-base">
+                    <InfoPill className="text-xs">
                       {hostel && (
                         <>
                           {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
@@ -669,7 +675,7 @@ export default function Hostelview() {
                 {/* Security */}
                 <div className="space-y-1">
                   <Label className="ml-8">Security</Label>
-                  <InfoPill className="text-xs md:text-base">
+                  <InfoPill className="text-xs">
                     {parseList(hostel?.security).join(" : ")}
                   </InfoPill>
                 </div>
@@ -677,7 +683,7 @@ export default function Hostelview() {
                 {/* Water */}
                 <div className="space-y-1">
                   <Label className="ml-8">Water</Label>
-                  <InfoPill className="text-xs md:text-base">
+                  <InfoPill className="text-xs">
                     {parseList(hostel?.water).join(" : ")}
                   </InfoPill>
                 </div>
@@ -1070,7 +1076,11 @@ export default function Hostelview() {
                 <div className="pt-2 w-full">
                   <button
                     disabled={!agreed}
-                    onClick={() => navigate(`/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`)}
+                    onClick={() =>
+                      navigate(
+                        `/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`,
+                      )
+                    }
                     className={clsx(
                       "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
                       agreed
