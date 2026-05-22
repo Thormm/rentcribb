@@ -177,11 +177,13 @@ interface HostSpace {
 // ----------------------- API -----------------------
 
 async function getRequests(): Promise<LiveRequest[]> {
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const res = await fetch("https://www.cribb.africa/apigets.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       action: "get_requests_by_school",
+      school: login?.school
     }),
   });
 
@@ -584,7 +586,7 @@ export default function StudentListing() {
     fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "getInstitutes" }),
+      body: JSON.stringify({ action: "getInstitutes", school: login?.school }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -669,7 +671,7 @@ export default function StudentListing() {
                   <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
                     Available Requests in{" "}
                     <span className="text-[#C2C8DA]">
-                      {filters.school ? filters.school.split(" - ")[0] : "All"}
+                      {filters.school ? filters.school.split(" - ")[0] : login?.school}
                     </span>
                   </h1>
                 </div>
