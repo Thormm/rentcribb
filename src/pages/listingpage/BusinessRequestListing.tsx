@@ -183,7 +183,7 @@ async function getRequests(): Promise<LiveRequest[]> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       action: "get_requests_by_school",
-      school: login?.school
+      school: login?.school,
     }),
   });
 
@@ -671,7 +671,9 @@ export default function StudentListing() {
                   <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
                     Available Requests in{" "}
                     <span className="text-[#C2C8DA]">
-                      {filters.school ? filters.school.split(" - ")[0] : login?.school}
+                      {filters.school
+                        ? filters.school.split(" - ")[0]
+                        : login?.school}
                     </span>
                   </h1>
                 </div>
@@ -681,7 +683,7 @@ export default function StudentListing() {
               <div className="flex flex-col items-end md:hidden space-y-3">
                 <button
                   onClick={() => navigate("/request")}
-                  className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
+                  className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
                 >
                   <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
                   LIST SPACE
@@ -689,15 +691,11 @@ export default function StudentListing() {
 
                 <div className="grid grid-cols-1 items-end">
                   <button
-                    className="inline-flex items-center justify-end gap-1 mt-3 cursor-pointer"
+                    className="justify-end gap-1 mt-3 cursor-pointer"
                     onClick={() => setShowAllFilters((v) => !v)}
                   >
-                    <span className="text-sm md:text-md text-[blue]">
-                      {showAllFilters ? "Hide filters" : "Show all Filter"}
-                    </span>
-
-                    <span className="text-sm md:text-md text-[blue] leading-none">
-                      ›
+                    <span className="text-xs md:text-md text-[blue] p-1 bg-white rounded">
+                      {showAllFilters ? "Hide filters" : "Show all Filter"} ›
                     </span>
                   </button>
                 </div>
@@ -837,10 +835,10 @@ export default function StudentListing() {
           </div>
 
           {/* RIGHT SIDE DESKTOP */}
-          <div className="hidden md:flex flex-col items-end space-y-8">
+          <div className="hidden md:flex flex-col items-end space-y-5">
             <button
               onClick={() => navigate("/request")}
-              className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
+              className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
             >
               <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
               LIST SPACE
@@ -851,12 +849,8 @@ export default function StudentListing() {
                 className="inline-flex items-center justify-end gap-1 mt-3 cursor-pointer"
                 onClick={() => setShowAllFilters((v) => !v)}
               >
-                <span className="text-xs md:text-md text-[blue]">
-                  {showAllFilters ? "Hide filters" : "Show all Filter"}
-                </span>
-
-                <span className="text-xs md:text-md text-[blue] leading-none">
-                  ›
+                <span className="text-xs md:text-md text-[#0556F8] p-1 bg-white rounded">
+                  {showAllFilters ? "Hide filters" : "Show all Filter"} ›
                 </span>
               </button>
             </div>

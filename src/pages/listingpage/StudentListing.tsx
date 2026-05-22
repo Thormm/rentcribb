@@ -457,13 +457,9 @@ export default function StudentListing() {
                   className="inline-flex items-center gap-1 mt-3 cursor-pointer"
                   onClick={() => setShowAllFilters((v) => !v)}
                 >
-                  <span className="text-sm md:text-md text-[blue]">
-                    {showAllFilters ? "Hide filters" : "Show all Filter"}
-                  </span>
-
-                  <span className="text-sm md:text-md text-[blue] leading-none">
-                    ›
-                  </span>
+                  <span className="text-xs md:text-md text-[#0556F8] p-1 bg-white rounded">
+                  {showAllFilters ? "Hide filters" : "Show all Filter"} ›
+                </span>
                 </button>
               </div>
             </div>
@@ -577,7 +573,7 @@ export default function StudentListing() {
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="flex-col hidden md:flex items-end space-y-8">
+          <div className="flex-col hidden md:flex items-end space-y-5">
             <button
               onClick={() => navigate("/request")}
               className="justify-self-end cursor-pointer text-xs md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
@@ -590,13 +586,9 @@ export default function StudentListing() {
               className="inline-flex items-center gap-1 mt-3 cursor-pointer"
               onClick={() => setShowAllFilters((v) => !v)}
             >
-              <span className="text-sm md:text-md text-[blue]">
-                {showAllFilters ? "Hide filters" : "Show all Filter"}
-              </span>
-
-              <span className="text-sm md:text-md text-[blue] leading-none">
-                ›
-              </span>
+              <span className="text-xs md:text-md text-[#0556F8] p-1 bg-white rounded">
+                  {showAllFilters ? "Hide filters" : "Show all Filter"} ›
+                </span>
             </button>
           </div>
         </div>
