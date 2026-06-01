@@ -8,6 +8,7 @@ import { FiMail } from "react-icons/fi";
 import { TbUserSquare } from "react-icons/tb";
 import { RiInformationLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import Spaceholder from "../../components/Spaceholder.tsx";
 
 // Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -94,6 +95,12 @@ function PaginatedList({
     status: string;
   }[];
 }) {
+
+   if (data.length === 0) {
+      return (
+        <Spaceholder />
+      );
+    }
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -114,7 +121,7 @@ function PaginatedList({
         {currentData.map((item) => (
           <div
             key={item.id}
-            className="flex md:w-2/3  justify-between items-center px-4 md:px-8 py-3 md:py-5 rounded-4xl border border-black"
+            className="flex justify-between items-center px-4 md:px-8 py-3 md:py-5 rounded-4xl border border-black"
           >
             <div className="flex items-center gap-3">
               {item.status === "done" ? (
