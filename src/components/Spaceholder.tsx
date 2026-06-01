@@ -1,4 +1,4 @@
-import spacebanner from "../../src/assets/spacebanner.jpg";
+import spacebanner from "../../src/assets/spacebanner.png";
 type SpaceholderProps = {
   className?: string;
   title?: string;
@@ -12,7 +12,7 @@ export default function Spaceholder({
 }: SpaceholderProps) {
   return (
     <div
-      className={`relative w-full overflow-hidden ${className}`}
+      className={`relative w-full rounded overflow-hidden ${className}`}
     >
       {/* Background Image */}
       <img
