@@ -10,6 +10,7 @@ import {
   MdDoubleArrow,
 } from "react-icons/md";
 import { RiStickyNoteAddLine } from "react-icons/ri";
+import Spaceholder from "../../components/Spaceholder";
 
 // ✅ Reusable Label
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -99,6 +100,12 @@ function PaginatedList({
     details: string;
   }[];
 }) {
+
+  if(data.length === 0) {
+    return(
+      <Spaceholder />
+    )
+  }
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);

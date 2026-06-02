@@ -9,6 +9,7 @@ import { FiMail } from "react-icons/fi";
 import { MdOutlinePending } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import LGAS_DATA from "../../components/localgovt.json";
+import Spaceholder from "../../components/Spaceholder.tsx";
 
 // === Helper to get login info from sessionStorage ===
 const getLoginData = () => {
@@ -785,97 +786,104 @@ const Overview = () => {
                 </div>
 
                 {/* Reviews list */}
-                <div className="space-y-3 md:space-y-6">
-                  {reviews.map((r) => {
-                    const isExpanded = expanded === r.id;
-                    return (
-                      <div
-                        key={r.id}
-                        className="border-black rounded-4xl border px-3 md:px-6 py-3 md:py-4 shadow-sm flex flex-col"
-                      >
-                        {/* Row 1 */}
-                        <div className="flex items-center w-full gap-2 md:gap-4">
-                          {/* Icon */}
-                          <div className="flex-shrink-0 w-5 md:w-6 flex justify-center">
-                            <PiHouse className="w-4 h-4 md:w-6 md:h-6 text-black" />
-                          </div>
+                {reviews.length === 0 ? (
+                  <Spaceholder />
+                ) : (
+                  <div className="space-y-3 md:space-y-6">
+                    {reviews.map((r) => {
+                      const isExpanded = expanded === r.id;
+                      return (
+                        <div
+                          key={r.id}
+                          className="border-black rounded-4xl border px-3 md:px-6 py-3 md:py-4 shadow-sm flex flex-col"
+                        >
+                          {/* Row 1 */}
+                          <div className="flex items-center w-full gap-2 md:gap-4">
+                            {/* Icon */}
+                            <div className="flex-shrink-0 w-5 md:w-6 flex justify-center">
+                              <PiHouse className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                            </div>
 
-                          {/* Date */}
-                          <div className="flex-shrink-0 w-[90px] md:w-[120px] text-xs md:text-sm font-normal text-black text-left">
-                            {r.date}
-                          </div>
+                            {/* Date */}
+                            <div className="flex-shrink-0 w-[90px] md:w-[120px] text-xs md:text-sm font-normal text-black text-left">
+                              {r.date}
+                            </div>
 
-                          {/* Name */}
-                          <div className="flex-grow min-w-0 text-xs md:text-sm text-black font-normal text-left break-words">
-                            {r.name}
-                          </div>
+                            {/* Name */}
+                            <div className="flex-grow min-w-0 text-xs md:text-sm text-black font-normal text-left break-words">
+                              {r.name}
+                            </div>
 
-                          {/* Dropdown icon */}
-                          <div
-                            className="flex-shrink-0 w-5 md:w-6 flex justify-center cursor-pointer"
-                            onClick={() =>
-                              setExpanded(isExpanded ? null : r.id)
-                            }
-                          >
-                            {isExpanded ? (
-                              <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
-                            ) : (
-                              <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Expanded content */}
-                        {isExpanded && (
-                          <div className="mt-3 px-10">
-                            {/* Stars + POST */}
-                            <div className="flex flex-col items-center w-full gap-3">
-                              {/* Stars + POST in same row, centered */}
-                              <div className="flex items-center justify-center gap-3">
-                                {/* Stars */}
-                                <div className="flex items-center gap-1">
-                                  {Array.from({ length: 5 }).map((_, i) =>
-                                    i < (ratings[r.id] || 0) ? (
-                                      <AiFillStar
-                                        key={i}
-                                        className="w-7 h-7 text-yellow-400 cursor-pointer"
-                                        onClick={() => handleStarClick(r.id, i)}
-                                      />
-                                    ) : (
-                                      <AiOutlineStar
-                                        key={i}
-                                        className="w-7 h-7 text-gray-300 cursor-pointer"
-                                        onClick={() => handleStarClick(r.id, i)}
-                                      />
-                                    ),
-                                  )}
-                                </div>
-
-                                {/* POST button */}
-                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-black text-[#D6FFC3] text-sm font-medium cursor-pointer">
-                                  <FiArrowUpRight className="w-4 h-4" />
-                                  POST
-                                </span>
-                              </div>
-
-                              {/* Feedback textarea */}
-                              <div className="w-full">
-                                <textarea
-                                  value={feedbackTexts[r.id] || ""}
-                                  onChange={(e) =>
-                                    handleTextChange(r.id, e.target.value)
-                                  }
-                                  className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl border border-black bg-white focus:outline-none resize-none text-sm"
-                                />
-                              </div>
+                            {/* Dropdown icon */}
+                            <div
+                              className="flex-shrink-0 w-5 md:w-6 flex justify-center cursor-pointer"
+                              onClick={() =>
+                                setExpanded(isExpanded ? null : r.id)
+                              }
+                            >
+                              {isExpanded ? (
+                                <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                              ) : (
+                                <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                              )}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
 
+                          {/* Expanded content */}
+                          {isExpanded && (
+                            <div className="mt-3 px-10">
+                              {/* Stars + POST */}
+                              <div className="flex flex-col items-center w-full gap-3">
+                                {/* Stars + POST in same row, centered */}
+                                <div className="flex items-center justify-center gap-3">
+                                  {/* Stars */}
+                                  <div className="flex items-center gap-1">
+                                    {Array.from({ length: 5 }).map((_, i) =>
+                                      i < (ratings[r.id] || 0) ? (
+                                        <AiFillStar
+                                          key={i}
+                                          className="w-7 h-7 text-yellow-400 cursor-pointer"
+                                          onClick={() =>
+                                            handleStarClick(r.id, i)
+                                          }
+                                        />
+                                      ) : (
+                                        <AiOutlineStar
+                                          key={i}
+                                          className="w-7 h-7 text-gray-300 cursor-pointer"
+                                          onClick={() =>
+                                            handleStarClick(r.id, i)
+                                          }
+                                        />
+                                      ),
+                                    )}
+                                  </div>
+
+                                  {/* POST button */}
+                                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-black text-[#D6FFC3] text-sm font-medium cursor-pointer">
+                                    <FiArrowUpRight className="w-4 h-4" />
+                                    POST
+                                  </span>
+                                </div>
+
+                                {/* Feedback textarea */}
+                                <div className="w-full">
+                                  <textarea
+                                    value={feedbackTexts[r.id] || ""}
+                                    onChange={(e) =>
+                                      handleTextChange(r.id, e.target.value)
+                                    }
+                                    className="w-full min-h-[80px] py-2 px-3 text-black rounded-xl border border-black bg-white focus:outline-none resize-none text-sm"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
                 {/* Feedback area */}
                 <div className="mt-10">
                   <Label>FEEDBACK</Label>

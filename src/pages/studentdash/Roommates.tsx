@@ -10,6 +10,7 @@ import { CgCross } from "react-icons/cg";
 import { BiComment } from "react-icons/bi";
 import { FaToggleOn } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import Spaceholder from "../../components/Spaceholder";
 
 const getLoginData = () => {
   try {
@@ -70,6 +71,12 @@ function PaginatedCards() {
         console.error(err);
       });
   }, []);
+
+  if (data.length === 0) {
+    return (
+      <Spaceholder />
+    )
+  }
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
@@ -180,6 +187,12 @@ function MatchedCards() {
         console.error(err);
       });
   }, []);
+
+  if (data.length === 0) {
+    return (
+      <Spaceholder />
+    )
+  }
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 

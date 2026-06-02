@@ -18,7 +18,7 @@ export default function Spaceholder({
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1200); // adjust duration
+    }, 1600); // adjust duration
 
     return () => clearTimeout(timer);
   }, []);

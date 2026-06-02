@@ -21,6 +21,7 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdOutlineCall } from "react-icons/md";
 import { FiCopy } from "react-icons/fi";
+import Spaceholder from "../../components/Spaceholder";
 
 // ----------------------- Reusable Label -----------------------
 type LabelProps = React.PropsWithChildren<{ className?: string }>;
@@ -245,6 +246,12 @@ function RequestsCards({
       .finally(() => setLoading(false));
   }, []);
 
+  if(draftItems.length === 0){
+    return(
+      <Spaceholder />
+    )
+  }
+
   const itemsPerPage = 10;
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
   const currentData = draftItems.slice(
@@ -465,6 +472,12 @@ function BookedCards({ data }: { data: LiveSpace[] }) {
   useEffect(() => {
     setPage(1);
   }, [data]);
+
+  if (data.length === 0) {
+    return(
+      <Spaceholder />
+    )
+  }
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
@@ -866,6 +879,12 @@ function PaginatedHost() {
     fetchBookings();
   }, []);
 
+  if (draftItems.length === 0) {
+    return(
+      <Spaceholder />
+    )
+  }
+
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
   const currentData = draftItems.slice(
     (page - 1) * itemsPerPage,
@@ -891,7 +910,7 @@ function PaginatedHost() {
         {currentData.map((item) => (
           <div
             key={item.id}
-            className="flex gap-6 md:w-2/3 md:min-w-2/3 items-center"
+            className="flex gap-6 items-center"
           >
             <div className="grid  w-full">
               {/* Left card */}
@@ -907,7 +926,7 @@ function PaginatedHost() {
                     <HiOutlineUserCircle className="w-7 h-7 text-black" />
                   </div>
 
-                  <div className="truncate text-xs md:text-sm text-black">
+                  <div className="truncate justify-center text-center items-center text-xs md:text-sm text-black">
                     {item.name?.length > 20
                       ? item.name.slice(0, 20) + "…"
                       : item.name}
