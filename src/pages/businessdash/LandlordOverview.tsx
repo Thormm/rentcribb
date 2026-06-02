@@ -11,6 +11,7 @@ import { PiHouse } from "react-icons/pi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 //import { FaPlus } from "react-icons/fa";
 import { useDashboardTab } from "./DashComponents/DashboardTabContext";
+import Spaceholder from "../../components/Spaceholder.tsx";
 
 const days = [
   "Monday",
@@ -866,105 +867,111 @@ const Landlordoverview: React.FC = () => {
                 {/* --- REVIEWS LIST + PAGINATION --- */}
                 <div>
                   {/* Reviews container (pagination-controlled) */}
-                  <div
-                    className="space-y-8 max-h-[350px] overflow-y-auto pr-2"
-                    style={{
-                      scrollbarColor: "#FFA1A1 transparent",
-                      scrollbarWidth: "thin",
-                    }}
-                  >
-                    {currentItems.map((r) => {
-                      const isExpanded = expanded === r.id;
-                      return (
-                        <div
-                          key={r.id}
-                          className="border-black md:w-2/3 rounded-4xl border px-2 md:px-6 py-2 md:py-4 shadow-sm bg-white"
-                        >
-                          {/* Row 1 */}
-                          <div className="flex items-center">
-                            {/* Left icon */}
-                            <div className="w-6 h-6 md:w-6 md:h-6 flex items-center justify-center text-black">
-                              <PiHouse className="w-4 h-4 md:w-6 md:h-6" />
-                            </div>
-
-                            {/* Date + Name (SAME LINE) */}
-                            <div className="flex flex-grow min-w-0 items-center gap-2 px-2 md:px-4">
-                              <span className="text-[10px] md:text-md font-normal text-black whitespace-nowrap">
-                                {r.date}
-                              </span>
-
-                              <span className="text-xs md:text-md font-normal text-black truncate max-w-[180px]">
-                                {r.name.length > 14
-                                  ? r.name.substring(0, 14) + "..."
-                                  : r.name}
-                              </span>
-                            </div>
-
-                            {/* Dropdown toggle */}
+                  {currentItems.length === 0 ? (
+                    <Spaceholder />
+                  ) : (
+                    <>
+                      <div
+                        className="space-y-8 max-h-[350px] overflow-y-auto pr-2"
+                        style={{
+                          scrollbarColor: "#FFA1A1 transparent",
+                          scrollbarWidth: "thin",
+                        }}
+                      >
+                        {currentItems.map((r) => {
+                          const isExpanded = expanded === r.id;
+                          return (
                             <div
-                              className="w-6 h-6 flex items-center justify-center cursor-pointer"
-                              onClick={() =>
-                                setExpanded(isExpanded ? null : r.id)
-                              }
+                              key={r.id}
+                              className="border-black md:w-2/3 rounded-4xl border px-2 md:px-6 py-2 md:py-4 shadow-sm bg-white"
                             >
-                              {isExpanded ? (
-                                <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
-                              ) : (
-                                <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
-                              )}
-                            </div>
-                          </div>
+                              {/* Row 1 */}
+                              <div className="flex items-center">
+                                {/* Left icon */}
+                                <div className="w-6 h-6 md:w-6 md:h-6 flex items-center justify-center text-black">
+                                  <PiHouse className="w-4 h-4 md:w-6 md:h-6" />
+                                </div>
 
-                          {/* Expanded section */}
-                          {isExpanded && (
-                            <div className="mt-3 px-5 md:px-10 space-y-3">
-                              {/* Stars */}
-                              {r.rating !== undefined && (
-                                <div className="flex items-center gap-1">
-                                  {Array.from({ length: 5 }).map((_, i) =>
-                                    i < (r.rating ?? 0) ? (
-                                      <AiFillStar
-                                        key={i}
-                                        className="w-4 h-4 md:w-7 md:h-7 text-yellow-400"
-                                      />
-                                    ) : (
-                                      <AiOutlineStar
-                                        key={i}
-                                        className="w-4 h-4 md:w-7 md:h-7 text-gray-300"
-                                      />
-                                    ),
+                                {/* Date + Name (SAME LINE) */}
+                                <div className="flex flex-grow min-w-0 items-center gap-2 px-2 md:px-4">
+                                  <span className="text-[10px] md:text-md font-normal text-black whitespace-nowrap">
+                                    {r.date}
+                                  </span>
+
+                                  <span className="text-xs md:text-md font-normal text-black truncate max-w-[180px]">
+                                    {r.name.length > 14
+                                      ? r.name.substring(0, 14) + "..."
+                                      : r.name}
+                                  </span>
+                                </div>
+
+                                {/* Dropdown toggle */}
+                                <div
+                                  className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                                  onClick={() =>
+                                    setExpanded(isExpanded ? null : r.id)
+                                  }
+                                >
+                                  {isExpanded ? (
+                                    <IoIosArrowUp className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                                  ) : (
+                                    <IoIosArrowDown className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Expanded section */}
+                              {isExpanded && (
+                                <div className="mt-3 px-5 md:px-10 space-y-3">
+                                  {/* Stars */}
+                                  {r.rating !== undefined && (
+                                    <div className="flex items-center gap-1">
+                                      {Array.from({ length: 5 }).map((_, i) =>
+                                        i < (r.rating ?? 0) ? (
+                                          <AiFillStar
+                                            key={i}
+                                            className="w-4 h-4 md:w-7 md:h-7 text-yellow-400"
+                                          />
+                                        ) : (
+                                          <AiOutlineStar
+                                            key={i}
+                                            className="w-4 h-4 md:w-7 md:h-7 text-gray-300"
+                                          />
+                                        ),
+                                      )}
+                                    </div>
+                                  )}
+                                  {/* Review text */}
+                                  {r.text && (
+                                    <p className="text-xs md:text-sm text-black leading-relaxed">
+                                      {r.text}
+                                    </p>
                                   )}
                                 </div>
                               )}
-                              {/* Review text */}
-                              {r.text && (
-                                <p className="text-xs md:text-sm text-black leading-relaxed">
-                                  {r.text}
-                                </p>
-                              )}
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                          );
+                        })}
+                      </div>
 
-                  {/* Pagination buttons */}
-                  <div className="flex justify-center gap-2 mt-6">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button
-                        key={i + 1}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`px-4 py-2 rounded-lg border text-sm transition ${
-                          currentPage === i + 1
-                            ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                            : "bg-white text-black border-black"
-                        }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
+                      {/* Pagination buttons */}
+                      <div className="flex justify-center gap-2 mt-6">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <button
+                            key={i + 1}
+                            onClick={() => setCurrentPage(i + 1)}
+                            className={`px-4 py-2 rounded-lg border text-sm transition ${
+                              currentPage === i + 1
+                                ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
+                                : "bg-white text-black border-black"
+                            }`}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}

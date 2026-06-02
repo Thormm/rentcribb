@@ -22,6 +22,7 @@ import {
   IoMdCheckmarkCircleOutline,
 } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import Spaceholder from "../../components/Spaceholder.tsx";
 
 interface DraftItem {
   id: number | string;
@@ -159,6 +160,12 @@ function PaginatedBookings() {
 
     fetchBookings();
   }, []);
+
+  if (draftItems.length === 0) {
+    return (
+      <Spaceholder/>
+    )
+  }
 
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
   const currentData = draftItems.slice(
@@ -532,6 +539,12 @@ function PaginatedRequests() {
       showAlert("Something went wrong", "info");
     }
   };
+
+  if (requests.length === 0) {
+    return (
+      <Spaceholder />
+    )
+  }
 
   const totalPages = Math.ceil(requests.length / itemsPerPage);
 

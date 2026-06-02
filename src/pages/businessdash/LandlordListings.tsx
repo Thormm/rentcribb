@@ -30,6 +30,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { BiComment } from "react-icons/bi";
 import { RiInformationLine } from "react-icons/ri";
 import { GrStatusGood } from "react-icons/gr";
+import Spaceholder from "../../components/Spaceholder.tsx";
 
 // ----------------------- CONSTANTS -----------------------
 
@@ -143,6 +144,8 @@ function PaginatedDrafts() {
     });
   }, []);
 
+   
+
   const handleSearch = useMemo(
     () =>
       debounce((val: string) => {
@@ -225,6 +228,12 @@ function PaginatedDrafts() {
 
     return data;
   }, [drafts, search, sortBy, fuse]);
+
+  if (filteredDrafts.length === 0) {
+      return (
+        <Spaceholder />
+      );
+    }
 
   const totalPages = Math.ceil(filteredDrafts.length / itemsPerPage);
   const currentData = filteredDrafts.slice(
@@ -518,7 +527,7 @@ async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
   return [...entire, ...shared];
 }
 
-function PaginatedCards() {
+function LiveCards() {
   const [cards, setCards] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -530,6 +539,12 @@ function PaginatedCards() {
 
     getLiveSpaces(login.user).then((data) => setCards(data));
   }, []);
+
+  if (cards.length === 0) {
+      return (
+        <Spaceholder />
+      );
+    }
 
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentData = cards.slice(
@@ -747,7 +762,7 @@ const Landlordlistings: React.FC = () => {
                     --- YOUR LISTINGS -------------
                   </span>
                 </div>
-                <PaginatedCards />
+                <LiveCards />
                 <button
                   onClick={() => navigate("/businessrequests")}
                   className="w-full md:w-2/3 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
