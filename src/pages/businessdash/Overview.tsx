@@ -55,11 +55,11 @@ function SectionHeader({ title }: { title: string }) {
     <div className="pt-5 text-black">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl md:text-4xl font-extrabold">Hola, {title}</h2>
-        <div className="h-12 w-12 rounded-full bg-black flex items-center justify-center">
-          <BsQuestionCircle className="text-white" size={40} />
-        </div>
+        <button className="p-2 rounded-full bg-black transition">
+          <BsQuestionCircle className="w-5 h-5 text-white" />
+        </button>
       </div>
-      <p className="text-xs md:text-sm pt-5">
+      <p className="text-xs md:text-sm pt-2">
         Our goal is for your{" "}
         <span className="text-[#FFA1A1] font-semibold">BUSINESS</span> to be{" "}
         <span className="text-[#FFA1A1] font-semibold">MADE SOFT</span>
