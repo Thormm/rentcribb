@@ -350,18 +350,18 @@ export default function StudentListing() {
     }
   }, [navigate]);
 
-  const statesAndLgas: { state: string; lgas: string[] }[] =
-    React.useMemo(() => {
-      try {
-        if (Array.isArray(LGAS_DATA as any)) return LGAS_DATA as any;
-        return Object.keys(LGAS_DATA as any).map((s) => ({
-          state: s,
-          lgas: (LGAS_DATA as any)[s],
-        }));
-      } catch (e) {
-        return [];
-      }
-    }, []);
+  const schoolStateLgas = React.useMemo(() => {
+    try {
+      const school = login?.school || "";
+      const match = school.match(/\((.*?)\)/);
+      const stateName = match?.[1]?.trim();
+      if (!stateName) return [];
+
+      return (LGAS_DATA as any)[stateName] || [];
+    } catch {
+      return [];
+    }
+  }, [login?.school]);
 
   const [filters, setFilters] = useState({
     space: "",
@@ -458,8 +458,8 @@ export default function StudentListing() {
                   onClick={() => setShowAllFilters((v) => !v)}
                 >
                   <span className="text-xs md:text-md text-[#0556F8] p-1 bg-white rounded">
-                  {showAllFilters ? "Hide filters" : "Show all Filter"} ›
-                </span>
+                    {showAllFilters ? "Hide filters" : "Show all Filter"} ›
+                  </span>
                 </button>
               </div>
             </div>
@@ -526,7 +526,7 @@ export default function StudentListing() {
                 {/* LOCATION SPECIAL CASE */}
                 <FilterSelect
                   label="Location"
-                  placeholder="Around Where?"
+                  placeholder="All Areas?"
                   value={filters.location}
                   onChange={(value) =>
                     setFilters({
@@ -535,14 +535,10 @@ export default function StudentListing() {
                     })
                   }
                 >
-                  {statesAndLgas.map((s) => (
-                    <optgroup label={s.state} key={s.state}>
-                      {s.lgas.map((l) => (
-                        <option key={l} value={`${s.state} - ${l}`}>
-                          {l}
-                        </option>
-                      ))}
-                    </optgroup>
+                  {schoolStateLgas.map((lga: string) => (
+                    <option key={lga} value={lga}>
+                      {lga}
+                    </option>
                   ))}
                 </FilterSelect>
               </div>
@@ -587,8 +583,8 @@ export default function StudentListing() {
               onClick={() => setShowAllFilters((v) => !v)}
             >
               <span className="text-xs md:text-md text-[#0556F8] p-1 bg-white rounded">
-                  {showAllFilters ? "Hide filters" : "Show all Filter"} ›
-                </span>
+                {showAllFilters ? "Hide filters" : "Show all Filter"} ›
+              </span>
             </button>
           </div>
         </div>

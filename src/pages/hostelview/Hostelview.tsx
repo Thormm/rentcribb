@@ -1,5 +1,6 @@
 import { useAlert } from "../../App";
 import React from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   FaStar,
   FaRegStar,
@@ -8,9 +9,10 @@ import {
   FaShareAlt,
   FaCalendarAlt,
   FaShieldAlt,
-  FaUser,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { HiOutlineUserCircle } from "react-icons/hi";
+import { TbUserSquare } from "react-icons/tb";
 import InfoPill, { DfButton } from "../../components/Pill";
 import clsx from "clsx"; // optional, for cleaner class merging
 import Card from "../../components/Cards";
@@ -18,6 +20,8 @@ import Footer from "../../components/Footer";
 import imgright from "../../assets/hero.jpg";
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { IoIosArrowBack } from "react-icons/io";
+import mapbanner from "../../../src/assets/mapbanner.png";
 
 interface LiveSpace {
   id: string;
@@ -147,7 +151,6 @@ function SectionHeader({
     </div>
   );
 }
-
 
 function Label({
   children,
@@ -283,9 +286,29 @@ export default function Hostelview() {
       const data = await res.json();
 
       if (data?.status === "success" || data?.success) {
-        showAlert("Booked successfully", "success", true);
+        showAlert("Connecting to host now", "success", true);
+
+        navigate(
+          `/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`,
+        );
       } else {
-        showAlert(data?.message || "Unable to book inspection", "warning");
+        const msg = data?.message || "Unable to book Connect";
+
+        // ===============================
+        // SUBSCRIPTION / PLAN ERRORS
+        // ===============================
+        if (
+          msg.includes("No active rent package") ||
+          msg.includes("expired") ||
+          msg.includes("Invalid rent package")
+        ) {
+          showAlert(msg, "warning");
+
+          navigate("/rentplan");
+          return;
+        }
+
+        showAlert(msg, "warning", true);
       }
     } catch (e) {
       showAlert("Network error", "warning");
@@ -454,22 +477,34 @@ export default function Hostelview() {
     fetchHost();
   }, [hostel?.user]);
 
+  const capitalize = (value?: string) =>
+    value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+
   const otherCards = cards.filter(
     (c) => !(String(c.id) === String(id) && c.space === space_type),
   );
 
   if (!hostel) {
-    return <div className="p-10">Loading hostel...</div>;
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-black text-center">
+        <>
+          <AiOutlineLoading3Quarters className="w-8 h-8 md:w-10 md:h-10 animate-spin mb-3" />
+          <h1 className="text-lg md:text-xl font-semibold">Loading...</h1>
+        </>
+      </div>
+    );
   }
 
   return (
     <div className="bg-[#F3EDFE]">
       <section className=" w-full ">
         {/* SECTION 1: Headbar */}
-        <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+        <div className="relative w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
           <div className="mx-auto w-full max-w-6xl px-4">
             {/* small kicker */}
-            <div className="text-md font-semibold text-[#FFA1A1]">LISTINGS</div>
+            <div className="text-md font-semibold text-[#FFA1A1]">
+              HOSTEL VIEW
+            </div>
 
             <div className="mt-1 flex items-center justify-between gap-4">
               <h1 className="text-4xl my-4 font-extrabold ">
@@ -480,6 +515,13 @@ export default function Hostelview() {
               </h1>
             </div>
           </div>
+
+          <button
+            onClick={() => navigate(`/studentlisting`)}
+            className="cursor-pointer absolute right-3 bottom-3 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+          >
+            <IoIosArrowBack size={14} />
+          </button>
         </div>
       </section>
 
@@ -625,34 +667,16 @@ export default function Hostelview() {
                           : ""}{" "}
                         is available around {hostel.location} for{" "}
                         <span className="font-extrabold">
-                          ₦
-                          {Number(
-                            hostel.space_type.toLowerCase().includes("shared")
-                              ? hostel.rent
-                              : hostel.price || 0,
-                          ).toLocaleString()}
+                          ₦{Number(hostel.rent || 0).toLocaleString()}
                         </span>{" "}
-                        {hostel.duration}.
-                        {!isEntire && (
-                          <>
-                            {" "}
-                            Preferred Gender:{" "}
-                            <span className="font-semibold">
-                              {hostel.pref_gender}
-                            </span>
-                            , Religion:{" "}
-                            <span className="font-semibold">
-                              {hostel.pref_religion}
-                            </span>
-                          </>
-                        )}
+                        {hostel.duration}
                       </>
                     )}
                   </InfoPill>
                 </div>
-
-                {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}
-                {isEntire && (
+                {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}{" "}
+                {/* Preference (SHARED SPACE ONLY) */}
+                {isEntire ? (
                   <div className="space-y-1">
                     <Label className="ml-8">Bedrooms and Toilets</Label>
                     <InfoPill className="text-xs">
@@ -670,8 +694,16 @@ export default function Hostelview() {
                       )}
                     </InfoPill>
                   </div>
+                ) : (
+                  <div className="space-y-1">
+                    <Label className="ml-8">Preference</Label>
+                    <InfoPill className="text-xs">
+                      {capitalize(hostel?.pref_gender)} :{" "}
+                      {capitalize(hostel?.pref_religion)} : {hostel?.pref_year}{" "}
+                      : {capitalize(hostel?.pref_faculty)}
+                    </InfoPill>
+                  </div>
                 )}
-
                 {/* Security */}
                 <div className="space-y-1">
                   <Label className="ml-8">Security</Label>
@@ -679,7 +711,6 @@ export default function Hostelview() {
                     {parseList(hostel?.security).join(" : ")}
                   </InfoPill>
                 </div>
-
                 {/* Water */}
                 <div className="space-y-1">
                   <Label className="ml-8">Water</Label>
@@ -687,7 +718,6 @@ export default function Hostelview() {
                     {parseList(hostel?.water).join(" : ")}
                   </InfoPill>
                 </div>
-
                 {/* Grid pairs */}
                 <div className="space-y-5 md:space-y-5">
                   <div className="grid grid-cols-2 gap-6">
@@ -736,7 +766,6 @@ export default function Hostelview() {
                     </div>
                   </div>
                 </div>
-
                 <div className="mt-8 flex">
                   {/* Left: Available block */}
                   <div className="w-1/2 flex flex-col items-start">
@@ -760,7 +789,6 @@ export default function Hostelview() {
                     </button>
                   </div>
                 </div>
-
                 {/* View House Rules */}
                 <div className="pt-2 w-full">
                   <button
@@ -770,7 +798,6 @@ export default function Hostelview() {
                     View House Rules
                   </button>
                 </div>
-
                 <div
                   className="mt-2 w-full border-t-4"
                   style={{
@@ -779,7 +806,6 @@ export default function Hostelview() {
                       "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
                   }}
                 />
-
                 {/* Report / Share */}
                 <div className="flex items-center justify-between mt-10 text-sm md:text-xl">
                   <button className="inline-flex items-center gap-2 text-red-600  underline underline-offset-4">
@@ -804,7 +830,7 @@ export default function Hostelview() {
 
                       <button
                         onClick={() => setOpenModal(null)}
-                        className="text-sm underline cursor-pointer"
+                        className="text-sm cursor-pointer"
                       >
                         Close
                       </button>
@@ -815,7 +841,7 @@ export default function Hostelview() {
                         ? parseList(hostel?.all_feature)
                         : parseList(hostel?.house_rules)
                       ).map((item, index) => (
-                        <li key={index} className="border-b pb-1">
+                        <li key={index} className="pb-1">
                           • {item}
                         </li>
                       ))}
@@ -836,8 +862,20 @@ export default function Hostelview() {
             <Maincard className="bg-[#F4F6F5] mt-10 pb-5">
               <SectionHeader title="Map" />
               <div className="px-5 pb-5 pt-3">
-                <div className="h-107 w-full rounded-xl border-2 bg-[#EDEDED] grid place-items-center my-9">
-                  Map Placeholder
+                <div className="h-107 relative w-full rounded-xl border-2 bg-[#EDEDED] grid place-items-center my-9">
+                  <img
+                    src={mapbanner}
+                    alt="Banner"
+                    className="absolute inset-0 h-full w-full object-cover opacity-50"
+                  />
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-black text-center">
+                    <h1 className="text-xl md:text-2xl font-semibold">
+                      Nothing to see yet...
+                    </h1>
+
+                    <p className="mt-3 text-xs md:text-sm">Coming Soon ...</p>
+                  </div>
                 </div>
 
                 {/* Book inspection */}
@@ -875,7 +913,11 @@ export default function Hostelview() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 bg-white rounded-xl border-3 px-2 py-3">
                     <div className="place-items-center">
-                      <FaUser className="text-[16px] md:text-[25px]" />
+                      {hostel?.uploader === "agent" ? (
+                        <HiOutlineUserCircle className="text-[16px] md:text-[25px]" />
+                      ) : (
+                        <TbUserSquare className="text-[16px] md:text-[25px]" />
+                      )}
                     </div>
 
                     <span className="font-semibold text-sm md:text-xl mr-5 md:mr-35">
@@ -1031,7 +1073,7 @@ export default function Hostelview() {
                 </div>
 
                 {/* Book Inspection */}
-                <div className="pt-2 w-full">
+                <div className="pt-2 w-full hidden">
                   <button
                     disabled={!agreed || booking}
                     onClick={handleBookInspection}
@@ -1076,11 +1118,7 @@ export default function Hostelview() {
                 <div className="pt-2 w-full">
                   <button
                     disabled={!agreed}
-                    onClick={() =>
-                      navigate(
-                        `/connected?uploader=${hostel?.user}&&type=${hostel?.uploader}`,
-                      )
-                    }
+                    onClick={handleBookInspection}
                     className={clsx(
                       "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
                       agreed

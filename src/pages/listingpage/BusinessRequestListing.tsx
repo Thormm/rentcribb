@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import React, { useState, useEffect, useMemo } from "react";
 import Footer from "../../components/Footer";
 import clsx from "clsx";
@@ -143,6 +144,22 @@ const extraFilters = [
       },
     ],
   },
+  {
+  key: "budget",
+  label: "Budget",
+  placeholder: "Any Budget",
+  options: [
+    { label: "₦50,000 - ₦100,000", value: "₦50,000 - ₦100,000" },
+    { label: "₦100,000 - ₦250,000", value: "₦100,000 - ₦250,000" },
+    { label: "₦250,000 - ₦500,000", value: "₦250,000 - ₦500,000" },
+    { label: "₦500,000 - ₦750,000", value: "₦500,000 - ₦750,000" },
+    { label: "₦750,000 - ₦1,000,000", value: "₦750,000 - ₦1,000,000" },
+    { label: "₦1,000,000 - ₦2,000,000", value: "₦1,000,000 - ₦2,000,000" },
+    { label: "₦2,000,000 - ₦3,000,000", value: "₦2,000,000 - ₦3,000,000" },
+    { label: "₦3,000,000 - ₦4,000,000", value: "₦3,000,000 - ₦4,000,000" },
+    { label: "₦4,000,000 - ₦5,000,000", value: "₦4,000,000 - ₦5,000,000" },
+  ],
+}
 ];
 
 // ----------------------- TYPES -----------------------
@@ -162,6 +179,8 @@ interface LiveRequest {
   school: string;
   status: string;
   created_at: string;
+  login_last: string;
+  response_count: number;
 }
 
 interface HostSpace {
@@ -204,6 +223,8 @@ async function getRequests(): Promise<LiveRequest[]> {
     school: r.school,
     status: r.status,
     created_at: r.created_at,
+    login_last: r.login_last,
+    response_count: r.response_count ?? 0,
   }));
 }
 
@@ -277,7 +298,7 @@ function PaginatedCards({
                     </div>
 
                     <div className="px-3 py-1 rounded-lg bg-[#D6FFC3] text-[10px] md:text-[12px] text-black">
-                      7 hosts responded
+                      {card.response_count} hosts responded
                     </div>
                   </div>
 
@@ -324,7 +345,7 @@ function PaginatedCards({
 
                     {/* time badge */}
                     <span className="text-[11px] rounded-md px-2 py-0.5 bg-white text-gray-700">
-                      {daysAgo(card.created_at)}
+                      {daysAgo(card.login_last)}
                     </span>
                   </span>
                 </div>
@@ -366,7 +387,7 @@ function PaginatedCards({
 
                 {/* bottom row: share, reply button */}
                 <div className="mt-5 flex items-center justify-between">
-                  <div className="flex items-center">
+                  <div className="items-center hidden">
                     <span className="underline text-sm md:text-md text-[#2563eb]">
                       SHARE
                     </span>
@@ -421,7 +442,7 @@ export default function StudentListing() {
   const [activeRequest, setActiveRequest] = useState<LiveRequest | null>(null);
   const [replySpaces, setReplySpaces] = useState<HostSpace[]>([]);
   const [selectedReplyKeys, setSelectedReplyKeys] = useState<string[]>([]);
-
+  const { showAlert } = useAlert();
   const [institutes, setInstitutes] = useState<
     { id: number; institution: string }[]
   >([]);
@@ -508,59 +529,115 @@ export default function StudentListing() {
   ];
 
   async function getMySpacesForReply(
-    user: string,
-    school: string,
-  ): Promise<HostSpace[]> {
-    const res = await fetch("https://www.cribb.africa/apigets.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "get_reply_spaces",
-        user,
-        target_university: school,
-      }),
-    });
-    console.log("i even reach here");
-    const data = await res.json();
-    console.log("API response for spaces:", data);
+  user: string,
+  school: string,
+) {
+  const res = await fetch("https://www.cribb.africa/apigets.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action: "get_reply_spaces",
+      user,
+      target_university: school,
+    }),
+  });
 
-    // 👇 IMPORTANT: always read spaces safely
+  return await res.json();
+}
+
+async function openReply(card: LiveRequest) {
+  setReplyLoading(true);
+  setReplyOpen(true);
+
+  try {
+    const data = await getMySpacesForReply(
+      login.user,
+      card.school,
+    );
+
+    // No verified account
+    if (
+      !data.success &&
+      data.error_type === "no_account"
+    ) {
+      showAlert(
+        data.message ||
+          "You don't have an agent or landlord account",
+        "warning",
+        true,
+      );
+
+      navigate("/businessonboarding");
+      return;
+    }
+
+    // No active subscription
+    if (
+      !data.success &&
+      data.error_type === "no_subscription"
+    ) {
+      showAlert(
+        data.message ||
+          "You don't have a valid subscription",
+        "warning",
+        true,
+      );
+
+      navigate("/businessdash?goto=subscriptions");
+      return;
+    }
+
+    // Any other backend error
+    if (!data.success) {
+      showAlert(
+        data.message || "Unable to load spaces",
+        "warning",
+        true,
+      );
+      return;
+    }
+
+    // Account warning but still allow access
+    if (data.warning) {
+      showAlert(
+        data.warning,
+        "warning",
+        true,
+      );
+    }
+
     const spaces = Array.isArray(data?.spaces)
       ? data.spaces
-      : typeof data?.spaces === "string"
-        ? JSON.parse(data.spaces)
-        : [];
+      : [];
 
-    return spaces.map((r: any) => ({
+    const mappedSpaces: HostSpace[] = spaces.map((r: any) => ({
       id: Number(r.id),
       space_name: r.space_name,
       full_address: r.full_address,
       space_type: r.space_type,
       units: String(r.units),
-      space: r.space_scope, // or r.space_scope depending on backend
+      space: r.space_scope,
       reply_key: `${r.space_scope}-${r.id}`,
     }));
-  }
 
-  async function openReply(card: LiveRequest) {
-    console.log("Opening reply for card:", card);
     setActiveRequest(card);
-    setReplySpaces([]);
+    setReplySpaces(mappedSpaces);
     setSelectedReplyKeys([]);
-    setReplyLoading(true);
-    setReplyOpen(true);
 
-    try {
-      const spaces = await getMySpacesForReply(login.user, card.school);
-      console.log("Fetched spaces:", spaces);
-      setReplySpaces(spaces);
-    } catch (err) {
-      console.error("Error fetching spaces:", err);
-      setReplySpaces([]);
-    } finally {
-      setReplyLoading(false);
-    }
+  } catch (err) {
+    console.error("Error fetching spaces:", err);
+
+    showAlert(
+      "Network error",
+      "warning",
+      true,
+    );
+  } finally {
+    setReplyLoading(false);
   }
+}
 
   async function sendReply() {
     if (!activeRequest) return;
@@ -605,13 +682,14 @@ export default function StudentListing() {
   }, [navigate]);
 
   const [filters, setFilters] = useState({
-    school: "", // default school
+    school: "",
     category: "",
     type: "",
     gender: "",
     moveIn: "",
     features: [] as string[],
     religion: "",
+    budget: "",
   });
 
   const filteredCards = useMemo(() => {
@@ -645,6 +723,11 @@ export default function StudentListing() {
 
       // 7️⃣ Religion filter
       if (filters.religion && card.religion !== filters.religion) return false;
+
+      // 8️⃣ Budget filter
+      if (filters.budget && card.budget !== filters.budget) {
+        return false;
+      }
 
       return true;
     });
@@ -682,7 +765,7 @@ export default function StudentListing() {
               {/* RIGHT SIDE MOBILE */}
               <div className="flex flex-col items-end md:hidden space-y-3">
                 <button
-                  onClick={() => navigate("/request")}
+                  onClick={() => navigate("/businessdash")}
                   className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
                 >
                   <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
@@ -837,7 +920,7 @@ export default function StudentListing() {
           {/* RIGHT SIDE DESKTOP */}
           <div className="hidden md:flex flex-col items-end space-y-5">
             <button
-              onClick={() => navigate("/request")}
+              onClick={() => navigate("/businessdash")}
               className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
             >
               <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
@@ -862,7 +945,7 @@ export default function StudentListing() {
         </div>
       </section>
       {replyOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[30] bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl relative">
             <button
               className="absolute right-4 top-4 text-xl font-bold z-10"

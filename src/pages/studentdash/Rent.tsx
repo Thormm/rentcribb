@@ -775,7 +775,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        Simple, Transparent Plan based on your need
+        We’ve made it a soft experience getting your space ...
       </p>
 
       <div

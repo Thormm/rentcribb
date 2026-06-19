@@ -38,7 +38,7 @@ function SectionHeader({ title }: { title: string }) {
         </div>
       </div>
       <p className="text-xs md:text-sm pt-5">
-        Collect your rewards: You have done the Most !!
+        Collect your rewards : You have done the Most !!
       </p>
 
       <div

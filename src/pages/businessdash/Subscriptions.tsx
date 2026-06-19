@@ -1,3 +1,4 @@
+import { useAlert } from "../../App";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
@@ -95,12 +96,9 @@ function PaginatedList({
     status: string;
   }[];
 }) {
-
-   if (data.length === 0) {
-      return (
-        <Spaceholder />
-      );
-    }
+  if (data.length === 0) {
+    return <Spaceholder />;
+  }
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -188,7 +186,7 @@ const AGENT_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
-  Free: { listing: "Unlimited", connection: "Unlimited" },
+  free: { listing: "Unlimited", connection: "Unlimited" },
   Instant: { listing: "1 Listings", connection: "Unlimited" },
   Explore: { listing: "Unlimited", connection: "Unlimited" },
   Go_pro: {
@@ -201,7 +199,7 @@ const LANDLORD_PLAN_DETAILS: Record<
   string,
   { listing: string; connection: string }
 > = {
-  Free: { listing: "Unlimited", connection: "Unlimited" },
+  free: { listing: "Unlimited", connection: "Unlimited" },
   Instant: { listing: "1 Listings", connection: "Unlimited" },
   Explore: { listing: "Unlimited", connection: "Unlimited" },
   Go_pro: {
@@ -217,7 +215,7 @@ const Subscriptions = () => {
   const [agentPlan, setAgentPlan] = useState<any>({});
   const [landlordPlan, setLandlordPlan] = useState<any>({});
 
-  const [showCongrats, setCongrats] = useState(false);
+  const { showAlert } = useAlert();
   const [activeTab, setActiveTab] = useState("Agent");
   const [agentFilled, setHasAgentEmail] = useState<boolean | undefined>(
     undefined,
@@ -301,11 +299,12 @@ const Subscriptions = () => {
 
       const data = await response.json();
       if (data.success) {
-        setCongrats(true);
-
-        setTimeout(() => {
-          navigate("/businessdash");
-        }, 5000);
+        showAlert(
+          "Your 14-day free trial has started. You have access to all features for the next 14 days. Enjoy exploring!",
+          "success",
+          true,
+        );
+        window.location.href = "/businessdash?goto=subscriptions";
       } else {
         alert(data.message || "Failed to save data.");
       }
@@ -332,8 +331,7 @@ const Subscriptions = () => {
         `/businessonboarding?add=${role === "landlord" ? "Landlord" : "Agent"}`,
       );
       return;
-    }
-    else {
+    } else {
       navigate(
         `/businessplan?role=${role === "landlord" ? "landlord" : "agent"}`,
       );
@@ -605,24 +603,6 @@ const Subscriptions = () => {
           </div>
         </div>
       </section>
-      {showCongrats && (
-        <div className="fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 relative">
-            <p className="text-sm text-center text-gray-600 mb-4">
-              Your 14-day free trial has started. You have access to all
-              features for the next 14 days. Enjoy exploring!
-            </p>
-            <div className="flex justify-center">
-              <button
-                className="px-4 py-2 bg-black text-white rounded-lg"
-                onClick={() => navigate("/businessdash")}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
