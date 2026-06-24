@@ -31,6 +31,7 @@ import { BiComment } from "react-icons/bi";
 import { RiInformationLine } from "react-icons/ri";
 import { GrStatusGood } from "react-icons/gr";
 import Spaceholder from "../../components/Spaceholder.tsx";
+import { useAlert } from "../../App";
 
 // ----------------------- CONSTANTS -----------------------
 
@@ -89,6 +90,46 @@ async function getDraftSpaces(user: string) {
   return [...entire, ...shared];
 }
 
+async function updateLiveSpaceActive(
+  id: string,
+  space: string,
+  user: string,
+  active: number,
+) {
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const signup_key = login?.signup_key || "";
+  const res = await fetch("https://www.cribb.africa/api_save.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "update_live_space_active",
+      signup_key,
+      id,
+      space,
+      user,
+      active,
+    }),
+  });
+  return await res.json();
+}
+
+async function deleteLiveSpace(id: string, space: string, user: string) {
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const signup_key = login?.signup_key || "";
+  const res = await fetch("https://www.cribb.africa/api_save.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "delete_live_space",
+      signup_key,
+      id,
+      space,
+      user,
+    }),
+  });
+  return await res.json();
+}
+
 type DraftItem = {
   id: string;
   name: string;
@@ -143,8 +184,6 @@ function PaginatedDrafts() {
       );
     });
   }, []);
-
-   
 
   const handleSearch = useMemo(
     () =>
@@ -230,10 +269,8 @@ function PaginatedDrafts() {
   }, [drafts, search, sortBy, fuse]);
 
   if (filteredDrafts.length === 0) {
-      return (
-        <Spaceholder />
-      );
-    }
+    return <Spaceholder />;
+  }
 
   const totalPages = Math.ceil(filteredDrafts.length / itemsPerPage);
   const currentData = filteredDrafts.slice(
@@ -532,6 +569,10 @@ function LiveCards() {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
+  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  const user = login.user || "";
+  const { showAlert } = useAlert();
+  const [deleteTarget, setDeleteTarget] = useState<LiveSpace | null>(null); // Add this
 
   useEffect(() => {
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -540,11 +581,64 @@ function LiveCards() {
     getLiveSpaces(login.user).then((data) => setCards(data));
   }, []);
 
-  if (cards.length === 0) {
-      return (
-        <Spaceholder />
+  const handleToggle = async (card: LiveSpace) => {
+    const newActive = Number(card.active) === 1 ? 0 : 1;
+
+    try {
+      const response = await updateLiveSpaceActive(
+        card.id,
+        card.space,
+        user,
+        newActive,
       );
+      showAlert(response.reply, response.state, response.timer);
+      // Refresh the data
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (login.user) {
+        const updatedData = await getLiveSpaces(login.user);
+        setCards(updatedData);
+      }
+    } catch (error) {
+      showAlert("Failed to update status","warning", true);
     }
+  };
+
+  const handleDelete = async (card: LiveSpace) => {
+    setDeleteTarget(card); // Show confirmation dialog
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      const response = await deleteLiveSpace(
+        deleteTarget.id,
+        deleteTarget.space,
+        user,
+      );
+      showAlert(response.reply, "success", true);
+      setDeleteTarget(null);
+      window.location.reload();
+
+      // Refresh the data
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (login.user) {
+        const updatedData = await getLiveSpaces(login.user);
+        setCards(updatedData);
+      }
+    } catch (error) {
+      showAlert("Failed to delete space");
+      setDeleteTarget(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteTarget(null);
+  };
+
+  if (cards.length === 0) {
+    return <Spaceholder />;
+  }
 
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentData = cards.slice(
@@ -562,15 +656,12 @@ function LiveCards() {
         }}
       >
         {currentData.map((card) => (
-          <div className="overflow-x-auto scrollbar-hide">
-            <div
-              key={card.id}
-              className="flex items-center gap-6 min-w-[422px] md:min-w-0"
-            >
+          <div key={card.id} className="overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-6 min-w-[422px] md:min-w-0">
               {/* LEFT PANEL */}
               <div className="w-[35%] flex flex-col gap-4">
                 <InfoPill className="bg-white">
-                  <div className="inline-flex items-center justify-between w-full ">
+                  <div className="inline-flex items-center justify-between w-full">
                     <span className="text-xs md:text-sm py-1 text-black">
                       {card.name}
                     </span>
@@ -592,14 +683,18 @@ function LiveCards() {
 
                 <InfoPill
                   style={{
-                    backgroundColor: card.active === 1 ? "#D6FFC3" : "#9D9D9D",
+                    backgroundColor:
+                      Number(card.active) === 1 ? "#D6FFC3" : "#9D9D9D",
                   }}
                 >
-                  <div className="inline-flex items-center justify-between w-full">
+                  <div
+                    className="inline-flex items-center justify-between w-full cursor-pointer"
+                    onClick={() => handleToggle(card)}
+                  >
                     <span className="text-xs md:text-sm py-1 text-black">
-                      {card.active === 1 ? "Online" : "Offline"}
+                      {Number(card.active) === 1 ? "Online" : "Offline"}
                     </span>
-                    {card.active === 1 ? (
+                    {Number(card.active) === 1 ? (
                       <FaToggleOn size={25} className="ml-auto text-black" />
                     ) : (
                       <FaToggleOff size={25} className="ml-auto text-black" />
@@ -608,7 +703,10 @@ function LiveCards() {
                 </InfoPill>
 
                 <InfoPill className="bg-[#FFA1A1]">
-                  <div className="inline-flex items-center justify-between w-full">
+                  <div
+                    className="inline-flex items-center justify-between w-full cursor-pointer"
+                    onClick={() => handleDelete(card)}
+                  >
                     <span className="text-xs md:text-sm py-1 text-black">
                       Delete
                     </span>
@@ -640,6 +738,34 @@ function LiveCards() {
         ))}
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-black mb-2">Delete Space</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">"{deleteTarget.name}"</span>? This
+              action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded-lg bg-gray-200 text-black font-medium hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-5">
           {Array.from({ length: totalPages }, (_, i) => (
@@ -666,7 +792,18 @@ function LiveCards() {
 const Landlordlistings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Live");
   const [open, setOpen] = useState(false);
+  const [liveSpaces, setLiveSpaces] = useState<LiveSpace[]>([]); // Add this
   const navigate = useNavigate();
+
+  // Add this useEffect to fetch live spaces
+  useEffect(() => {
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    if (!login.user) return;
+
+    getLiveSpaces(login.user).then((data) => {
+      setLiveSpaces(data);
+    });
+  }, []);
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -697,27 +834,26 @@ const Landlordlistings: React.FC = () => {
                     <div>
                       <Label>TOTAL ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                          <input
-                        type="text"
-                        readOnly
-                        value={12}
-                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
-                      />
-                    
+                        <input
+                          type="text"
+                          readOnly
+                          value={liveSpaces.length}
+                          className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        />
+
                         <GrStatusGood className="pointer-events-none absolute right-5  text-[black]" />
                       </InfoPill>
                     </div>
                     <div>
                       <Label>MAX ACTIVE</Label>
                       <InfoPill className="relative flex items-center">
-                          <input
-                        type="text"
-                        readOnly
-                        value={"TIER 2 - 15"}
-                        className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
-                      />
-                    
-                        
+                        <input
+                          type="text"
+                          readOnly
+                          value={"TIER 2 - 15"}
+                          className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
+                        />
+
                         <RiInformationLine className="pointer-events-none absolute right-5 text-[black] " />
                       </InfoPill>
                     </div>

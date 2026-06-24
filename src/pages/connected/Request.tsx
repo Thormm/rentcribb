@@ -584,7 +584,7 @@ export default function Request() {
               {/* Gender & Religion */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label>Pref. Gender</Label>
+                  <Label>Gender</Label>
                   <IconOptionGroup
                     options={genderOptions}
                     value={gender}
@@ -594,7 +594,7 @@ export default function Request() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label> Pref. Religion</Label>
+                  <Label>Religion</Label>
                   <IconOptionGroup
                     options={religionOptions}
                     value={religion}

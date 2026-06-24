@@ -466,7 +466,7 @@ export default function Loginpage() {
               {/* Space */}
               <div>
                 <div
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/studentlisting")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <PiHouse className="text-black text-4xl ml-5" />
