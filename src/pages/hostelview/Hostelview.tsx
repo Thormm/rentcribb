@@ -499,7 +499,7 @@ export default function Hostelview() {
     <div className="bg-[#F3EDFE]">
       <section className=" w-full ">
         {/* SECTION 1: Headbar */}
-        <div className="relative w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+        <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
           <div className="mx-auto w-full max-w-6xl px-4">
             {/* small kicker */}
             <div className="text-md font-semibold text-[#FFA1A1]">
@@ -514,14 +514,16 @@ export default function Hostelview() {
                 </span>
               </h1>
             </div>
-          </div>
 
-          <button
+            <button
             onClick={() => navigate(`/studentlisting`)}
-            className="cursor-pointer absolute right-3 bottom-3 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
           </button>
+          </div>
+
+          
         </div>
       </section>
 

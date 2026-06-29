@@ -1,12 +1,13 @@
 // Sharedspace.tsx
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Sharedspace1 from "./Sharedspaces/Sharedspace1";
 import Sharedspace2 from "./Sharedspaces/Sharedspace2";
 import Sharedspace3 from "./Sharedspaces/Sharedspace3";
 import Sharedspace4 from "./Sharedspaces/Sharedspace4";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
+import { useAlert } from "../../../App";
 
 interface FormData {
   space_id: string;
@@ -49,7 +50,95 @@ const Sharedspace: React.FC = () => {
   const [searchParams] = useSearchParams();
   const spaceIdFromUrl = searchParams.get("id") || "";
   const uploaderType = searchParams.get("uploader") || "";
+  const [checkingTier, setCheckingTier] = useState(true);
+  const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
+  useEffect(() => {
+    const validUploaders = ["agent", "landlord"];
+
+    if (!validUploaders.includes(uploaderType)) {
+      showAlert(
+        "Please create your listing under Agent or Landlord Profile before proceeding.",
+        "warning",
+      );
+      setTimeout(() => {
+        navigate("/businessdash");
+      }, 1500);
+
+      return;
+    }
+  }, [uploaderType, navigate]);
+
+  useEffect(() => {
+    const validUploaders = ["agent", "landlord"];
+
+    if (!validUploaders.includes(uploaderType)) {
+      setCheckingTier(false);
+      return;
+    }
+
+    // Helper to get redirect path
+    const getRedirectPath = () => {
+      const base =
+        uploaderType === "agent"
+          ? "/businessdash?goto=agentoverview"
+          : "/businessdash?goto=landlordoverview";
+      return `${base}#Verify%20Business`;
+    };
+
+    const checkMerchantTier = async () => {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      const user = login?.user || "";
+
+      if (!user) {
+        setCheckingTier(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_merchant_tier",
+            user,
+            uploader: uploaderType,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error("API returned unsuccessful response");
+        }
+
+        if (Number(data.tier) === 0) {
+          showAlert(
+            `Please complete your ${uploaderType} TIER 1 before creating a listing.`,
+            "warning",
+          );
+          setTimeout(() => navigate(getRedirectPath()), 1500);
+          return;
+        }
+
+        setCheckingTier(false);
+      } catch (err) {
+        console.error("Failed to check merchant tier:", err);
+        showAlert(
+          "Unable to verify your account status. Please try again.",
+          "warning",
+        );
+        setTimeout(() => navigate(getRedirectPath()), 1500);
+      }
+    };
+
+    checkMerchantTier();
+  }, [uploaderType, navigate, showAlert]);
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -126,7 +215,7 @@ const Sharedspace: React.FC = () => {
             // if it's already a full URL, keep it; otherwise build path
             fn && (fn.startsWith("http://") || fn.startsWith("https://"))
               ? fn
-              : `${base}/${fn}`
+              : `${base}/${fn}`,
           );
 
           const videoFn = space.video || "";
@@ -135,8 +224,8 @@ const Sharedspace: React.FC = () => {
             (videoFn.startsWith("http://") || videoFn.startsWith("https://"))
               ? videoFn
               : videoFn
-              ? `${base}/${videoFn}`
-              : null;
+                ? `${base}/${videoFn}`
+                : null;
 
           setFormData((prev) => ({
             ...prev,
@@ -151,8 +240,8 @@ const Sharedspace: React.FC = () => {
               ? Array.isArray(space.house_rules)
                 ? space.house_rules
                 : typeof space.house_rules === "string"
-                ? space.house_rules.split(",")
-                : []
+                  ? space.house_rules.split(",")
+                  : []
               : [],
 
             pref_gender: space.pref_gender || "",
@@ -189,38 +278,42 @@ const Sharedspace: React.FC = () => {
       .catch((err) => console.error("Failed to load space:", err));
   }, [spaceIdFromUrl]);
 
+  if (checkingTier) {
+    return null;
+  }
+
   return (
     <>
-    <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
-            <div className="hidden md:flex justify-center">
-              <div className="rounded-full bg-black">
-                <img
-                  src={nigeriaflag}
-                  alt="Nigeria Flag"
-                  className="h-7 md:h-12 object-contain p-3"
-                />
-              </div>
-            </div>
-    
-            <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
-              <img
-                src={logo}
-                alt="Cribb.Africa Logo"
-                className="m-0 p-0 h-8 md:h-11"
-              />
-              <div className="flex flex-col items-end p-0 m-0">
-                <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
-                  Cribb
-                </span>
-                <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
-                  for Business
-                </span>
-              </div>
-            </div>
-    
-            {/* Removed toggle button */}
-            <div></div>
-          </nav>
+      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+        <div className="hidden md:flex justify-center">
+          <div className="rounded-full bg-black">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-7 md:h-12 object-contain p-3"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
+          <img
+            src={logo}
+            alt="Cribb.Africa Logo"
+            className="m-0 p-0 h-8 md:h-11"
+          />
+          <div className="flex flex-col items-end p-0 m-0">
+            <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
+              Cribb
+            </span>
+            <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
+              for Business
+            </span>
+          </div>
+        </div>
+
+        {/* Removed toggle button */}
+        <div></div>
+      </nav>
       {step === 1 && (
         <Sharedspace1
           formData={formData}

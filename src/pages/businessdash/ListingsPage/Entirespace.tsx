@@ -1,12 +1,13 @@
 // Entirespace.tsx
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Entirespace1 from "./Entirespaces/Entirespace1";
 import Entirespace2 from "./Entirespaces/Entirespace2";
 import Entirespace3 from "./Entirespaces/Entirespace3";
 import Entirespace4 from "./Entirespaces/Entirespace4";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
+import { useAlert } from "../../../App";
 
 interface FormData {
   space_id: string;
@@ -49,7 +50,95 @@ const Entirespace: React.FC = () => {
   const [searchParams] = useSearchParams();
   const spaceIdFromUrl = searchParams.get("id") || "";
   const uploaderType = searchParams.get("uploader") || "";
+  const [checkingTier, setCheckingTier] = useState(true);
+  const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
+  useEffect(() => {
+    const validUploaders = ["agent", "landlord"];
+
+    if (!validUploaders.includes(uploaderType)) {
+      showAlert(
+        "Please create your listing under Agent or Landlord Profile before proceeding.",
+        "warning",
+      );
+      setTimeout(() => {
+        navigate("/businessdash");
+      }, 1500);
+
+      return;
+    }
+  }, [uploaderType, navigate]);
+
+  useEffect(() => {
+    const validUploaders = ["agent", "landlord"];
+
+    if (!validUploaders.includes(uploaderType)) {
+      setCheckingTier(false);
+      return;
+    }
+
+    // Helper to get redirect path
+    const getRedirectPath = () => {
+      const base =
+        uploaderType === "agent"
+          ? "/businessdash?goto=agentoverview"
+          : "/businessdash?goto=landlordoverview";
+      return `${base}#Verify%20Business`;
+    };
+
+    const checkMerchantTier = async () => {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      const user = login?.user || "";
+
+      if (!user) {
+        setCheckingTier(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_merchant_tier",
+            user,
+            uploader: uploaderType,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error("API returned unsuccessful response");
+        }
+
+        if (Number(data.tier) === 0) {
+          showAlert(
+            `Please complete your ${uploaderType} TIER 1 before creating a listing.`,
+            "warning",
+          );
+          setTimeout(() => navigate(getRedirectPath()), 1500);
+          return;
+        }
+
+        setCheckingTier(false);
+      } catch (err) {
+        console.error("Failed to check merchant tier:", err);
+        showAlert(
+          "Unable to verify your account status. Please try again.",
+          "warning",
+        );
+        setTimeout(() => navigate(getRedirectPath()), 1500);
+      }
+    };
+
+    checkMerchantTier();
+  }, [uploaderType, navigate, showAlert]);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     space_id: "",
@@ -187,6 +276,10 @@ const Entirespace: React.FC = () => {
       })
       .catch((err) => console.error("Failed to load space:", err));
   }, [spaceIdFromUrl]);
+
+  if (checkingTier) {
+    return null;
+  }
 
   return (
     <>

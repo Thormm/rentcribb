@@ -145,21 +145,21 @@ const extraFilters = [
     ],
   },
   {
-  key: "budget",
-  label: "Budget",
-  placeholder: "Any Budget",
-  options: [
-    { label: "₦50,000 - ₦100,000", value: "₦50,000 - ₦100,000" },
-    { label: "₦100,000 - ₦250,000", value: "₦100,000 - ₦250,000" },
-    { label: "₦250,000 - ₦500,000", value: "₦250,000 - ₦500,000" },
-    { label: "₦500,000 - ₦750,000", value: "₦500,000 - ₦750,000" },
-    { label: "₦750,000 - ₦1,000,000", value: "₦750,000 - ₦1,000,000" },
-    { label: "₦1,000,000 - ₦2,000,000", value: "₦1,000,000 - ₦2,000,000" },
-    { label: "₦2,000,000 - ₦3,000,000", value: "₦2,000,000 - ₦3,000,000" },
-    { label: "₦3,000,000 - ₦4,000,000", value: "₦3,000,000 - ₦4,000,000" },
-    { label: "₦4,000,000 - ₦5,000,000", value: "₦4,000,000 - ₦5,000,000" },
-  ],
-}
+    key: "budget",
+    label: "Budget",
+    placeholder: "Any Budget",
+    options: [
+      { label: "₦50,000 - ₦100,000", value: "₦50,000 - ₦100,000" },
+      { label: "₦100,000 - ₦250,000", value: "₦100,000 - ₦250,000" },
+      { label: "₦250,000 - ₦500,000", value: "₦250,000 - ₦500,000" },
+      { label: "₦500,000 - ₦750,000", value: "₦500,000 - ₦750,000" },
+      { label: "₦750,000 - ₦1,000,000", value: "₦750,000 - ₦1,000,000" },
+      { label: "₦1,000,000 - ₦2,000,000", value: "₦1,000,000 - ₦2,000,000" },
+      { label: "₦2,000,000 - ₦3,000,000", value: "₦2,000,000 - ₦3,000,000" },
+      { label: "₦3,000,000 - ₦4,000,000", value: "₦3,000,000 - ₦4,000,000" },
+      { label: "₦4,000,000 - ₦5,000,000", value: "₦4,000,000 - ₦5,000,000" },
+    ],
+  },
 ];
 
 // ----------------------- TYPES -----------------------
@@ -528,135 +528,132 @@ export default function StudentListing() {
     },
   ];
 
-  async function getMySpacesForReply(
-  user: string,
-  school: string,
-) {
-  const res = await fetch("https://www.cribb.africa/apigets.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      action: "get_reply_spaces",
-      user,
-      target_university: school,
-    }),
-  });
-
-  return await res.json();
-}
-
-async function openReply(card: LiveRequest) {
-  setReplyLoading(true);
-  setReplyOpen(true);
-
-  try {
-    const data = await getMySpacesForReply(
-      login.user,
-      card.school,
-    );
-
-    // No verified account
-    if (
-      !data.success &&
-      data.error_type === "no_account"
-    ) {
-      showAlert(
-        data.message ||
-          "You don't have an agent or landlord account",
-        "warning",
-        true,
-      );
-
-      navigate("/businessonboarding");
-      return;
-    }
-
-    // No active subscription
-    if (
-      !data.success &&
-      data.error_type === "no_subscription"
-    ) {
-      showAlert(
-        data.message ||
-          "You don't have a valid subscription",
-        "warning",
-        true,
-      );
-
-      navigate("/businessdash?goto=subscriptions");
-      return;
-    }
-
-    // Any other backend error
-    if (!data.success) {
-      showAlert(
-        data.message || "Unable to load spaces",
-        "warning",
-        true,
-      );
-      return;
-    }
-
-    // Account warning but still allow access
-    if (data.warning) {
-      showAlert(
-        data.warning,
-        "warning",
-        true,
-      );
-    }
-
-    const spaces = Array.isArray(data?.spaces)
-      ? data.spaces
-      : [];
-
-    const mappedSpaces: HostSpace[] = spaces.map((r: any) => ({
-      id: Number(r.id),
-      space_name: r.space_name,
-      full_address: r.full_address,
-      space_type: r.space_type,
-      units: String(r.units),
-      space: r.space_scope,
-      reply_key: `${r.space_scope}-${r.id}`,
-    }));
-
-    setActiveRequest(card);
-    setReplySpaces(mappedSpaces);
-    setSelectedReplyKeys([]);
-
-  } catch (err) {
-    console.error("Error fetching spaces:", err);
-
-    showAlert(
-      "Network error",
-      "warning",
-      true,
-    );
-  } finally {
-    setReplyLoading(false);
-  }
-}
-
-  async function sendReply() {
-    if (!activeRequest) return;
-    if (selectedReplyKeys.length === 0) return;
-
-    await fetch("https://www.cribb.africa/api_save.php", {
+  async function getMySpacesForReply(user: string, school: string) {
+    const res = await fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        action: "save_request_responses",
-        request_id: activeRequest.id,
-        responses: selectedReplyKeys,
+        action: "get_reply_spaces",
+        user,
+        target_university: school,
       }),
     });
 
-    setReplyOpen(false);
-    setSelectedReplyKeys([]);
-    setReplySpaces([]);
-    setActiveRequest(null);
+    return await res.json();
+  }
+
+  async function openReply(card: LiveRequest) {
+    setReplyLoading(true);
+    setReplyOpen(true);
+
+    try {
+      const data = await getMySpacesForReply(login.user, card.school);
+
+      // No verified account
+      if (!data.success && data.error_type === "no_account") {
+        showAlert(
+          data.message || "You don't have an agent or landlord account",
+          "warning",
+          true,
+        );
+
+        navigate("/businessonboarding");
+        return;
+      }
+
+      // No active subscription
+      if (!data.success && data.error_type === "no_subscription") {
+        showAlert(
+          data.message || "You don't have a valid subscription",
+          "warning",
+          true,
+        );
+
+        navigate("/businessdash?goto=subscriptions");
+        return;
+      }
+
+      // Any other backend error
+      if (!data.success) {
+        showAlert(data.message || "Unable to load spaces", "warning", true);
+        return;
+      }
+
+      // Account warning but still allow access
+      if (data.warning) {
+        showAlert(data.warning, "warning", true);
+      }
+
+      const spaces = Array.isArray(data?.spaces) ? data.spaces : [];
+
+      const mappedSpaces: HostSpace[] = spaces.map((r: any) => ({
+        id: Number(r.id),
+        space_name: r.space_name,
+        full_address: r.full_address,
+        space_type: r.space_type,
+        units: String(r.units),
+        space: r.space_scope,
+        reply_key: `${r.space_scope}-${r.id}`,
+      }));
+
+      setActiveRequest(card);
+      setReplySpaces(mappedSpaces);
+      setSelectedReplyKeys([]);
+    } catch (err) {
+      console.error("Error fetching spaces:", err);
+
+      showAlert("Network error", "warning", true);
+    } finally {
+      setReplyLoading(false);
+    }
+  }
+
+  async function sendReply() {
+    if (!activeRequest) return;
+    if (selectedReplyKeys.length === 0) {
+      showAlert("Please select at least one space to reply with.", "warning");
+      return;
+    }
+
+    setReplyLoading(true);
+
+    try {
+      const response = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_request_responses",
+          request_id: activeRequest.id,
+          responses: selectedReplyKeys,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // ✅ Show success message
+        showAlert("Student replied successfully!", "success", true);
+
+        // Close modal and reset state
+        setReplyOpen(false);
+        setSelectedReplyKeys([]);
+        setReplySpaces([]);
+        setActiveRequest(null);
+      } else {
+        // ❌ Show error from backend
+        showAlert(
+          data.message || "Failed to send reply. Please try again.",
+          "warning",
+        );
+      }
+    } catch (error) {
+      console.error("Error sending reply:", error);
+      showAlert("Network error. Please try again.", "warning");
+    } finally {
+      setReplyLoading(false);
+    }
   }
 
   useEffect(() => {

@@ -135,6 +135,7 @@ const Agentoverview: React.FC = () => {
   const { setActiveTab } = useDashboardTab();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [activeTab, setActiveTabPage] = useState<string>("Profile");
+
   const [activePlan, setActivePlan] = useState<any>("TIER1");
   const [agentDetails, setAgentDetails] = useState<AgentDetails>({
     agent_callno: "",
@@ -186,6 +187,20 @@ const Agentoverview: React.FC = () => {
     };
   }, [reviews]);
 
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    const decodedHash = decodeURIComponent(hash);
+
+    if (tabs.includes(decodedHash)) {
+      setActiveTabPage(decodedHash);
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search,
+      );
+    }
+  }, []);
+
   const filtered = useMemo<Review[]>(() => {
     if (selectedFilter === "all") return reviews;
     return reviews.filter((r) => r.rating === selectedFilter);
@@ -215,8 +230,6 @@ const Agentoverview: React.FC = () => {
       );
       const user = login_data?.user || "";
 
-      console.log("Fetching agent details for user:", user);
-
       try {
         const response = await fetch("https://www.cribb.africa/apigets.php", {
           method: "POST",
@@ -230,7 +243,6 @@ const Agentoverview: React.FC = () => {
         // ✅ Read only once, sanitize it, then parse
         const text = await response.text();
         const cleanText = text.trim().replace(/\[\]$/, ""); // remove trailing []
-        console.log("Clean raw response:", cleanText);
 
         const data = JSON.parse(cleanText || "{}");
 
