@@ -1,4 +1,3 @@
-// Sharedspace.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sharedspace1 from "./Sharedspaces/Sharedspace1";
@@ -70,6 +69,7 @@ const Sharedspace: React.FC = () => {
     }
   }, [uploaderType, navigate]);
 
+  // ===== CHECK TIER + PLAN + LISTING LIMITS =====
   useEffect(() => {
     const validUploaders = ["agent", "landlord"];
 
@@ -78,16 +78,7 @@ const Sharedspace: React.FC = () => {
       return;
     }
 
-    // Helper to get redirect path
-    const getRedirectPath = () => {
-      const base =
-        uploaderType === "agent"
-          ? "/businessdash?goto=agentoverview"
-          : "/businessdash?goto=landlordoverview";
-      return `${base}#Verify%20Business`;
-    };
-
-    const checkMerchantTier = async () => {
+    const checkMerchantStatus = async () => {
       const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
       const user = login?.user || "";
 
@@ -117,28 +108,113 @@ const Sharedspace: React.FC = () => {
           throw new Error("API returned unsuccessful response");
         }
 
-        if (Number(data.tier) === 0) {
+        // ===== HANDLE ERRORS BASED ON ERROR_TYPE =====
+        const errorType = data.plan.error_type;
+
+        // 1. TIER INCOMPLETE → Route to onboarding
+        if (errorType === "tier_incomplete") {
           showAlert(
             `Please complete your ${uploaderType} TIER 1 before creating a listing.`,
             "warning",
           );
-          setTimeout(() => navigate(getRedirectPath()), 1500);
+          setTimeout(() => {
+            const base =
+              uploaderType === "agent"
+                ? "/businessdash?goto=agentoverview"
+                : "/businessdash?goto=landlordoverview";
+            navigate(`${base}#Verify%20Business`);
+          }, 2000);
+          setCheckingTier(false);
           return;
+        }
+
+        // 2. PLAN EXPIRED or INACTIVE → Route to subscription
+        if (errorType === "plan_expired" || errorType === "plan_inactive") {
+          showAlert(data.plan.message, "warning");
+          setTimeout(() => navigate("/businessdash?goto=subscriptions"), 2000);
+          setCheckingTier(false);
+          return;
+        }
+
+        // 3. TIER LIMIT REACHED → Show upgrade message
+        if (errorType === "tier_limit_reached") {
+          if (!spaceIdFromUrl) {
+            showAlert(data.plan.message, "warning");
+            setTimeout(() => {
+              const base =
+                uploaderType === "agent"
+                  ? "/businessdash?goto=agentoverview"
+                  : "/businessdash?goto=landlordoverview";
+              navigate(`${base}#Verify%20Business`);
+            }, 2000);
+            setCheckingTier(false);
+            return;
+          }
+        }
+
+        // 4. PLAN LIMIT REACHED → Route to subscription
+        if (errorType === "plan_limit_reached") {
+          if (!spaceIdFromUrl) {
+            showAlert(data.plan.message, "warning");
+            setTimeout(
+              () => navigate("/businessdash?goto=subscriptions"),
+              2000,
+            );
+            setCheckingTier(false);
+            return;
+          }
+        }
+
+        // ===== SHOW INFO MESSAGES (not errors) =====
+        // For NEW spaces with valid plan
+        if (!spaceIdFromUrl && data.plan.can_list_more) {
+          if (data.plan.max_allowed === "unlimited") {
+            showAlert(
+              `Your TIER ${data.plan.tier} with ${data.plan.plan} plan allows unlimited listings. You currently have ${data.plan.total_listings} listing(s).`,
+              "info",
+              true,
+            );
+          } else {
+            const remaining =
+              Number(data.plan.max_allowed) - data.plan.total_listings;
+            if (remaining > 0) {
+              showAlert(
+                `Your TIER ${data.plan.tier} allows ${data.plan.max_label}. You have ${remaining} listing(s) remaining.`,
+                "info",
+                true,
+              );
+            }
+          }
+        }
+        // For editing existing space
+        else if (spaceIdFromUrl) {
+          showAlert(
+            `Editing space. You have ${data.plan.total_listings} total listing(s) on TIER ${data.plan.tier} with ${data.plan.plan} plan.`,
+            "info",
+            true,
+          );
         }
 
         setCheckingTier(false);
       } catch (err) {
-        console.error("Failed to check merchant tier:", err);
+        console.error("Failed to check merchant status:", err);
         showAlert(
           "Unable to verify your account status. Please try again.",
           "warning",
         );
-        setTimeout(() => navigate(getRedirectPath()), 1500);
+        setTimeout(() => {
+          const base =
+            uploaderType === "agent"
+              ? "/businessdash?goto=agentoverview"
+              : "/businessdash?goto=landlordoverview";
+          navigate(base);
+        }, 1500);
+        setCheckingTier(false);
       }
     };
 
-    checkMerchantTier();
-  }, [uploaderType, navigate, showAlert]);
+    checkMerchantStatus();
+  }, [uploaderType, navigate, showAlert, spaceIdFromUrl]);
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -204,15 +280,12 @@ const Sharedspace: React.FC = () => {
         if (data.success && data.space) {
           const space = data.space;
 
-          // backend stores photo filenames (e.g. photo_1_12345.jpg).
-          // build full URLs for preview using the same user folder used on upload:
           const base = `https://www.cribb.africa/uploads/shared_spaces/${user}`;
 
           const photosFromDb: string[] =
             space.photos && Array.isArray(space.photos) ? space.photos : [];
 
           const photoUrls = photosFromDb.map((fn: string) =>
-            // if it's already a full URL, keep it; otherwise build path
             fn && (fn.startsWith("http://") || fn.startsWith("https://"))
               ? fn
               : `${base}/${fn}`,
@@ -259,8 +332,6 @@ const Sharedspace: React.FC = () => {
             special_feature: space.special_feature || "",
             target_university: space.target_university || "",
 
-            // set URLs (strings). If user selects new File objects later,
-            // they will replace this photos array with File objects.
             photos: photoUrls,
             video: videoUrl,
 
@@ -279,7 +350,16 @@ const Sharedspace: React.FC = () => {
   }, [spaceIdFromUrl]);
 
   if (checkingTier) {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">
+            Verifying your account and plan...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -311,9 +391,9 @@ const Sharedspace: React.FC = () => {
           </div>
         </div>
 
-        {/* Removed toggle button */}
         <div></div>
       </nav>
+
       {step === 1 && (
         <Sharedspace1
           formData={formData}

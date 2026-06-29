@@ -225,6 +225,11 @@ const Subscriptions = () => {
   );
   const [hasAgentPlan, setHasAgentPlan] = useState(false);
   const [hasLandlordPlan, setHasLandlordPlan] = useState(false);
+
+  // ===== NEW: Track if free plan was ever used =====
+  const [agentFreeUsed, setAgentFreeUsed] = useState(false);
+  const [landlordFreeUsed, setLandlordFreeUsed] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -244,11 +249,11 @@ const Subscriptions = () => {
           const agentPlans = res.agent || [];
           const landlordPlans = res.landlord || [];
 
-          // ✅ Store all plans for the history lists
+          // Store all plans for the history lists
           setAgentHistory(agentPlans);
           setLandlordHistory(landlordPlans);
 
-          // ✅ Check for active running plans
+          // Check for active running plans
           const activeAgent = agentPlans.find(
             (p: any) => String(p.status).toLowerCase() === "running",
           );
@@ -256,17 +261,25 @@ const Subscriptions = () => {
             (p: any) => String(p.status).toLowerCase() === "running",
           );
 
-          const hasAgentPlan = !!activeAgent;
-          const hasLandlordPlan = !!activeLandlord;
+          setHasAgentPlan(!!activeAgent);
+          setHasLandlordPlan(!!activeLandlord);
 
-          setHasAgentPlan(hasAgentPlan);
-          setHasLandlordPlan(hasLandlordPlan);
+          // ===== NEW: Check if free plan was ever used (regardless of status) =====
+          const agentFreeExists = agentPlans.some(
+            (p: any) => String(p.plan).toLowerCase() === "free",
+          );
+          const landlordFreeExists = landlordPlans.some(
+            (p: any) => String(p.plan).toLowerCase() === "free",
+          );
 
-          // ✅ Optional: email presence flags (if you need them)
+          setAgentFreeUsed(agentFreeExists);
+          setLandlordFreeUsed(landlordFreeExists);
+
+          // Email presence flags
           setHasAgentEmail?.(res.agent_email_present);
           setHasLandlordEmail?.(res.landlord_email_present);
 
-          // ✅ NEW: set plan data or empty if none
+          // Set plan data or empty if none
           setAgentPlan(activeAgent || {});
           setLandlordPlan(activeLandlord || {});
         } else {
@@ -352,8 +365,6 @@ const Subscriptions = () => {
               <div className="p-2 md:p-5 mt-5 md:w-2/3 ">
                 {!hasAgentPlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
-                    {/* show button only if there's no running agent plan */}
-
                     <button
                       onClick={() => handleClickRole("agent")}
                       className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
@@ -363,14 +374,11 @@ const Subscriptions = () => {
                         ? "Become an Agent >>"
                         : "Get an Agent Plan >>"}
                     </button>
-
-                    {/* if they DO have an agent plan, you may choose to show something else — left unchanged */}
                   </div>
                 )}
                 <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasAgentPlan && (
                     <>
-                      {" "}
                       <div>
                         <Label>CURRENT PLAN</Label>
                         <InfoPill>
@@ -395,7 +403,6 @@ const Subscriptions = () => {
                           </div>
                         </InfoPill>
                       </div>
-                      {/* LISTING LIMIT and CONNECTION */}
                       <div>
                         <Label>LISTING LIMIT</Label>
                         <InfoPill>
@@ -423,15 +430,16 @@ const Subscriptions = () => {
                     </>
                   )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
+                    {/* ===== UPDATED: Disable if free plan was ever used ===== */}
                     <button
                       onClick={() => freeplan("Agent")}
-                      disabled={hasAgentPlan || !agentFilled}
+                      disabled={hasAgentPlan || !agentFilled || agentFreeUsed}
                       className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg
-    ${
-      hasAgentPlan || !agentFilled
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
-    }`}
+                        ${
+                          hasAgentPlan || !agentFilled || agentFreeUsed
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
+                        }`}
                     >
                       FREE TRIAL
                     </button>
@@ -450,7 +458,7 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- HISTORY --------------------
                   </span>
                 </div>
@@ -466,13 +474,11 @@ const Subscriptions = () => {
               </div>
             )}
 
-            {/* Landlord Tab */}
+            {/* Landlord Tab - Same updates */}
             {activeTab === "Landlord" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3 ">
                 {!hasLandlordPlan && (
                   <div className="flex flex-col mb-5 bg-transparent">
-                    {/* show button only if there's no running landlord plan */}
-
                     <button
                       onClick={() => handleClickRole("landlord")}
                       className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-4 py-4 shadow-sm text-lg text-white"
@@ -488,7 +494,6 @@ const Subscriptions = () => {
                 <div className="grid mb-10 w-full grid-cols-2 gap-4 md:gap-6">
                   {hasLandlordPlan && (
                     <>
-                      {" "}
                       <div>
                         <Label>CURRENT PLAN</Label>
                         <InfoPill>
@@ -540,11 +545,14 @@ const Subscriptions = () => {
                     </>
                   )}
                   <div className="col-span-2 flex mt-4 justify-between px-8">
+                    {/* ===== UPDATED: Disable if free plan was ever used ===== */}
                     <button
                       onClick={() => freeplan("Landlord")}
-                      disabled={hasLandlordPlan || !landlordFilled}
+                      disabled={
+                        hasLandlordPlan || !landlordFilled || landlordFreeUsed
+                      }
                       className={`cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium border-2 rounded-lg shadow-lg ${
-                        hasLandlordPlan || !landlordFilled
+                        hasLandlordPlan || !landlordFilled || landlordFreeUsed
                           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                           : "bg-white text-black hover:bg-black hover:text-white transition-all duration-200"
                       }`}
@@ -566,7 +574,7 @@ const Subscriptions = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mt-10 mb-5">
-                  <span className="text-sm md:text-md font-semibold text-black  tracking-wide">
+                  <span className="text-sm md:text-md font-semibold text-black tracking-wide">
                     --- HISTORY --------------------
                   </span>
                 </div>
@@ -582,17 +590,14 @@ const Subscriptions = () => {
               </div>
             )}
 
-            {/* Vendor Tab */}
+            {/* Vendor Tab - Unchanged */}
             {activeTab === "Vendor" && (
               <div className="p-2 md:p-5 mt-5 md:w-2/3">
                 <div className="flex flex-col gap-8 bg-transparent">
-                  {/* Coming Soon */}
                   <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                     <MdOutlinePending className="w-8 h-8" />
                     Coming Soon ...
                   </button>
-
-                  {/* Join Waitlist */}
                   <button className="w-full flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                     <FiMail className="w-8 h-8" />
                     Join Waitlist &gt;&gt;
