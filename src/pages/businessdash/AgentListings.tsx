@@ -850,7 +850,7 @@ const Agentlistings: React.FC = () => {
                         <input
                           type="text"
                           readOnly
-                          value={"TIER 2 - 15"}
+                          value={"TIER 1 - 5"}
                           className="w-full text-xs md:text-sm outline-none py-1 rounded-md text-black"
                         />
 
