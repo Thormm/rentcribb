@@ -645,7 +645,7 @@ export default function Hostelview() {
         )}
       </section>
 
-      <section className="bg-[#F3EDFE] my-20">
+      <section className="bg-[#F3EDFE] my-10">
         <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
           {/* LEFT STACK */}
           <div className="space-y-1">
@@ -656,10 +656,10 @@ export default function Hostelview() {
               <div className="md:px-5 pb-4 pt-3 space-y-5 md:space-y-8">
                 {/* Description */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Description</Label>
+                  <Label>Description</Label>
 
-                  <InfoPill className="text-xs">
-                    {hostel && (
+                  <InfoPill className="rounded-lg">
+                   <span className="text-xs py-1 leading-5"> {hostel && (
                       <>
                         {hostel.units} unit{Number(hostel.units) > 1 ? "s" : ""}{" "}
                         of “{hostel.space_type}”{" "}
@@ -673,7 +673,7 @@ export default function Hostelview() {
                         </span>{" "}
                         {hostel.duration}
                       </>
-                    )}
+                    )}</span>
                   </InfoPill>
                 </div>
                 {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}{" "}
@@ -681,7 +681,7 @@ export default function Hostelview() {
                 {isEntire ? (
                   <div className="space-y-1">
                     <Label className="ml-8">Bedrooms and Toilets</Label>
-                    <InfoPill className="text-xs">
+                    <InfoPill className="text-xs my-1">
                       {hostel && (
                         <>
                           {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
@@ -941,8 +941,8 @@ export default function Hostelview() {
 
                     <InfoPill className="px-3 md:pl-8 md:px-base">
                       <div className="inline-flex items-center justify-between w-full text-[11px]">
-                        <span className="text-xs md:text-sm inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
-                          <FaShieldAlt size={14} />
+                        <span className="text-xs inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
+                          <FaShieldAlt  />
                           TIER {host?.tier ?? "-"}
                         </span>
 
@@ -957,7 +957,7 @@ export default function Hostelview() {
 
                     <InfoPill className="px-3 md:px-base">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:pl-4 md:text-sm py-1">
+                        <span className="text-xs md:pl-4 py-1">
                           {host?.listings ?? 0}
                         </span>
 
@@ -973,7 +973,7 @@ export default function Hostelview() {
                     <Label className="ml-3 md:ml-8">Joined</Label>
 
                     <InfoPill className="px-3 md:pl-8 md:px-base">
-                      <span className="text-xs md:text-sm text-start">
+                      <span className="text-xs text-start">
                         {timeAgo(host?.reg_time)} ago
                       </span>
                     </InfoPill>
@@ -984,7 +984,7 @@ export default function Hostelview() {
                     <Label className="ml-3 md:ml-8">Last Seen</Label>
 
                     <InfoPill className="px-3 md:pl-8 md:px-base">
-                      <span className="text-xs md:text-sm">
+                      <span className="text-xs">
                         {timeAgo(host?.last_activity)} ago
                       </span>
                     </InfoPill>
