@@ -516,14 +516,12 @@ export default function Hostelview() {
             </div>
 
             <button
-            onClick={() => navigate(`/studentlisting`)}
-            className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
-          >
-            <IoIosArrowBack size={14} />
-          </button>
+              onClick={() => navigate(`/studentlisting`)}
+              className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            >
+              <IoIosArrowBack size={14} />
+            </button>
           </div>
-
-          
         </div>
       </section>
 
@@ -658,66 +656,80 @@ export default function Hostelview() {
                 <div className="space-y-1">
                   <Label>Description</Label>
 
-                  <InfoPill className="rounded-lg">
-                   <span className="text-xs py-1 leading-5"> {hostel && (
-                      <>
-                        {hostel.units} unit{Number(hostel.units) > 1 ? "s" : ""}{" "}
-                        of “{hostel.space_type}”{" "}
-                        {hostel.space_type.toLowerCase().includes("flat") ||
-                        hostel.space_type.toLowerCase().includes("room")
-                          ? "(Furnished)"
-                          : ""}{" "}
-                        is available around {hostel.location} for{" "}
-                        <span className="font-extrabold">
-                          ₦{Number(hostel.rent || 0).toLocaleString()}
-                        </span>{" "}
-                        {hostel.duration}
-                      </>
-                    )}</span>
+                  <InfoPill className="rounded-4xl">
+                    <span className="text-xs py-1 leading-5">
+                      {" "}
+                      {hostel && (
+                        <>
+                          {hostel.units} unit
+                          {Number(hostel.units) > 1 ? "s" : ""} of “
+                          {hostel.space_type}”{" "}
+                          {hostel.space_type.toLowerCase().includes("flat") ||
+                          hostel.space_type.toLowerCase().includes("room")
+                            ? "(Furnished)"
+                            : ""}{" "}
+                          is available around {hostel.location} for{" "}
+                          <span className="font-extrabold">
+                            ₦{Number(hostel.rent || 0).toLocaleString()}
+                          </span>{" "}
+                          {hostel.duration}
+                        </>
+                      )}
+                    </span>
                   </InfoPill>
                 </div>
                 {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}{" "}
                 {/* Preference (SHARED SPACE ONLY) */}
                 {isEntire ? (
                   <div className="space-y-1">
-                    <Label className="ml-8">Bedrooms and Toilets</Label>
-                    <InfoPill className="text-xs my-1">
-                      {hostel && (
-                        <>
-                          {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
-                          Bathroom (
-                          {Math.max(
-                            0,
-                            Number(hostel.bathrooms || 0) -
-                              Number(hostel.ensuite || 0),
-                          )}{" "}
-                          Shared, {hostel.ensuite} Ensuite)
-                        </>
-                      )}
+                    <Label>Bedrooms and Toilets</Label>
+                    <InfoPill>
+                      <span className="text-xs py-1">
+                        {hostel && (
+                          <>
+                            {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
+                            Bathroom (
+                            {Math.max(
+                              0,
+                              Number(hostel.bathrooms || 0) -
+                                Number(hostel.ensuite || 0),
+                            )}{" "}
+                            Shared, {hostel.ensuite} Ensuite)
+                          </>
+                        )}
+                      </span>
                     </InfoPill>
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    <Label className="ml-8">Preference</Label>
-                    <InfoPill className="text-xs">
-                      {capitalize(hostel?.pref_gender)} :{" "}
-                      {capitalize(hostel?.pref_religion)} : {hostel?.pref_year}{" "}
-                      : {capitalize(hostel?.pref_faculty)}
+                    <Label>Preference</Label>
+                    <InfoPill>
+                      <span className="text-xs py-1">
+                        {capitalize(hostel?.pref_gender)} :{" "}
+                        {capitalize(hostel?.pref_religion)} :{" "}
+                        {hostel?.pref_year} : {capitalize(hostel?.pref_faculty)}
+                      </span>
                     </InfoPill>
                   </div>
                 )}
                 {/* Security */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Security</Label>
-                  <InfoPill className="text-xs">
-                    {parseList(hostel?.security).join(" : ")}
+                  <Label>Security</Label>
+                  <InfoPill>
+                    <span className="text-xs py-1">
+                      {" "}
+                      {parseList(hostel?.security).join(" : ")}
+                    </span>
                   </InfoPill>
                 </div>
                 {/* Water */}
                 <div className="space-y-1">
-                  <Label className="ml-8">Water</Label>
-                  <InfoPill className="text-xs">
-                    {parseList(hostel?.water).join(" : ")}
+                  <Label>Water</Label>
+                  <InfoPill>
+                    <span className="text-xs py-1">
+                      {" "}
+                      {parseList(hostel?.water).join(" : ")}{" "}
+                    </span>
                   </InfoPill>
                 </div>
                 {/* Grid pairs */}
@@ -930,7 +942,7 @@ export default function Hostelview() {
                   {/* rating still static for now */}
                   <button className="inline-flex items-center md:gap-1 text-xs font-semibold">
                     <FaStar className="text-lg text-yellow-400" />
-                    <span className="underline ml-3">1.2 (85)</span>
+                    <span className="underline ml-3">0 (0)</span>
                   </button>
                 </div>
 
@@ -939,10 +951,10 @@ export default function Hostelview() {
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Verification</Label>
 
-                    <InfoPill className="px-3 md:pl-8 md:px-base">
-                      <div className="inline-flex items-center justify-between w-full text-[11px]">
+                    <InfoPill className="md:pl-8 md:px-base">
+                      <div className="inline-flex items-center justify-between w-full">
                         <span className="text-xs inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
-                          <FaShieldAlt  />
+                          <FaShieldAlt />
                           TIER {host?.tier ?? "-"}
                         </span>
 
@@ -955,9 +967,9 @@ export default function Hostelview() {
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">No. of Listings</Label>
 
-                    <InfoPill className="px-3 md:px-base">
+                    <InfoPill className="md:pl-8 md:px-base">
                       <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs md:pl-4 py-1">
+                        <span className="text-xs py-1">
                           {host?.listings ?? 0}
                         </span>
 
@@ -972,7 +984,7 @@ export default function Hostelview() {
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Joined</Label>
 
-                    <InfoPill className="px-3 md:pl-8 md:px-base">
+                    <InfoPill className="md:pl-8 md:px-base">
                       <span className="text-xs text-start">
                         {timeAgo(host?.reg_time)} ago
                       </span>
@@ -983,7 +995,7 @@ export default function Hostelview() {
                   <div className="space-y-1">
                     <Label className="ml-3 md:ml-8">Last Seen</Label>
 
-                    <InfoPill className="px-3 md:pl-8 md:px-base">
+                    <InfoPill className="md:pl-8 md:px-base">
                       <span className="text-xs">
                         {timeAgo(host?.last_activity)} ago
                       </span>
@@ -1002,7 +1014,7 @@ export default function Hostelview() {
                 <div className="space-y-1">
                   <Label className="ml-8">Inspection Fee</Label>
                   <InfoPill className="bg-white">
-                    <div className="inline-flex items-center justify-between w-full">
+                    <div className="inline-flex ml-2 items-center justify-between w-full">
                       <span className="text-xs md:text-sm py-1">
                         ₦{Number(hostel.price || 0).toLocaleString()}
                       </span>
@@ -1059,7 +1071,7 @@ export default function Hostelview() {
                 <div className="space-y-1">
                   <Label className="ml-8">Total Package</Label>
                   <InfoPill>
-                    <div className="inline-flex items-center justify-between w-full">
+                    <div className="inline-flex items-center justify-between w-full ml-2">
                       <span className="text-lg py-1 font-bold">
                         ₦
                         {(

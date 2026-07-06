@@ -240,7 +240,10 @@ export default function Loginpage() {
       }
     } else {
       // just show a modal telling user to enter email/phone
-      showAlert("Please enter your email or phone number in the login field above before requesting a password reset.", "info")
+      showAlert(
+        "Please enter your email or phone number in the login field above before requesting a password reset.",
+        "info",
+      );
     }
   };
 
@@ -338,7 +341,14 @@ export default function Loginpage() {
                 } Account to continue`}
               />
 
-              <div className="md:px-5 mt-3 md:mt-auto pb-4 pt-3 space-y-4">
+              {/* Form wrapper with onSubmit handler */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault(); // Prevent page refresh
+                  handleContinue();
+                }}
+                className="md:px-5 mt-3 md:mt-auto pb-4 pt-3 space-y-4"
+              >
                 <InputField
                   label="EMAIL / PHONE NO."
                   placeholder="Enter email / phone no."
@@ -366,8 +376,8 @@ export default function Loginpage() {
                 {/* Continue Button */}
                 <InfoPill className="mt-5 md:mt-5 py-4 bg-black text-white grid align-middle">
                   <button
+                    type="submit" // Changed from "button" to "submit"
                     className="inline-flex cursor-pointer items-center justify-center w-full"
-                    onClick={handleContinue}
                     disabled={!username || !password || loading}
                   >
                     <LuLogIn className="ml-2 text-2xl md:text-4xl" />
@@ -405,7 +415,7 @@ export default function Loginpage() {
                     </span>
                   </span>
                 </div>
-              </div>
+              </form>
             </Maincard>
           </div>
         </div>
@@ -649,7 +659,6 @@ export default function Loginpage() {
           </div>
         </div>
       )}
-
     </>
   );
 }
