@@ -14,7 +14,7 @@ import {
 import Navbar from "./components/Navbar";
 import AlertBox from "./components/AlertBox";
 
-import Home from "./pages/home/Home";
+import Home from "./pages/home/Rentpage";
 import StudentListing from "./pages/listingpage/StudentListing";
 import BusinessRequests from "./pages/listingpage/BusinessRequestListing";
 import Hostelview from "./pages/hostelview/Hostelview";
