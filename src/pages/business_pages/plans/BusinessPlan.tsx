@@ -8,8 +8,8 @@ import { TbUserSquare } from "react-icons/tb";
 import clsx from "clsx";
 import { DfButton } from "../../../components/Pill";
 import InfoPill from "../../../components/Pill";
-import logo from "../../assets/logo.png";
-import nigeriaflag from "../../assets/nigeriaflag.png";
+import logo from "../../../assets/logo.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineTag } from "react-icons/ai";
 
