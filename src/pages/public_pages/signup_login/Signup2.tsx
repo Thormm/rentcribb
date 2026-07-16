@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import clsx from "clsx";
-import signbg from "../../assets/signbg.png";
+import signbg from "../../../assets/signbg.png";
 import InfoPill from "../../../components/Pill";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { IoChevronBack } from "react-icons/io5";

@@ -2,13 +2,13 @@ import { useAlert } from "../../../App";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
-import signbg from "../../assets/signbg.png";
+import signbg from "../../../assets/signbg.png";
 import InfoPill from "../../../components/Pill";
-import loginStudent from "../../assets/login1.png";
-import loginMerchant from "../../assets/login2.png"; // add a second image
+import loginStudent from "../../../assets/login1.png";
+import loginMerchant from "../../../assets/login2.png"; // add a second image
 import { BiCommentAdd, BiSolidBriefcase } from "react-icons/bi";
-import logo from "../../assets/logo.png";
-import nigeriaflag from "../../assets/nigeriaflag.png";
+import logo from "../../../assets/logo.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { LuLogIn } from "react-icons/lu";
 import { PiHouse } from "react-icons/pi";
