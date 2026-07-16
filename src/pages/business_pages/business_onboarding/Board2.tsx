@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import imgright from "../../assets/board2.png";
+import imgright from "../../../assets/board2.png";
 import InfoPill from "../../../components/Pill";
 import { IoIosArrowBack, IoIosStarOutline } from "react-icons/io";
 import {

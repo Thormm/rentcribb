@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
-import imgright from "../../assets/board1.png";
+import imgright from "../../../assets/board1.png";
 import InfoPill from "../../../components/Pill";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";

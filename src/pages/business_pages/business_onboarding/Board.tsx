@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Board1 from "./Board1";
 import Board2 from "./Board2";
-import nigeriaflag from "../../assets/nigeriaflag.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import logo from "../../../assets/logo.png";
 
 const Board = () => {
