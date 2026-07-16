@@ -4,8 +4,8 @@ import Sharedspace1 from "./Sharedspaces/Sharedspace1";
 import Sharedspace2 from "./Sharedspaces/Sharedspace2";
 import Sharedspace3 from "./Sharedspaces/Sharedspace3";
 import Sharedspace4 from "./Sharedspaces/Sharedspace4";
-import logo from "../../../../assets/logo.png";
-import nigeriaflag from "../../../../assets/nigeriaflag.png";
+import logo from "../../../assets/logo.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { useAlert } from "../../../App";
 
 interface FormData {

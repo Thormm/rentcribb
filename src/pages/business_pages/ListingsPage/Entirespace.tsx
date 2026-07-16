@@ -4,8 +4,8 @@ import Entirespace1 from "./Entirespaces/Entirespace1";
 import Entirespace2 from "./Entirespaces/Entirespace2";
 import Entirespace3 from "./Entirespaces/Entirespace3";
 import Entirespace4 from "./Entirespaces/Entirespace4";
-import logo from "../../../../assets/logo.png";
-import nigeriaflag from "../../../../assets/nigeriaflag.png";
+import logo from "../../../assets/logo.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { useAlert } from "../../../App";
 
 interface FormData {
