@@ -1,8 +1,11 @@
+// src/App.tsx
+
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
   useLocation,
+  useNavigate as useNavigateOriginal,
 } from "react-router-dom";
 import {
   useState,
@@ -14,35 +17,16 @@ import {
 import Navbar from "./components/Navbar";
 import AlertBox from "./components/AlertBox";
 
-import Home from "./pages/home/Rentpage";
-import StudentListing from "./pages/listingpage/StudentListing";
-import BusinessRequests from "./pages/listingpage/BusinessRequestListing";
-import Hostelview from "./pages/hostelview/Hostelview";
-import Connected from "./pages/connected/Connected";
-import Request from "./pages/connected/Request";
-import Hostpage from "./pages/hostpage/Hostpage";
-import RoommatePlan from "./pages/plans/RoommatePlan"
-import RentPlan from "./pages/plans/RentPlan";
-import BusinessPlan from "./pages/plans/BusinessPlan";
-import BusinessDash from "./pages/businessdash/BusinessDash";
-import StudentDash from "./pages/studentdash/StudentDash";
-import Entirespace from "./pages/businessdash/ListingsPage/Entirespace";
-import Sharedspace from "./pages/businessdash/ListingsPage/Sharedspace";
-import Signup from "./pages/signup_login/Signup";
-import Loginpage from "./pages/signup_login/Loginpage";
-import ForgotPassword from "./pages/signup_login/ResetPassword";
-import Board from "./pages/business_onboarding/Board";
+import publicRoutes from "./routes/PublicRoute";
+import studentRoutes from "./routes/StudentRoute";
+import businessRoutes from "./routes/BusinessRoute";
 
 /* ---------------- ALERT GLOBAL CONTEXT ---------------- */
 
 type AlertType = "warning" | "info" | "success";
 
 type AlertContextType = {
-  showAlert: (
-    message: string,
-    alertType?: AlertType,
-    timer?: boolean
-  ) => void;
+  showAlert: (message: string, alertType?: AlertType, timer?: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType | null>(null);
@@ -53,10 +37,91 @@ export const useAlert = () => {
   return ctx;
 };
 
+/* ---------------- DOMAIN CONTEXT ---------------- */
+
+type Subdomain = "public" | "student" | "business";
+
+interface DomainContextType {
+  subdomain: Subdomain;
+}
+
+const DomainContext = createContext<DomainContextType | null>(null);
+
+export const useDomain = () => {
+  const ctx = useContext(DomainContext);
+  if (!ctx) throw new Error("useDomain must be used inside App");
+  return ctx;
+};
+
+/* ---------------- DETECT SUBDOMAIN ---------------- */
+
+const getSubdomain = (): Subdomain => {
+  if (import.meta.env.DEV) {
+    const params = new URLSearchParams(window.location.search);
+    const testDomain = params.get('domain');
+    if (testDomain === 'student') return 'student';
+    if (testDomain === 'business') return 'business';
+    return 'public';
+  }
+
+  const host = window.location.hostname;
+  if (host === 'student.cribb.africa') return 'student';
+  if (host === 'business.cribb.africa') return 'business';
+  return 'public';
+};
+
+/* ---------------- OVERRIDE useNavigate ---------------- */
+
+// This overrides the default useNavigate to work with domain params in dev
+export const useNavigate = () => {
+  const navigate = useNavigateOriginal();
+  
+  return useCallback((to: string | number, options?: any) => {
+    // If it's a number (go back/forward), just use it directly
+    if (typeof to === 'number') {
+      navigate(to);
+      return;
+    }
+
+    // ONLY in development: preserve the domain query param
+    if (import.meta.env.DEV) {
+      const params = new URLSearchParams(window.location.search);
+      const domain = params.get('domain');
+      
+      if (domain && typeof to === 'string') {
+        const separator = to.includes('?') ? '&' : '?';
+        const url = `${to}${separator}domain=${domain}`;
+        navigate(url, options);
+        return;
+      }
+    }
+    
+    // Production: navigate normally
+    navigate(to, options);
+  }, [navigate]);
+};
+
+/* ---------------- GET ROUTES BASED ON SUBDOMAIN ---------------- */
+
+const getRoutesForSubdomain = () => {
+  const subdomain = getSubdomain();
+  
+  if (subdomain === 'student') {
+    return [...publicRoutes, ...studentRoutes];
+  }
+  
+  if (subdomain === 'business') {
+    return [...publicRoutes, ...businessRoutes];
+  }
+  
+  return publicRoutes;
+};
+
 /* ---------------- LAYOUT ---------------- */
 
 function Layout() {
   const location = useLocation();
+  const subdomain = getSubdomain();
 
   const showNavbarOn = [
     "/",
@@ -69,49 +134,28 @@ function Layout() {
   ];
 
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
-
   const [loginModal, setLoginModal] = useState(false);
 
   return (
-    <>
-      {shouldShowNavbar && (
-        <Navbar setLoginModal={setLoginModal} />
-      )}
-
-      <Outlet context={{ loginModal, setLoginModal }} />
-    </>
+    <DomainContext.Provider value={{ subdomain }}>
+      {shouldShowNavbar && <Navbar setLoginModal={setLoginModal} />}
+      <Outlet context={{ loginModal, setLoginModal, subdomain }} />
+    </DomainContext.Provider>
   );
 }
 
 /* ---------------- ROUTER ---------------- */
 
+const routes = getRoutesForSubdomain();
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
-    children: [
-      { path: "/", element: <Home /> },
-      { path: "/studentlisting", element: <StudentListing /> },
-      { path: "/businessrequests", element: <BusinessRequests /> },
-      { path: "/hostelview", element: <Hostelview /> },
-      { path: "/connected", element: <Connected /> },
-      { path: "/request", element: <Request /> },
-      { path: "/hostpage", element: <Hostpage /> },
-      { path: "/roommateplan", element: <RoommatePlan /> },
-      { path: "/rentplan", element: <RentPlan /> },
-      { path: "/businessplan", element: <BusinessPlan /> },
-      { path: "/businessdash", element: <BusinessDash /> },
-      { path: "/studentdash", element: <StudentDash /> },
-      { path: "/entirespace", element: <Entirespace /> },
-      { path: "/sharedspace", element: <Sharedspace /> },
-      { path: "/signup", element: <Signup /> },
-      { path: "/login", element: <Loginpage /> },
-      { path: "/forgotpassword", element: <ForgotPassword /> },
-      { path: "/businessonboarding", element: <Board /> },
-    ],
+    children: routes,
   },
 ]);
 
-/* ---------------- APP (GLOBAL ALERT LOGIC) ---------------- */
+/* ---------------- APP ---------------- */
 
 export default function App() {
   const [alert, setAlert] = useState({
@@ -122,11 +166,7 @@ export default function App() {
   });
 
   const showAlert = useCallback(
-    (
-      message: string,
-      alertType: AlertType = "info",
-      timer = false
-    ) => {
+    (message: string, alertType: AlertType = "info", timer = false) => {
       setAlert({
         open: true,
         message,
@@ -144,8 +184,6 @@ export default function App() {
   return (
     <AlertContext.Provider value={{ showAlert }}>
       <RouterProvider router={router} />
-
-      {/* GLOBAL ALERT (ONLY ONCE) */}
       <AlertBox
         open={alert.open}
         onClose={closeAlert}
