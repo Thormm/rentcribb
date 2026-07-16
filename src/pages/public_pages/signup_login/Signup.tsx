@@ -6,7 +6,7 @@ import Signup3 from "./Signup3";
 import Signup4 from "./Signup4";
 import { BiSolidBriefcase } from "react-icons/bi";
 import logo from "../../../assets/logo.png";
-import nigeriaflag from "../../assets/nigeriaflag.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 
 const Signup = () => {
