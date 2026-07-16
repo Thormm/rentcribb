@@ -21,7 +21,7 @@ import imgright from "../../../assets/hero.jpg";
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import mapbanner from "../../../src/assets/mapbanner.png";
+import mapbanner from "../../../assets/mapbanner.png";
 
 interface LiveSpace {
   id: string;
