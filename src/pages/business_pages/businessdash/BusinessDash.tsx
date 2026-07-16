@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import logo from "../../assets/logo2.png";
+import logo from "../../../assets/logo2.png";
 import Overview from "./Overview";
 import Payment from "./Payment";
 import Subscriptions from "./Subscriptions";
