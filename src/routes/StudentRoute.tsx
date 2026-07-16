@@ -10,10 +10,6 @@ import Knowyou from "../pages/student_pages/student_knowyou/Knowyou";
 
 const studentRoutes = [
   {
-      path: "/",
-      element: <StudentDash />,
-    },
-  {
     path: "/studentlisting",
     element: <StudentListing />,
   },

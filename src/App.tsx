@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import {
   createBrowserRouter,
   RouterProvider,
@@ -72,18 +70,15 @@ const getSubdomain = (): Subdomain => {
 
 /* ---------------- OVERRIDE useNavigate ---------------- */
 
-// This overrides the default useNavigate to work with domain params in dev
 export const useNavigate = () => {
   const navigate = useNavigateOriginal();
   
   return useCallback((to: string | number, options?: any) => {
-    // If it's a number (go back/forward), just use it directly
     if (typeof to === 'number') {
       navigate(to);
       return;
     }
 
-    // ONLY in development: preserve the domain query param
     if (import.meta.env.DEV) {
       const params = new URLSearchParams(window.location.search);
       const domain = params.get('domain');
@@ -96,7 +91,6 @@ export const useNavigate = () => {
       }
     }
     
-    // Production: navigate normally
     navigate(to, options);
   }, [navigate]);
 };
@@ -107,13 +101,22 @@ const getRoutesForSubdomain = () => {
   const subdomain = getSubdomain();
   
   if (subdomain === 'student') {
-    return [...publicRoutes, ...studentRoutes];
+    // Public routes + student routes
+    return [
+      ...publicRoutes,
+      ...studentRoutes,
+    ];
   }
   
   if (subdomain === 'business') {
-    return [...publicRoutes, ...businessRoutes];
+    // Public routes + business routes
+    return [
+      ...publicRoutes,
+      ...businessRoutes,
+    ];
   }
   
+  // Public domain: public routes only
   return publicRoutes;
 };
 

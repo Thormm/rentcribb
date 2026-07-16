@@ -7,10 +7,6 @@ import BusinessPlan from "../pages/business_pages/plans/BusinessPlan";
 
 const businessRoutes = [
   {
-    path: "/",
-    element: <BusinessDash />,
-  },
-  {
     path: "/businessdash",
     element: <BusinessDash />,
   },
