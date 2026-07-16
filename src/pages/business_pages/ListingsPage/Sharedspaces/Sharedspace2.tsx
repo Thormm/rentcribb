@@ -1,4 +1,4 @@
-import imgright from "../../../../../../src/assets/list2.png";
+import imgright from "../../../../assets/list2.png";
 import { DfButton } from "../../../../components/Pill";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";

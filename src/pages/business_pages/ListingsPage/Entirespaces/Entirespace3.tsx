@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
-import imgright from "../../../../../../src/assets/list3.png";
+import imgright from "../../../../assets/list3.png";
 import { DfButton } from "../../../../components/Pill";
 import { IoIosArrowDown, IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../../components/Pill";

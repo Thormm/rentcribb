@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import imgright from "../../../../../../src/assets/list2.png";
+import imgright from "../../../../assets/list2.png";
 import InfoPill, { DfButton } from "../../../../components/Pill";
 import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
 import { FaMinus, FaPlus } from "react-icons/fa";

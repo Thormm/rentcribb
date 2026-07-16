@@ -1,8 +1,8 @@
 import { useAlert } from "../../../../App";
 import { useState } from "react";
-import imgright from "../../../../../../src/assets/list4.png";
+import imgright from "../../../../assets/list4.png";
 import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
-import InfoPill from ".././../../../components/Pill";
+import InfoPill from "../../../../components/Pill";
 import clsx from "clsx";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { RiInformationLine } from "react-icons/ri";
