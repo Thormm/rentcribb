@@ -1,5 +1,3 @@
-// src/routes/StudentRoute.tsx
-
 import StudentListing from "../pages/student_pages/listingpage/StudentListing";
 import Hostelview from "../pages/student_pages/hostelview/Hostelview";
 import Connected from "../pages/student_pages/connected/Connected";

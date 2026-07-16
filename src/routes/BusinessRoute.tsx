@@ -1,5 +1,3 @@
-// src/routes/BusinessRoute.tsx
-
 import BusinessDash from "../pages/business_pages/businessdash/BusinessDash";
 import BusinessRequests from "../pages/business_pages/listingpage/BusinessRequestListing";
 import Entirespace from "../pages/business_pages/ListingsPage/Entirespace";

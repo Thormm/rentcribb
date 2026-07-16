@@ -1,5 +1,3 @@
-// src/routes/PublicRoute.tsx
-
 import Home from "../pages/public_pages/home/Rentpage";
 import Loginpage from "../pages/public_pages/signup_login/Loginpage";
 import Signup from "../pages/public_pages/signup_login/Signup";
