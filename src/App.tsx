@@ -64,11 +64,14 @@ const getSubdomain = (): Subdomain => {
   }
 
   const host = window.location.hostname;
-  console.log("🔍 Detected hostname:", host); // Debug log
+  console.log("🔍 Detected hostname:", host);
   
+  // Same conditions for both subdomains
   if (host === 'student.cribb.africa') return 'student';
   if (host === 'business.cribb.africa') return 'business';
-  if (host.includes('business.cribb.africa')) return 'business'; // Added fallback
+  if (host.includes('student.cribb.africa')) return 'student';
+  if (host.includes('business.cribb.africa')) return 'business';
+  
   return 'public';
 };
 
@@ -102,8 +105,9 @@ export const useNavigate = () => {
 /* ---------------- GET ROUTES BASED ON SUBDOMAIN ---------------- */
 
 const getRoutesForSubdomain = (subdomain: Subdomain) => {
-  console.log("📋 Getting routes for subdomain:", subdomain); // Debug log
+  console.log("📋 Getting routes for subdomain:", subdomain);
   
+  // Same pattern for both subdomains
   if (subdomain === 'student') {
     return [
       ...publicRoutes,
