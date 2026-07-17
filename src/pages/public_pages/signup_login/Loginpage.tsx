@@ -452,9 +452,7 @@ export default function Loginpage() {
               {/* Roommate */}
               <div>
                 <div
-                  onClick={() => {
-                    window.location.href = "https://www.cribb.africa/homepage";
-                  }}
+                  onClick={() => window.location.href = "https://www.student.cribb.africa/studentdash"}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
                 >
                   <HiOutlineUsers className="text-black text-4xl ml-5" />
@@ -476,7 +474,7 @@ export default function Loginpage() {
               {/* Space */}
               <div>
                 <div
-                  onClick={() => navigate("/studentlisting")}
+                  onClick={() => (window.location.href = "https://www.student.cribb.africa/studentlisting")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <PiHouse className="text-black text-4xl ml-5" />
@@ -526,7 +524,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => navigate("/studentdash")}
+                  onClick={() => (window.location.href = "https://www.student.cribb.africa/studentdash")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />
@@ -583,7 +581,7 @@ export default function Loginpage() {
               {/* Reply */}
               <div>
                 <div
-                  onClick={() => navigate("/businessrequests")}
+                  onClick={() => (window.location.href = "https://www.business.cribb.africa/businessrequests")}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <BiCommentAdd className="text-black text-4xl ml-5" />
@@ -634,7 +632,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => navigate("/businessdash")}
+                  onClick={() => window.location.href = "https://www.business.cribb.africa/businessdash"}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />
