@@ -10,6 +10,7 @@ import {
   createContext,
   useContext,
   useCallback,
+  useMemo,
 } from "react";
 
 import Navbar from "./components/Navbar";
@@ -97,9 +98,7 @@ export const useNavigate = () => {
 
 /* ---------------- GET ROUTES BASED ON SUBDOMAIN ---------------- */
 
-const getRoutesForSubdomain = () => {
-  const subdomain = getSubdomain();
-  
+const getRoutesForSubdomain = (subdomain: Subdomain) => {
   if (subdomain === 'student') {
     return [
       ...publicRoutes,
@@ -154,14 +153,19 @@ export default function App() {
     timer: false,
   });
 
-  // Create router INSIDE the component so it re-evaluates on each render
-  const routes = getRoutesForSubdomain();
-  const router = createBrowserRouter([
-    {
-      element: <Layout />,
-      children: routes,
-    },
-  ]);
+  // Get subdomain once when component mounts
+  const subdomain = useMemo(() => getSubdomain(), []);
+  
+  // Create router with useMemo to prevent recreation
+  const router = useMemo(() => {
+    const routes = getRoutesForSubdomain(subdomain);
+    return createBrowserRouter([
+      {
+        element: <Layout />,
+        children: routes,
+      },
+    ]);
+  }, [subdomain]);
 
   const showAlert = useCallback(
     (message: string, alertType: AlertType = "info", timer = false) => {
