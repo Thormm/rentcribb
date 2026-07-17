@@ -10,7 +10,7 @@ import {
   createContext,
   useContext,
   useCallback,
-  useMemo,
+  useEffect,
 } from "react";
 
 import Navbar from "./components/Navbar";
@@ -153,19 +153,20 @@ export default function App() {
     timer: false,
   });
 
-  // Get subdomain once when component mounts
-  const subdomain = useMemo(() => getSubdomain(), []);
-  
-  // Create router with useMemo to prevent recreation
-  const router = useMemo(() => {
+  const [router, setRouter] = useState<any>(null);
+
+  // Initialize router after component mounts
+  useEffect(() => {
+    const subdomain = getSubdomain();
     const routes = getRoutesForSubdomain(subdomain);
-    return createBrowserRouter([
+    const newRouter = createBrowserRouter([
       {
         element: <Layout />,
         children: routes,
       },
     ]);
-  }, [subdomain]);
+    setRouter(newRouter);
+  }, []);
 
   const showAlert = useCallback(
     (message: string, alertType: AlertType = "info", timer = false) => {
@@ -182,6 +183,11 @@ export default function App() {
   const closeAlert = () => {
     setAlert((prev) => ({ ...prev, open: false }));
   };
+
+  // Show nothing while router is initializing
+  if (!router) {
+    return null;
+  }
 
   return (
     <AlertContext.Provider value={{ showAlert }}>
