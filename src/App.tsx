@@ -101,7 +101,6 @@ const getRoutesForSubdomain = () => {
   const subdomain = getSubdomain();
   
   if (subdomain === 'student') {
-    // Public routes + student routes
     return [
       ...publicRoutes,
       ...studentRoutes,
@@ -109,14 +108,12 @@ const getRoutesForSubdomain = () => {
   }
   
   if (subdomain === 'business') {
-    // Public routes + business routes
     return [
       ...publicRoutes,
       ...businessRoutes,
     ];
   }
   
-  // Public domain: public routes only
   return publicRoutes;
 };
 
@@ -147,17 +144,6 @@ function Layout() {
   );
 }
 
-/* ---------------- ROUTER ---------------- */
-
-const routes = getRoutesForSubdomain();
-
-const router = createBrowserRouter([
-  {
-    element: <Layout />,
-    children: routes,
-  },
-]);
-
 /* ---------------- APP ---------------- */
 
 export default function App() {
@@ -167,6 +153,15 @@ export default function App() {
     alertType: "info" as AlertType,
     timer: false,
   });
+
+  // Create router INSIDE the component so it re-evaluates on each render
+  const routes = getRoutesForSubdomain();
+  const router = createBrowserRouter([
+    {
+      element: <Layout />,
+      children: routes,
+    },
+  ]);
 
   const showAlert = useCallback(
     (message: string, alertType: AlertType = "info", timer = false) => {
