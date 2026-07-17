@@ -64,8 +64,11 @@ const getSubdomain = (): Subdomain => {
   }
 
   const host = window.location.hostname;
+  console.log("🔍 Detected hostname:", host); // Debug log
+  
   if (host === 'student.cribb.africa') return 'student';
   if (host === 'business.cribb.africa') return 'business';
+  if (host.includes('business.cribb.africa')) return 'business'; // Added fallback
   return 'public';
 };
 
@@ -99,6 +102,8 @@ export const useNavigate = () => {
 /* ---------------- GET ROUTES BASED ON SUBDOMAIN ---------------- */
 
 const getRoutesForSubdomain = (subdomain: Subdomain) => {
+  console.log("📋 Getting routes for subdomain:", subdomain); // Debug log
+  
   if (subdomain === 'student') {
     return [
       ...publicRoutes,
@@ -158,7 +163,12 @@ export default function App() {
   // Initialize router after component mounts
   useEffect(() => {
     const subdomain = getSubdomain();
+    console.log("🚀 App mounted, subdomain:", subdomain);
+    
     const routes = getRoutesForSubdomain(subdomain);
+    console.log("📋 Total routes loaded:", routes.length);
+    console.log("📋 Route paths:", routes.map(r => r.path));
+    
     const newRouter = createBrowserRouter([
       {
         element: <Layout />,
