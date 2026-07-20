@@ -113,7 +113,7 @@ export default function Loginpage() {
   // Determine mode based on domain
   const getModeFromDomain = (): "student" | "merchant" => {
     const hostname = window.location.hostname;
-    if (hostname.includes("students.cribb.africa")) {
+    if (hostname.includes("student.cribb.africa")) {
       return "student";
     } else if (hostname.includes("business.cribb.africa")) {
       return "merchant";
@@ -146,13 +146,13 @@ export default function Loginpage() {
     const currentDomain = window.location.hostname;
     let targetDomain = "";
 
-    if (currentDomain.includes("students.cribb.africa")) {
+    if (currentDomain.includes("student.cribb.africa")) {
       targetDomain = "https://business.cribb.africa";
     } else if (currentDomain.includes("business.cribb.africa")) {
-      targetDomain = "https://students.cribb.africa";
+      targetDomain = "https://student.cribb.africa";
     } else {
       // If on an unknown domain, default to students
-      targetDomain = "https://students.cribb.africa";
+      targetDomain = "https://student.cribb.africa";
     }
 
     // Preserve the current path
@@ -263,18 +263,18 @@ export default function Loginpage() {
   // Domain-based navigation helpers
   const getDashboardUrl = () => {
     if (mode === "student") {
-      return "https://students.cribb.africa/studentdash";
+      return "https://student.cribb.africa/studentdash";
     } else {
       return "https://business.cribb.africa/businessdash";
     }
   };
 
   const getFindRoommateUrl = () => {
-    return "https://students.cribb.africa/studentdash";
+    return "https://student.cribb.africa/studentdash";
   };
 
   const getRentSpaceUrl = () => {
-    return "https://students.cribb.africa/studentlisting";
+    return "https://student.cribb.africa/studentlisting";
   };
 
   const getReplyRequestsUrl = () => {
