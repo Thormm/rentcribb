@@ -132,7 +132,6 @@ function Layout() {
   const subdomain = getSubdomain();
 
   const showNavbarOn = [
-    "/",
     "/studentlisting",
     "/businesslisting",
     "/businessrequests",
