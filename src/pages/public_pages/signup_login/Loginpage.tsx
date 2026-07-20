@@ -5,8 +5,8 @@ import clsx from "clsx";
 import signbg from "../../../assets/signbg.png";
 import InfoPill from "../../../components/Pill";
 import loginStudent from "../../../assets/login1.png";
-import loginMerchant from "../../../assets/login2.png"; // add a second image
-import { BiCommentAdd, BiSolidBriefcase } from "react-icons/bi";
+import loginMerchant from "../../../assets/login2.png";
+import { BiSolidBriefcase } from "react-icons/bi";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
 import { HiOutlineUsers } from "react-icons/hi2";
@@ -107,39 +107,62 @@ function InputField({
 
 export default function Loginpage() {
   const location = useLocation();
-  const [mode, setMode] = useState<"student" | "merchant">("student");
-  const signup =
-    mode === "student"
-      ? "/signup?mode=student"
-      : mode === "merchant"
-        ? "/signup?mode=merchant"
-        : "/signup"; // safe fallback
+  const navigate = useNavigate();
+  const { showAlert } = useAlert();
+
+  // Determine mode based on domain
+  const getModeFromDomain = (): "student" | "merchant" => {
+    const hostname = window.location.hostname;
+    if (hostname.includes("students.cribb.africa")) {
+      return "student";
+    } else if (hostname.includes("business.cribb.africa")) {
+      return "merchant";
+    }
+    // Default to student for unknown domains
+    return "student";
+  };
+
+  const [mode, setMode] = useState<"student" | "merchant">(getModeFromDomain);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // existing "what next" modal open
   const [open, setOpen] = useState(false);
 
-  // NEW: forgot password modal states
-  const { showAlert } = useAlert();
-  const navigate = useNavigate();
-
+  // Check domain on component mount and whenever URL changes
   useEffect(() => {
+    const currentMode = getModeFromDomain();
+    setMode(currentMode);
+
+    // Update URL params to match domain mode
     const params = new URLSearchParams(location.search);
     const urlMode = params.get("mode");
-
-    if (urlMode === "student" || urlMode === "merchant") {
-      setMode(urlMode);
+    if (urlMode !== currentMode) {
+      navigate(`?mode=${currentMode}`, { replace: true });
     }
-  }, [location.search]);
+  }, [location.search, navigate]); // Fixed dependency
 
   const toggleMode = () => {
-    setMode((prev) => {
-      const next = prev === "student" ? "merchant" : "student";
-      navigate(`?mode=${next}`, { replace: true });
-      return next;
-    });
+    // Instead of toggling, navigate to the appropriate domain
+    const currentDomain = window.location.hostname;
+    let targetDomain = "";
+
+    if (currentDomain.includes("students.cribb.africa")) {
+      targetDomain = "https://business.cribb.africa";
+    } else if (currentDomain.includes("business.cribb.africa")) {
+      targetDomain = "https://students.cribb.africa";
+    } else {
+      // If on an unknown domain, default to students
+      targetDomain = "https://students.cribb.africa";
+    }
+
+    // Preserve the current path
+    const currentPath = window.location.pathname + window.location.search;
+    window.location.href = targetDomain + currentPath;
+  };
+
+  const getSignupPath = () => {
+    const basePath = mode === "student" ? "/signup" : "/signup";
+    return `${basePath}?mode=${mode}`;
   };
 
   const isEmail = (val: string) => {
@@ -147,7 +170,6 @@ export default function Loginpage() {
   };
 
   const normalizePhone = (val: string) => {
-    // Very small normalization: remove spaces, parentheses, dashes.
     return val.replace(/[^\d+]/g, "");
   };
 
@@ -172,10 +194,8 @@ export default function Loginpage() {
         sessionStorage.setItem("signup_key", data.signup_key);
         if (data.verification !== "otp") {
           setOpen(true);
-          // Clear all previous sessionStorage items
           sessionStorage.clear();
 
-          // Create new login_data object
           const login_data = {
             signup_key: data.signup_key,
             mode: mode,
@@ -186,11 +206,10 @@ export default function Loginpage() {
             email: data.email,
           };
 
-          // Save to sessionStorage as JSON string
           sessionStorage.setItem("login_data", JSON.stringify(login_data));
         } else {
-          sessionStorage.setItem("signupStep", "3"); // open step 3
-          sessionStorage.setItem("signupMode", mode); // open as merchant
+          sessionStorage.setItem("signupStep", "3");
+          sessionStorage.setItem("signupMode", mode);
           sessionStorage.removeItem("signup_data");
           sessionStorage.setItem(
             "signup_data",
@@ -214,18 +233,13 @@ export default function Loginpage() {
     }
   };
 
-  // NEW: perform navigation to forgotpassword page with appropriate session storage
   const goToForgotPassword = (identifier: string, type: "email" | "phone") => {
-    // store signup_data expected by forgotpassword page
-    // keep shape consistent with forgotpassword: { email, callNo, whats } where applicable
     const signupData: any = { mode };
     if (type === "email") signupData.email = identifier;
     else signupData.callNo = identifier;
 
     sessionStorage.setItem("signup_data", JSON.stringify(signupData));
-    // Also store a small indicator to make it explicit
     sessionStorage.setItem("forgot_via", type);
-    // navigate
     navigate("/forgotpassword");
   };
 
@@ -239,12 +253,36 @@ export default function Loginpage() {
         goToForgotPassword(phone, "phone");
       }
     } else {
-      // just show a modal telling user to enter email/phone
       showAlert(
         "Please enter your email or phone number in the login field above before requesting a password reset.",
         "info",
       );
     }
+  };
+
+  // Domain-based navigation helpers
+  const getDashboardUrl = () => {
+    if (mode === "student") {
+      return "https://students.cribb.africa/studentdash";
+    } else {
+      return "https://business.cribb.africa/businessdash";
+    }
+  };
+
+  const getFindRoommateUrl = () => {
+    return "https://students.cribb.africa/studentdash";
+  };
+
+  const getRentSpaceUrl = () => {
+    return "https://students.cribb.africa/studentlisting";
+  };
+
+  const getReplyRequestsUrl = () => {
+    return "https://business.cribb.africa/businessrequests";
+  };
+
+  const getWaitlistUrl = () => {
+    return "https://www.cribb.africa/waitlist";
   };
 
   return (
@@ -279,7 +317,7 @@ export default function Loginpage() {
           </div>
         </div>
 
-        {/* Right: Toggle Button */}
+        {/* Right: Domain Switch Button */}
         <div className="flex justify-end md:justify-center items-center gap-2">
           <div className="md:hidden rounded-full bg-black p-2 shrink-0">
             <img
@@ -341,10 +379,9 @@ export default function Loginpage() {
                 } Account to continue`}
               />
 
-              {/* Form wrapper with onSubmit handler */}
               <form
                 onSubmit={(e) => {
-                  e.preventDefault(); // Prevent page refresh
+                  e.preventDefault();
                   handleContinue();
                 }}
                 className="md:px-5 mt-3 md:mt-auto pb-4 pt-3 space-y-4"
@@ -373,10 +410,9 @@ export default function Loginpage() {
                   </span>
                 </div>
 
-                {/* Continue Button */}
                 <InfoPill className="mt-5 md:mt-5 py-4 bg-black text-white grid align-middle">
                   <button
-                    type="submit" // Changed from "button" to "submit"
+                    type="submit"
                     className="inline-flex cursor-pointer items-center justify-center w-full"
                     disabled={!username || !password || loading}
                   >
@@ -392,7 +428,6 @@ export default function Loginpage() {
                   </button>
                 </InfoPill>
 
-                {/* Divider */}
                 <div
                   className="md:mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
                   style={{
@@ -402,14 +437,13 @@ export default function Loginpage() {
                   }}
                 />
 
-                {/* Footer link */}
                 <div className="w-full flex text-xs md:text-sm md:pt-5 justify-center">
                   <span>
                     New to Cribb.Africa{" "}
                     {mode === "student" ? "For Students" : "For Business"}?{" "}
                     <span
                       className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
-                      onClick={() => navigate(signup)}
+                      onClick={() => navigate(getSignupPath())}
                     >
                       Sign-up
                     </span>
@@ -421,7 +455,7 @@ export default function Loginpage() {
         </div>
       </section>
 
-      {/* Modal Box 1*/}
+      {/* Modal Box - Student */}
       {open && mode === "student" && (
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
@@ -452,7 +486,7 @@ export default function Loginpage() {
               {/* Roommate */}
               <div>
                 <div
-                  onClick={() => window.location.href = "https://www.student.cribb.africa/studentdash"}
+                  onClick={() => window.location.href = getFindRoommateUrl()}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
                 >
                   <HiOutlineUsers className="text-black text-4xl ml-5" />
@@ -474,7 +508,7 @@ export default function Loginpage() {
               {/* Space */}
               <div>
                 <div
-                  onClick={() => (window.location.href = "https://www.student.cribb.africa/studentlisting")}
+                  onClick={() => window.location.href = getRentSpaceUrl()}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <PiHouse className="text-black text-4xl ml-5" />
@@ -497,7 +531,7 @@ export default function Loginpage() {
               <div>
                 <div
                   onClick={() => {
-                    window.location.href = "https://www.cribb.africa/waitlist";
+                    window.location.href = getWaitlistUrl();
                   }}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
                 >
@@ -524,7 +558,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => (window.location.href = "https://www.student.cribb.africa/studentdash")}
+                  onClick={() => window.location.href = getDashboardUrl()}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />
@@ -550,7 +584,7 @@ export default function Loginpage() {
         </div>
       )}
 
-      {/* Modal Box 2*/}
+      {/* Modal Box - Merchant */}
       {open && mode === "merchant" && (
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
@@ -581,10 +615,10 @@ export default function Loginpage() {
               {/* Reply */}
               <div>
                 <div
-                  onClick={() => (window.location.href = "https://www.business.cribb.africa/businessrequests")}
+                  onClick={() => window.location.href = getReplyRequestsUrl()}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
-                  <BiCommentAdd className="text-black text-4xl ml-5" />
+                  <HiOutlineUsers className="text-black text-4xl ml-5" />
                   <span className="flex-1 text-black text-lg text-center font-medium">
                     Reply Requests
                   </span>
@@ -605,7 +639,7 @@ export default function Loginpage() {
               <div>
                 <div
                   onClick={() => {
-                    window.location.href = "https://www.cribb.africa/waitlist";
+                    window.location.href = getWaitlistUrl();
                   }}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
                 >
@@ -632,7 +666,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => window.location.href = "https://www.business.cribb.africa/businessdash"}
+                  onClick={() => window.location.href = getDashboardUrl()}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />
