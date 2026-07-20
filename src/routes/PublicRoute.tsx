@@ -1,4 +1,4 @@
-import Home from "../pages/public_pages/home/Rentpage";
+//import Home from "../pages/public_pages/home/Rentpage";
 import Loginpage from "../pages/public_pages/signup_login/Loginpage";
 import Signup from "../pages/public_pages/signup_login/Signup";
 import ForgotPassword from "../pages/public_pages/signup_login/ResetPassword";
