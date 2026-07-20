@@ -6,7 +6,7 @@ import ForgotPassword from "../pages/public_pages/signup_login/ResetPassword";
 const publicRoutes = [
   {
     path: "/",
-    element: <Home />,
+    element: <Loginpage />,
   },
   {
     path: "/login",
