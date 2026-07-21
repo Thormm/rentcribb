@@ -13,7 +13,7 @@ const Signup = () => {
   const location = useLocation();
 
   const [step, setStep] = useState(1);
-  const [mode, setMode] = useState<"student" | "merchant">("student"); // default student
+  const [mode, setMode] = useState<"student" | "merchant">("student");
 
   const goNext = () => setStep((prev) => prev + 1);
   const goBack = () => setStep((prev) => prev - 1);
@@ -21,11 +21,13 @@ const Signup = () => {
   useEffect(() => {
     // Detect mode from subdomain
     const host = window.location.hostname;
+    // Remove 'www.' if it exists for consistent comparison
+    const cleanHost = host.replace(/^www\./, '');
     
     // For production
-    if (host === "student.cribb.africa" || host.includes("student.cribb.africa")) {
+    if (cleanHost === "student.cribb.africa") {
       setMode("student");
-    } else if (host === "business.cribb.africa" || host.includes("business.cribb.africa")) {
+    } else if (cleanHost === "business.cribb.africa") {
       setMode("merchant");
     } 
     // For development with query param
@@ -51,9 +53,13 @@ const Signup = () => {
       const currentHost = window.location.hostname;
       const domain = next === "student" ? "student" : "business";
       
-      // Replace the subdomain
-      const newHost = currentHost.replace(/^(student|business)\./, `${domain}.`);
-      window.location.href = `https://${newHost}${location.pathname}${location.search}`;
+      // Preserve 'www.' if it was present
+      const hasWww = currentHost.startsWith('www.');
+      const baseHost = currentHost.replace(/^www\./, '');
+      const newBaseHost = baseHost.replace(/^(student|business)\./, `${domain}.`);
+      const newHost = hasWww ? `www.${newBaseHost}` : newBaseHost;
+      
+      window.location.href = `https://${newHost}${location.pathname}`;
     }
   };
 
