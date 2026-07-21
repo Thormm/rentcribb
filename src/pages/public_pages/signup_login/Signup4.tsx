@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAlert } from "../../../App";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -86,6 +87,8 @@ export default function Signup4({ mode }: Signup4Props) {
   const [docType, setDocType] = useState<"terms" | "privacy" | null>(null);
   const [docText, setDocText] = useState("");
 
+  const { showAlert } = useAlert();
+
   // Static list of Nigerian states (you can expand this list)
   const states = [
     "Abia",
@@ -159,7 +162,7 @@ export default function Signup4({ mode }: Signup4Props) {
 
     const signup_key = sessionStorage.getItem("signup_key");
     if (!signup_key) {
-      alert("Missing signup key from first step");
+      showAlert("Missing signup key from first step", "warning");
       return;
     }
 
@@ -179,17 +182,21 @@ export default function Signup4({ mode }: Signup4Props) {
       const data = await res.json();
 
       if (data.success) {
+        showAlert(
+          "Registration successful! Please log in to continue.",
+          "success",
+        );
         if (mode === "student") {
           navigate("/login?mode=student");
         } else {
           navigate("/login?mode=merchant");
         }
       } else {
-        alert(data.message || "Something went wrong");
+        showAlert(data.message || "Something went wrong", "warning");
       }
     } catch (err) {
       console.error(err);
-      alert("Network error, try again.");
+      showAlert("Network error, try again.", "warning");
     }
   };
 
@@ -270,9 +277,7 @@ export default function Signup4({ mode }: Signup4Props) {
                 onClick={openTerms}
               >
                 <RiListView className="text-2xl md:text-4xl -ml-2" />
-                <span className="flex-1 text-center text-xl">
-                  Terms of Use
-                </span>
+                <span className="flex-1 text-center text-xl">Terms of Use</span>
                 <FiArrowRight className="text-white h-8 w-8 md:h-12 md:w-12 p-2 md:p-3 rounded-full bg-black shrink-0 ml-auto -mr-4 md:-mr-8" />
               </button>
             </InfoPill>
