@@ -3,10 +3,11 @@ import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import signbg from "../../../assets/signbg.png";
 import InfoPill from "../../../components/Pill";
+import { useNavigate } from "react-router-dom";
 
 /* ---------- Helpers ---------- */
 function debounce(fn: (...args: any[]) => void, delay = 2000) {
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout>; // ✅ works in browser & Node
   return (...args: any[]) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
@@ -127,16 +128,13 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
   const [email, setEmail] = useState("");
   const [callNo, setCallNo] = useState("");
   const [whats, setWhats] = useState("");
-  
-  // Get the login URL based on mode
-  const getLoginUrl = () => {
-    if (mode === "student") {
-      return "https://www.student.cribb.africa/login";
-    } else if (mode === "merchant") {
-      return "https://www.business.cribb.africa/login";
-    }
-    return "/login"; // fallback
-  };
+  const navigate = useNavigate();
+  const login =
+    mode === "student"
+      ? "/login?mode=student"
+      : mode === "merchant"
+        ? "/login?mode=merchant"
+        : "/login"; // safe fallback
 
   const [emailStatus, setEmailStatus] = useState<"idle" | "valid" | "invalid">(
     "idle",
@@ -247,11 +245,6 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
     if (onNext) onNext();
   };
 
-  // Handle login navigation
-  const handleLoginClick = () => {
-    window.location.href = getLoginUrl();
-  };
-
   return (
     <>
       {/* Section */}
@@ -281,7 +274,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
               title="Sign Up"
-              caption="Let's get you Set-Up, it's super easy!"
+              caption="Let’s get you Set-Up, it’s super easy!"
             />
 
             <div className="md:px-5 pb-4 pt-6  space-y-4">
@@ -344,7 +337,7 @@ export default function Signup1({ mode, onNext }: Signup1Props) {
                   Have a Cribb.Africa account?{" "}
                   <span
                     className="text-[#0556F8] cursor-pointer text-xs shadow rounded-md bg-white py-1 px-2"
-                    onClick={handleLoginClick}
+                    onClick={() => navigate(login)}
                   >
                     Log in
                   </span>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Signup1 from "./Signup1";
 import Signup2 from "./Signup2";
 import Signup3 from "./Signup3";
@@ -11,7 +11,6 @@ import { HiOutlineUsers } from "react-icons/hi2";
 
 const Signup = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"student" | "merchant">("student"); // default student
@@ -20,20 +19,42 @@ const Signup = () => {
   const goBack = () => setStep((prev) => prev - 1);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const urlMode = params.get("mode");
-
-    if (urlMode === "student" || urlMode === "merchant") {
-      setMode(urlMode);
+    // Detect mode from subdomain
+    const host = window.location.hostname;
+    
+    // For production
+    if (host === "student.cribb.africa" || host.includes("student.cribb.africa")) {
+      setMode("student");
+    } else if (host === "business.cribb.africa" || host.includes("business.cribb.africa")) {
+      setMode("merchant");
+    } 
+    // For development with query param
+    else if (import.meta.env.DEV) {
+      const params = new URLSearchParams(location.search);
+      const urlMode = params.get("mode");
+      if (urlMode === "student" || urlMode === "merchant") {
+        setMode(urlMode);
+      }
     }
   }, [location.search]);
 
   const toggleMode = () => {
-    setMode((prev) => {
-      const next = prev === "student" ? "merchant" : "student";
-      navigate(`?mode=${next}`, { replace: true });
-      return next;
-    });
+    const next = mode === "student" ? "merchant" : "student";
+    
+    // For development, use query param
+    if (import.meta.env.DEV) {
+      const currentPath = location.pathname;
+      window.location.href = `${window.location.origin}${currentPath}?domain=${next}`;
+    } 
+    // For production, switch subdomain
+    else {
+      const currentHost = window.location.hostname;
+      const domain = next === "student" ? "student" : "business";
+      
+      // Replace the subdomain
+      const newHost = currentHost.replace(/^(student|business)\./, `${domain}.`);
+      window.location.href = `https://${newHost}${location.pathname}${location.search}`;
+    }
   };
 
   useEffect(() => {
@@ -44,7 +65,7 @@ const Signup = () => {
     if (savedStep) setStep(Number(savedStep));
     if (savedMode === "merchant" || savedMode === "student") setMode(savedMode);
 
-    // optional: clear after use so it doesn’t persist
+    // optional: clear after use so it doesn't persist
     sessionStorage.removeItem("signupStep");
     sessionStorage.removeItem("signupMode");
   }, []);
@@ -117,7 +138,6 @@ const Signup = () => {
       </nav>
 
       {/* Steps */}
-
       {step === 1 && <Signup1 mode={mode} onNext={goNext} />}
       {step === 2 && <Signup2 mode={mode} onNext={goNext} onBack={goBack} />}
       {step === 3 && <Signup3 mode={mode} onNext={goNext} />}
