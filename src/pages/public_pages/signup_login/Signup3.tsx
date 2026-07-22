@@ -22,7 +22,7 @@ function Maincard({
 }
 
 function debounce(fn: (...args: any[]) => void, delay = 2000) {
-  let timer: ReturnType<typeof setTimeout>; // ✅ works in browser & Node
+  let timer: ReturnType<typeof setTimeout>;
   return (...args: any[]) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
@@ -113,6 +113,14 @@ function InputField({
   );
 }
 
+/* ---------- Helper: Get Cookie ---------- */
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
+
 /* ---------- Main Signup1 Page ---------- */
 interface Signup3Props {
   mode: "student" | "merchant";
@@ -157,7 +165,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
         password,
         referral,
         thirdpage: true,
-        signup_key, // send the key to PHP
+        signup_key,
         mode: mode,
       }),
       credentials: "include",
@@ -179,7 +187,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           referral: val,
-          check: "referral", // 👈 important
+          check: "referral",
           mode: mode,
         }),
       });
@@ -198,7 +206,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
 
   const debouncedValidateReferral = debounce(async (val: string) => {
     if (!val) {
-      setReferralStatus("idle"); // ✅ reset properly
+      setReferralStatus("idle");
       return;
     }
 
@@ -206,9 +214,20 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
     setReferralStatus(res.status as any);
   }, 400);
 
+  // Validate referral when it changes
   useEffect(() => {
     if (referral) debouncedValidateReferral(referral);
   }, [referral]);
+
+  // === LOAD REFERRAL FROM COOKIE ON MOUNT ===
+  useEffect(() => {
+    const savedReferral = getCookie('ref_code');
+    if (savedReferral && !referral) {
+      setReferral(savedReferral);
+      // Validate the loaded referral
+      debouncedValidateReferral(savedReferral);
+    }
+  }, []);
 
   return (
     <>
@@ -239,7 +258,7 @@ export default function Signup3({ mode, onNext }: Signup3Props) {
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 px-6 md:px-10">
             <SectionHeader
               title="Sign Up"
-              caption="Let’s get you Set-Up, it’s super easy!"
+              caption="Let's get you Set-Up, it's super easy!"
             />
 
             <div className="md:px-5 pb-4 pt-5 space-y-4">
