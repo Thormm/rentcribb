@@ -68,7 +68,7 @@ function Label({ children, className }: LabelProps) {
 // ✅ Pricing tables
 const RentPlans = {
   INSTANT: {
-    price: "₦10,000",
+    price: "₦5,000",
     tag: "For a Quick and Single Connect : Pay-As-You-Go",
     discount: 0,
     features: [

@@ -1,3 +1,4 @@
+import  { useAlert }  from "../../../App.tsx";
 import React, { useState, useEffect, useRef } from "react";
 import { FiCamera, FiChevronDown, FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
@@ -262,18 +263,20 @@ const Overview = () => {
     setFeedbackTexts((prev) => ({ ...prev, [reviewId]: value }));
   };
 
+  const { showAlert } = useAlert();
+
   // validation helpers
   const validateProfile = () => {
     if (!address || address.trim().length === 0) {
-      alert("Please enter your full address.");
+      showAlert("Please enter your full address.", "info", true);
       return false;
     }
     if (!stateValue || stateValue.trim().length === 0) {
-      alert("Please select your state.");
+      showAlert("Please select your state.", "info", true);
       return false;
     }
     if (!landmark || landmark.trim().length === 0) {
-      alert("Please enter a landmark.");
+      showAlert("Please enter a landmark.", "info", true);
       return false;
     }
     return true;
@@ -281,23 +284,23 @@ const Overview = () => {
 
   const validateKin = () => {
     if (!kinFirst.trim()) {
-      alert("Please enter next of kin first name.");
+      showAlert("Please enter next of kin first name.", "info", true);
       return false;
     }
     if (!kinLast.trim()) {
-      alert("Please enter next of kin last name.");
+      showAlert("Please enter next of kin last name.", "info", true);
       return false;
     }
     if (!kinCall.trim()) {
-      alert("Please enter next of kin call number.");
+      showAlert("Please enter next of kin call number.", "info", true);
       return false;
     }
     if (!kinWhats.trim()) {
-      alert("Please enter next of kin WhatsApp number.");
+      showAlert("Please enter next of kin WhatsApp number.", "info", true);
       return false;
     }
     if (!kinEmail.trim()) {
-      alert("Please enter next of kin email.");
+      showAlert("Please enter next of kin email.", "info", true);
       return false;
     }
     return true;
@@ -309,7 +312,7 @@ const Overview = () => {
 
     // ✅ Block saving if no profile image
     if (!localImageFile && !profileImage) {
-      alert("Please upload a profile image before saving.");
+      showAlert("Please upload a profile image before saving.", "info", true);
       return;
     }
 
@@ -338,19 +341,19 @@ const Overview = () => {
       });
       const data = await res.json();
       if (data.success) {
-        alert(data.message || "Profile saved successfully.");
+        showAlert(data.message || "Profile saved successfully.", "success", true);
         if (data.profile_image) {
           setProfileImage(data.profile_image);
         }
         setLocalImageFile(null);
         setIsProfileLocked(true); // 🔒 lock fields after saving
       } else {
-        alert(data.message || "Failed to save profile. Try again.");
+        showAlert(data.message || "Failed to save profile. Try again.", "warning");
       }
       console.log("Profile save response:", data);
     } catch (err) {
       console.error("Save profile error:", err);
-      alert("Network error while saving profile.");
+      showAlert("Network error while saving profile.", "warning");
     }
   };
 
@@ -383,15 +386,15 @@ const Overview = () => {
       });
       const data = await res.json();
       if (data.success) {
-        alert(data.message || "Next of kin saved.");
+        showAlert(data.message || "Next of kin saved.", "success", true);
         setIsKinLocked(true); // 🔒 lock kin fields after saving
       } else {
-        alert(data.message || "Failed to save next of kin.");
+        showAlert(data.message || "Failed to save next of kin.", "warning");
       }
       console.log("Next of kin save response:", data);
     } catch (err) {
       console.error("Save kin error:", err);
-      alert("Network error while saving next of kin.");
+      showAlert("Network error while saving next of kin.", "warning");
     }
   };
 
@@ -407,14 +410,14 @@ const Overview = () => {
 
   const handleSendFeedback = async () => {
     if (!feedback.trim()) {
-      alert("Please type your feedback before sending.");
+      showAlert("Please type your feedback before sending.", "warning");
       return;
     }
 
     const login = getLoginData();
     const user = login?.user || "";
     if (!user) {
-      alert("Session expired, please log in again.");
+      showAlert("Session expired, please log in again.", "warning");
       return;
     }
 
@@ -431,14 +434,14 @@ const Overview = () => {
       });
       const data = await res.json();
       if (data.success) {
-        alert(data.message || "Feedback sent successfully!");
+        showAlert(data.message || "Feedback sent successfully!", "success", true);
         setFeedback("");
       } else {
-        alert(data.message || "Failed to send feedback, please try again.");
+        showAlert(data.message || "Failed to send feedback, please try again.", "warning");
       }
     } catch (err) {
       console.error("Feedback send error:", err);
-      alert("Network error while sending feedback.");
+      showAlert("Network error while sending feedback.", "warning");
     } finally {
       setIsSending(false);
     }
