@@ -6,6 +6,7 @@ import InfoPill from "../../../components/Pill";
 import clsx from "clsx";
 import React, { useState, useEffect } from "react";
 import { FaMale, FaFemale, FaMoon, FaCross, FaBan } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const genderOptions: OptionItem[] = [
   { id: "male", icon: <FaMale /> },
@@ -199,12 +200,10 @@ export default function Knowyou1({
   formData,
   setFormData,
   onNext,
-  onBack,
 }: {
   formData: any;
   setFormData: any;
   onNext?: () => void;
-  onBack?: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -212,6 +211,7 @@ export default function Knowyou1({
   const [showWaterModal, setShowWaterModal] = useState(false);
   const [showYearModal, setShowYearModal] = useState(false);
   const [showFacultyModal, setShowFacultyModal] = useState(false);
+  const navigate = useNavigate();
 
   const security = normalizeArray(formData.security);
   const water = normalizeArray(formData.water);
