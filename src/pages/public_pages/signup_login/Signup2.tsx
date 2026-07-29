@@ -70,7 +70,7 @@ interface Signup2Props {
 
 export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
   const [otp, setOtp] = useState("");
-  const [showEmail, setShowEmail] = useState(false);
+  const [showEmail, setShowEmail] = useState(true);
 
   const [codeSent, setCodeSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
