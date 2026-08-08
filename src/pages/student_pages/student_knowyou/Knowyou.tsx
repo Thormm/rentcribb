@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import Knowyou1 from "./Knowyou1";
+import Knowyou2 from "./Knowyou2";
+import Knowyou3 from "./Knowyou3";
+import Knowyou5 from "./Knowyou5";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
 
@@ -12,24 +15,58 @@ interface FormData {
   selectedLocation: string;
   selectedMonth: string;
   selectedRules: string[];
+  // Knowyou1 fields
+  pref_gender?: string;
+  pref_religion?: string;
+  pref_year?: string;
+  pref_faculty?: string;
+  hobbies?: string[];
+  pet?: string;
+  // Knowyou2 fields
+  type?: string;
+  roommates?: number;
+  hostel_loc?: string;
+  availability?: string;
+  amount_share?: number;
+  duration?: string;
+  // Knowyou3 fields
+  security?: string[];
+  water?: string[];
+  power_supply?: number;
+  network_strength?: number;
+  compound?: number;
+  access_road?: number;
 }
 
 const Knowyou: React.FC = () => {
- 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     space_id: "",
     spaceName: "",
     fullAddress: "",
     selectedType: "",
-    units: 1,
+    units: 2,
     selectedLocation: "",
     selectedMonth: "",
     selectedRules: [],
-
+    hobbies: [],
+    // Knowyou2 defaults
+    type: "",
+    roommates: 2,
+    hostel_loc: "",
+    availability: "",
+    amount_share: 0,
+    duration: "",
+    // Knowyou3 defaults
+    security: [],
+    water: [],
+    power_supply: 0,
+    network_strength: 0,
+    compound: 0,
+    access_road: 0,
   });
 
-  const goNext = () => setStep((prev) => prev + 1);
+  const goToStep = (stepNumber: number) => setStep(stepNumber);
 
   return (
     <>
@@ -59,8 +96,6 @@ const Knowyou: React.FC = () => {
             </span>
           </div>
         </div>
-
-        {/* Removed toggle button */}
         <div></div>
       </nav>
 
@@ -68,9 +103,27 @@ const Knowyou: React.FC = () => {
         <Knowyou1
           formData={formData}
           setFormData={setFormData}
-          onNext={goNext}
+          onNext={() => goToStep(2)}
+          onNoSpace={() => goToStep(5)}
         />
       )}
+      {step === 2 && (
+        <Knowyou2
+          formData={formData}
+          setFormData={setFormData}
+          onNext={() => goToStep(3)}
+          onBack={() => goToStep(1)}
+        />
+      )}
+      {step === 3 && (
+        <Knowyou3
+          formData={formData}
+          setFormData={setFormData}
+          onNext={() => goToStep(4)}
+          onBack={() => goToStep(2)}
+        />
+      )}
+      {step === 5 && <Knowyou5 formData={formData} setFormData={setFormData} />}
     </>
   );
 };

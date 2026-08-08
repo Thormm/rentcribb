@@ -172,14 +172,12 @@ interface Knowyou1Props {
   formData: any;
   setFormData: (data: any) => void;
   onNext?: () => void;
-  onNoSpace?: () => void;
 }
 
 export default function Knowyou1({
   formData,
   setFormData,
   onNext,
-  onNoSpace,
 }: Knowyou1Props) {
   const [loading, setLoading] = useState(false);
   const [showHobbiesModal, setShowHobbiesModal] = useState(false);
@@ -250,7 +248,7 @@ export default function Knowyou1({
       const data = await res.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success", true);
+        showAlert("Saved successfully!", "success");
         
         // Update formData to reflect saved state
         setFormData((prev: any) => ({
@@ -281,12 +279,17 @@ export default function Knowyou1({
   // Handle navigation from modal
   const handleHasSpace = () => {
     setShowSpaceModal(false);
+    // Navigate to Knowyou2 (step 2)
     if (onNext) onNext();
   };
 
   const handleNoSpace = () => {
     setShowSpaceModal(false);
-    if (onNoSpace) onNoSpace();
+    // Navigate to Knowyou5 (step 5)
+    // We need to jump to step 5
+    // Since we're in the child, we'll use a custom prop or navigate directly
+    // Let's use a custom navigation approach
+    navigate("/knowyou?step=5");
   };
 
   return (

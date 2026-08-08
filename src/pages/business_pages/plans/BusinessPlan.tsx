@@ -199,7 +199,8 @@ const BusinessPlan = () => {
     }
 
     // ✅ Use new reference format
-    const ref = `cribb_${category}_${extractAmount(current.price)}_${user}`;
+    const random = Math.random().toString(36).substring(2, 10);
+    const ref = `cribb_Rent_${extractAmount(current.price)}_${user}_${random}`;
 
     const handler = PaystackPop.setup({
       key: "pk_live_e7e226db6e7b774d5fc940646959c622a606e546",
@@ -406,7 +407,7 @@ const BusinessPlan = () => {
               </div>
             </div>
 
-           {/*  <div
+            {/*  <div
               className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
               style={{
                 borderStyle: "dashed",

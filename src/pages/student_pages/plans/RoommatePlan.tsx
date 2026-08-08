@@ -148,7 +148,8 @@ const RoommatePlan = () => {
     }
 
     // ✅ Use new reference format
-    const ref = `cribb_Roommate_${extractAmount(current.price)}_${user}`;
+    const random = Math.random().toString(36).substring(2, 10);
+    const ref = `cribb_Rent_${extractAmount(current.price)}_${user}_${random}`
 
     const handler = PaystackPop.setup({
       key: "pk_live_e7e226db6e7b774d5fc940646959c622a606e546",
