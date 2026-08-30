@@ -1,75 +1,146 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Knowyou1 from "./Knowyou1";
 import Knowyou2 from "./Knowyou2";
 import Knowyou3 from "./Knowyou3";
+import Knowyou4 from "./Knowyou4";
 import Knowyou5 from "./Knowyou5";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
 
+// ============================================================
+// 1. FORM DATA INTERFACE
+// ============================================================
 interface FormData {
-  space_id: string;
-  spaceName: string;
-  fullAddress: string;
-  selectedType: string;
-  units: number;
-  selectedLocation: string;
-  selectedMonth: string;
-  selectedRules: string[];
-  // Knowyou1 fields
+  // Step 1
   pref_gender?: string;
   pref_religion?: string;
   pref_year?: string;
   pref_faculty?: string;
   hobbies?: string[];
   pet?: string;
-  // Knowyou2 fields
+  // Step 2
   type?: string;
   roommates?: number;
   hostel_loc?: string;
   availability?: string;
   amount_share?: number;
   duration?: string;
-  // Knowyou3 fields
+  // Step 3
   security?: string[];
   water?: string[];
   power_supply?: number;
   network_strength?: number;
   compound?: number;
   access_road?: number;
+  // Step 4
+  all_feature?: string;
+  special_feature?: string;
+  photos?: any[];
+  video?: any;
+  selectedRules?: string[];
 }
 
+// ============================================================
+// 2. MAIN COMPONENT
+// ============================================================
 const Knowyou: React.FC = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
-    space_id: "",
-    spaceName: "",
-    fullAddress: "",
-    selectedType: "",
-    units: 2,
-    selectedLocation: "",
-    selectedMonth: "",
-    selectedRules: [],
+    // Step 1 defaults
+    pref_gender: "",
+    pref_religion: "",
+    pref_year: "",
+    pref_faculty: "",
     hobbies: [],
-    // Knowyou2 defaults
+    pet: "",
+    // Step 2 defaults
     type: "",
     roommates: 2,
     hostel_loc: "",
     availability: "",
     amount_share: 0,
     duration: "",
-    // Knowyou3 defaults
+    // Step 3 defaults
     security: [],
     water: [],
     power_supply: 0,
     network_strength: 0,
     compound: 0,
     access_road: 0,
+    // Step 4 defaults
+    all_feature: "",
+    special_feature: "",
+    photos: [],
+    video: null,
+    selectedRules: [],
   });
+
+  // ----- Fetch existing user data on mount (no loading state) -----
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      const user = login?.user || "";
+      const signup_key = login?.signup_key || "";
+
+      if (!user || !signup_key) return;
+
+      try {
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_user_data",
+            user: user,
+            signup_key: signup_key, // include for session validation
+          }),
+        });
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const d = result.data;
+          setFormData({
+            // Step 1 – map DB columns to frontend keys
+            pref_gender: d.gender || "",
+            pref_religion: d.religion || "",
+            pref_year: d.level || "",
+            pref_faculty: d.faculty || "",
+            hobbies: d.hobby ? d.hobby.split(",").map((s: string) => s.trim()) : [],
+            pet: d.pet || "",
+            // Step 2
+            type: d.type || "",
+            roommates: parseInt(d.roommates) || 2,
+            hostel_loc: d.hostel_loc || "",
+            availability: d.availability || "",
+            amount_share: parseFloat(d.amount_share) || 0,
+            duration: d.duration || "",
+            // Step 3
+            security: d.security || [],
+            water: d.water || [],
+            power_supply: parseInt(d.power) || 0,
+            network_strength: parseInt(d.network) || 0,
+            compound: parseInt(d.compound) || 0,
+            access_road: parseInt(d.road) || 0,
+            // Step 4
+            all_feature: d.all_feature || "",
+            special_feature: d.special_feature || "",
+            selectedRules: d.house_rules || [],
+            photos: d.photos || [],
+            video: d.video || null,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const goToStep = (stepNumber: number) => setStep(stepNumber);
 
   return (
     <>
+      {/* --- Navbar --- */}
       <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
@@ -99,6 +170,7 @@ const Knowyou: React.FC = () => {
         <div></div>
       </nav>
 
+      {/* --- Step Renderer --- */}
       {step === 1 && (
         <Knowyou1
           formData={formData}
@@ -123,7 +195,20 @@ const Knowyou: React.FC = () => {
           onBack={() => goToStep(2)}
         />
       )}
-      {step === 5 && <Knowyou5 formData={formData} setFormData={setFormData} />}
+      {step === 4 && (
+        <Knowyou4
+          formData={formData}
+          setFormData={setFormData}
+          onNext={() => goToStep(5)}
+          onBack={() => goToStep(3)}
+        />
+      )}
+      {step === 5 && (
+        <Knowyou5
+          formData={formData}
+          setFormData={setFormData}
+        />
+      )}
     </>
   );
 };

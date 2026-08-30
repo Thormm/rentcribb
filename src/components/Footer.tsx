@@ -9,25 +9,33 @@ import {
 function IconBtn({
   children,
   label,
+  bgColor = '#CDBCEC',   // default if not provided
 }: {
   children: React.ReactNode;
   label: string;
+  bgColor?: string;
 }) {
   return (
     <a
       href="#"
       aria-label={label}
-      className="rounded-xl bg-[#CDBCEC] text-black p-3 "
+      className="rounded-xl text-black p-3"
+      style={{ backgroundColor: bgColor }}   // use inline style
     >
       {children}
     </a>
   );
 }
 
-const Footer = () => {
+interface FooterProps {
+  bgColor?: string;        // footer background
+  iconBgColor?: string;    // background for icon buttons
+}
+
+const Footer = ({ bgColor = '#000000', iconBgColor = '#CDBCEC' }: FooterProps) => {
   return (
     <div>{/* ===== FOOTER ===== */}
-      <footer className="bg-black text-white border-t border-white/10">
+      <footer style={{ backgroundColor: bgColor }}  className="text-white border-t border-white/10">
         <div className="max-w-6xl mx-auto py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
@@ -74,19 +82,19 @@ const Footer = () => {
             <h3 className="font-semibold mb-3 text-md ">Contact us</h3>
             <div className="flex items-center gap-3">
               {/* Rounded square “icon” buttons (swap inner spans with your SVGs later) */}
-              <IconBtn label="WhatsApp">
+              <IconBtn label="WhatsApp" bgColor={iconBgColor}>
                 <FaWhatsapp className="w-6 h-6"/>
               </IconBtn>
-              <IconBtn label="Instagram">
+              <IconBtn label="Instagram" bgColor={iconBgColor}>
                 <FaInstagram className="w-6 h-6"/>
               </IconBtn>
-              <IconBtn label="Twitter / X">
+              <IconBtn label="Twitter / X" bgColor={iconBgColor}>
                 <FaTwitter className="w-6 h-6"/>
               </IconBtn>
-              <IconBtn label="Facebook">
+              <IconBtn label="Facebook" bgColor={iconBgColor}>
                 <FaFacebook className="w-6 h-6"/>
               </IconBtn>
-              <IconBtn label="LinkedIn">
+              <IconBtn label="LinkedIn" bgColor={iconBgColor}>
                 <FaLinkedin className="w-6 h-6"/>
               </IconBtn>
             </div>

@@ -189,6 +189,7 @@ function Layout() {
     "/request",
     "/hostelview",
     "/connected",
+     "/explore",
   ];
 
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);

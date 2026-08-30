@@ -235,7 +235,7 @@ export default function Knowyou3({
       const data = await response.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success");
+        showAlert("Saved successfully!", "success", true);
         setTimeout(() => {
           onNext?.();
         }, 500);
@@ -266,15 +266,16 @@ export default function Knowyou3({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
+        {/* Image */}
         <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
-            alt="Traveler with suitcase"
+            alt="Traveler"
             className="h-full w-full object-cover"
           />
           <button
             onClick={onBack}
-            className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white"
           >
             <IoIosArrowBack size={14} />
           </button>

@@ -7,6 +7,8 @@ import RoommatePlan from "../pages/student_pages/plans/RoommatePlan";
 import RentPlan from "../pages/student_pages/plans/RentPlan";
 import StudentDash from "../pages/student_pages/studentdash/StudentDash";
 import Knowyou from "../pages/student_pages/student_knowyou/Knowyou";
+import Explore from "../pages/student_pages/roommate/roommatelisting/Explore";
+import SendHostelRequest from "../pages/student_pages/roommate/requestpage/SendHostelRequest"
 
 const studentRoutes = [
   {
@@ -44,6 +46,14 @@ const studentRoutes = [
   {
     path: "/knowyou",
     element: <Knowyou />,
+  },
+  {
+    path: "/explore",
+    element: <Explore />,
+  },
+  {
+    path: "/roommatehostelrequest",
+    element: <SendHostelRequest />,
   },
 ];
 

@@ -1,5 +1,5 @@
 import { useAlert } from "../../../App";
-import imgright from "../../../assets/knowyou2.jpg";
+import imgright from "../../../assets/knowyou2.png";
 import { DfButton } from "../../../components/Pill";
 import { IoIosArrowDown, IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../components/Pill";
@@ -156,7 +156,7 @@ export default function Knowyou2({
         // Filter by user's location if available
         if (userLocation) {
           return data.filter(
-            (s) => s.state.toLowerCase() === userLocation.toLowerCase()
+            (s) => s.state.toLowerCase() === userLocation.toLowerCase(),
           );
         }
         return data;
@@ -256,7 +256,7 @@ export default function Knowyou2({
       const data = await response.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success");
+        showAlert("Saved successfully!", "success", true);
         setTimeout(() => {
           onNext?.();
         }, 500);
@@ -287,15 +287,16 @@ export default function Knowyou2({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] items-center">
+        {/* Image */}
         <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
-            alt="Traveler with suitcase"
+            alt="Traveler"
             className="h-full w-full object-cover"
           />
           <button
             onClick={onBack}
-            className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white"
           >
             <IoIosArrowBack size={14} />
           </button>
@@ -477,7 +478,7 @@ export default function Knowyou2({
                 type="text"
                 value={stateSearch}
                 onChange={(e) => setStateSearch(e.target.value)}
-                placeholder={`Search ${userLocation || 'state'}`}
+                placeholder={`Search ${userLocation || "state"}`}
                 className="w-full px-3 py-2 border rounded-lg text-sm outline-none"
               />
             </div>
@@ -521,7 +522,9 @@ export default function Knowyou2({
 
               {filteredStates.length === 0 && (
                 <p className="text-sm text-gray-400 text-center py-3">
-                  {userLocation ? `No locations found for ${userLocation}` : "No state found"}
+                  {userLocation
+                    ? `No locations found for ${userLocation}`
+                    : "No state found"}
                 </p>
               )}
             </div>
