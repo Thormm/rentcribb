@@ -660,10 +660,10 @@ export default function Knowyou1({
 
       {/* Space Availability Modal */}
       {showSpaceModal && (
-        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
-          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="relative w-full max-w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6 my-8 mx-auto">
             <div
-              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer z-10"
               onClick={() => setShowSpaceModal(false)}
             >
               <FaTimes className="text-white" />
