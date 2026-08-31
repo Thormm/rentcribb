@@ -218,7 +218,7 @@ export default function Knowyou1({
   // Check if data has changed
   const checkForChanges = (newData: any) => {
     if (!initialFormDataRef.current) return true;
-    
+
     const initial = initialFormDataRef.current;
     const current = {
       pref_gender: newData.pref_gender || "",
@@ -232,7 +232,7 @@ export default function Knowyou1({
     const initialHobbies = [...(initial.hobbies || [])].sort();
     const currentHobbies = [...(current.hobbies || [])].sort();
 
-    const hasChanged = 
+    const hasChanged =
       initial.pref_gender !== current.pref_gender ||
       initial.pref_religion !== current.pref_religion ||
       initial.pref_year !== current.pref_year ||
@@ -312,7 +312,7 @@ export default function Knowyou1({
 
       if (data.success) {
         showAlert("Saved successfully!", "success");
-        
+
         // Update formData to reflect saved state
         setFormData((prev: any) => ({
           ...prev,
@@ -418,6 +418,7 @@ export default function Knowyou1({
                     options={religionOptions}
                     value={formData.pref_religion ?? ""}
                     onChange={(id) => updateField("pref_religion", id)}
+                    className="ml-6"
                   />
                 </div>
 
@@ -662,7 +663,7 @@ export default function Knowyou1({
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
           <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
             <div
-              className="absolute -top-3 -right-3 w-10 h-10 rounded-full border border-white bg-black flex items-center justify-center cursor-pointer"
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setShowSpaceModal(false)}
             >
               <FaTimes className="text-white" />

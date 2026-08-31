@@ -153,6 +153,60 @@ export default function Knowyou4({
 
   const navigate = useNavigate();
 
+  // ===== GET USER =====
+  const getCurrentUser = () => {
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    return login?.user || "";
+  };
+
+  // ===== GET IMAGE URL =====
+  const getImageUrl = (filename: string): string => {
+    if (!filename) return "";
+    // If it's already a full URL, return it
+    if (filename.startsWith("http://") || filename.startsWith("https://")) {
+      return filename;
+    }
+    // Otherwise, build the full URL
+    const user = getCurrentUser();
+    return `https://www.cribb.africa/uploads/users/${user}/${filename}`;
+  };
+
+  // ===== GET SRC =====
+  const getSrc = (p: any): string | undefined => {
+    if (!p) return undefined;
+    if (p instanceof File) return URL.createObjectURL(p);
+    if (typeof p === "string") {
+      // If it's a filename (not a full URL), build the full URL
+      return getImageUrl(p);
+    }
+    return undefined;
+  };
+
+  const truncateText = (text: string, maxLength: number = 20) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
+  const selectedFeatures = (formData.all_feature || "")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  const selectedRules: string[] = formData.selectedRules || [];
+  
+  const toggleRule = (rule: string) => {
+    const next = selectedRules.includes(rule)
+      ? selectedRules.filter((r: string) => r !== rule)
+      : [...selectedRules, rule];
+    const newData = { ...formData, selectedRules: next };
+    setFormData(newData);
+    checkForChanges(newData);
+  };
+
+  const rulesDisplay = selectedRules.length === 0
+    ? "Select House Rules"
+    : truncateText(selectedRules.join(", "), 25);
+
   // ===== CAPTURE INITIAL FORM DATA =====
   useEffect(() => {
     if (isFirstLoad.current && formData) {
@@ -200,39 +254,6 @@ export default function Knowyou4({
     setHasChanges(hasChanged);
     return hasChanged;
   };
-
-  // ===== GET SRC =====
-  const getSrc = (p: any): string | undefined => {
-    if (!p) return undefined;
-    if (p instanceof File) return URL.createObjectURL(p);
-    if (typeof p === "string") return p;
-    return undefined;
-  };
-
-  const truncateText = (text: string, maxLength: number = 20) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
-  const selectedFeatures = (formData.all_feature || "")
-    .split(",")
-    .map((s: string) => s.trim())
-    .filter(Boolean);
-
-  const selectedRules: string[] = formData.selectedRules || [];
-  
-  const toggleRule = (rule: string) => {
-    const next = selectedRules.includes(rule)
-      ? selectedRules.filter((r: string) => r !== rule)
-      : [...selectedRules, rule];
-    const newData = { ...formData, selectedRules: next };
-    setFormData(newData);
-    checkForChanges(newData);
-  };
-
-  const rulesDisplay = selectedRules.length === 0
-    ? "Select House Rules"
-    : truncateText(selectedRules.join(", "), 25);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
@@ -369,24 +390,18 @@ export default function Knowyou4({
                 setUploadProgress(100);
 
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
-                  const base = `https://www.cribb.africa/uploads/users/${user}`;
-                  const urls = resp.photos_final.map((fn: string) =>
-                    fn && (fn.startsWith("http://") || fn.startsWith("https://"))
-                      ? fn
-                      : `${base}/${fn}`,
-                  );
-                  setFormData((prev: any) => ({ ...prev, photos: urls }));
+                  // Store just the filenames, the getSrc function will build the full URL
+                  setFormData((prev: any) => ({ 
+                    ...prev, 
+                    photos: resp.photos_final 
+                  }));
                 }
 
                 if (resp.video_final) {
-                  const base = `https://www.cribb.africa/uploads/users/${user}`;
-                  const vUrl = resp.video_final &&
-                    (resp.video_final.startsWith("http://") || resp.video_final.startsWith("https://"))
-                      ? resp.video_final
-                      : resp.video_final
-                        ? `${base}/${resp.video_final}`
-                        : null;
-                  setFormData((prev: any) => ({ ...prev, video: vUrl }));
+                  setFormData((prev: any) => ({ 
+                    ...prev, 
+                    video: resp.video_final 
+                  }));
                 }
 
                 // Update initial data reference after successful save
