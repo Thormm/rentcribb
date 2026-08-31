@@ -205,7 +205,6 @@ const Knowyou: React.FC = () => {
         <Knowyou4
           formData={formData}
           setFormData={setFormData}
-          onNext={() => goToStep(5)}
           onBack={() => goToStep(3)}
         />
       )}
