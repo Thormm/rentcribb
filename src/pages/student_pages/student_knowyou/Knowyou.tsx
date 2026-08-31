@@ -169,7 +169,7 @@ const Knowyou: React.FC = () => {
               Cribb
             </span>
             <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
-              for Business
+              for Student
             </span>
           </div>
         </div>
