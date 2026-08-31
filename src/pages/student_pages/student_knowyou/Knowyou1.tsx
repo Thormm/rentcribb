@@ -5,7 +5,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../components/Pill";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaMale, FaFemale, FaMoon, FaCross } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { PiHouse } from "react-icons/pi";
@@ -187,21 +187,76 @@ export default function Knowyou1({
   const [showYearModal, setShowYearModal] = useState(false);
   const [showFacultyModal, setShowFacultyModal] = useState(false);
   const [showSpaceModal, setShowSpaceModal] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const navigate = useNavigate();
   const { showAlert } = useAlert();
+
+  // Store initial form data to detect changes
+  const initialFormDataRef = useRef<any>(null);
+
+  // Track if this is the first load
+  const isFirstLoad = useRef(true);
+
+  // Capture initial form data on first render
+  useEffect(() => {
+    if (isFirstLoad.current && formData) {
+      initialFormDataRef.current = {
+        pref_gender: formData.pref_gender || "",
+        pref_religion: formData.pref_religion || "",
+        pref_year: formData.pref_year || "",
+        pref_faculty: formData.pref_faculty || "",
+        hobbies: [...(formData.hobbies || [])],
+        pet: formData.pet || "",
+      };
+      isFirstLoad.current = false;
+    }
+  }, [formData]);
 
   const hobbies: string[] = formData.hobbies || [];
   const pet: string = formData.pet || "";
 
+  // Check if data has changed
+  const checkForChanges = (newData: any) => {
+    if (!initialFormDataRef.current) return true;
+    
+    const initial = initialFormDataRef.current;
+    const current = {
+      pref_gender: newData.pref_gender || "",
+      pref_religion: newData.pref_religion || "",
+      pref_year: newData.pref_year || "",
+      pref_faculty: newData.pref_faculty || "",
+      hobbies: [...(newData.hobbies || [])].sort(),
+      pet: newData.pet || "",
+    };
+
+    const initialHobbies = [...(initial.hobbies || [])].sort();
+    const currentHobbies = [...(current.hobbies || [])].sort();
+
+    const hasChanged = 
+      initial.pref_gender !== current.pref_gender ||
+      initial.pref_religion !== current.pref_religion ||
+      initial.pref_year !== current.pref_year ||
+      initial.pref_faculty !== current.pref_faculty ||
+      JSON.stringify(initialHobbies) !== JSON.stringify(currentHobbies) ||
+      initial.pet !== current.pet;
+
+    setHasChanges(hasChanged);
+    return hasChanged;
+  };
+
   const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+    const newData = { ...formData, [field]: value };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   const toggleHobby = (hobby: string) => {
     const next = hobbies.includes(hobby)
       ? hobbies.filter((h) => h !== hobby)
       : [...hobbies, hobby];
-    updateField("hobbies", next);
+    const newData = { ...formData, hobbies: next };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   const saveAndContinue = async () => {
@@ -219,6 +274,12 @@ export default function Knowyou1({
     }
 
     if (loading) return;
+
+    // If no changes were made, just open the modal without saving
+    if (!hasChanges) {
+      setShowSpaceModal(true);
+      return;
+    }
 
     setLoading(true);
 
@@ -250,7 +311,7 @@ export default function Knowyou1({
       const data = await res.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success", true);
+        showAlert("Saved successfully!", "success");
         
         // Update formData to reflect saved state
         setFormData((prev: any) => ({
@@ -262,6 +323,17 @@ export default function Knowyou1({
           hobbies: hobbies,
           pet: formData.pet,
         }));
+
+        // Reset initial data to current data (so changes are reset)
+        initialFormDataRef.current = {
+          pref_gender: formData.pref_gender,
+          pref_religion: formData.pref_religion,
+          pref_year: formData.pref_year,
+          pref_faculty: formData.pref_faculty,
+          hobbies: [...hobbies],
+          pet: formData.pet,
+        };
+        setHasChanges(false);
 
         // Open the Space Availability modal after saving
         setTimeout(() => {
@@ -596,7 +668,7 @@ export default function Knowyou1({
               <FaTimes className="text-white" />
             </div>
             <h2 className="text-3xl mt-5 font-medium text-center text-black">
-              Space Availibility
+              Space Availability
             </h2>
             <p className="text-sm text-black text-center mt-5">
               Hola, do you have a Hostel?

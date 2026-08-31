@@ -38,6 +38,8 @@ interface FormData {
   photos?: any[];
   video?: any;
   selectedRules?: string[];
+  // Step 5
+  budget?: any;
 }
 
 // ============================================================
@@ -73,6 +75,8 @@ const Knowyou: React.FC = () => {
     photos: [],
     video: null,
     selectedRules: [],
+    // Step 5 defaults
+    budget: "",
   });
 
   // ----- Fetch existing user data on mount (no loading state) -----
@@ -126,6 +130,8 @@ const Knowyou: React.FC = () => {
             selectedRules: d.house_rules || [],
             photos: d.photos || [],
             video: d.video || null,
+            //step 5
+            budget: d.budget || "",
           });
         }
       } catch (error) {
@@ -207,6 +213,7 @@ const Knowyou: React.FC = () => {
         <Knowyou5
           formData={formData}
           setFormData={setFormData}
+          onBack={() => goToStep(1)}
         />
       )}
     </>

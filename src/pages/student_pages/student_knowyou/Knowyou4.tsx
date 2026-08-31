@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import imgright from "../../../assets/knowyou4.png";
 import { DfButton } from "../../../components/Pill";
@@ -9,6 +9,7 @@ import { IoCameraOutline } from "react-icons/io5";
 import { AiOutlineVideoCameraAdd } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { useAlert } from "../../../App";
+import { useNavigate } from "react-router-dom";
 
 function Maincard({
   className = "",
@@ -105,7 +106,6 @@ const ALL_FEATURES = [
   "Fridge",
 ];
 
-// ✅ House Rules extracted from Entirespace1
 const houseRuleOptions = [
   "No smoking",
   "No pets",
@@ -126,14 +126,12 @@ const houseRuleOptions = [
 interface Knowyou4Props {
   formData: any;
   setFormData: (data: any) => void;
-  onNext?: () => void;
   onBack?: () => void;
 }
 
 export default function Knowyou4({
   formData,
   setFormData,
-  onNext,
   onBack,
 }: Knowyou4Props) {
   const { showAlert } = useAlert();
@@ -142,13 +140,68 @@ export default function Knowyou4({
   const [showSpecialFeatureModal, setShowSpecialFeatureModal] = useState(false);
   const [showHouseRulesModal, setShowHouseRulesModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // ✅ Progress states for upload feedback
+  // Progress states for upload feedback
   const [photoUploadProgress, setPhotoUploadProgress] = useState<number>(0);
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  // ✅ Fixed: Returns string | undefined instead of string | null
+  // Refs for change detection
+  const initialFormDataRef = useRef<any>(null);
+  const isFirstLoad = useRef(true);
+
+  const navigate = useNavigate();
+
+  // ===== CAPTURE INITIAL FORM DATA =====
+  useEffect(() => {
+    if (isFirstLoad.current && formData) {
+      initialFormDataRef.current = {
+        all_feature: formData.all_feature || "",
+        special_feature: formData.special_feature || "",
+        selectedRules: [...(formData.selectedRules || [])],
+        photos: formData.photos || [],
+        video: formData.video || null,
+      };
+      isFirstLoad.current = false;
+    }
+  }, [formData]);
+
+  // ===== CHECK FOR CHANGES =====
+  const checkForChanges = (newData: any) => {
+    if (!initialFormDataRef.current) return true;
+    
+    const initial = initialFormDataRef.current;
+    
+    // Check if photos changed (compare by length and file names)
+    const initialPhotos = initial.photos || [];
+    const currentPhotos = newData.photos || [];
+    const photosChanged = 
+      initialPhotos.length !== currentPhotos.length ||
+      JSON.stringify(initialPhotos.map((p: any) => p instanceof File ? p.name : p)) !== 
+      JSON.stringify(currentPhotos.map((p: any) => p instanceof File ? p.name : p));
+
+    // Check if video changed
+    const initialVideo = initial.video;
+    const currentVideo = newData.video;
+    const videoChanged = 
+      (initialVideo instanceof File && currentVideo instanceof File && initialVideo.name !== currentVideo.name) ||
+      (!initialVideo && currentVideo) ||
+      (initialVideo && !currentVideo);
+
+    const hasChanged = 
+      initial.all_feature !== newData.all_feature ||
+      initial.special_feature !== newData.special_feature ||
+      JSON.stringify([...(initial.selectedRules || [])].sort()) !== 
+        JSON.stringify([...(newData.selectedRules || [])].sort()) ||
+      photosChanged ||
+      videoChanged;
+
+    setHasChanges(hasChanged);
+    return hasChanged;
+  };
+
+  // ===== GET SRC =====
   const getSrc = (p: any): string | undefined => {
     if (!p) return undefined;
     if (p instanceof File) return URL.createObjectURL(p);
@@ -166,14 +219,15 @@ export default function Knowyou4({
     .map((s: string) => s.trim())
     .filter(Boolean);
 
-  // ✅ House Rules helpers
   const selectedRules: string[] = formData.selectedRules || [];
   
   const toggleRule = (rule: string) => {
     const next = selectedRules.includes(rule)
       ? selectedRules.filter((r: string) => r !== rule)
       : [...selectedRules, rule];
-    setFormData((prev: any) => ({ ...prev, selectedRules: next }));
+    const newData = { ...formData, selectedRules: next };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   const rulesDisplay = selectedRules.length === 0
@@ -190,7 +244,9 @@ export default function Knowyou4({
         showAlert("You can upload a maximum of 5 photos. Please select up to 5.", "warning");
         return;
       }
-      setFormData((prev: any) => ({ ...prev, photos: selected }));
+      const newData = { ...formData, photos: selected };
+      setFormData(newData);
+      checkForChanges(newData);
 
       setPhotoUploadProgress(0);
       let p = 0;
@@ -222,7 +278,9 @@ export default function Knowyou4({
           );
           return;
         }
-        setFormData((prev: any) => ({ ...prev, video: file }));
+        const newData = { ...formData, video: file };
+        setFormData(newData);
+        checkForChanges(newData);
 
         setVideoUploadProgress(0);
         let p = 0;
@@ -242,7 +300,7 @@ export default function Knowyou4({
   };
 
   const handleSubmit = async () => {
-    // ✅ Validate: Features, House Rules, Photos OR Video
+    // Validate: Features, House Rules, Photos OR Video
     if (!formData.all_feature) {
       showAlert("Please select at least one feature", "warning");
       return;
@@ -253,6 +311,14 @@ export default function Knowyou4({
     }
     if (!(formData.photos && formData.photos.length > 0) && !formData.video) {
       showAlert("Please upload at least one photo or a video", "warning");
+      return;
+    }
+
+    if (loading) return;
+
+    // If no changes were made, just navigate to next step
+    if (!hasChanges) {
+      navigate("/studentdash");
       return;
     }
 
@@ -323,8 +389,18 @@ export default function Knowyou4({
                   setFormData((prev: any) => ({ ...prev, video: vUrl }));
                 }
 
+                // Update initial data reference after successful save
+                initialFormDataRef.current = {
+                  all_feature: formData.all_feature || "",
+                  special_feature: formData.special_feature || "",
+                  selectedRules: [...selectedRules],
+                  photos: formData.photos || [],
+                  video: formData.video || null,
+                };
+                setHasChanges(false);
+
                 setTimeout(() => {
-                  if (onNext) onNext();
+                  navigate("/studentdash");
                 }, 500);
 
                 resolve();
@@ -354,20 +430,23 @@ export default function Knowyou4({
     const features = formData.all_feature
       ? formData.all_feature.split(",")
       : [];
+    let newData;
     if (features.includes(feature)) {
       const filtered = features.filter((f: string) => f !== feature).join(",");
-      setFormData({
+      newData = {
         ...formData,
         all_feature: filtered,
         special_feature:
           formData.special_feature === feature ? "" : formData.special_feature,
-      });
+      };
     } else {
-      setFormData({
+      newData = {
         ...formData,
         all_feature: [...features, feature].join(","),
-      });
+      };
     }
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   return (
@@ -515,7 +594,7 @@ export default function Knowyou4({
                 </div>
               </div>
 
-              {/* ✅ House Rules - Replaces Target University */}
+              {/* House Rules */}
               <div className="grid grid-cols-1 gap-6">
                 <div
                   className="space-y-1"
@@ -567,7 +646,7 @@ export default function Knowyou4({
         </div>
       </div>
 
-      {/* ✅ HOUSE RULES MODAL - Replaces University Modal */}
+      {/* HOUSE RULES MODAL */}
       {showHouseRulesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
@@ -676,9 +755,11 @@ export default function Knowyou4({
                     formData.special_feature === "None" ||
                     !formData.special_feature
                   }
-                  onChange={() =>
-                    setFormData({ ...formData, special_feature: "None" })
-                  }
+                  onChange={() => {
+                    const newData = { ...formData, special_feature: "None" };
+                    setFormData(newData);
+                    checkForChanges(newData);
+                  }}
                   className="w-4 h-4"
                 />
                 <span>None</span>
@@ -693,9 +774,11 @@ export default function Knowyou4({
                     type="radio"
                     name="specialFeature"
                     checked={formData.special_feature === feat}
-                    onChange={() =>
-                      setFormData({ ...formData, special_feature: feat })
-                    }
+                    onChange={() => {
+                      const newData = { ...formData, special_feature: feat };
+                      setFormData(newData);
+                      checkForChanges(newData);
+                    }}
                     className="w-4 h-4"
                   />
                   <span>{feat}</span>

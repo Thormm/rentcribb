@@ -4,7 +4,7 @@ import { DfButton } from "../../../components/Pill";
 import { IoIosArrowDown, IoIosArrowBack } from "react-icons/io";
 import InfoPill from "../../../components/Pill";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { LuStar, LuStarOff } from "react-icons/lu";
 
 // ===== COMPONENTS =====
@@ -161,12 +161,63 @@ export default function Knowyou3({
   const [loading, setLoading] = useState(false);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [showWaterModal, setShowWaterModal] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const initialFormDataRef = useRef<any>(null);
+  const isFirstLoad = useRef(true);
 
   const security = normalizeArray(formData.security);
   const water = normalizeArray(formData.water);
 
+  // ===== CAPTURE INITIAL FORM DATA =====
+  useEffect(() => {
+    if (isFirstLoad.current && formData) {
+      initialFormDataRef.current = {
+        security: [...normalizeArray(formData.security)],
+        water: [...normalizeArray(formData.water)],
+        power_supply: formData.power_supply || 0,
+        network_strength: formData.network_strength || 0,
+        compound: formData.compound || 0,
+        access_road: formData.access_road || 0,
+      };
+      isFirstLoad.current = false;
+    }
+  }, [formData]);
+
+  // ===== CHECK FOR CHANGES =====
+  const checkForChanges = (newData: any) => {
+    if (!initialFormDataRef.current) return true;
+    
+    const initial = initialFormDataRef.current;
+    const current = {
+      security: [...normalizeArray(newData.security)].sort(),
+      water: [...normalizeArray(newData.water)].sort(),
+      power_supply: newData.power_supply || 0,
+      network_strength: newData.network_strength || 0,
+      compound: newData.compound || 0,
+      access_road: newData.access_road || 0,
+    };
+
+    const initialSecurity = [...(initial.security || [])].sort();
+    const currentSecurity = [...(current.security || [])].sort();
+    const initialWater = [...(initial.water || [])].sort();
+    const currentWater = [...(current.water || [])].sort();
+
+    const hasChanged = 
+      JSON.stringify(initialSecurity) !== JSON.stringify(currentSecurity) ||
+      JSON.stringify(initialWater) !== JSON.stringify(currentWater) ||
+      initial.power_supply !== current.power_supply ||
+      initial.network_strength !== current.network_strength ||
+      initial.compound !== current.compound ||
+      initial.access_road !== current.access_road;
+
+    setHasChanges(hasChanged);
+    return hasChanged;
+  };
+
   const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+    const newData = { ...formData, [field]: value };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   const toggleMulti = (field: string, value: string) => {
@@ -174,7 +225,9 @@ export default function Knowyou3({
     const next = current.includes(value)
       ? current.filter((v) => v !== value)
       : [...current, value];
-    updateField(field, next);
+    const newData = { ...formData, [field]: next };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   // ===== SAVE =====
@@ -207,6 +260,12 @@ export default function Knowyou3({
 
     if (loading) return;
 
+    // If no changes were made, just navigate to next step
+    if (!hasChanges) {
+      onNext?.();
+      return;
+    }
+
     setLoading(true);
 
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -235,7 +294,19 @@ export default function Knowyou3({
       const data = await response.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success", true);
+        showAlert("Saved successfully!", "success");
+        
+        // Update initial data reference
+        initialFormDataRef.current = {
+          security: [...security],
+          water: [...water],
+          power_supply: formData.power_supply || 0,
+          network_strength: formData.network_strength || 0,
+          compound: formData.compound || 0,
+          access_road: formData.access_road || 0,
+        };
+        setHasChanges(false);
+
         setTimeout(() => {
           onNext?.();
         }, 500);

@@ -119,17 +119,19 @@ export default function Knowyou2({
   const [loading, setLoading] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
+  const [hasChanges, setHasChanges] = useState(false);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const initialFormDataRef = useRef<any>(null);
+  const isFirstLoad = useRef(true);
 
   // ===== GET USER'S SCHOOL LOCATION =====
   const getUserLocation = () => {
     try {
       const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
       const school = login?.school || "";
-      // Extract location from school name (e.g., "KWASU - Kwara State University, Ilorin (Kwara)")
       const match = school.match(/\(([^)]+)\)/);
       if (match) {
-        return match[1]; // Returns "Kwara" or "Abuja" etc.
+        return match[1];
       }
       return null;
     } catch {
@@ -153,7 +155,6 @@ export default function Knowyou2({
           }));
         }
 
-        // Filter by user's location if available
         if (userLocation) {
           return data.filter(
             (s) => s.state.toLowerCase() === userLocation.toLowerCase(),
@@ -176,9 +177,52 @@ export default function Knowyou2({
     }
   }, [showStateModal]);
 
+  // ===== CAPTURE INITIAL FORM DATA =====
+  useEffect(() => {
+    if (isFirstLoad.current && formData) {
+      initialFormDataRef.current = {
+        type: formData.type || "",
+        roommates: formData.roommates || 2,
+        hostel_loc: formData.hostel_loc || "",
+        availability: formData.availability || "",
+        amount_share: formData.amount_share || "",
+        duration: formData.duration || "",
+      };
+      isFirstLoad.current = false;
+    }
+  }, [formData]);
+
+  // ===== CHECK FOR CHANGES =====
+  const checkForChanges = (newData: any) => {
+    if (!initialFormDataRef.current) return true;
+    
+    const initial = initialFormDataRef.current;
+    const current = {
+      type: newData.type || "",
+      roommates: newData.roommates || 2,
+      hostel_loc: newData.hostel_loc || "",
+      availability: newData.availability || "",
+      amount_share: newData.amount_share || "",
+      duration: newData.duration || "",
+    };
+
+    const hasChanged = 
+      initial.type !== current.type ||
+      initial.roommates !== current.roommates ||
+      initial.hostel_loc !== current.hostel_loc ||
+      initial.availability !== current.availability ||
+      String(initial.amount_share) !== String(current.amount_share) ||
+      initial.duration !== current.duration;
+
+    setHasChanges(hasChanged);
+    return hasChanged;
+  };
+
   // ===== HELPERS =====
   const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+    const newData = { ...formData, [field]: value };
+    setFormData(newData);
+    checkForChanges(newData);
   };
 
   const counter = (field: string, value: number, min = 2) => (
@@ -186,16 +230,20 @@ export default function Knowyou2({
       <div className="flex items-center justify-between w-full leading-5 text-xs py-1">
         <FaMinus
           className="cursor-pointer"
-          onClick={() =>
-            updateField(field, Math.max(min, (formData[field] || min) - 1))
-          }
+          onClick={() => {
+            const newVal = Math.max(min, (formData[field] || min) - 1);
+            updateField(field, newVal);
+          }}
         />
         <span className="text-gray-500">
           {value} Bedspace{value > 1 ? "s" : ""}
         </span>
         <FaPlus
           className="cursor-pointer"
-          onClick={() => updateField(field, (formData[field] || min) + 1)}
+          onClick={() => {
+            const newVal = (formData[field] || min) + 1;
+            updateField(field, newVal);
+          }}
         />
       </div>
     </InfoPill>
@@ -227,6 +275,12 @@ export default function Knowyou2({
 
     if (loading) return;
 
+    // If no changes were made, just navigate to next step
+    if (!hasChanges) {
+      onNext?.();
+      return;
+    }
+
     setLoading(true);
 
     const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
@@ -241,7 +295,7 @@ export default function Knowyou2({
       hostel_loc: formData.hostel_loc,
       type: formData.type,
       amount_share: formData.amount_share,
-      roommates: formData.roommates || 2, // Default to 2 if not set
+      roommates: formData.roommates || 2,
       duration: formData.duration,
       availability: formData.availability,
     };
@@ -256,7 +310,19 @@ export default function Knowyou2({
       const data = await response.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success", true);
+        showAlert("Saved successfully!", "success");
+        
+        // Update initial data reference
+        initialFormDataRef.current = {
+          type: formData.type || "",
+          roommates: formData.roommates || 2,
+          hostel_loc: formData.hostel_loc || "",
+          availability: formData.availability || "",
+          amount_share: formData.amount_share || "",
+          duration: formData.duration || "",
+        };
+        setHasChanges(false);
+
         setTimeout(() => {
           onNext?.();
         }, 500);
@@ -318,12 +384,11 @@ export default function Knowyou2({
                     <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.type || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            type: e.target.value,
-                          })
-                        }
+                        onChange={(e) => {
+                          const newData = { ...formData, type: e.target.value };
+                          setFormData(newData);
+                          checkForChanges(newData);
+                        }}
                         className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Space Type</option>
@@ -369,12 +434,11 @@ export default function Knowyou2({
                     <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.availability || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            availability: e.target.value,
-                          })
-                        }
+                        onChange={(e) => {
+                          const newData = { ...formData, availability: e.target.value };
+                          setFormData(newData);
+                          checkForChanges(newData);
+                        }}
                         className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Available from?</option>
@@ -402,12 +466,14 @@ export default function Knowyou2({
                       <input
                         type="number"
                         value={formData.amount_share || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            amount_share: parseFloat(e.target.value) || 0,
-                          })
-                        }
+                        onChange={(e) => {
+                          const newData = { 
+                            ...formData, 
+                            amount_share: parseFloat(e.target.value) || 0 
+                          };
+                          setFormData(newData);
+                          checkForChanges(newData);
+                        }}
                         placeholder="Amount per person"
                         className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none py-1"
                         min="0"
@@ -423,12 +489,11 @@ export default function Knowyou2({
                     <div className="flex items-center justify-between w-full">
                       <select
                         value={formData.duration || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            duration: e.target.value,
-                          })
-                        }
+                        onChange={(e) => {
+                          const newData = { ...formData, duration: e.target.value };
+                          setFormData(newData);
+                          checkForChanges(newData);
+                        }}
                         className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none cursor-pointer py-1"
                       >
                         <option value="">Select Duration</option>
@@ -504,10 +569,9 @@ export default function Knowyou2({
                           type="radio"
                           checked={isSelected}
                           onChange={() => {
-                            setFormData((prev: any) => ({
-                              ...prev,
-                              hostel_loc: value,
-                            }));
+                            const newData = { ...formData, hostel_loc: value };
+                            setFormData(newData);
+                            checkForChanges(newData);
                             setShowStateModal(false);
                             setStateSearch("");
                           }}
