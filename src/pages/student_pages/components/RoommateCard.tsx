@@ -224,12 +224,14 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
         </div>
 
         {/* PRICE + DURATION */}
-        <div className="flex justify-center items-center gap-1 mt-1 text-sm">
-          <span className="text-[#0556F8]">{priceDisplay}</span>
-          {hasDuration && (
-            <span className="text-[#0556F8]"> / {durationShort}</span>
-          )}
-        </div>
+        {priceDisplay && (
+          <div className="flex justify-center items-center gap-1 mt-1 text-sm">
+            <span className="text-[#0556F8]">{priceDisplay}</span>
+            {hasDuration && (
+              <span className="text-[#0556F8]"> / {durationShort}</span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

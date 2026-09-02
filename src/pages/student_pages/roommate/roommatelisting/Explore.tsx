@@ -272,7 +272,7 @@ export default function Explore() {
             pet: item.pet || "",
             school: item.school || "",
             created_at: new Date().toISOString(),
-            value: "100%",
+            value: item.whats === user ? "You" : "100%",
           }));
 
           setCards(transformedCards);
@@ -289,7 +289,7 @@ export default function Explore() {
     };
 
     fetchRoommates();
-  }, []); // Empty dependency array - only runs once on mount
+  }, [loginData]);
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -395,7 +395,7 @@ export default function Explore() {
               className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
             >
               <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
-              LET’S KNOW YOU
+              LET'S KNOW YOU
             </button>
             <button
               className="inline-flex items-center justify-end gap-1 mt-3 cursor-pointer"
@@ -426,9 +426,16 @@ export default function Explore() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-              {paginatedCards.map((card) => (
-                <RoommateCard key={card.id} card={card} />
-              ))}
+              {paginatedCards.map((card, index) => {
+                const isUserCard = index === 0 && card.value === "You";
+                return (
+                  <RoommateCard 
+                    key={card.id} 
+                    card={card}
+                    bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
+                  />
+                );
+              })}
             </div>
           )}
 
