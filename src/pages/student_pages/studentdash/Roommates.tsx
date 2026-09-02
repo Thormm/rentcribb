@@ -11,6 +11,7 @@ import { BiComment } from "react-icons/bi";
 import { FaToggleOn } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import Spaceholder from "../../../components/Spaceholder";
+import { useNavigate } from "../../../App";
 
 const getLoginData = () => {
   try {
@@ -128,7 +129,7 @@ function PaginatedCards() {
                     </div>
                   </InfoPill>
 
-                  <div className="flex justify-center">
+                  <div className="flex justify-center" >
                     <button className="py-3 text-md w-30 font-medium bg-black text-white shadow-lg rounded-lg">
                       EDIT
                     </button>
@@ -300,6 +301,7 @@ function Tabs({
 // ----------------------- Main Component -----------------------
 const Rommates = () => {
   const [activeTab, setActiveTab] = useState("Explore");
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -355,7 +357,7 @@ const Rommates = () => {
                       </div>
                     </div>
 
-                    <button className="mt-6 bg-black text-semibold text-white w-40 py-4 rounded-lg shadow-md">
+                    <button onClick={() => navigate("/knowyou")} className="mt-6 bg-black text-semibold text-white w-40 py-4 rounded-lg shadow-md">
                       EDIT
                     </button>
                   </div>
