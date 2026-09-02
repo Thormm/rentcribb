@@ -311,7 +311,7 @@ export default function Knowyou1({
       const data = await res.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success");
+        showAlert("Saved successfully!", "success", true);
 
         // Update formData to reflect saved state
         setFormData((prev: any) => ({

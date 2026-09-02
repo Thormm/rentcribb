@@ -3,16 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../../../components/Footer";
 import clsx from "clsx";
 import InfoPill from "../../../../components/Pill";
-import {
-  MdOutlinePostAdd,
-} from "react-icons/md";
+import { MdOutlinePostAdd } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 
 // Import the reusable card and its type
-import RoommateCard, {type Roommate } from "../../components/RoommateCard";
+import RoommateCard, { type Roommate } from "../../components/RoommateCard";
 
-
-// ---------- Option arrays (for filters & mock data) ----------
+// ---------- Option arrays ----------
 const departments = [
   "Mass Communication",
   "Computer Science",
@@ -81,60 +78,6 @@ const priceRanges = [
   "₦4,000,000 - ₦5,000,000",
 ];
 
-const featureOptions = [
-  "Games",
-  "Food",
-  "Exercise",
-  "Reading",
-  "Hangout",
-  "Sleep",
-  "Movies",
-  "Chat",
-  "Music",
-];
-
-const petOptions = ["Cat_Dog", "Cat", "Dog", "None"];
-const religions: Roommate["religion"][] = ["christian", "muslim", "none"];
-
-// ---------- Mock Data Generator ----------
-function generateMockData(count: number): Roommate[] {
-  const data: Roommate[] = [];
-  for (let i = 1; i <= count; i++) {
-    const randomPercent = Math.floor(Math.random() * 100) + 1;
-    const value = `${randomPercent}%`;
-
-    const gender = i % 2 === 0 ? "male" : "female";
-    const religion = religions[i % religions.length];
-    const level = levels[i % levels.length];
-    const department = departments[i % departments.length];
-    const moveIn = moveInDates[i % moveInDates.length];
-    const duration = durationOptions[i % durationOptions.length];
-    const type = spaceTypes[i % spaceTypes.length];
-    const price = priceRanges[i % priceRanges.length];
-    const shuffled = [...featureOptions].sort(() => Math.random() - 0.5);
-    const features = shuffled.slice(0, 3);
-    const pet = petOptions[i % petOptions.length];
-    data.push({
-      id: i,
-      user: `User ${i}`,
-      gender,
-      religion,
-      level,
-      department,
-      move_in_date: moveIn,
-      duration,
-      type,
-      price,
-      features,
-      pet,
-      school: "Cribb University",
-      created_at: new Date(Date.now() - i * 86400000).toISOString(),
-      value,
-    });
-  }
-  return data;
-}
-
 // ---------- FilterSelect Component ----------
 type FilterSelectProps = {
   label: string;
@@ -175,9 +118,17 @@ function FilterSelect({
   );
 }
 
-function Label({ children, className }: React.PropsWithChildren<{ className?: string }>) {
+function Label({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={clsx("text-sm md:text-md md:my-3 font-semibold ml-6", className)}>
+    <div
+      className={clsx(
+        "text-sm md:text-md md:my-3 font-semibold ml-6",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -186,9 +137,19 @@ function Label({ children, className }: React.PropsWithChildren<{ className?: st
 // ---------- Main Page ----------
 export default function Explore() {
   const navigate = useNavigate();
-  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+  
+  // Get login data once and memoize it
+  const loginData = useMemo(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    } catch {
+      return {};
+    }
+  }, []);
+
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [cards, setCards] = useState<Roommate[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -265,10 +226,70 @@ export default function Explore() {
     },
   ];
 
+  // ----- Fetch real data from database -----
   useEffect(() => {
-    const mock = generateMockData(25);
-    setCards(mock);
-  }, []);
+    const fetchRoommates = async () => {
+      setLoading(true);
+      try {
+        const user = loginData?.user || "";
+        const signup_key = loginData?.signup_key || "";
+        const school = loginData?.school || "";
+
+        if (!user || !signup_key || !school) {
+          console.log("Missing session data");
+          setCards([]);
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_roommates",
+            user: user,
+            signup_key: signup_key,
+            school: school,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Include ALL users - no filtering
+          const transformedCards: Roommate[] = result.data.map((item: any) => ({
+            id: parseInt(item.id) || Math.random(),
+            user: item.whats || "User",
+            gender: item.gender || "",
+            religion: item.religion || "",
+            level: item.level || "",
+            department: item.faculty || "",
+            move_in_date: item.availability || "",
+            duration: item.duration || "",
+            type: item.type || "",
+            price: item.amount_share || "",
+            features: item.hobby ? item.hobby.split(",").map((s: string) => s.trim()) : [],
+            pet: item.pet || "",
+            school: item.school || "",
+            created_at: new Date().toISOString(),
+            value: "100%",
+          }));
+
+          setCards(transformedCards);
+        } else {
+          console.log("No data found");
+          setCards([]);
+        }
+      } catch (error) {
+        console.error("Error fetching roommates:", error);
+        setCards([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoommates();
+  }, []); // Empty dependency array - only runs once on mount
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -301,12 +322,14 @@ export default function Explore() {
           <div className="w-full">
             <div className="grid grid-cols-[1fr_auto] items-center gap-1">
               <div>
-                <div className="text-md font-semibold text-[#FFA1A1]">LISTINGS</div>
+                <div className="text-md font-semibold text-[#FFA1A1]">
+                  LISTINGS
+                </div>
                 <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center gap-4">
                   <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
                     Available Roommates in{" "}
                     <span className="text-[#C2C8DA]">
-                      {login?.school || "Your School"}
+                      {loginData?.school || "Your School"}
                     </span>
                   </h1>
                 </div>
@@ -387,14 +410,30 @@ export default function Explore() {
 
         {/* Cards Grid */}
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {paginatedCards.map((card) => (
-              <RoommateCard key={card.id} card={card} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3A2A05] mx-auto"></div>
+                <p className="mt-4 text-[#3A2A05]">Loading roommates...</p>
+              </div>
+            </div>
+          ) : paginatedCards.length === 0 ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-center">
+                <p className="text-xl text-[#3A2A05]">No roommates found</p>
+                <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              {paginatedCards.map((card) => (
+                <RoommateCard key={card.id} card={card} />
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {!loading && totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-8">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

@@ -3,6 +3,8 @@ import clsx from "clsx";
 import {
   MdOutlineMan4,
   MdOutlineWoman2,
+  MdOutlineChat,
+  MdPeople,
 } from "react-icons/md";
 import { CgCross } from "react-icons/cg";
 import {
@@ -43,11 +45,25 @@ const truncateText = (text: string, maxLength: number = 10) => {
   return text.length > maxLength ? text.slice(0, maxLength) + "…" : text;
 };
 
-// Get numeric price from range string (e.g., "₦50,000 - ₦100,000" -> "₦50,000")
+// Get numeric price from range string and format with commas
 const getNumericPrice = (priceRange: string): string => {
-  if (!priceRange) return "₦0";
+  if (!priceRange || priceRange.trim() === "" || priceRange === "₦0") return "";
+  
   const parts = priceRange.split(" - ");
-  return parts[0] || priceRange;
+  const firstPrice = parts[0] || priceRange;
+  
+  // Extract the numeric value from the price string (remove ₦ and commas)
+  const numericValue = firstPrice.replace(/[₦,]/g, '').trim();
+  
+  // Check if it's a valid number
+  if (numericValue === "" || isNaN(parseInt(numericValue, 10))) return "";
+  
+  // Parse as number and format with commas
+  const num = parseInt(numericValue, 10);
+  if (num === 0) return ""; // Don't show zero
+  
+  // Format with commas and add ₦ sign
+  return `₦${num.toLocaleString()}`;
 };
 
 // Map duration to short label
@@ -84,15 +100,21 @@ const featureIcons: Record<string, React.ReactNode> = {
   Food: <FaUtensils />,
   Exercise: <FaFutbol />,
   Reading: <FaBook />,
-  Hangout: <FaMusic />,
+  Hangout: <MdPeople />,
   Sleep: <FaMoon />,
   Movies: <FaFilm />,
-  Chat: <FaMusic />,
+  Chat: <MdOutlineChat />,
   Music: <FaMusic />,
 };
 
 // ---------- Pet Icon with red stroke ----------
-const PetIcon = ({ liked, children }: { liked: boolean; children: React.ReactNode }) => (
+const PetIcon = ({
+  liked,
+  children,
+}: {
+  liked: boolean;
+  children: React.ReactNode;
+}) => (
   <div className="relative w-6 h-6 flex items-center justify-center">
     <span className="text-xl">{children}</span>
     {!liked && (
@@ -126,8 +148,8 @@ const likesDog = (pet: string) => pet === "Cat_Dog" || pet === "Dog";
 interface RoommateCardProps {
   card: Roommate;
   className?: string;
-  bgColor?: string;          // optional card background color (hex or Tailwind class)
-  avatarBgColor?: string;    // optional avatar circle background (default semi-transparent)
+  bgColor?: string; // optional card background color (hex or Tailwind class)
+  avatarBgColor?: string; // optional avatar circle background (default semi-transparent)
 }
 
 export const RoommateCard: React.FC<RoommateCardProps> = ({
@@ -145,7 +167,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
     <div
       className={clsx(
         "relative text-black rounded-4xl mt-10 py-6 shadow-md text-center",
-        className
+        className,
       )}
       style={{ backgroundColor: bgColor }}
     >
@@ -158,23 +180,20 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
 
       <div className="mt-20 justify-center">
         {/* PET ROW – cat above gender, dog above religion */}
-        {card.pet !== "None" ? (
-          <div className="flex justify-center gap-2 items-center mx-5">
-            <div className="w-10 flex justify-center">
-              <PetIcon liked={likesCat(card.pet)}>
-                <FaCat className="text-black" />
-              </PetIcon>
-            </div>
-            <div className="flex-1"></div>
-            <div className="w-10 flex justify-center">
-              <PetIcon liked={likesDog(card.pet)}>
-                <FaDog className="text-black" />
-              </PetIcon>
-            </div>
+
+        <div className="flex justify-center gap-2 items-center mx-5">
+          <div className="w-10 flex justify-center">
+            <PetIcon liked={likesCat(card.pet)}>
+              <FaCat className="text-black" />
+            </PetIcon>
           </div>
-        ) : (
-          <div className="h-6"></div>
-        )}
+          <div className="flex-1"></div>
+          <div className="w-10 flex justify-center">
+            <PetIcon liked={likesDog(card.pet)}>
+              <FaDog className="text-black" />
+            </PetIcon>
+          </div>
+        </div>
 
         {/* GENDER + DEPT/LEVEL + RELIGION */}
         <div className="flex justify-center gap-2">
@@ -207,7 +226,9 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
         {/* PRICE + DURATION */}
         <div className="flex justify-center items-center gap-1 mt-1 text-sm">
           <span className="text-[#0556F8]">{priceDisplay}</span>
-          {hasDuration && <span className="text-[#0556F8]"> / {durationShort}</span>}
+          {hasDuration && (
+            <span className="text-[#0556F8]"> / {durationShort}</span>
+          )}
         </div>
       </div>
     </div>

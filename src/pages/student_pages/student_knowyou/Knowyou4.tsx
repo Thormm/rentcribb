@@ -386,7 +386,7 @@ export default function Knowyou4({
               const resp = JSON.parse(xhr.responseText || "{}");
 
               if (xhr.status >= 200 && xhr.status < 300 && resp.success) {
-                showAlert("Saved successfully!", "success");
+                showAlert("Saved successfully!", "success", true);
                 setUploadProgress(100);
 
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {

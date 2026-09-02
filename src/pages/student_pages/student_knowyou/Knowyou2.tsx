@@ -310,7 +310,7 @@ export default function Knowyou2({
       const data = await response.json();
 
       if (data.success) {
-        showAlert("Saved successfully!", "success");
+        showAlert("Saved successfully!", "success", true);
         
         // Update initial data reference
         initialFormDataRef.current = {
