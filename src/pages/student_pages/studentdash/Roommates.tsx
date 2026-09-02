@@ -368,7 +368,7 @@ const Rommates = () => {
                   Rommate Requests
                 </button>
 
-                <button className="mt-5 w-full  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button onClick={() => navigate("/explore")} className="mt-5 w-full  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
