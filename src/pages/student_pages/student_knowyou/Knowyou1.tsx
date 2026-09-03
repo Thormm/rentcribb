@@ -251,12 +251,25 @@ export default function Knowyou1({
   };
 
   const toggleHobby = (hobby: string) => {
-    const next = hobbies.includes(hobby)
-      ? hobbies.filter((h) => h !== hobby)
-      : [...hobbies, hobby];
-    const newData = { ...formData, hobbies: next };
-    setFormData(newData);
-    checkForChanges(newData);
+    // Check if already selected
+    if (hobbies.includes(hobby)) {
+      // Remove the hobby if already selected
+      const next = hobbies.filter((h) => h !== hobby);
+      const newData = { ...formData, hobbies: next };
+      setFormData(newData);
+      checkForChanges(newData);
+    } else {
+      // Only add if less than 3 hobbies are selected
+      if (hobbies.length < 3) {
+        const next = [...hobbies, hobby];
+        const newData = { ...formData, hobbies: next };
+        setFormData(newData);
+        checkForChanges(newData);
+      } else {
+        // Show alert if trying to select more than 3
+        showAlert("You can only select up to 3 hobbies", "warning");
+      }
+    }
   };
 
   const saveAndContinue = async () => {
@@ -270,6 +283,12 @@ export default function Knowyou1({
       !formData.pet
     ) {
       showAlert("Please complete all required fields", "warning");
+      return;
+    }
+
+    // Validate exactly 3 hobbies
+    if (hobbies.length !== 3) {
+      showAlert("Please select exactly 3 hobbies", "warning");
       return;
     }
 
@@ -403,7 +422,7 @@ export default function Knowyou1({
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 md:mt-0">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label>Pref. Gender</Label>
+                  <Label>Gender</Label>
                   <IconOptionGroup
                     options={genderOptions}
                     value={formData.pref_gender ?? ""}
@@ -413,7 +432,7 @@ export default function Knowyou1({
                 </div>
 
                 <div className="space-y-1">
-                  <Label>Pref. Religion</Label>
+                  <Label>Religion</Label>
                   <IconOptionGroup
                     options={religionOptions}
                     value={formData.pref_religion ?? ""}
@@ -523,26 +542,40 @@ export default function Knowyou1({
       {showHobbiesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold">Select Hobbies</h3>
               <button onClick={() => setShowHobbiesModal(false)}>Close</button>
             </div>
+            <p className="text-sm text-gray-600 mb-3">
+              Select exactly 3 hobbies ({hobbies.length}/3 selected)
+            </p>
             {hobbiesOptions.map((opt) => (
               <label key={opt} className="flex items-center gap-3 py-1">
                 <input
                   type="checkbox"
                   checked={hobbies.includes(opt)}
                   onChange={() => toggleHobby(opt)}
+                  disabled={hobbies.length >= 3 && !hobbies.includes(opt)}
                 />
-                {opt}
+                <span
+                  className={
+                    hobbies.length >= 3 && !hobbies.includes(opt)
+                      ? "text-gray-400"
+                      : ""
+                  }
+                >
+                  {opt}
+                </span>
               </label>
             ))}
-            <button
-              className="w-full mt-4 py-2 bg-black text-white rounded"
-              onClick={() => setShowHobbiesModal(false)}
-            >
-              Done
-            </button>
+            <div className="mt-4 flex gap-2">
+              <button
+                className="flex-1 py-2 bg-black text-white rounded"
+                onClick={() => setShowHobbiesModal(false)}
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}

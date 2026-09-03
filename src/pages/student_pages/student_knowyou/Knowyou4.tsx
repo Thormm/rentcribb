@@ -147,9 +147,13 @@ export default function Knowyou4({
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  // Refs for change detection
+  // Refs for file inputs and change detection
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const initialFormDataRef = useRef<any>(null);
   const isFirstLoad = useRef(true);
+  // FIX: Add ref to prevent duplicate submissions
+  const isSubmitting = useRef(false);
 
   const navigate = useNavigate();
 
@@ -162,11 +166,9 @@ export default function Knowyou4({
   // ===== GET IMAGE URL =====
   const getImageUrl = (filename: string): string => {
     if (!filename) return "";
-    // If it's already a full URL, return it
     if (filename.startsWith("http://") || filename.startsWith("https://")) {
       return filename;
     }
-    // Otherwise, build the full URL
     const user = getCurrentUser();
     return `https://www.cribb.africa/uploads/users/${user}/${filename}`;
   };
@@ -176,7 +178,6 @@ export default function Knowyou4({
     if (!p) return undefined;
     if (p instanceof File) return URL.createObjectURL(p);
     if (typeof p === "string") {
-      // If it's a filename (not a full URL), build the full URL
       return getImageUrl(p);
     }
     return undefined;
@@ -227,7 +228,6 @@ export default function Knowyou4({
     
     const initial = initialFormDataRef.current;
     
-    // Check if photos changed (compare by length and file names)
     const initialPhotos = initial.photos || [];
     const currentPhotos = newData.photos || [];
     const photosChanged = 
@@ -235,7 +235,6 @@ export default function Knowyou4({
       JSON.stringify(initialPhotos.map((p: any) => p instanceof File ? p.name : p)) !== 
       JSON.stringify(currentPhotos.map((p: any) => p instanceof File ? p.name : p));
 
-    // Check if video changed
     const initialVideo = initial.video;
     const currentVideo = newData.video;
     const videoChanged = 
@@ -255,6 +254,7 @@ export default function Knowyou4({
     return hasChanged;
   };
 
+  // ===== FIX: Handle file change - REPLACE old photos with new ones =====
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (!files) return;
@@ -265,6 +265,8 @@ export default function Knowyou4({
         showAlert("You can upload a maximum of 5 photos. Please select up to 5.", "warning");
         return;
       }
+      
+      // FIX: Replace ALL photos with the new ones, not merge
       const newData = { ...formData, photos: selected };
       setFormData(newData);
       checkForChanges(newData);
@@ -299,6 +301,7 @@ export default function Knowyou4({
           );
           return;
         }
+        // FIX: Replace video with new one
         const newData = { ...formData, video: file };
         setFormData(newData);
         checkForChanges(newData);
@@ -321,7 +324,13 @@ export default function Knowyou4({
   };
 
   const handleSubmit = async () => {
-    // Validate: Features, House Rules, Photos OR Video
+    // Prevent duplicate submissions
+    if (isSubmitting.current) {
+      console.log('Submission already in progress, ignoring...');
+      return;
+    }
+
+    // Validate
     if (!formData.all_feature) {
       showAlert("Please select at least one feature", "warning");
       return;
@@ -337,12 +346,12 @@ export default function Knowyou4({
 
     if (loading) return;
 
-    // If no changes were made, just navigate to next step
     if (!hasChanges) {
       navigate("/studentdash");
       return;
     }
 
+    isSubmitting.current = true;
     setLoading(true);
     setUploadProgress(0);
 
@@ -359,10 +368,10 @@ export default function Knowyou4({
       data.append("special_feature", formData.special_feature || "");
       data.append("house_rules", JSON.stringify(selectedRules));
 
-      (formData.photos || []).forEach((p: any) => {
-        if (p instanceof File) {
-          data.append("photos[]", p);
-        }
+      // FIX: Only send NEW photos (File objects), NOT the old filenames
+      const newPhotos = (formData.photos || []).filter((p: any) => p instanceof File);
+      newPhotos.forEach((p: File) => {
+        data.append("photos[]", p);
       });
 
       if (formData.video instanceof File) {
@@ -389,28 +398,32 @@ export default function Knowyou4({
                 showAlert("Saved successfully!", "success", true);
                 setUploadProgress(100);
 
+                // FIX: Update formData with server response (REPLACE with new values)
+                const updatedFormData = { ...formData };
+                
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
-                  // Store just the filenames, the getSrc function will build the full URL
-                  setFormData((prev: any) => ({ 
-                    ...prev, 
-                    photos: resp.photos_final 
-                  }));
+                  // REPLACE photos with the ones from server
+                  updatedFormData.photos = resp.photos_final;
                 }
-
+                
                 if (resp.video_final) {
-                  setFormData((prev: any) => ({ 
-                    ...prev, 
-                    video: resp.video_final 
-                  }));
+                  // REPLACE video with the one from server
+                  updatedFormData.video = resp.video_final;
                 }
+                
+                setFormData(updatedFormData);
+                
+                // Clear file inputs
+                if (photoInputRef.current) photoInputRef.current.value = '';
+                if (videoInputRef.current) videoInputRef.current.value = '';
 
-                // Update initial data reference after successful save
+                // Update initial data reference
                 initialFormDataRef.current = {
-                  all_feature: formData.all_feature || "",
-                  special_feature: formData.special_feature || "",
+                  all_feature: updatedFormData.all_feature || "",
+                  special_feature: updatedFormData.special_feature || "",
                   selectedRules: [...selectedRules],
-                  photos: formData.photos || [],
-                  video: formData.video || null,
+                  photos: updatedFormData.photos || [],
+                  video: updatedFormData.video || null,
                 };
                 setHasChanges(false);
 
@@ -438,6 +451,7 @@ export default function Knowyou4({
     } finally {
       setLoading(false);
       setUploadProgress(0);
+      isSubmitting.current = false;
     }
   };
 
@@ -560,6 +574,7 @@ export default function Knowyou4({
                         )}
                       </span>
                       <input
+                        ref={photoInputRef}
                         type="file"
                         name="photos"
                         multiple
@@ -592,6 +607,7 @@ export default function Knowyou4({
                         )}
                       </span>
                       <input
+                        ref={videoInputRef}
                         type="file"
                         name="video"
                         accept="video/*"
@@ -661,6 +677,7 @@ export default function Knowyou4({
         </div>
       </div>
 
+      {/* All Modals remain the same... */}
       {/* HOUSE RULES MODAL */}
       {showHouseRulesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
