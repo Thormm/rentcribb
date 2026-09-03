@@ -27,7 +27,7 @@ export interface Roommate {
   gender: "male" | "female";
   religion: "christian" | "muslim" | "none";
   level: string;
-  department: string;
+  faculty: string;
   move_in_date: string;
   duration: string;
   type: string;
@@ -202,7 +202,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
           </div>
           <div className="flex-1 text-center">
             <p className="text-sm leading-loose">
-              {truncateText(card.department, 8)} <br /> {card.level}
+              {truncateText(card.faculty, 8)} <br /> {card.level}
             </p>
           </div>
           <div className="w-10 flex justify-center">

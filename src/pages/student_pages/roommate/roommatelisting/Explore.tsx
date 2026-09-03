@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../../../components/Footer";
 import clsx from "clsx";
 import InfoPill from "../../../../components/Pill";
-import { MdOutlinePostAdd } from "react-icons/md";
+import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 
 // Import the reusable card and its type
@@ -28,18 +28,18 @@ const levels = [
 
 const Availability = [
   "Currently",
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const durationOptions = [
@@ -74,6 +74,25 @@ const priceRanges = [
   "₦3,000,000 - ₦4,000,000",
   "₦4,000,000 - ₦5,000,000",
 ];
+
+// ---------- Helper: parse price range ----------
+const parsePriceRange = (range: string): { min: number; max: number } | null => {
+  if (!range) return null;
+  const parts = range.replace(/[₦,]/g, "").split(" - ");
+  if (parts.length !== 2) return null;
+  const min = parseInt(parts[0].trim(), 10);
+  const max = parseInt(parts[1].trim(), 10);
+  if (isNaN(min) || isNaN(max)) return null;
+  return { min, max };
+};
+
+// ---------- Helper: extract school acronym ----------
+const getSchoolAcronym = (school: string): string => {
+  if (!school) return "Your School";
+  // If there's a dash, take the part before it
+  const parts = school.split(" - ");
+  return parts[0].trim();
+};
 
 // ---------- FilterSelect Component ----------
 type FilterSelectProps = {
@@ -155,8 +174,8 @@ export default function Explore() {
     gender: "",
     religion: "",
     level: "",
-    department: "",
-    moveIn: "",
+    faculty: "",
+    availability: "",
     duration: "",
     type: "",
     price: "",
@@ -259,11 +278,11 @@ export default function Explore() {
             gender: item.gender || "",
             religion: item.religion || "",
             level: item.level || "",
-            department: item.faculty || "",
+            faculty: item.faculty || "",
             move_in_date: item.availability || "",
             duration: item.duration || "",
             type: item.type || "",
-            price: item.amount_share || "",
+            price: item.amount_share ? String(item.amount_share) : "",
             features: item.hobby ? item.hobby.split(",").map((s: string) => s.trim()) : [],
             pet: item.pet || "",
             school: item.school || "",
@@ -287,19 +306,37 @@ export default function Explore() {
     fetchRoommates();
   }, [loginData]);
 
+  // ----- Filtering (always keep the "You" card) -----
   const filteredCards = useMemo(() => {
-    return cards.filter((card) => {
+    // Separate the "You" card from the rest
+    const youCard = cards.find((card) => card.value === "You");
+    const otherCards = cards.filter((card) => card.value !== "You");
+
+    // Apply filters to the other cards
+    const filteredOthers = otherCards.filter((card) => {
       if (filters.gender && card.gender !== filters.gender) return false;
       if (filters.religion && card.religion !== filters.religion) return false;
       if (filters.level && card.level !== filters.level) return false;
-      if (filters.department && card.department !== filters.department)
+      if (filters.faculty && card.faculty !== filters.faculty)
         return false;
-      if (filters.moveIn && card.move_in_date !== filters.moveIn) return false;
+      if (filters.availability && card.move_in_date !== filters.availability) return false;
       if (filters.duration && card.duration !== filters.duration) return false;
       if (filters.type && card.type !== filters.type) return false;
-      if (filters.price && card.price !== filters.price) return false;
+      
+      // ----- Price filter (range) -----
+      if (filters.price) {
+        const range = parsePriceRange(filters.price);
+        if (range) {
+          const priceNum = parseFloat(card.price.replace(/,/g, ""));
+          if (isNaN(priceNum)) return false;
+          if (priceNum < range.min || priceNum > range.max) return false;
+        }
+      }
       return true;
     });
+
+    // If there is a "You" card, put it at the front; otherwise just return filtered others
+    return youCard ? [youCard, ...filteredOthers] : filteredOthers;
   }, [cards, filters]);
 
   const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
@@ -309,6 +346,9 @@ export default function Explore() {
   }, [filteredCards, currentPage]);
 
   useEffect(() => setCurrentPage(1), [filters]);
+
+  // Get the school acronym for display
+  const schoolDisplay = getSchoolAcronym(loginData?.school || "");
 
   return (
     <div className="bg-[#F3EECE]">
@@ -325,18 +365,18 @@ export default function Explore() {
                   <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
                     Available Roommates in{" "}
                     <span className="text-[#C2C8DA]">
-                      {loginData?.school || "Your School"}
+                      {schoolDisplay}
                     </span>
                   </h1>
                 </div>
               </div>
               <div className="flex flex-col items-end md:hidden space-y-3">
                 <button
-                  onClick={() => navigate("/studentdash")}
+                  onClick={() => navigate("/knowyou")}
                   className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white"
                 >
-                  <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
-                  LIST SPACE
+                  <FaUserCircle className="h-6 w-6 md:h-10 md:w-10" />
+                  LET'S KNOW YOU
                 </button>
                 <button
                   className="justify-end gap-1 mt-3 cursor-pointer"
@@ -390,7 +430,7 @@ export default function Explore() {
               onClick={() => navigate("/knowyou")}
               className="justify-self-end cursor-pointer text-sm md:text-lg inline-flex items-center gap-2 rounded-lg border-2 px-3 py-2 font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15"
             >
-              <MdOutlinePostAdd className="h-6 w-6 md:h-10 md:w-10" />
+              <FaUserCircle className="h-6 w-6 md:h-10 md:w-10" />
               LET'S KNOW YOU
             </button>
             <button
@@ -422,8 +462,8 @@ export default function Explore() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-              {paginatedCards.map((card, index) => {
-                const isUserCard = index === 0 && card.value === "You";
+              {paginatedCards.map((card) => {
+                const isUserCard = card.value === "You";
                 return (
                   <RoommateCard 
                     key={card.id} 
