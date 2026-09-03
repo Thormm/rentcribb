@@ -147,7 +147,7 @@ export default function Knowyou4({
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  // --- FIX: Local preview states to guarantee latest files are shown ---
+  // Local preview states
   const [previewPhotos, setPreviewPhotos] = useState<any[]>([]);
   const [previewVideo, setPreviewVideo] = useState<any>(null);
 
@@ -156,7 +156,6 @@ export default function Knowyou4({
   const videoInputRef = useRef<HTMLInputElement>(null);
   const initialFormDataRef = useRef<any>(null);
   const isFirstLoad = useRef(true);
-  // FIX: Add ref to prevent duplicate submissions
   const isSubmitting = useRef(false);
 
   const navigate = useNavigate();
@@ -212,7 +211,7 @@ export default function Knowyou4({
     ? "Select House Rules"
     : truncateText(selectedRules.join(", "), 25);
 
-  // ===== Sync preview states when formData changes (e.g., from parent or after save) =====
+  // ===== Sync preview states =====
   useEffect(() => {
     setPreviewPhotos(formData.photos || []);
     setPreviewVideo(formData.video || null);
@@ -232,7 +231,7 @@ export default function Knowyou4({
     }
   }, [formData]);
 
-  // ===== CHECK FOR CHANGES =====
+  // ===== CHECK FOR CHANGES (FIXED) =====
   const checkForChanges = (newData: any) => {
     if (!initialFormDataRef.current) return true;
 
@@ -245,10 +244,22 @@ export default function Knowyou4({
       JSON.stringify(initialPhotos.map((p: any) => p instanceof File ? p.name : p)) !==
       JSON.stringify(currentPhotos.map((p: any) => p instanceof File ? p.name : p));
 
+    // ----- FIX: Detect video change in ALL cases -----
     const initialVideo = initial.video;
     const currentVideo = newData.video;
+
+    // Helper to check if a value is a File
+    const isFile = (val: any): val is File => val instanceof File;
+
+    // Video changed if:
+    // 1. Both are Files with different names
+    // 2. Initial is string and current is File (new upload)
+    // 3. Initial is File and current is string (removed/replaced)
+    // 4. One exists and the other doesn't
     const videoChanged =
-      (initialVideo instanceof File && currentVideo instanceof File && initialVideo.name !== currentVideo.name) ||
+      (isFile(initialVideo) && isFile(currentVideo) && initialVideo.name !== currentVideo.name) ||
+      (typeof initialVideo === "string" && isFile(currentVideo)) ||
+      (isFile(initialVideo) && typeof currentVideo === "string") ||
       (!initialVideo && currentVideo) ||
       (initialVideo && !currentVideo);
 
@@ -264,7 +275,7 @@ export default function Knowyou4({
     return hasChanged;
   };
 
-  // ===== FIX: Handle file change - REPLACE old photos with new ones =====
+  // ===== HANDLE FILE CHANGE =====
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (!files) return;
@@ -276,10 +287,9 @@ export default function Knowyou4({
         return;
       }
 
-      // Replace ALL photos with the new ones, not merge
       const newData = { ...formData, photos: selected };
       setFormData(newData);
-      setPreviewPhotos(selected); // <--- immediate preview update
+      setPreviewPhotos(selected);
       checkForChanges(newData);
 
       setPhotoUploadProgress(0);
@@ -312,10 +322,9 @@ export default function Knowyou4({
           );
           return;
         }
-        // Replace video with new one
         const newData = { ...formData, video: file };
         setFormData(newData);
-        setPreviewVideo(file); // <--- immediate preview update
+        setPreviewVideo(file);
         checkForChanges(newData);
 
         setVideoUploadProgress(0);
@@ -336,13 +345,11 @@ export default function Knowyou4({
   };
 
   const handleSubmit = async () => {
-    // Prevent duplicate submissions
     if (isSubmitting.current) {
       console.log('Submission already in progress, ignoring...');
       return;
     }
 
-    // Validate
     if (!formData.all_feature) {
       showAlert("Please select at least one feature", "warning");
       return;
@@ -380,7 +387,7 @@ export default function Knowyou4({
       data.append("special_feature", formData.special_feature || "");
       data.append("house_rules", JSON.stringify(selectedRules));
 
-      // FIX: Only send NEW photos (File objects), NOT the old filenames
+      // Only send NEW photos (File objects)
       const newPhotos = (formData.photos || []).filter((p: any) => p instanceof File);
       newPhotos.forEach((p: File) => {
         data.append("photos[]", p);
@@ -410,7 +417,6 @@ export default function Knowyou4({
                 showAlert("Saved successfully!", "success", true);
                 setUploadProgress(100);
 
-                // FIX: Update formData with server response (REPLACE with new values)
                 const updatedFormData = { ...formData };
 
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
@@ -422,16 +428,12 @@ export default function Knowyou4({
                 }
 
                 setFormData(updatedFormData);
-
-                // Update preview states with server response
                 setPreviewPhotos(updatedFormData.photos || []);
                 setPreviewVideo(updatedFormData.video || null);
 
-                // Clear file inputs
                 if (photoInputRef.current) photoInputRef.current.value = '';
                 if (videoInputRef.current) videoInputRef.current.value = '';
 
-                // Update initial data reference
                 initialFormDataRef.current = {
                   all_feature: updatedFormData.all_feature || "",
                   special_feature: updatedFormData.special_feature || "",
@@ -493,7 +495,7 @@ export default function Knowyou4({
   };
 
   return (
-    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EECE]">
       {/* Progress Bar */}
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
@@ -843,7 +845,7 @@ export default function Knowyou4({
         </div>
       )}
 
-      {/* PREVIEW MODAL - NOW USES previewPhotos and previewVideo */}
+      {/* PREVIEW MODAL */}
       {showPreviewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl md:w-3/5 max-h-[90vh] overflow-y-auto p-6">
