@@ -25,11 +25,11 @@ const religionOptions = [
 
 const yearOptions = [
   { value: "", label: "Choose preference" },
-  { value: "100 level", label: "100 Level" },
-  { value: "200 level", label: "200 Level" },
-  { value: "300 level", label: "300 Level" },
-  { value: "400 level", label: "400 Level" },
-  { value: "postgrad", label: "Postgraduate" },
+  { value: "100 Level", label: "100 Level" },
+  { value: "200 Level", label: "200 Level" },
+  { value: "300 Level", label: "300 Level" },
+  { value: "400 Level", label: "400 Level" },
+  { value: "Postgraduate", label: "Postgraduate" },
 ];
 
 const facultyOptions = [
@@ -754,7 +754,7 @@ export default function Knowyou1({
                 </div>
                 <div className="flex justify-center mt-1">
                   <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    Connect directly to roommates, that need a space at your
+                    Connect directly to roommates, that have a space at your
                     Uni.
                   </span>
                 </div>

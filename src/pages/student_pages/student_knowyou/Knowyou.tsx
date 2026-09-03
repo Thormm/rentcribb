@@ -108,7 +108,9 @@ const Knowyou: React.FC = () => {
             pref_religion: d.religion || "",
             pref_year: d.level || "",
             pref_faculty: d.faculty || "",
-            hobbies: d.hobby ? d.hobby.split(",").map((s: string) => s.trim()) : [],
+            hobbies: d.hobby
+              ? d.hobby.split(",").map((s: string) => s.trim())
+              : [],
             pet: d.pet || "",
             // Step 2
             type: d.type || "",
@@ -143,6 +145,8 @@ const Knowyou: React.FC = () => {
   }, []);
 
   const goToStep = (stepNumber: number) => setStep(stepNumber);
+
+  document.body.style.backgroundColor = "#F3EECE";
 
   return (
     <>

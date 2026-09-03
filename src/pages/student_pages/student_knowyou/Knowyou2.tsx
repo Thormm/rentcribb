@@ -474,7 +474,7 @@ export default function Knowyou2({
                           setFormData(newData);
                           checkForChanges(newData);
                         }}
-                        placeholder="Amount per person"
+                        placeholder="Per person"
                         className="w-full appearance-none bg-transparent text-xs leading-5 text-gray-500 outline-none py-1"
                         min="0"
                         step="1000"

@@ -10,15 +10,12 @@ import { IoIosArrowDown } from "react-icons/io";
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
 
 // ---------- Option arrays ----------
-const departments = [
-  "Mass Communication",
-  "Computer Science",
-  "Engineering",
-  "Business Admin",
-  "Economics",
-  "Law",
-  "Medicine",
-  "Architecture",
+const faculty = [
+  "engineering",
+  "sciences",
+  "arts",
+  "management",
+  "law",
 ];
 
 const levels = [
@@ -29,20 +26,20 @@ const levels = [
   "Postgraduate",
 ];
 
-const moveInDates = [
-  "Urgently",
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+const Availability = [
+  "Currently",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
 ];
 
 const durationOptions = [
@@ -182,7 +179,6 @@ export default function Explore() {
       options: [
         { label: "Christianity", value: "christian" },
         { label: "Islam", value: "muslim" },
-        { label: "None", value: "none" },
       ],
     },
     {
@@ -192,19 +188,19 @@ export default function Explore() {
       options: levels.map((l) => ({ label: l, value: l })),
     },
     {
-      key: "department",
-      label: "Department",
-      placeholder: "All Departments",
-      options: departments.map((d) => ({ label: d, value: d })),
+      key: "faculty",
+      label: "Faculty",
+      placeholder: "All Faculties",
+      options: faculty.map((f) => ({ label: f, value: f })),
     },
   ];
 
   const hiddenFilters = [
     {
-      key: "moveIn",
-      label: "Move‑in Date",
+      key: "availability",
+      label: "Availability",
       placeholder: "Any time",
-      options: moveInDates.map((m) => ({ label: m, value: m })),
+      options: Availability.map((m) => ({ label: m, value: m })),
     },
     {
       key: "duration",
