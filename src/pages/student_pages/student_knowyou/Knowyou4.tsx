@@ -147,6 +147,10 @@ export default function Knowyou4({
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
+  // --- FIX: Local preview states to guarantee latest files are shown ---
+  const [previewPhotos, setPreviewPhotos] = useState<any[]>([]);
+  const [previewVideo, setPreviewVideo] = useState<any>(null);
+
   // Refs for file inputs and change detection
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -194,7 +198,7 @@ export default function Knowyou4({
     .filter(Boolean);
 
   const selectedRules: string[] = formData.selectedRules || [];
-  
+
   const toggleRule = (rule: string) => {
     const next = selectedRules.includes(rule)
       ? selectedRules.filter((r: string) => r !== rule)
@@ -207,6 +211,12 @@ export default function Knowyou4({
   const rulesDisplay = selectedRules.length === 0
     ? "Select House Rules"
     : truncateText(selectedRules.join(", "), 25);
+
+  // ===== Sync preview states when formData changes (e.g., from parent or after save) =====
+  useEffect(() => {
+    setPreviewPhotos(formData.photos || []);
+    setPreviewVideo(formData.video || null);
+  }, [formData.photos, formData.video]);
 
   // ===== CAPTURE INITIAL FORM DATA =====
   useEffect(() => {
@@ -225,27 +235,27 @@ export default function Knowyou4({
   // ===== CHECK FOR CHANGES =====
   const checkForChanges = (newData: any) => {
     if (!initialFormDataRef.current) return true;
-    
+
     const initial = initialFormDataRef.current;
-    
+
     const initialPhotos = initial.photos || [];
     const currentPhotos = newData.photos || [];
-    const photosChanged = 
+    const photosChanged =
       initialPhotos.length !== currentPhotos.length ||
-      JSON.stringify(initialPhotos.map((p: any) => p instanceof File ? p.name : p)) !== 
+      JSON.stringify(initialPhotos.map((p: any) => p instanceof File ? p.name : p)) !==
       JSON.stringify(currentPhotos.map((p: any) => p instanceof File ? p.name : p));
 
     const initialVideo = initial.video;
     const currentVideo = newData.video;
-    const videoChanged = 
+    const videoChanged =
       (initialVideo instanceof File && currentVideo instanceof File && initialVideo.name !== currentVideo.name) ||
       (!initialVideo && currentVideo) ||
       (initialVideo && !currentVideo);
 
-    const hasChanged = 
+    const hasChanged =
       initial.all_feature !== newData.all_feature ||
       initial.special_feature !== newData.special_feature ||
-      JSON.stringify([...(initial.selectedRules || [])].sort()) !== 
+      JSON.stringify([...(initial.selectedRules || [])].sort()) !==
         JSON.stringify([...(newData.selectedRules || [])].sort()) ||
       photosChanged ||
       videoChanged;
@@ -265,10 +275,11 @@ export default function Knowyou4({
         showAlert("You can upload a maximum of 5 photos. Please select up to 5.", "warning");
         return;
       }
-      
-      // FIX: Replace ALL photos with the new ones, not merge
+
+      // Replace ALL photos with the new ones, not merge
       const newData = { ...formData, photos: selected };
       setFormData(newData);
+      setPreviewPhotos(selected); // <--- immediate preview update
       checkForChanges(newData);
 
       setPhotoUploadProgress(0);
@@ -301,9 +312,10 @@ export default function Knowyou4({
           );
           return;
         }
-        // FIX: Replace video with new one
+        // Replace video with new one
         const newData = { ...formData, video: file };
         setFormData(newData);
+        setPreviewVideo(file); // <--- immediate preview update
         checkForChanges(newData);
 
         setVideoUploadProgress(0);
@@ -400,19 +412,21 @@ export default function Knowyou4({
 
                 // FIX: Update formData with server response (REPLACE with new values)
                 const updatedFormData = { ...formData };
-                
+
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
-                  // REPLACE photos with the ones from server
                   updatedFormData.photos = resp.photos_final;
                 }
-                
+
                 if (resp.video_final) {
-                  // REPLACE video with the one from server
                   updatedFormData.video = resp.video_final;
                 }
-                
+
                 setFormData(updatedFormData);
-                
+
+                // Update preview states with server response
+                setPreviewPhotos(updatedFormData.photos || []);
+                setPreviewVideo(updatedFormData.video || null);
+
                 // Clear file inputs
                 if (photoInputRef.current) photoInputRef.current.value = '';
                 if (videoInputRef.current) videoInputRef.current.value = '';
@@ -677,7 +691,6 @@ export default function Knowyou4({
         </div>
       </div>
 
-      {/* All Modals remain the same... */}
       {/* HOUSE RULES MODAL */}
       {showHouseRulesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -830,7 +843,7 @@ export default function Knowyou4({
         </div>
       )}
 
-      {/* PREVIEW MODAL */}
+      {/* PREVIEW MODAL - NOW USES previewPhotos and previewVideo */}
       {showPreviewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl md:w-3/5 max-h-[90vh] overflow-y-auto p-6">
@@ -868,8 +881,8 @@ export default function Knowyou4({
             <div className="mb-4">
               <h4 className="font-semibold">Photos</h4>
               <div className="grid grid-cols-3 gap-3 mt-2">
-                {formData.photos && formData.photos.length > 0 ? (
-                  formData.photos.map((p: any, i: number) => {
+                {previewPhotos && previewPhotos.length > 0 ? (
+                  previewPhotos.map((p: any, i: number) => {
                     const src = getSrc(p);
                     return src ? (
                       <img
@@ -889,10 +902,10 @@ export default function Knowyou4({
             <div className="mb-6">
               <h4 className="font-semibold">Video</h4>
               <div className="mt-2">
-                {formData.video ? (
+                {previewVideo ? (
                   <video
                     controls
-                    src={getSrc(formData.video)}
+                    src={getSrc(previewVideo)}
                     className="w-full rounded-xl"
                   />
                 ) : (
