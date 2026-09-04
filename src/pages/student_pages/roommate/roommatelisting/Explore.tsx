@@ -5,18 +5,10 @@ import clsx from "clsx";
 import InfoPill from "../../../../components/Pill";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-
-// Import the reusable card and its type
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
 
 // ---------- Option arrays ----------
-const faculty = [
-  "engineering",
-  "sciences",
-  "arts",
-  "management",
-  "law",
-];
+const faculty = ["engineering", "sciences", "arts", "management", "law"];
 
 const levels = [
   "100 Level",
@@ -76,7 +68,9 @@ const priceRanges = [
 ];
 
 // ---------- Helper: parse price range ----------
-const parsePriceRange = (range: string): { min: number; max: number } | null => {
+const parsePriceRange = (
+  range: string,
+): { min: number; max: number } | null => {
   if (!range) return null;
   const parts = range.replace(/[₦,]/g, "").split(" - ");
   if (parts.length !== 2) return null;
@@ -142,7 +136,7 @@ function Label({
     <div
       className={clsx(
         "text-sm md:text-md md:my-3 font-semibold ml-6",
-        className
+        className,
       )}
     >
       {children}
@@ -153,7 +147,7 @@ function Label({
 // ---------- Main Page ----------
 export default function Explore() {
   const navigate = useNavigate();
-  
+
   // Get login data once and memoize it
   const loginData = useMemo(() => {
     try {
@@ -274,7 +268,7 @@ export default function Explore() {
           // Include ALL users - no filtering
           const transformedCards: Roommate[] = result.data.map((item: any) => ({
             id: parseInt(item.id) || Math.random(),
-            user: item.whats || "User",
+            whats: item.whats || "User",
             gender: item.gender || "",
             religion: item.religion || "",
             level: item.level || "",
@@ -283,7 +277,9 @@ export default function Explore() {
             duration: item.duration || "",
             type: item.type || "",
             price: item.amount_share ? String(item.amount_share) : "",
-            features: item.hobby ? item.hobby.split(",").map((s: string) => s.trim()) : [],
+            features: item.hobby
+              ? item.hobby.split(",").map((s: string) => s.trim())
+              : [],
             pet: item.pet || "",
             school: item.school || "",
             created_at: new Date().toISOString(),
@@ -317,12 +313,12 @@ export default function Explore() {
       if (filters.gender && card.gender !== filters.gender) return false;
       if (filters.religion && card.religion !== filters.religion) return false;
       if (filters.level && card.level !== filters.level) return false;
-      if (filters.faculty && card.faculty !== filters.faculty)
+      if (filters.faculty && card.faculty !== filters.faculty) return false;
+      if (filters.availability && card.move_in_date !== filters.availability)
         return false;
-      if (filters.availability && card.move_in_date !== filters.availability) return false;
       if (filters.duration && card.duration !== filters.duration) return false;
       if (filters.type && card.type !== filters.type) return false;
-      
+
       // ----- Price filter (range) -----
       if (filters.price) {
         const range = parsePriceRange(filters.price);
@@ -364,9 +360,7 @@ export default function Explore() {
                 <div className="mt-1 grid grid-cols-1 md:grid-cols-2 items-center gap-4">
                   <h1 className="text-2xl md:text-4xl my-4 font-extrabold">
                     Available Roommates in{" "}
-                    <span className="text-[#C2C8DA]">
-                      {schoolDisplay}
-                    </span>
+                    <span className="text-[#C2C8DA]">{schoolDisplay}</span>
                   </h1>
                 </div>
               </div>
@@ -457,7 +451,9 @@ export default function Explore() {
             <div className="flex justify-center items-center h-64">
               <div className="text-center">
                 <p className="text-xl text-[#3A2A05]">No roommates found</p>
-                <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Try adjusting your filters
+                </p>
               </div>
             </div>
           ) : (
@@ -465,10 +461,15 @@ export default function Explore() {
               {paginatedCards.map((card) => {
                 const isUserCard = card.value === "You";
                 return (
-                  <RoommateCard 
-                    key={card.id} 
+                  <RoommateCard
+                    key={card.id}
                     card={card}
                     bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
+                    onClick={() =>
+                      navigate("/sendroommaterequest?domain=student", {
+                        state: { whats: card.whats },
+                      })
+                    }
                   />
                 );
               })}
@@ -489,7 +490,9 @@ export default function Explore() {
                 {currentPage} / {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 bg-white rounded disabled:opacity-50"
               >

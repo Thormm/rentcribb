@@ -23,7 +23,7 @@ import {
 // ---------- Types ----------
 export interface Roommate {
   id: number;
-  user: string;
+  whats: string;
   gender: "male" | "female";
   religion: "christian" | "muslim" | "none";
   level: string;
@@ -150,6 +150,7 @@ interface RoommateCardProps {
   className?: string;
   bgColor?: string; // optional card background color (hex or Tailwind class)
   avatarBgColor?: string; // optional avatar circle background (default semi-transparent)
+  onClick?: () => void; // ← NEW: click handler for the whole card
 }
 
 export const RoommateCard: React.FC<RoommateCardProps> = ({
@@ -157,6 +158,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
   className,
   bgColor = "#F4F6F5",
   avatarBgColor = "#C2C8DA4D",
+  onClick,
 }) => {
   const priceDisplay = getNumericPrice(card.price);
   const durationShort = getDurationShort(card.duration);
@@ -167,9 +169,11 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
     <div
       className={clsx(
         "relative text-black rounded-4xl mt-10 py-6 shadow-md text-center",
+        onClick && "cursor-pointer", // ← make it clickable if onClick is provided
         className,
       )}
       style={{ backgroundColor: bgColor }}
+      onClick={onClick} // ← attach the handler to the root div
     >
       <div
         className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-30 h-30 rounded-full flex items-center justify-center"
@@ -180,7 +184,6 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
 
       <div className="mt-20 justify-center">
         {/* PET ROW – cat above gender, dog above religion */}
-
         <div className="flex justify-center gap-2 items-center mx-5">
           <div className="w-10 flex justify-center">
             <PetIcon liked={likesCat(card.pet)}>
