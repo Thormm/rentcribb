@@ -23,19 +23,17 @@ import {
 // ---------- Types ----------
 export interface Roommate {
   id: number;
-  whats: string;
   gender: "male" | "female";
   religion: "christian" | "muslim" | "none";
   level: string;
   faculty: string;
-  move_in_date: string;
   duration: string;
+  whats: string;
   type: string;
+  move_in_date: string;
   price: string;
   features: string[];
   pet: string; // "Cat_Dog", "Cat", "Dog", "None"
-  school: string;
-  created_at: string;
   value?: string; // optional – can be a percentage like "50%" or any string (e.g., "You")
 }
 
