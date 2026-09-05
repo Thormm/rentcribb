@@ -5,7 +5,6 @@ import {
   FaRegStar,
   FaExclamationTriangle,
   FaShareAlt,
-  FaMapMarkerAlt,
 } from "react-icons/fa";
 import InfoPill from "../../../../components/Pill";
 import clsx from "clsx";
@@ -14,7 +13,6 @@ import imgright from "../../../../assets/hero.jpg";
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import mapbanner from "../../../../assets/mapbanner.png";
 
 // NEW IMPORT
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
