@@ -98,6 +98,7 @@ export default function SendRoommateRequest() {
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
+   const [agreed, setAgreed] = useState(false);
 
   const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.whats}`;
 
@@ -166,6 +167,8 @@ export default function SendRoommateRequest() {
       .map((v) => v.trim())
       .filter(Boolean);
   };
+
+    const handleBookInspection = async () => {};
 
   useEffect(() => {
     const user = login?.user;
@@ -237,7 +240,7 @@ export default function SendRoommateRequest() {
         </div>
       </section>
 
-      {hostel?.image_1 && (
+      {hostel?.image1 && (
         <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0">
           <section className="relative w-full h-full">
             <img
@@ -347,7 +350,7 @@ export default function SendRoommateRequest() {
       <section className="my-10">
         <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
           {/* LEFT STACK */}
-          {hostel?.image_1 && (
+          {hostel?.image1 && (
             <div className="space-y-1">
               <Maincard className="bg-[#F4F6F5] pb-5">
                 <SectionHeader title="Hostel View" />
@@ -539,6 +542,46 @@ export default function SendRoommateRequest() {
                 </div>
               </div>
             </Maincard>
+
+
+            {/* Terms */}
+                            <div className="w-full flex flex-col items-center text-center mt-2">
+                              <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4 accent-black"
+                                  checked={agreed}
+                                  onChange={(e) => setAgreed(e.target.checked)}
+                                />
+                                <span>
+                                  I agree to the{" "}
+                                  <span className="underline font-semibold text-[#0556F8]">
+                                    Terms
+                                  </span>{" "}
+                                  and{" "}
+                                  <span className="underline font-semibold text-[#0556F8]">
+                                    Privacy Policy
+                                  </span>{" "}
+                                  of Cribb
+                                </span>
+                              </label>
+                            </div>
+            
+                            {/* Connect */}
+                            <div className="pt-2 w-full">
+                              <button
+                                disabled={!agreed}
+                                onClick={handleBookInspection}
+                                className={clsx(
+                                  "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                                  agreed
+                                    ? "bg-black text-white"
+                                    : "bg-gray-400 text-white cursor-not-allowed",
+                                )}
+                              >
+                                Connect
+                              </button>
+                            </div>
           </div>
         </div>
       </section>
