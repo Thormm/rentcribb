@@ -796,7 +796,7 @@ export default function SendRoommateRequest() {
                         <MdOutlineReviews className="text-sm" />
                         <span className="underline text-xs text-[#0556F8]">Give Review</span>
                       </button>
-                      <button className="flex items-center gap-2">
+                      <button className="flex items-center border-2 p-2 rounded gap-2">
                         <FaHome className="text-sm" />
                         <span>SPACE</span>
                       </button>
