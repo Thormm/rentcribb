@@ -788,13 +788,13 @@ export default function SendRoommateRequest() {
                   </div>
                   <div className="flex items-center justify-center">
                     <div className="flex flex-col gap-4 text-sm font-medium border-l-3 border-black pl-4 min-h-[100px]">
-                      <button className="flex items-center gap-2 text-red">
-                        <PiWarningCircle className="text-xs" />
+                      <button className="flex items-center gap-2 text-[#EC0000]">
+                        <PiWarningCircle className="text-md" />
                         <span className="underline text-xs">Report Listing</span>
                       </button>
-                      <button className="flex items-center gap-2">
+                      <button className="flex items-center gap-2 ">
                         <MdOutlineReviews className="text-sm" />
-                        <span className="underline text-xs">Give Review</span>
+                        <span className="underline text-xs text-[#0556F8]">Give Review</span>
                       </button>
                       <button className="flex items-center gap-2">
                         <FaHome className="text-sm" />
