@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useRef } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   FaStar,
   FaRegStar,
   FaExclamationTriangle,
   FaShareAlt,
+  FaTimes,
+  FaHome,
 } from "react-icons/fa";
-import InfoPill from "../../../../components/Pill";
+import InfoPill, { DfButton } from "../../../../components/Pill";
 import clsx from "clsx";
 import Footer from "../../../../components/Footer";
 import imgright from "../../../../assets/hero.jpg";
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { PiWarningCircle } from "react-icons/pi";
+import { MdOutlineReviews } from "react-icons/md";
 
 // NEW IMPORT
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
@@ -98,7 +102,11 @@ export default function SendRoommateRequest() {
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
-   const [agreed, setAgreed] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [otherHostels, setOtherHostels] = useState<Roommate[]>([]);
+  const [loadingOtherHostels, setLoadingOtherHostels] = useState(true);
+  const hasFetchedOtherHostels = useRef(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
 
   const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.whats}`;
 
@@ -168,7 +176,9 @@ export default function SendRoommateRequest() {
       .filter(Boolean);
   };
 
-    const handleBookInspection = async () => {};
+  const ConnectRoommate = async () => {
+    setShowConnectModal(true);
+  };
 
   useEffect(() => {
     const user = login?.user;
@@ -204,6 +214,102 @@ export default function SendRoommateRequest() {
 
     fetchHostel();
   }, [id, space_type]);
+
+  // Reset fetch flag when hostel changes
+  useEffect(() => {
+    hasFetchedOtherHostels.current = false;
+    setOtherHostels([]); // Clear old hostels
+    setLoadingOtherHostels(true); // Show loading state
+  }, [hostel?.whats]);
+
+  // ----- Fetch other hostels (filter out current hostel AND logged-in user) -----
+  useEffect(() => {
+    if (!hostel) return;
+    if (hasFetchedOtherHostels.current) return;
+
+    const fetchOtherHostels = async () => {
+      setLoadingOtherHostels(true);
+      try {
+        const user = login?.user || "";
+        const signup_key = login?.signup_key || "";
+        const school = login?.school || "";
+
+        if (!user || !signup_key || !school) {
+          setOtherHostels([]);
+          setLoadingOtherHostels(false);
+          return;
+        }
+
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_roommates",
+            user: user,
+            signup_key: signup_key,
+            school: school,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // Transform all data
+          const transformedCards: Roommate[] = result.data.map((item: any) => ({
+            id: parseInt(item.id) || Math.random(),
+            whats: item.whats || "User",
+            gender: item.gender || "",
+            religion: item.religion || "",
+            level: item.level || "",
+            faculty: item.faculty || "",
+            move_in_date: item.availability || "",
+            duration: item.duration || "",
+            type: item.type || "",
+            price: item.amount_share ? String(item.amount_share) : "",
+            features: item.hobby
+              ? item.hobby.split(",").map((s: string) => s.trim())
+              : [],
+            pet: item.pet || "",
+            school: item.school || "",
+            created_at: new Date().toISOString(),
+            value: item.whats === user ? "You" : "100%",
+          }));
+
+          // Filter out:
+          // 1. The current hostel
+          // 2. The logged-in user's own card
+          const filteredCards = transformedCards.filter((card) => {
+            const cardWhats = card.whats?.trim()?.toLowerCase() || "";
+            const currentHostelWhats =
+              hostel?.whats?.trim()?.toLowerCase() || "";
+            const loggedInUser = login?.user?.trim()?.toLowerCase() || "";
+
+            // Exclude the current hostel
+            if (cardWhats === currentHostelWhats) {
+              return false;
+            }
+            // Exclude the logged-in user
+            if (cardWhats === loggedInUser) {
+              return false;
+            }
+            return true;
+          });
+
+          setOtherHostels(filteredCards);
+          hasFetchedOtherHostels.current = true;
+        } else {
+          setOtherHostels([]);
+        }
+      } catch (error) {
+        console.error("Error fetching other hostels:", error);
+        setOtherHostels([]);
+      } finally {
+        setLoadingOtherHostels(false);
+      }
+    };
+
+    fetchOtherHostels();
+  }, [hostel, login?.user, login?.signup_key, login?.school]);
 
   if (!hostel) {
     return (
@@ -348,7 +454,9 @@ export default function SendRoommateRequest() {
       )}
 
       <section className="my-10">
-        <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
+        <div
+          className={`mx-2 md:mx-24 max-w-6xl ${hostel?.image1 ? "grid grid-cols-1 gap-14 lg:grid-cols-2" : ""}`}
+        >
           {/* LEFT STACK */}
           {hostel?.image1 && (
             <div className="space-y-1">
@@ -450,7 +558,7 @@ export default function SendRoommateRequest() {
                     }}
                   />
                   <div className="flex items-center justify-between mt-10 text-sm md:text-xl">
-                    <button className="inline-flex items-center gap-2 text-red-600  underline underline-offset-4">
+                    <button className="inline-flex items-center gap-2 text-red-600 underline underline-offset-4">
                       <FaExclamationTriangle />
                       Report listing
                     </button>
@@ -500,7 +608,9 @@ export default function SendRoommateRequest() {
           )}
 
           {/* RIGHT STACK - FIXED RoommateCard */}
-          <div className="space-y-4">
+          <div
+            className={`space-y-4 ${!hostel?.image1 ? "lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center" : ""}`}
+          >
             <Maincard className="bg-[#EBD96B] pb-5">
               <SectionHeader
                 title="Send Request"
@@ -519,9 +629,59 @@ export default function SendRoommateRequest() {
                   </div>
                 </div>
               )}
+
+              <div
+                className="mt-10 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                style={{
+                  borderStyle: "dashed",
+                  borderImage:
+                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                }}
+              >
+                {" "}
+              </div>
+
+              {/* Terms */}
+              <div className="w-full flex flex-col items-center text-center mt-2">
+                <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-black"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                  />
+                  <span>
+                    I agree to the{" "}
+                    <span className="underline font-semibold text-[#0556F8]">
+                      Terms
+                    </span>{" "}
+                    and{" "}
+                    <span className="underline font-semibold text-[#0556F8]">
+                      Privacy Policy
+                    </span>{" "}
+                    of Cribb
+                  </span>
+                </label>
+              </div>
+
+              {/* Connect */}
+              <div className="pt-2 w-full">
+                <button
+                  disabled={!agreed}
+                  onClick={ConnectRoommate}
+                  className={clsx(
+                    "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                    agreed
+                      ? "bg-black text-white"
+                      : "bg-gray-400 text-white cursor-not-allowed",
+                  )}
+                >
+                  Connect
+                </button>
+              </div>
             </Maincard>
 
-            <Maincard className="bg-[#3A2A05] mt-10 py-5">
+            <Maincard className="bg-[#3A2A05] py-5">
               <div className="px-5 pb-6 pt-5">
                 <h4 className="text-lg font-semibold text-[#FFA1A1] tracking-wide">
                   SAFETY TIPS
@@ -542,51 +702,114 @@ export default function SendRoommateRequest() {
                 </div>
               </div>
             </Maincard>
-
-
-            {/* Terms */}
-                            <div className="w-full flex flex-col items-center text-center mt-2">
-                              <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
-                                <input
-                                  type="checkbox"
-                                  className="h-4 w-4 accent-black"
-                                  checked={agreed}
-                                  onChange={(e) => setAgreed(e.target.checked)}
-                                />
-                                <span>
-                                  I agree to the{" "}
-                                  <span className="underline font-semibold text-[#0556F8]">
-                                    Terms
-                                  </span>{" "}
-                                  and{" "}
-                                  <span className="underline font-semibold text-[#0556F8]">
-                                    Privacy Policy
-                                  </span>{" "}
-                                  of Cribb
-                                </span>
-                              </label>
-                            </div>
-            
-                            {/* Connect */}
-                            <div className="pt-2 w-full">
-                              <button
-                                disabled={!agreed}
-                                onClick={handleBookInspection}
-                                className={clsx(
-                                  "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
-                                  agreed
-                                    ? "bg-black text-white"
-                                    : "bg-gray-400 text-white cursor-not-allowed",
-                                )}
-                              >
-                                Connect
-                              </button>
-                            </div>
           </div>
         </div>
       </section>
 
-      <Footer />
+      <section className="bg-[#EBD96B] my-20 rounded-4xl border-4">
+        <div className="w-full px-4 pb-16 pt-6">
+          <h1 className="font-semibold text-lg">MORE ROOMMATES LIKE THIS</h1>
+
+          <div className="flex justify-center mb-4">
+            {loadingOtherHostels ? (
+              <div className="flex justify-center items-center h-32">
+                <div className="text-center">
+                  <AiOutlineLoading3Quarters className="w-8 h-8 animate-spin mx-auto" />
+                  <p className="mt-2 text-sm">Loading other hostels...</p>
+                </div>
+              </div>
+            ) : otherHostels.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No other hostels available</p>
+              </div>
+            ) : (
+              <div className="grid my-10 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                {otherHostels.map((card) => {
+                  const isUserCard = card.value === "You";
+                  return (
+                    <RoommateCard
+                      key={card.id}
+                      card={card}
+                      bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
+                      onClick={() =>
+                        navigate("/sendroommaterequest?domain=student", {
+                          state: { whats: card.whats },
+                        })
+                      }
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-center">
+            <DfButton
+              className="font-[300] py-3 px-7 text-[16px]"
+              onClick={() => navigate("/explore")}
+            >
+              EXPLORE
+            </DfButton>
+          </div>
+        </div>
+      </section>
+
+      {/* Space Availability Modal */}
+      {showConnectModal && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="relative w-full max-w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6 my-8 mx-auto">
+            <div
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer z-10"
+              onClick={() => setShowConnectModal(false)}
+            >
+              <FaTimes className="text-white" />
+            </div>
+            <h2 className="text-3xl mt-5 font-medium text-center text-black">
+              Space Availability
+            </h2>
+            <p className="text-sm text-black text-center mt-5">
+              Hola, do you have a Hostel?
+            </p>
+
+            <div
+              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+
+            <div className="space-y-6">
+              {roommateData && (
+                <div className="grid grid-cols-[1.2fr_0.8fr] gap-4 md:gap-12 px-0 md:px-6 mt-4 items-center">
+                  <div>
+                    <RoommateCard card={roommateData} onClick={() => {}} />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className="flex flex-col gap-4 text-sm font-medium border-l-3 border-black pl-4 min-h-[100px]">
+                      <button className="flex items-center gap-2 text-red">
+                        <PiWarningCircle className="text-xs" />
+                        <span className="underline">Report Listing</span>
+                      </button>
+                      <button className="flex items-center gap-2">
+                        <MdOutlineReviews className="text-sm" />
+                        <span>Give Review</span>
+                      </button>
+                      <button className="flex items-center gap-2">
+                        <FaHome className="text-sm" />
+                        <span>SPACE</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer bgColor="#3A2A05" iconBgColor="#EBD96B" />
     </div>
   );
 }
