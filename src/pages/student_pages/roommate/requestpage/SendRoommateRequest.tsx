@@ -16,10 +16,29 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { PiWarningCircle } from "react-icons/pi";
-import { MdOutlineReviews } from "react-icons/md";
+import { MdOutlineReviews, MdOutlineCall } from "react-icons/md";
+import { HiOutlineUserCircle } from "react-icons/hi2";
+import { RiWhatsappLine } from "react-icons/ri";
+import { FiCopy } from "react-icons/fi";
+import { HiOutlineMail } from "react-icons/hi";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 // NEW IMPORT
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
+
+// #4: Reusable Dashed Divider Component
+function DashedDivider({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`border-t-4 mx-auto text-[#0000004D] ${className}`}
+      style={{
+        borderStyle: "dashed",
+        borderImage:
+          "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+      }}
+    />
+  );
+}
 
 function Maincard({
   className = "",
@@ -45,14 +64,7 @@ function SectionHeader({
       <p className="text-center text-xs md:text-md pt-3">
         {caption ?? "Check out the Features of this Hostel"}
       </p>
-      <div
-        className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-        style={{
-          borderStyle: "dashed",
-          borderImage:
-            "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-        }}
-      />
+      <DashedDivider className="mt-1 md:w-95" />
     </div>
   );
 }
@@ -87,6 +99,17 @@ function StarRow({ value = 4 }: { value?: number }) {
   );
 }
 
+// #1: Changed from array to single object
+const currentUser = {
+  id: 1,
+  space_name: "Sunset Hostel",
+  name: "John Doe",
+  date: "2026-09-08",
+  email: "john.doe@email.com",
+  call: "+1234567890",
+  whatsapp: "1234567890",
+};
+
 export default function SendRoommateRequest() {
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const [openPhotos, setOpenPhotos] = useState(false);
@@ -107,6 +130,39 @@ export default function SendRoommateRequest() {
   const [loadingOtherHostels, setLoadingOtherHostels] = useState(true);
   const hasFetchedOtherHostels = useRef(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [expandedLeft, setExpandedLeft] = useState<{ [key: string]: boolean }>(
+    {},
+  );
+
+  const handleCopy = (label: string, value: string) => {
+    navigator.clipboard.writeText(value);
+    setCopiedField(label);
+    setTimeout(() => setCopiedField(null), 1500);
+  };
+
+  // --- DEFINE parseList FIRST ---
+  const parseList = (value: any): string[] => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value !== "string") return [];
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map(String);
+        }
+      } catch {
+        // fall through
+      }
+    }
+    return trimmed
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+  };
 
   const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.whats}`;
 
@@ -154,27 +210,11 @@ export default function SendRoommateRequest() {
   const secondPhoto = photos[1] ? `${mediaBase}/${photos[1]}` : imgright;
   const videoUrl = hostel?.video ? `${mediaBase}/${hostel.video}` : null;
 
-  const parseList = (value: any): string[] => {
-    if (!value) return [];
-    if (Array.isArray(value)) return value;
-    if (typeof value !== "string") return [];
-    const trimmed = value.trim();
-    if (!trimmed) return [];
-    if (trimmed.startsWith("[")) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed)) {
-          return parsed.map(String);
-        }
-      } catch {
-        // fall through
-      }
-    }
-    return trimmed
-      .split(",")
-      .map((v) => v.trim())
-      .filter(Boolean);
-  };
+  // #3: Memoized parse results (parseList is now defined above)
+  const securityList = useMemo(() => parseList(hostel?.security), [hostel]);
+  const waterList = useMemo(() => parseList(hostel?.water), [hostel]);
+  const amenitiesList = useMemo(() => parseList(hostel?.all_feature), [hostel]);
+  const rulesList = useMemo(() => parseList(hostel?.house_rules), [hostel]);
 
   const ConnectRoommate = async () => {
     setShowConnectModal(true);
@@ -467,7 +507,7 @@ export default function SendRoommateRequest() {
                     <Label>Security</Label>
                     <InfoPill>
                       <span className="text-xs py-1">
-                        {parseList(hostel?.security).join(" : ")}
+                        {securityList.join(" : ")}
                       </span>
                     </InfoPill>
                   </div>
@@ -475,7 +515,7 @@ export default function SendRoommateRequest() {
                     <Label>Water</Label>
                     <InfoPill>
                       <span className="text-xs py-1">
-                        {parseList(hostel?.water).join(" : ")}
+                        {waterList.join(" : ")}
                       </span>
                     </InfoPill>
                   </div>
@@ -549,14 +589,7 @@ export default function SendRoommateRequest() {
                       View House Rules
                     </button>
                   </div>
-                  <div
-                    className="mt-2 w-full border-t-4"
-                    style={{
-                      borderStyle: "dashed",
-                      borderImage:
-                        "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-                    }}
-                  />
+                  <DashedDivider className="mt-2 w-full" />
                   <div className="flex items-center justify-between mt-10 text-sm md:text-xl">
                     <button className="inline-flex items-center gap-2 text-red-600 underline underline-offset-4">
                       <FaExclamationTriangle />
@@ -586,17 +619,15 @@ export default function SendRoommateRequest() {
                       </div>
                       <ul className="space-y-2 text-sm max-h-[300px] overflow-y-auto">
                         {(openModal === "amenities"
-                          ? parseList(hostel?.all_feature)
-                          : parseList(hostel?.house_rules)
+                          ? amenitiesList
+                          : rulesList
                         ).map((item, index) => (
                           <li key={index} className="pb-1">
                             • {item}
                           </li>
                         ))}
-                        {(openModal === "amenities"
-                          ? parseList(hostel?.all_feature)
-                          : parseList(hostel?.house_rules)
-                        ).length === 0 && (
+                        {(openModal === "amenities" ? amenitiesList : rulesList)
+                          .length === 0 && (
                           <li className="text-gray-400">No data available</li>
                         )}
                       </ul>
@@ -630,16 +661,7 @@ export default function SendRoommateRequest() {
                 </div>
               )}
 
-              <div
-                className="mt-10 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-                style={{
-                  borderStyle: "dashed",
-                  borderImage:
-                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                }}
-              >
-                {" "}
-              </div>
+              <DashedDivider className="mt-10 md:w-95" />
 
               {/* Terms */}
               <div className="w-full flex flex-col items-center text-center mt-2">
@@ -771,14 +793,7 @@ export default function SendRoommateRequest() {
               Hola, do you have a Hostel?
             </p>
 
-            <div
-              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
+            <DashedDivider className="mt-1 mb-5 md:w-95" />
 
             <div className="space-y-6">
               {roommateData && (
@@ -790,11 +805,15 @@ export default function SendRoommateRequest() {
                     <div className="flex flex-col gap-4 text-sm font-medium border-l-3 border-black pl-4 min-h-[100px]">
                       <button className="flex items-center gap-2 text-[#EC0000]">
                         <PiWarningCircle className="text-md" />
-                        <span className="underline text-xs">Report Listing</span>
+                        <span className="underline text-xs">
+                          Report Listing
+                        </span>
                       </button>
                       <button className="flex items-center gap-2 ">
                         <MdOutlineReviews className="text-sm" />
-                        <span className="underline text-xs text-[#0556F8]">Give Review</span>
+                        <span className="underline text-xs text-[#0556F8]">
+                          Give Review
+                        </span>
                       </button>
                       <button className="flex items-center border-2 p-2 rounded gap-2">
                         <FaHome className="text-sm" />
@@ -805,10 +824,159 @@ export default function SendRoommateRequest() {
                 </div>
               )}
             </div>
+
+            {/* #2: Removed IIFE and array, using direct object */}
+            <div className="space-y-4 mt-8">
+              <div className="pb-4">
+                <div className="flex gap-6 items-start">
+                  <div
+                    className={clsx(
+                      "flex-1 border-black rounded-4xl border shadow-sm w-full",
+                      "min-h-[40px] md:min-h-[60px] flex flex-col justify-center",
+                    )}
+                  >
+                    {/* Header row - always visible */}
+                    <div className="grid grid-cols-[auto_1fr_1fr_auto] items-center px-3 py-3 gap-3">
+                      <div className="flex justify-center">
+                        <HiOutlineUserCircle className="w-7 h-7 text-black" />
+                      </div>
+
+                      <div className="truncate text-xs md:text-sm text-black">
+                        {currentUser.space_name?.length > 7
+                          ? currentUser.space_name.slice(0, 7) + "…"
+                          : currentUser.space_name}
+                      </div>
+
+                      <div className="truncate text-xs md:text-sm text-black">
+                        {currentUser.name?.length > 7
+                          ? currentUser.name.slice(0, 7) + "…"
+                          : currentUser.name}
+                      </div>
+
+                      {/* Toggle arrow */}
+                      <span
+                        className="flex justify-center cursor-pointer"
+                        onClick={() =>
+                          setExpandedLeft((prev) => ({
+                            ...prev,
+                            [currentUser.id]: !prev[currentUser.id],
+                          }))
+                        }
+                      >
+                        {expandedLeft[currentUser.id] !== false ? (
+                          <IoIosArrowUp className="w-7 h-7 text-black" />
+                        ) : (
+                          <IoIosArrowDown className="w-7 h-7 text-black" />
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Expanded content - only shown when expanded */}
+                    {expandedLeft[currentUser.id] !== false && (
+                      <>
+                        {/* Row 2 icons */}
+                        <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
+                          <span className="text-xs">{currentUser.date}</span>
+
+                          <div className="flex gap-2 md:gap-3">
+                            <div
+                              className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                              onClick={() =>
+                                (window.location.href = `mailto:${currentUser.email}`)
+                              }
+                            >
+                              <HiOutlineMail className="w-4 h-4" />
+                            </div>
+
+                            <div
+                              className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                              onClick={() =>
+                                (window.location.href = `tel:${currentUser.call}`)
+                              }
+                            >
+                              <MdOutlineCall className="w-4 h-4" />
+                            </div>
+
+                            <div
+                              className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
+                              onClick={() =>
+                                window.open(
+                                  `https://wa.me/${currentUser.whatsapp}`,
+                                  "_blank",
+                                )
+                              }
+                            >
+                              <RiWhatsappLine className="w-4 h-4" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Contact details */}
+                        <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
+                          <div className="space-y-4">
+                            {[
+                              { label: "Email", value: currentUser.email },
+                              { label: "Call no.", value: currentUser.call },
+                              {
+                                label: "Whatsapp",
+                                value: currentUser.whatsapp,
+                              },
+                            ].map((field, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center justify-between relative"
+                              >
+                                <span className="text-xs md:text-base font-semibold">
+                                  {field.label}
+                                </span>
+                                <div className="flex items-center pl-4">
+                                  <span className="text-xs md:text-base truncate">
+                                    {field.value?.length > 14
+                                      ? field.value.slice(0, 14) + "…"
+                                      : field.value}
+                                  </span>
+                                  <FiCopy
+                                    className="w-4 h-4 cursor-pointer ml-2"
+                                    onClick={() =>
+                                      handleCopy(field.label, field.value)
+                                    }
+                                  />
+                                </div>
+                                {copiedField === field.label && (
+                                  <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
+                                    Copied!
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Connect */}
+              <div className="pt-2 w-full">
+                <button
+                  disabled={!agreed}
+                  onClick={ConnectRoommate}
+                  className={clsx(
+                    "cursor-pointer w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                    agreed
+                      ? "bg-black text-white"
+                      : "bg-gray-400 text-white cursor-not-allowed",
+                  )}
+                >
+                <RiWhatsappLine className="w-7 h-7 rounded-full text-black bg-white p-1" />
+                  <span className="text-sm md:text-2xl">Say “Hola” to your Match</span>
+                </button>
+              </div>
           </div>
         </div>
       )}
-
       <Footer bgColor="#3A2A05" iconBgColor="#EBD96B" />
     </div>
   );
