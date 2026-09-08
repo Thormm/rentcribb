@@ -28,7 +28,6 @@ export interface Roommate {
   level: string;
   faculty: string;
   duration: string;
-  whats: string;
   type: string;
   move_in_date: string;
   price: string;

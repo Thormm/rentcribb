@@ -266,25 +266,26 @@ export default function Explore() {
 
         if (result.success && result.data) {
           // Include ALL users - no filtering
-          const transformedCards: Roommate[] = result.data.map((item: any) => ({
-            id: parseInt(item.id) || Math.random(),
-            whats: item.whats || "User",
-            gender: item.gender || "",
-            religion: item.religion || "",
-            level: item.level || "",
-            faculty: item.faculty || "",
-            move_in_date: item.availability || "",
-            duration: item.duration || "",
-            type: item.type || "",
-            price: item.amount_share ? String(item.amount_share) : "",
-            features: item.hobby
-              ? item.hobby.split(",").map((s: string) => s.trim())
-              : [],
-            pet: item.pet || "",
-            school: item.school || "",
-            created_at: new Date().toISOString(),
-            value: item.whats === user ? "You" : "100%",
-          }));
+          const transformedCards: Roommate[] = result.data.map(
+            (item: any, index: number) => ({
+              id: parseInt(item.id),
+              gender: item.gender || "",
+              religion: item.religion || "",
+              level: item.level || "",
+              faculty: item.faculty || "",
+              move_in_date: item.availability || "",
+              duration: item.duration || "",
+              type: item.type || "",
+              price: item.amount_share ? String(item.amount_share) : "",
+              features: item.hobby
+                ? item.hobby.split(",").map((s: string) => s.trim())
+                : [],
+              pet: item.pet || "",
+              school: item.school || "",
+              created_at: new Date().toISOString(),
+              value: index === 0 ? "You" : "100%", // First row is always "You"
+            }),
+          );
 
           setCards(transformedCards);
         } else {
@@ -467,7 +468,7 @@ export default function Explore() {
                     bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
                     onClick={() =>
                       navigate("/sendroommaterequest?domain=student", {
-                        state: { whats: card.whats },
+                        state: { id: card.id },
                       })
                     }
                   />

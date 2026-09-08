@@ -118,10 +118,7 @@ export default function SendRoommateRequest() {
   const navigate = useNavigate();
   const [hostel, setHostel] = React.useState<any>(null);
   const location = useLocation();
-  const space = location.state?.whats;
-  const whats = location.state?.whats;
-  const id = space?.[0];
-  const space_type = space?.[1];
+  const id = location.state?.id;
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
@@ -164,7 +161,7 @@ export default function SendRoommateRequest() {
       .filter(Boolean);
   };
 
-  const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.whats}`;
+  const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.id}`;
 
   const photos: string[] = useMemo(() => {
     if (!hostel) return [];
@@ -187,7 +184,6 @@ export default function SendRoommateRequest() {
     if (!hostel) return null;
     return {
       id: parseInt(hostel.id) || Math.random(),
-      whats: hostel.whats || "User",
       gender: hostel.gender || "",
       religion: hostel.religion || "",
       level: hostel.level || "",
@@ -225,13 +221,13 @@ export default function SendRoommateRequest() {
     if (!user) {
       navigate("/login");
     }
-    if (!space) {
+    if (!id) {
       navigate("/studentlisting", { replace: true });
     }
-  }, [space, navigate]);
+  }, [id, navigate]);
 
   useEffect(() => {
-    if (!id || !space_type) return;
+    if (!id) return;
 
     const fetchHostel = async () => {
       const res = await fetch("https://www.cribb.africa/apigets.php", {
@@ -239,7 +235,7 @@ export default function SendRoommateRequest() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "get_roommate_hostel_details",
-          whats: whats,
+          id: id,
         }),
       });
 
@@ -253,14 +249,14 @@ export default function SendRoommateRequest() {
     };
 
     fetchHostel();
-  }, [id, space_type]);
+  }, [id]);
 
   // Reset fetch flag when hostel changes
   useEffect(() => {
     hasFetchedOtherHostels.current = false;
     setOtherHostels([]); // Clear old hostels
     setLoadingOtherHostels(true); // Show loading state
-  }, [hostel?.whats]);
+  }, [hostel?.id]);
 
   // ----- Fetch other hostels (filter out current hostel AND logged-in user) -----
   useEffect(() => {
@@ -295,41 +291,32 @@ export default function SendRoommateRequest() {
 
         if (result.success && result.data) {
           // Transform all data
-          const transformedCards: Roommate[] = result.data.map((item: any) => ({
-            id: parseInt(item.id) || Math.random(),
-            whats: item.whats || "User",
-            gender: item.gender || "",
-            religion: item.religion || "",
-            level: item.level || "",
-            faculty: item.faculty || "",
-            move_in_date: item.availability || "",
-            duration: item.duration || "",
-            type: item.type || "",
-            price: item.amount_share ? String(item.amount_share) : "",
-            features: item.hobby
-              ? item.hobby.split(",").map((s: string) => s.trim())
-              : [],
-            pet: item.pet || "",
-            school: item.school || "",
-            created_at: new Date().toISOString(),
-            value: item.whats === user ? "You" : "100%",
-          }));
+          const transformedCards: Roommate[] = result.data.map(
+            (item: any, index: number) => ({
+              id: parseInt(item.id),
+              gender: item.gender || "",
+              religion: item.religion || "",
+              level: item.level || "",
+              faculty: item.faculty || "",
+              move_in_date: item.availability || "",
+              duration: item.duration || "",
+              type: item.type || "",
+              price: item.amount_share ? String(item.amount_share) : "",
+              features: item.hobby
+                ? item.hobby.split(",").map((s: string) => s.trim())
+                : [],
+              pet: item.pet || "",
+              school: item.school || "",
+              created_at: new Date().toISOString(),
+              value: index === 0 ? "You" : "100%", // First row is always "You"
+            }),
+          );
 
-          // Filter out:
-          // 1. The current hostel
-          // 2. The logged-in user's own card
           const filteredCards = transformedCards.filter((card) => {
-            const cardWhats = card.whats?.trim()?.toLowerCase() || "";
-            const currentHostelWhats =
-              hostel?.whats?.trim()?.toLowerCase() || "";
-            const loggedInUser = login?.user?.trim()?.toLowerCase() || "";
-
-            // Exclude the current hostel
-            if (cardWhats === currentHostelWhats) {
+            if (card.id === id) {
               return false;
             }
-            // Exclude the logged-in user
-            if (cardWhats === loggedInUser) {
+            if (card.value === "You") {
               return false;
             }
             return true;
@@ -755,7 +742,7 @@ export default function SendRoommateRequest() {
                       bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
                       onClick={() =>
                         navigate("/sendroommaterequest?domain=student", {
-                          state: { whats: card.whats },
+                          state: { id: card.id },
                         })
                       }
                     />
@@ -959,21 +946,23 @@ export default function SendRoommateRequest() {
             </div>
 
             {/* Connect */}
-              <div className="pt-2 w-full">
-                <button
-                  disabled={!agreed}
-                  onClick={ConnectRoommate}
-                  className={clsx(
-                    "cursor-pointer w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
-                    agreed
-                      ? "bg-black text-white"
-                      : "bg-gray-400 text-white cursor-not-allowed",
-                  )}
-                >
+            <div className="pt-2 w-full">
+              <button
+                disabled={!agreed}
+                onClick={ConnectRoommate}
+                className={clsx(
+                  "cursor-pointer w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                  agreed
+                    ? "bg-black text-white"
+                    : "bg-gray-400 text-white cursor-not-allowed",
+                )}
+              >
                 <RiWhatsappLine className="w-7 h-7 rounded-full text-black bg-white p-1" />
-                  <span className="text-sm md:text-2xl">Say “Hola” to your Match</span>
-                </button>
-              </div>
+                <span className="text-sm md:text-2xl">
+                  Say “Hola” to your Match
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       )}
