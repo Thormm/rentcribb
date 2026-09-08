@@ -114,10 +114,10 @@ const PetIcon = ({
   children: React.ReactNode;
 }) => (
   <div className="relative w-6 h-6 flex items-center justify-center">
-    <span className="text-xl">{children}</span>
+    <span className="text-md md:text-xl">{children}</span>
     {!liked && (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[120%] h-[2px] bg-red-500 transform rotate-45 origin-center"></div>
+        <div className="w-[80%] md:w-[120%] h-[2px] bg-red-500 transform rotate-45 origin-center"></div>
       </div>
     )}
   </div>
@@ -126,16 +126,16 @@ const PetIcon = ({
 // ---------- Helper icons ----------
 const GenderIcon = ({ gender }: { gender: string }) =>
   gender === "male" ? (
-    <MdOutlineMan4 className="text-3xl mt-2" />
+    <MdOutlineMan4 className="text-xl md:text-3xl mt-2" />
   ) : (
-    <MdOutlineWoman2 className="text-3xl mt-2" />
+    <MdOutlineWoman2 className="text-xl md:text-3xl mt-2" />
   );
 
 const ReligionIcon = ({ religion }: { religion: string }) =>
   religion === "christian" ? (
-    <CgCross className="text-4xl mt-2" />
+    <CgCross className="text-2xl md:text-4xl mt-2" />
   ) : religion === "muslim" ? (
-    <FaMosque className="text-2xl mt-2" />
+    <FaMosque className="text-lg md:text-2xl mt-2" />
   ) : null;
 
 // ---------- Pet logic ----------
@@ -174,13 +174,13 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
       onClick={onClick} // ← attach the handler to the root div
     >
       <div
-        className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-30 h-30 rounded-full flex items-center justify-center"
+        className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-25 md:w-30 h-25 md:h-30 rounded-full flex items-center justify-center"
         style={{ backgroundColor: avatarBgColor }}
       >
-        <span className="text-3xl font-semibold">{avatarText}</span>
+        <span className="text-2xl md:text-3xl font-semibold">{avatarText}</span>
       </div>
 
-      <div className="mt-20 justify-center">
+      <div className="mt-10 md:mt-20 justify-center">
         {/* PET ROW – cat above gender, dog above religion */}
         <div className="flex justify-center gap-2 items-center mx-5">
           <div className="w-10 flex justify-center">
@@ -202,7 +202,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
             <GenderIcon gender={card.gender} />
           </div>
           <div className="flex-1 text-center">
-            <p className="text-sm leading-loose">
+            <p className="text-xs md:text-sm leading-loose">
               {truncateText(card.faculty, 8)} <br /> {card.level}
             </p>
           </div>
@@ -216,7 +216,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
           {card.features.slice(0, 3).map((feat, idx) => (
             <span
               key={idx}
-              className="text-2xl rounded-full p-2 text-black"
+              className="text-xl md:text-2xl rounded-full p-2 text-black"
               style={{ backgroundColor: featureColors[feat] || "#EC4899" }}
             >
               {featureIcons[feat] || feat}
@@ -226,7 +226,7 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
 
         {/* PRICE + DURATION */}
         {priceDisplay && (
-          <div className="flex justify-center items-center gap-1 mt-1 text-sm">
+          <div className="flex justify-center items-center gap-1 mt-1 text-xs md:text-sm">
             <span className="text-[#0556F8]">{priceDisplay}</span>
             {hasDuration && (
               <span className="text-[#0556F8]"> / {durationShort}</span>
