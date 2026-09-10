@@ -7,7 +7,6 @@ import {
   FaExclamationTriangle,
   FaShareAlt,
   FaTimes,
-  FaHome,
 } from "react-icons/fa";
 import InfoPill, { DfButton } from "../../../../components/Pill";
 import clsx from "clsx";
@@ -878,10 +877,10 @@ export default function SendRoommateRequest() {
                             Give Review
                           </span>
                         </button>
-                        <button className="flex items-center border-2 p-2 rounded gap-2">
+                        {/*<button className="flex items-center border-2 p-2 rounded gap-2">
                           <FaHome className="text-sm" />
                           <span>SPACE</span>
-                        </button>
+                        </button>*/}
                       </div>
                     </div>
                   </div>
@@ -919,7 +918,7 @@ export default function SendRoommateRequest() {
                             }))
                           }
                         >
-                          {expandedLeft[currentUser?.id] !== false ? (
+                          {expandedLeft[currentUser?.id] === true ? (
                             <IoIosArrowUp className="w-7 h-7 text-black" />
                           ) : (
                             <IoIosArrowDown className="w-7 h-7 text-black" />
@@ -927,7 +926,7 @@ export default function SendRoommateRequest() {
                         </span>
                       </div>
 
-                      {expandedLeft[currentUser?.id] !== false && (
+                      {expandedLeft[currentUser?.id] === true && (
                         <>
                           <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
                             <span className="text-xs">
@@ -986,8 +985,8 @@ export default function SendRoommateRequest() {
                                   </span>
                                   <div className="flex items-center pl-4">
                                     <span className="text-xs md:text-base truncate">
-                                      {field.value?.length > 14
-                                        ? field.value.slice(0, 14) + "…"
+                                      {field.value?.length > 25
+                                        ? field.value.slice(0, 25) + "…"
                                         : field.value}
                                     </span>
                                     <FiCopy
