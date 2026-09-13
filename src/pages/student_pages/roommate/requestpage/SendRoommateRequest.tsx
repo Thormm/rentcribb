@@ -22,8 +22,6 @@ import { RiWhatsappLine } from "react-icons/ri";
 import { FiCopy } from "react-icons/fi";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-
-// NEW IMPORT
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
 
 // #4: Reusable Dashed Divider Component
