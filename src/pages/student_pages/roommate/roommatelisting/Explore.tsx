@@ -267,7 +267,7 @@ export default function Explore() {
         if (result.success && result.data) {
           // Include ALL users - no filtering
           const transformedCards: Roommate[] = result.data.map(
-            (item: any, index: number) => ({
+            (item: any) => ({
               id: parseInt(item.id),
               gender: item.gender || "",
               religion: item.religion || "",
@@ -283,7 +283,7 @@ export default function Explore() {
               pet: item.pet || "",
               school: item.school || "",
               created_at: new Date().toISOString(),
-              value: index === 0 ? "You" : "100%", // First row is always "You"
+              value: item.value,
             }),
           );
 
