@@ -467,7 +467,7 @@ export default function Explore() {
                     card={card}
                     bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
                     onClick={() =>
-                      navigate("/sendroommaterequest?domain=student", {
+                      navigate("/sendroommaterequest", {
                         state: { id: card.id },
                       })
                     }

@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../../components/Pill";
 import { MdOutlinePostAdd, MdLightbulbOutline } from "react-icons/md";
 import { FiChevronDown } from "react-icons/fi";
-import { FaToggleOff } from "react-icons/fa";
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { BiComment } from "react-icons/bi";
-import { useNavigate } from "../../../App";
 import RoommateCard, { type Roommate } from "../components/RoommateCard";
 
 // ----------------------- Reusable Label -----------------------
@@ -89,6 +89,11 @@ const Rommates = () => {
   const [activeTab, setActiveTab] = useState("Explore");
   const navigate = useNavigate();
   const [hostel, setHostel] = React.useState<any>(null);
+  const [toggling, setToggling] = useState(false);
+
+  // ✅ Visibility flag from backend — "yes" → Active, anything else → INACTIVE
+  const isVisible = String(hostel?.open ?? "").toLowerCase() === "yes";
+
   // NEW: Build roommate data from hostel
   const roommateData: Roommate | null = useMemo(() => {
     if (!hostel) return null;
@@ -133,6 +138,19 @@ const Rommates = () => {
       const data = await res.json();
 
       if (data.data) {
+        // ✅ Verification guard — must be verified to see roommates
+        // Backend returns `verification: 0` (or "0") when the student
+        // hasn't completed the "know you" flow yet.
+        const verification = data.data.verification;
+        if (
+          verification === 0 ||
+          verification === "0" ||
+          verification === false
+        ) {
+          navigate("/knowyou", { replace: true });
+          return;
+        }
+
         setHostel(data.data);
       } else {
         console.log(data.message);
@@ -140,7 +158,45 @@ const Rommates = () => {
     };
 
     fetchHostel();
-  }, [login?.user]);
+  }, [login?.user, navigate]);
+
+  const handleToggleVisibility = async () => {
+    if (!hostel || toggling) return;
+    setToggling(true);
+
+    // Optimistic update
+    const previous = hostel.open;
+    const next = String(previous ?? "").toLowerCase() === "yes" ? "no" : "yes";
+    setHostel({ ...hostel, open: next });
+
+    try {
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "toggle_roommate_visibility",
+          user: login?.user,
+          signup_key: login?.signup_key, // <- confirm this key exists
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        // Roll back on failure
+        setHostel({ ...hostel, open: previous });
+        console.error("Toggle failed:", data.reply);
+      } else {
+        // Trust the server's value
+        setHostel({ ...hostel, open: data.open });
+      }
+    } catch (err) {
+      console.error("Toggle error:", err);
+      setHostel({ ...hostel, open: previous });
+    } finally {
+      setToggling(false);
+    }
+  };
 
   return (
     <div className="bg-white md:py-10 mb-20">
@@ -160,12 +216,19 @@ const Rommates = () => {
                     <InfoPill>
                       <div className="inline-flex items-center justify-between w-full">
                         <span className=" text-xs md:text-sm">
-                          Active : Yes, Receiving Requests
+                          {isVisible
+                            ? "Active : Yes, Receiving Requests"
+                            : "INACTIVE : Not Receiving Requests"}
                         </span>
-                        <span className="bg-black space-x-1 px-4 py-2 rounded-md text-[#D6FFC3] flex items-center">
-                          <FaToggleOff />{" "}
+                        <button
+                          type="button"
+                          onClick={handleToggleVisibility}
+                          disabled={toggling}
+                          className="bg-black space-x-1 px-4 py-2 rounded-md text-[#D6FFC3] flex items-center disabled:opacity-60"
+                        >
+                          {isVisible ? <FaToggleOn /> : <FaToggleOff />}{" "}
                           <span className=" text-xs md:text-sm">SWITCH</span>
-                        </span>
+                        </button>
                       </div>
                     </InfoPill>
                   </div>

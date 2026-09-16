@@ -3,7 +3,6 @@ import {
   RouterProvider,
   Outlet,
   useLocation,
-  useNavigate as useNavigateOriginal,
 } from "react-router-dom";
 import {
   useState,
@@ -54,63 +53,26 @@ export const useDomain = () => {
 
 /* ---------------- DETECT SUBDOMAIN ---------------- */
 
+/**
+ * Pure hostname-based detection. Works identically in dev and prod:
+ *   student.localhost          → "student"
+ *   business.localhost         → "business"
+ *   student.cribb.africa       → "student"
+ *   business.cribb.africa      → "business"
+ *   anything else              → "public"
+ */
 const getSubdomain = (): Subdomain => {
-  if (import.meta.env.DEV) {
-    const params = new URLSearchParams(window.location.search);
-    const testDomain = params.get("domain");
-    if (testDomain === "student") return "student";
-    if (testDomain === "business") return "business";
-    return "public";
-  }
-
   const host = window.location.hostname;
-  console.log("🔍 Detected hostname:", host);
 
-  // Same conditions for both subdomains
-  if (host === "student.cribb.africa") return "student";
-  if (host === "business.cribb.africa") return "business";
-  if (host.includes("student.cribb.africa")) return "student";
-  if (host.includes("business.cribb.africa")) return "business";
+  if (host.startsWith("student.")) return "student";
+  if (host.startsWith("business.")) return "business";
 
   return "public";
-};
-
-/* ---------------- OVERRIDE useNavigate ---------------- */
-
-export const useNavigate = () => {
-  const navigate = useNavigateOriginal();
-
-  return useCallback(
-    (to: string | number, options?: any) => {
-      if (typeof to === "number") {
-        navigate(to);
-        return;
-      }
-
-      if (import.meta.env.DEV) {
-        const params = new URLSearchParams(window.location.search);
-        const domain = params.get("domain");
-
-        if (domain && typeof to === "string") {
-          const separator = to.includes("?") ? "&" : "?";
-          const url = `${to}${separator}domain=${domain}`;
-          navigate(url, options);
-          return;
-        }
-      }
-
-      navigate(to, options);
-    },
-    [navigate],
-  );
 };
 
 /* ---------------- GET ROUTES BASED ON SUBDOMAIN ---------------- */
 
 const getRoutesForSubdomain = (subdomain: Subdomain) => {
-  console.log("📋 Getting routes for subdomain:", subdomain);
-
-  // Same pattern for both subdomains
   if (subdomain === "student") {
     return [...publicRoutes, ...studentRoutes];
   }
@@ -133,7 +95,6 @@ const updatePageTitle = (pathname: string, subdomain: Subdomain) => {
   let pageName = "Home";
   const path = pathname.toLowerCase();
 
-  // Simplified page name mapping
   if (path === "/" || path === "") pageName = "Home";
   else if (path.includes("login")) pageName = "Login";
   else if (path.includes("signup")) pageName = "Sign Up";
@@ -147,7 +108,6 @@ const updatePageTitle = (pathname: string, subdomain: Subdomain) => {
   else if (path.includes("waitlist")) pageName = "Waitlist";
   else if (path.includes("forgotpassword")) pageName = "Forgot Password";
   else {
-    // Fallback: extract from URL
     const parts = path.split("/").filter((p) => p);
     if (parts.length > 0) {
       pageName = parts[parts.length - 1]
@@ -159,10 +119,8 @@ const updatePageTitle = (pathname: string, subdomain: Subdomain) => {
     }
   }
 
-  // Remove duplicate mode names
   let title = `Cribb.Africa`;
   if (mode) {
-    // Don't repeat mode if it's already in page name
     if (!pageName.includes(mode)) {
       title += ` - ${mode}`;
     }
@@ -171,13 +129,13 @@ const updatePageTitle = (pathname: string, subdomain: Subdomain) => {
 
   document.title = title.trim();
 };
+
 /* ---------------- LAYOUT ---------------- */
 
 function Layout() {
   const location = useLocation();
   const subdomain = getSubdomain();
 
-  // Update page title whenever route changes
   useEffect(() => {
     updatePageTitle(location.pathname, subdomain);
   }, [location.pathname, subdomain]);
@@ -189,7 +147,7 @@ function Layout() {
     "/request",
     "/hostelview",
     "/connected",
-     "/explore",
+    "/explore",
   ];
 
   const shouldShowNavbar = showNavbarOn.includes(location.pathname);
@@ -215,17 +173,10 @@ export default function App() {
 
   const [router, setRouter] = useState<any>(null);
 
-  // Initialize router after component mounts
   useEffect(() => {
     const subdomain = getSubdomain();
-    console.log("🚀 App mounted, subdomain:", subdomain);
 
     const routes = getRoutesForSubdomain(subdomain);
-    console.log("📋 Total routes loaded:", routes.length);
-    console.log(
-      "📋 Route paths:",
-      routes.map((r) => r.path),
-    );
 
     const newRouter = createBrowserRouter([
       {
@@ -252,7 +203,6 @@ export default function App() {
     setAlert((prev) => ({ ...prev, open: false }));
   };
 
-  // Show nothing while router is initializing
   if (!router) {
     return null;
   }

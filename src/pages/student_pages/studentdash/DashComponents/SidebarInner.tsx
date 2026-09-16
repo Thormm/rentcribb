@@ -7,7 +7,7 @@ import {
 } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
 import { FiSettings, FiHome } from "react-icons/fi";
-import { FaRegCircle, FaToggleOff } from "react-icons/fa";
+import { FaRegCircle, FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { HiOutlineUsers } from "react-icons/hi";
 import ReferralCard from "./ReferralCard";
 
@@ -29,17 +29,15 @@ export default function SidebarInner({
 }) {
   const [sidebarData, setSidebarData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
   const handleLogout = () => {
-    // ✅ Clear all saved user session data
     sessionStorage.clear();
     localStorage.clear();
-
-    // ✅ Redirect to login
     navigate("/login", { replace: true });
   };
-  const navigate = useNavigate(); // ✅ initialize router navigation
 
-  // ✅ Fetch sidebar data
   useEffect(() => {
     const fetchSidebarData = async () => {
       try {
@@ -65,6 +63,11 @@ export default function SidebarInner({
     };
     fetchSidebarData();
   }, []);
+
+  // ✅ Roommates visibility flag from backend
+  // Backend returns `open: "yes"` → VISIBLE, anything else → HIDDEN
+  const roommatesVisible =
+    String(sidebarData?.open ?? "").toLowerCase() === "yes";
 
   const divider = (title: string) => (
     <div className="flex items-center my-2 md:my-4 rounded pl-2 pr-2 md:pl-5 md:pr-4 py-1 md:py-2 gap-1 w-full text-left">
@@ -126,8 +129,18 @@ export default function SidebarInner({
               <HiOutlineUsers className={baseIcon} />
               <span className="truncate text-[12px] md:text-xl">Rommates</span>
               <>
-                <FaToggleOff className="w-6 ml-auto text-white" />
-                <span className="text-xs text-white">HIDDEN</span>
+                {roommatesVisible ? (
+                  <FaToggleOn className="w-6 ml-auto text-[#FFA1A1]" />
+                ) : (
+                  <FaToggleOff className="w-6 ml-auto text-white" />
+                )}
+                <span
+                  className={`text-xs ${
+                    roommatesVisible ? "text-[#FFA1A1]" : "text-white"
+                  }`}
+                >
+                  {roommatesVisible ? "VISIBLE" : "HIDDEN"}
+                </span>
               </>
             </button>
 
@@ -143,8 +156,6 @@ export default function SidebarInner({
                 NEW
               </span>
             </button>
-
-           
 
             {/* === REFERRAL CARD === */}
             {divider("CRIBB INFLUENCERS")}
@@ -217,11 +228,6 @@ export default function SidebarInner({
                   >
                     <LuLogOut className="text-lg md:text-3xl" /> LOG OUT
                   </button>
-                  {/*<button className="flex items-center gap-1 text-[9px] md:text-md text-white hover:text-gray-300">
-                    <MdOutlineBackpack className="text-lg md:text-3xl" />
-                    <span className="underline">SWITCH TO STUDENTS</span>
-                    <span className="ml-1">&gt;&gt;</span>
-                  </button>*/}
                 </div>
               </div>
             ) : (
