@@ -54,18 +54,21 @@ export const useDomain = () => {
 /* ---------------- DETECT SUBDOMAIN ---------------- */
 
 /**
- * Pure hostname-based detection. Works identically in dev and prod:
- *   student.localhost          → "student"
- *   business.localhost         → "business"
- *   student.cribb.africa       → "student"
- *   business.cribb.africa      → "business"
- *   anything else              → "public"
+ * Hostname-based detection that handles optional prefixes (www, staging, etc.):
+ *   student.localhost              → "student"
+ *   student.cribb.africa           → "student"
+ *   www.student.cribb.africa       → "student"
+ *   business.localhost             → "business"
+ *   www.business.cribb.africa      → "business"
+ *   anything else                  → "public"
  */
 const getSubdomain = (): Subdomain => {
-  const host = window.location.hostname;
+  const host = window.location.hostname.toLowerCase();
 
-  if (host.startsWith("student.")) return "student";
-  if (host.startsWith("business.")) return "business";
+  // `(^|\.)` ensures `student` is a real subdomain label,
+  // so things like `mystudent.foo.com` don't match.
+  if (/(^|\.)student\./.test(host)) return "student";
+  if (/(^|\.)business\./.test(host)) return "business";
 
   return "public";
 };

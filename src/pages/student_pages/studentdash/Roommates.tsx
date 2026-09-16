@@ -287,7 +287,7 @@ const Rommates = () => {
 
                 <div className="flex items-center gap-3 mt-8 mb-10">
                   <span className="text-sm md:text-md font-semibold text-black tracking-wide mt-10">
-                    --- YOUR LISTINGS -------------
+                    --- YOUR REQUESTS -------------
                   </span>
                 </div>
                 <div className="overflow-x-auto md:min-w-150"></div>
