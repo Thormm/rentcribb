@@ -45,20 +45,20 @@ const truncateText = (text: string, maxLength: number = 10) => {
 // Get numeric price from range string and format with commas
 const getNumericPrice = (priceRange: string): string => {
   if (!priceRange || priceRange.trim() === "" || priceRange === "₦0") return "";
-  
+
   const parts = priceRange.split(" - ");
   const firstPrice = parts[0] || priceRange;
-  
+
   // Extract the numeric value from the price string (remove ₦ and commas)
-  const numericValue = firstPrice.replace(/[₦,]/g, '').trim();
-  
+  const numericValue = firstPrice.replace(/[₦,]/g, "").trim();
+
   // Check if it's a valid number
   if (numericValue === "" || isNaN(parseInt(numericValue, 10))) return "";
-  
+
   // Parse as number and format with commas
   const num = parseInt(numericValue, 10);
   if (num === 0) return ""; // Don't show zero
-  
+
   // Format with commas and add ₦ sign
   return `₦${num.toLocaleString()}`;
 };
@@ -122,20 +122,26 @@ const PetIcon = ({
   </div>
 );
 
-// ---------- Helper icons ----------
-const GenderIcon = ({ gender }: { gender: string }) =>
-  gender === "male" ? (
-    <MdOutlineMan4 className="text-xl md:text-3xl mt-2" />
-  ) : (
-    <MdOutlineWoman2 className="text-xl md:text-3xl mt-2" />
-  );
+// ---------- Helper icons (fixed-width boxes so cross/mosque don't shift layout) ----------
+const GenderIcon = ({ gender }: { gender: string }) => (
+  <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center mt-2 shrink-0">
+    {gender === "male" ? (
+      <MdOutlineMan4 className="text-xl md:text-3xl" />
+    ) : (
+      <MdOutlineWoman2 className="text-xl md:text-3xl" />
+    )}
+  </div>
+);
 
-const ReligionIcon = ({ religion }: { religion: string }) =>
-  religion === "christian" ? (
-    <CgCross className="text-2xl md:text-4xl mt-2" />
-  ) : religion === "muslim" ? (
-    <FaMosque className="text-lg md:text-2xl mt-2" />
-  ) : null;
+const ReligionIcon = ({ religion }: { religion: string }) => (
+  <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center mt-2 shrink-0">
+    {religion === "christian" ? (
+      <CgCross className="text-2xl md:text-4xl" />
+    ) : religion === "muslim" ? (
+      <FaMosque className="text-lg md:text-2xl" />
+    ) : null}
+  </div>
+);
 
 // ---------- Pet logic ----------
 const likesCat = (pet: string) => pet === "Cat_Dog" || pet === "Cat";
@@ -147,7 +153,7 @@ interface RoommateCardProps {
   className?: string;
   bgColor?: string; // optional card background color (hex or Tailwind class)
   avatarBgColor?: string; // optional avatar circle background (default semi-transparent)
-  onClick?: () => void; // ← NEW: click handler for the whole card
+  onClick?: () => void; // ← click handler for the whole card
 }
 
 export const RoommateCard: React.FC<RoommateCardProps> = ({
@@ -166,12 +172,15 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
     <div
       className={clsx(
         "relative text-black rounded-4xl mt-10 py-6 shadow-md text-center",
-        onClick && "cursor-pointer", // ← make it clickable if onClick is provided
+        // Responsive, no fixed pixel width — fills slot but stays a card
+        "w-full max-w-[260px] min-w-[180px] md:max-w-[320px] md:min-w-[180px] mx-auto",
+        onClick && "cursor-pointer",
         className,
       )}
       style={{ backgroundColor: bgColor }}
-      onClick={onClick} // ← attach the handler to the root div
+      onClick={onClick}
     >
+      {/* Avatar circle */}
       <div
         className="absolute -top-9 left-1/2 transform -translate-x-1/2 w-25 md:w-30 h-25 md:h-30 rounded-full flex items-center justify-center"
         style={{ backgroundColor: avatarBgColor }}
@@ -197,21 +206,17 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
 
         {/* GENDER + DEPT/LEVEL + RELIGION */}
         <div className="flex justify-center gap-2">
-          <div className="w-10 flex justify-center">
-            <GenderIcon gender={card.gender} />
-          </div>
+          <GenderIcon gender={card.gender} />
           <div className="flex-1 text-center">
-            <p className="text-xs md:text-sm leading-loose">
+            <p className="text-xs md:text-sm leading-loose min-h-[2.75rem]">
               {truncateText(card.faculty, 8)} <br /> {card.level}
             </p>
           </div>
-          <div className="w-10 flex justify-center">
-            <ReligionIcon religion={card.religion} />
-          </div>
+          <ReligionIcon religion={card.religion} />
         </div>
 
-        {/* FEATURES (3 icons) with HEX colors */}
-        <div className="flex justify-center space-x-3 mt-2 mb-5">
+        {/* FEATURES (up to 3 icons) with HEX colors */}
+        <div className="flex justify-center space-x-3 mt-2 mb-5 min-h-[2.75rem] items-center">
           {card.features.slice(0, 3).map((feat, idx) => (
             <span
               key={idx}

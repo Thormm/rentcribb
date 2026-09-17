@@ -35,8 +35,6 @@ export const useAlert = () => {
   return ctx;
 };
 
-/* ---------------- DOMAIN CONTEXT ---------------- */
-
 type Subdomain = "public" | "student" | "business";
 
 interface DomainContextType {
@@ -51,22 +49,9 @@ export const useDomain = () => {
   return ctx;
 };
 
-/* ---------------- DETECT SUBDOMAIN ---------------- */
-
-/**
- * Hostname-based detection that handles optional prefixes (www, staging, etc.):
- *   student.localhost              → "student"
- *   student.cribb.africa           → "student"
- *   www.student.cribb.africa       → "student"
- *   business.localhost             → "business"
- *   www.business.cribb.africa      → "business"
- *   anything else                  → "public"
- */
 const getSubdomain = (): Subdomain => {
   const host = window.location.hostname.toLowerCase();
 
-  // `(^|\.)` ensures `student` is a real subdomain label,
-  // so things like `mystudent.foo.com` don't match.
   if (/(^|\.)student\./.test(host)) return "student";
   if (/(^|\.)business\./.test(host)) return "business";
 
