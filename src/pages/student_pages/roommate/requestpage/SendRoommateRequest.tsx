@@ -106,6 +106,7 @@ export default function SendRoommateRequest() {
   const [hostel, setHostel] = React.useState<any>(null);
   const location = useLocation();
   const id = location.state?.id;
+  const accept = location.state?.accept === true; // ← NEW
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
@@ -151,7 +152,7 @@ export default function SendRoommateRequest() {
       .filter(Boolean);
   };
 
-  const mediaBase = `https://www.cribb.africa/uploads/users/${hostel?.id}`;
+  const mediaBase = `https://www.cribb.africa/uploads/users/${id}`;
 
   const photos: string[] = useMemo(() => {
     if (!hostel) return [];
@@ -173,7 +174,7 @@ export default function SendRoommateRequest() {
   const roommateData: Roommate | null = useMemo(() => {
     if (!hostel) return null;
     return {
-      id: parseInt(hostel.id) || Math.random(),
+      id: parseInt(hostel.id) || 0,
       gender: hostel.gender || "",
       religion: hostel.religion || "",
       level: hostel.level || "",
@@ -263,6 +264,7 @@ export default function SendRoommateRequest() {
           signup_key: signup_key,
           type: "roommate",
           id: id,
+          accept: accept,
         }),
       });
 
@@ -414,7 +416,9 @@ export default function SendRoommateRequest() {
               </h1>
             </div>
             <button
-              onClick={() => navigate(`/explore`)}
+              onClick={() =>
+                navigate(accept ? "/studentdash?goto=roommates" : "/explore")
+              }
               className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
             >
               <IoIosArrowBack size={14} />
@@ -702,15 +706,25 @@ export default function SendRoommateRequest() {
           <div
             className={`space-y-4 ${!hostel?.image1 ? "lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center" : ""}`}
           >
-            <Maincard className="bg-[#EBD96B] pb-5">
+            <Maincard
+              className={clsx("pb-5", accept ? "bg-[#F4F6F5]" : "bg-[#EBD96B]")}
+            >
               <SectionHeader
-                title="Send Request"
-                caption="Send your preferred user a pairing request"
+                title={accept ? "Accept Request" : "Send Request"}
+                caption={
+                  accept
+                    ? "Accept request and connect to this roommate"
+                    : "Send your preferred user a pairing request"
+                }
               />
               {roommateData && (
                 <div className="grid grid-cols-[1.2fr_0.8fr] gap-4 md:gap-12 px-0 md:px-6 mt-4 items-center">
                   <div>
-                    <RoommateCard card={roommateData} onClick={() => {}} />
+                    <RoommateCard
+                      card={roommateData}
+                      bgColor={accept ? "#F4F6F5" : undefined}
+                      onClick={() => {}}
+                    />
                   </div>
                   <div className="flex items-center justify-center">
                     <button className="inline-flex items-center gap-2 text-sm font-medium border-l-3 border-black pl-8 min-h-[100px]">
@@ -758,7 +772,7 @@ export default function SendRoommateRequest() {
                       : "bg-gray-400 text-white cursor-not-allowed",
                   )}
                 >
-                  Connect
+                  {accept ? "Accept" : "Connect"}
                 </button>
               </div>
             </Maincard>
@@ -828,7 +842,9 @@ export default function SendRoommateRequest() {
           <div className="flex justify-center">
             <DfButton
               className="font-[300] py-3 px-7 text-[16px]"
-              onClick={() => navigate("/explore")}
+              onClick={() =>
+                navigate(accept ? "/studentdash?goto=roommates" : "/explore")
+              }
             >
               EXPLORE
             </DfButton>

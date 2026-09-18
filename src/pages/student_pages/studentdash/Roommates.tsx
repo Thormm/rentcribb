@@ -144,11 +144,10 @@ function formatDate(iso: string) {
   }
 }
 
-
 function buildCardFromUser(u: any): Roommate | null {
   if (!u) return null;
   return {
-    id: parseInt(u.id) || Math.random(),
+    id: parseInt(u.id) || 0,
     gender: u.gender || "",
     religion: u.religion || "",
     level: u.level || "",
@@ -174,6 +173,7 @@ function RequestCard({
   const [open, setOpen] = useState(false);
   const flags = getStatusFlags(req.status);
   const isSender = req.isSender;
+  const navigate = useNavigate();
 
   const toggle = () => setOpen((p) => !p);
 
@@ -186,6 +186,16 @@ function RequestCard({
     onAction(key, req);
     setOpen(false);
   };
+
+  const canClick = !!req.card?.id && flags.pending;
+const handleClick = canClick
+  ? () =>
+      navigate("/sendroommaterequest", {
+        state: isSender
+          ? { id: req.card!.id }
+          : { id: req.card!.id, accept: true },
+      })
+  : undefined;
 
   return (
     <div className="md:min-w-150">
@@ -208,6 +218,7 @@ function RequestCard({
               <RoommateCard
                 card={req.card}
                 bgColor={isSender ? "#EBD96B" : undefined}
+                onClick={handleClick}
               />
 
               <div className="absolute -top-2 md:-top-4 -left-5 flex flex-col gap-5 z-10">
@@ -609,7 +620,10 @@ const Rommates = () => {
                   />
                 ))}
 
-                <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white">
+                <button
+                  onClick={() => navigate("/explore")}
+                  className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
+                >
                   <MdOutlinePostAdd className="w-8 h-8" />
                   Explore Rommates
                 </button>
