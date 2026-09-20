@@ -157,8 +157,8 @@ export default function Explore() {
       return {};
     }
   }, []);
-  const verification = loginData?.data?.verification;
-  const isVerified = verification === 1 || verification === "1";
+  const verification = loginData?.verification; 
+  const isVerified =  verification === "1";
   const { showAlert } = useAlert();
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [cards, setCards] = useState<Roommate[]>([]);
