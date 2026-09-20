@@ -1,3 +1,4 @@
+import { useAlert } from "../../../../App";
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../../../components/Footer";
@@ -156,7 +157,9 @@ export default function Explore() {
       return {};
     }
   }, []);
-
+  const verification = loginData?.data?.verification;
+  const isVerified = verification === 1 || verification === "1";
+  const { showAlert } = useAlert();
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [cards, setCards] = useState<Roommate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -266,26 +269,24 @@ export default function Explore() {
 
         if (result.success && result.data) {
           // Include ALL users - no filtering
-          const transformedCards: Roommate[] = result.data.map(
-            (item: any) => ({
-              id: parseInt(item.id),
-              gender: item.gender || "",
-              religion: item.religion || "",
-              level: item.level || "",
-              faculty: item.faculty || "",
-              move_in_date: item.availability || "",
-              duration: item.duration || "",
-              type: item.type || "",
-              price: item.amount_share ? String(item.amount_share) : "",
-              features: item.hobby
-                ? item.hobby.split(",").map((s: string) => s.trim())
-                : [],
-              pet: item.pet || "",
-              school: item.school || "",
-              created_at: new Date().toISOString(),
-              value: item.value,
-            }),
-          );
+          const transformedCards: Roommate[] = result.data.map((item: any) => ({
+            id: parseInt(item.id),
+            gender: item.gender || "",
+            religion: item.religion || "",
+            level: item.level || "",
+            faculty: item.faculty || "",
+            move_in_date: item.availability || "",
+            duration: item.duration || "",
+            type: item.type || "",
+            price: item.amount_share ? String(item.amount_share) : "",
+            features: item.hobby
+              ? item.hobby.split(",").map((s: string) => s.trim())
+              : [],
+            pet: item.pet || "",
+            school: item.school || "",
+            created_at: new Date().toISOString(),
+            value: item.value,
+          }));
 
           setCards(transformedCards);
         } else {
@@ -466,11 +467,19 @@ export default function Explore() {
                     key={card.id}
                     card={card}
                     bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
-                    onClick={() =>
+                    onClick={() => {
+                      if (!isVerified) {
+                        showAlert(
+                          "You need to fill in your details, Please click the LET'S KNOW YOU button to fill in your details before sending a request.",
+                          "warning",
+                          true,
+                        );
+                        return;
+                      }
                       navigate("/sendroommaterequest", {
                         state: { id: card.id },
-                      })
-                    }
+                      });
+                    }}
                   />
                 );
               })}

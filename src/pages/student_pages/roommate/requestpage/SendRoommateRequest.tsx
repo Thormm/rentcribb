@@ -106,7 +106,8 @@ export default function SendRoommateRequest() {
   const [hostel, setHostel] = React.useState<any>(null);
   const location = useLocation();
   const id = location.state?.id;
-  const accept = location.state?.accept === true; // ← NEW
+  const accept = location.state?.accept === true;
+  console.log("SendRoommateRequest id:", id, "accept:", accept);
   const [openModal, setOpenModal] = React.useState<
     null | "amenities" | "rules"
   >(null);
@@ -264,7 +265,7 @@ export default function SendRoommateRequest() {
           signup_key: signup_key,
           type: "roommate",
           id: id,
-          accept: accept,
+          accept: accept ? "true" : "false"
         }),
       });
 
@@ -554,7 +555,7 @@ export default function SendRoommateRequest() {
                         {hostel && (
                           <>
                             {hostel.roommates} Bedspace is available in “
-                            {hostel.type}” around {hostel.hostel_loc} for{" "}
+                            {hostel.type}” ( {hostel.all_feature} ) around {hostel.hostel_loc} for{" "}
                             <span className="font-extrabold">
                               ₦
                               {Number(
@@ -772,7 +773,7 @@ export default function SendRoommateRequest() {
                       : "bg-gray-400 text-white cursor-not-allowed",
                   )}
                 >
-                  {accept ? "Accept" : "Connect"}
+                  Connect
                 </button>
               </div>
             </Maincard>
@@ -863,10 +864,10 @@ export default function SendRoommateRequest() {
                 <FaTimes className="text-white" />
               </div>
               <h2 className="text-3xl mt-5 font-medium text-center text-black">
-                Space Availability
+                Hurray!!!
               </h2>
               <p className="text-sm text-black text-center mt-5">
-                Hola, do you have a Hostel?
+                Guess who has a rommate now? Yes, You!!!  
               </p>
 
               <DashedDivider className="mt-1 mb-5 md:w-95" />

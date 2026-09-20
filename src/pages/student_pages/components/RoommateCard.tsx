@@ -209,7 +209,12 @@ export const RoommateCard: React.FC<RoommateCardProps> = ({
           <GenderIcon gender={card.gender} />
           <div className="flex-1 text-center">
             <p className="text-xs md:text-sm leading-loose min-h-[2.75rem]">
-              {truncateText(card.faculty, 8)} <br /> {card.level}
+              {(() => {
+                const f = truncateText(card.faculty, 12);
+                return f.charAt(0).toUpperCase() + f.slice(1);
+              })()}
+              <br />
+              {card.level}
             </p>
           </div>
           <ReligionIcon religion={card.religion} />

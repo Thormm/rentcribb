@@ -270,7 +270,7 @@ export default function Loginpage() {
   };
 
   const getFindRoommateUrl = () => {
-    return "https://www.student.cribb.africa/studentdash";
+    return "https://www.student.cribb.africa/explore";
   };
 
   const getRentSpaceUrl = () => {
@@ -486,7 +486,7 @@ export default function Loginpage() {
               {/* Roommate */}
               <div>
                 <div
-                  onClick={() => window.location.href = getFindRoommateUrl()}
+                  onClick={() => (window.location.href = getFindRoommateUrl())}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFDF73]"
                 >
                   <HiOutlineUsers className="text-black text-4xl ml-5" />
@@ -508,7 +508,7 @@ export default function Loginpage() {
               {/* Space */}
               <div>
                 <div
-                  onClick={() => window.location.href = getRentSpaceUrl()}
+                  onClick={() => (window.location.href = getRentSpaceUrl())}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <PiHouse className="text-black text-4xl ml-5" />
@@ -558,7 +558,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => window.location.href = getDashboardUrl()}
+                  onClick={() => (window.location.href = getDashboardUrl())}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />
@@ -615,7 +615,7 @@ export default function Loginpage() {
               {/* Reply */}
               <div>
                 <div
-                  onClick={() => window.location.href = getReplyRequestsUrl()}
+                  onClick={() => (window.location.href = getReplyRequestsUrl())}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#CDBCEC]"
                 >
                   <HiOutlineUsers className="text-black text-4xl ml-5" />
@@ -666,7 +666,7 @@ export default function Loginpage() {
               {/* Dashboard */}
               <div>
                 <div
-                  onClick={() => window.location.href = getDashboardUrl()}
+                  onClick={() => (window.location.href = getDashboardUrl())}
                   className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-black"
                 >
                   <MdOutlineDashboard className="text-white text-4xl ml-5" />

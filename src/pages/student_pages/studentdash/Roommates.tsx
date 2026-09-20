@@ -158,7 +158,7 @@ function buildCardFromUser(u: any): Roommate | null {
     price: u.amount_share ? String(u.amount_share) : "",
     features: u.hobby ? u.hobby.split(",").map((s: string) => s.trim()) : [],
     pet: u.pet || "",
-    value: "You",
+    value: "100%",
   };
 }
 
@@ -188,14 +188,14 @@ function RequestCard({
   };
 
   const canClick = !!req.card?.id && flags.pending;
-const handleClick = canClick
-  ? () =>
-      navigate("/sendroommaterequest", {
-        state: isSender
-          ? { id: req.card!.id }
-          : { id: req.card!.id, accept: true },
-      })
-  : undefined;
+  const handleClick = canClick
+    ? () =>
+        navigate("/sendroommaterequest", {
+          state: isSender
+            ? { id: req.card!.id }
+            : { id: req.card!.id, accept: true },
+        })
+    : undefined;
 
   return (
     <div className="md:min-w-150">
@@ -509,6 +509,69 @@ const Rommates = () => {
     actions[actionKey](req);
   };
 
+  const [otherHostels, setOtherHostels] = useState<Roommate[]>([]);
+  const [loadingOtherHostels, setLoadingOtherHostels] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== "Match") return; // only fetch when Match tab is opened
+
+    const fetchOtherHostels = async () => {
+      setLoadingOtherHostels(true);
+      try {
+        const user = login?.user || "";
+
+        if (!user) {
+          setOtherHostels([]);
+          setLoadingOtherHostels(false);
+          return;
+        }
+
+        const response = await fetch("https://www.cribb.africa/apigets.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "get_match_roommates",
+            user: user,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const transformedCards: Roommate[] = result.data.map((item: any) => ({
+            id: parseInt(item.id),
+            gender: item.gender || "",
+            religion: item.religion || "",
+            level: item.level || "",
+            faculty: item.faculty || "",
+            move_in_date: item.availability || "",
+            duration: item.duration || "",
+            type: item.type || "",
+            price: item.amount_share ? String(item.amount_share) : "",
+            features: item.hobby
+              ? item.hobby.split(",").map((s: string) => s.trim())
+              : [],
+            pet: item.pet || "",
+            school: item.school || "",
+            created_at: new Date().toISOString(),
+            value: item.value,
+          }));
+
+          setOtherHostels(transformedCards);
+        } else {
+          setOtherHostels([]);
+        }
+      } catch (error) {
+        console.error("Error fetching other hostels:", error);
+        setOtherHostels([]);
+      } finally {
+        setLoadingOtherHostels(false);
+      }
+    };
+
+    fetchOtherHostels();
+  }, [activeTab, login?.user]);
+
   return (
     <div className="bg-white md:py-10 mb-20">
       <section className="px-3 md:px-10 flex justify-center">
@@ -559,11 +622,10 @@ const Rommates = () => {
                   </div>
                 </div>
 
-                <button className=" w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
+                {/*<button className=" w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
-                </button>
-
+                </button>*/}
                 <button
                   onClick={() => navigate("/explore")}
                   className="mt-5 w-full  flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
@@ -637,7 +699,36 @@ const Rommates = () => {
                   --- YOUR LISTINGS ----------
                 </span>
 
-                <div className="overflow-x-auto md:min-w-150"></div>
+                <div className="overflow-x-auto md:min-w-150">
+                  {loadingOtherHostels ? (
+                    <div className="flex justify-center items-center py-16">
+                      <AiOutlineLoading3Quarters className="animate-spin w-8 h-8 text-black" />
+                    </div>
+                  ) : otherHostels.length === 0 ? (
+                    <div className="text-center text-sm text-gray-500 py-10">
+                      No Match found.
+                    </div>
+                  ) : (
+                    <div className="grid my-10 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                      {otherHostels.map((card) => {
+                        const isUserCard = card.value === "You";
+                        return (
+                          <RoommateCard
+                            key={card.id}
+                            card={card}
+                            bgColor={isUserCard ? "#EBD96B" : "#F4F6F5"}
+                            onClick={() =>
+                              navigate("/sendroommaterequest", {
+                                state: { id: card.id },
+                              })
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
                 <button className="w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black">
                   <BiComment className="w-8 h-8" />
                   Rommate Requests
