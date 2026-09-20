@@ -555,7 +555,7 @@ export default function SendRoommateRequest() {
                         {hostel && (
                           <>
                             {hostel.roommates} Bedspace is available in “
-                            {hostel.type}” ( {hostel.all_feature} ) around {hostel.hostel_loc} for{" "}
+                            {hostel.type}” ({hostel.all_feature}) around {hostel.hostel_loc} for{" "}
                             <span className="font-extrabold">
                               ₦
                               {Number(
