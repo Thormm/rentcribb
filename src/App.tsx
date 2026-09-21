@@ -134,6 +134,7 @@ function Layout() {
     "/businessrequests",
     "/request",
     "/hostelview",
+    "/sendroommaterequest",
     "/connected",
     "/explore",
   ];

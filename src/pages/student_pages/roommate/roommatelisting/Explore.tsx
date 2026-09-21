@@ -470,7 +470,7 @@ export default function Explore() {
                     onClick={() => {
                       if (!isVerified) {
                         showAlert(
-                          "You need to fill in your details, Please click the LET'S KNOW YOU button to fill in your details before sending a request.",
+                          "Click “LET’S KNOW YOU” to complete your profile before sending a request.",
                           "warning",
                           true,
                         );
