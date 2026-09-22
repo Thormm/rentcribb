@@ -23,9 +23,8 @@ import { FiCopy } from "react-icons/fi";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import RoommateCard, { type Roommate } from "../../components/RoommateCard";
-
-import logo from "../../../assets/logo.png";
-import nigeriaflag from "../../../assets/nigeriaflag.png";
+import logo from "../../../../assets/logo.png";
+import nigeriaflag from "../../../../assets/nigeriaflag.png";
 
 // #4: Reusable Dashed Divider Component
 function DashedDivider({ className = "" }: { className?: string }) {
