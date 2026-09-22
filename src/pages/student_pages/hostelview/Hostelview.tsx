@@ -22,6 +22,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import mapbanner from "../../../assets/mapbanner.png";
+import logo from "../../../assets/logo.png";
+import nigeriaflag from "../../../assets/nigeriaflag.png";
 
 interface LiveSpace {
   id: string;
@@ -496,713 +498,748 @@ export default function Hostelview() {
   }
 
   return (
-    <div className="bg-[#F3EDFE]">
-      <section className=" w-full ">
-        {/* SECTION 1: Headbar */}
-        <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
-          <div className="mx-auto w-full max-w-6xl px-4">
-            {/* small kicker */}
-            <div className="text-md font-semibold text-[#FFA1A1]">
-              HOSTEL VIEW
-            </div>
-
-            <div className="mt-1 flex items-center justify-between gap-4">
-              <h1 className="text-4xl my-4 font-extrabold ">
-                Available Hostels in{" "}
-                <span className="text-[#C2C8DA]">
-                  {login?.school?.split(" - ")?.[0] ?? ""}
-                </span>
-              </h1>
-            </div>
-
-            <button
-              onClick={() => navigate(`/studentlisting`)}
-              className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
-            >
-              <IoIosArrowBack size={14} />
-            </button>
+    <>
+      {/* --- Navbar --- */}
+      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+        <div className="hidden md:flex justify-center">
+          <div className="rounded-full bg-black">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-7 md:h-12 object-contain p-3"
+            />
           </div>
         </div>
-      </section>
 
-      <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0">
-        {/* Left Section */}
-        <section className="relative w-full h-full">
+        <div
+          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"
+          onClick={() => navigate("/")}
+        >
           <img
-            src={mainPhoto}
-            className="w-full h-full object-cover border-2 rounded-3xl"
-            alt=""
+            src={logo}
+            alt="Cribb.Africa Logo"
+            className="m-0 p-0 h-8 md:h-11"
           />
+          <div className="flex flex-col items-end p-0 m-0">
+            <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
+              Cribb
+            </span>
+            <span className="text-[10px] pr-1 -mt-2 md:text-sm text-black self-end">
+              for Student
+            </span>
+          </div>
+        </div>
+        <div></div>
+      </nav>
+      <div className="bg-[#F3EDFE]">
+        <section className=" w-full ">
+          {/* SECTION 1: Headbar */}
+          <div className="w-full bg-[#1C0B3D] pb-8 pt-8 text-white shadow">
+            <div className="mx-auto w-full max-w-6xl px-4">
+              {/* small kicker */}
+              <div className="text-md font-semibold text-[#FFA1A1]">
+                HOSTEL VIEW
+              </div>
 
-          {photos.length > 0 && (
-            <button
-              onClick={() => {
-                setPhotoIndex(0);
-                setOpenPhotos(true);
-              }}
-              className="cursor-pointer text-xs md:text-base absolute bottom-3 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md"
-            >
-              VIEW PHOTOS
-            </button>
-          )}
+              <div className="mt-1 flex items-center justify-between gap-4">
+                <h1 className="text-4xl my-4 font-extrabold ">
+                  Available Hostels in{" "}
+                  <span className="text-[#C2C8DA]">
+                    {login?.school?.split(" - ")?.[0] ?? ""}
+                  </span>
+                </h1>
+              </div>
+
+              <button
+                onClick={() => navigate(`/studentlisting`)}
+                className="mt-4 cursor-pointer w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+              >
+                <IoIosArrowBack size={14} />
+              </button>
+            </div>
+          </div>
         </section>
 
-        {/* Right Section */}
-        <section className="flex flex-col gap-2">
-          {/* Top image */}
-          <div className="relative hidden md:block w-full h-70">
+        <section className="mt-5 md:mt-15 md:mx-12 grid grid-cols-1 md:grid-cols-[40%_60%] gap-2 p-6 pt-0">
+          {/* Left Section */}
+          <section className="relative w-full h-full">
             <img
-              src={secondPhoto}
+              src={mainPhoto}
               className="w-full h-full object-cover border-2 rounded-3xl"
               alt=""
             />
-          </div>
 
-          {/* Bottom video */}
-          <div className="relative w-full h-full">
-            {videoUrl ? (
-              <video
-                className="h-50 md:h-80 w-full object-cover border-2 rounded-3xl"
-                src={videoUrl}
-                muted
-              />
-            ) : (
-              <div className="h-50 md:h-80 w-full border-2 rounded-3xl flex items-center justify-center text-sm text-gray-400">
-                No video
-              </div>
-            )}
-
-            {videoUrl && (
+            {photos.length > 0 && (
               <button
-                onClick={() => setOpenVideo(true)}
-                className="cursor-pointer text-xs md:text-base absolute bottom-5 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md"
+                onClick={() => {
+                  setPhotoIndex(0);
+                  setOpenPhotos(true);
+                }}
+                className="cursor-pointer text-xs md:text-base absolute bottom-3 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md"
               >
-                VIEW VIDEO
+                VIEW PHOTOS
               </button>
             )}
-          </div>
-        </section>
-        {openPhotos && (
-          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
-            <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
-              {/* close */}
-              <button
-                className="absolute -top-10 right-0 z-10 text-white text-2xl"
-                onClick={() => setOpenPhotos(false)}
-              >
-                ✕
-              </button>
+          </section>
 
-              {/* prev */}
-              <button
-                onClick={() =>
-                  setPhotoIndex((i) => (i === 0 ? photos.length - 1 : i - 1))
-                }
-                className="absolute left-2 z-10 text-white text-3xl rounded-full bg-black/80 px-2 py-1 cursor-pointer"
-              >
-                ‹
-              </button>
-
+          {/* Right Section */}
+          <section className="flex flex-col gap-2">
+            {/* Top image */}
+            <div className="relative hidden md:block w-full h-70">
               <img
-                src={`${mediaBase}/${photos[photoIndex]}`}
-                className="max-h-[90vh] max-w-[90vw] rounded-xl object-contain"
+                src={secondPhoto}
+                className="w-full h-full object-cover border-2 rounded-3xl"
                 alt=""
               />
-
-              {/* next */}
-              <button
-                onClick={() =>
-                  setPhotoIndex((i) => (i === photos.length - 1 ? 0 : i + 1))
-                }
-                className="absolute right-2 z-10 text-white text-3xl rounded-full bg-black/80 px-2 py-1 cursor-pointer"
-              >
-                ›
-              </button>
             </div>
-          </div>
-        )}
 
-        {openVideo && videoUrl && (
-          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
-            <div className="relative max-w-[90vw] max-h-[90vh]">
-              <button
-                className="absolute -top-10 right-0 z-10 text-white text-2xl"
-                onClick={() => setOpenVideo(false)}
-              >
-                ✕
-              </button>
-
-              <video
-                src={videoUrl}
-                controls
-                autoPlay
-                className="max-h-[90vh] max-w-[90vw] rounded-xl"
-              />
-            </div>
-          </div>
-        )}
-      </section>
-
-      <section className="bg-[#F3EDFE] my-10">
-        <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
-          {/* LEFT STACK */}
-          <div className="space-y-1">
-            {/* HOSTEL VIEW */}
-            <Maincard className="bg-[#F4F6F5] pb-5">
-              <SectionHeader title="Hostel View" />
-
-              <div className="md:px-5 pb-4 pt-3 space-y-5 md:space-y-8">
-                {/* Description */}
-                <div className="space-y-1">
-                  <Label>Description</Label>
-
-                  <InfoPill className="rounded-4xl">
-                    <span className="text-xs py-1 leading-5">
-                      {" "}
-                      {hostel && (
-                        <>
-                          {hostel.units} unit
-                          {Number(hostel.units) > 1 ? "s" : ""} of “
-                          {hostel.space_type}”{" "}
-                          {hostel.space_type.toLowerCase().includes("flat") ||
-                          hostel.space_type.toLowerCase().includes("room")
-                            ? "(Furnished)"
-                            : ""}{" "}
-                          is available around {hostel.location} for{" "}
-                          <span className="font-extrabold">
-                            ₦{Number(hostel.rent || 0).toLocaleString()}
-                          </span>{" "}
-                          {hostel.duration}
-                        </>
-                      )}
-                    </span>
-                  </InfoPill>
+            {/* Bottom video */}
+            <div className="relative w-full h-full">
+              {videoUrl ? (
+                <video
+                  className="h-50 md:h-80 w-full object-cover border-2 rounded-3xl"
+                  src={videoUrl}
+                  muted
+                />
+              ) : (
+                <div className="h-50 md:h-80 w-full border-2 rounded-3xl flex items-center justify-center text-sm text-gray-400">
+                  No video
                 </div>
-                {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}{" "}
-                {/* Preference (SHARED SPACE ONLY) */}
-                {isEntire ? (
+              )}
+
+              {videoUrl && (
+                <button
+                  onClick={() => setOpenVideo(true)}
+                  className="cursor-pointer text-xs md:text-base absolute bottom-5 md:bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-4 md:px-7 py-4 font-semibold rounded-lg shadow-md"
+                >
+                  VIEW VIDEO
+                </button>
+              )}
+            </div>
+          </section>
+          {openPhotos && (
+            <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+              <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+                {/* close */}
+                <button
+                  className="absolute -top-10 right-0 z-10 text-white text-2xl"
+                  onClick={() => setOpenPhotos(false)}
+                >
+                  ✕
+                </button>
+
+                {/* prev */}
+                <button
+                  onClick={() =>
+                    setPhotoIndex((i) => (i === 0 ? photos.length - 1 : i - 1))
+                  }
+                  className="absolute left-2 z-10 text-white text-3xl rounded-full bg-black/80 px-2 py-1 cursor-pointer"
+                >
+                  ‹
+                </button>
+
+                <img
+                  src={`${mediaBase}/${photos[photoIndex]}`}
+                  className="max-h-[90vh] max-w-[90vw] rounded-xl object-contain"
+                  alt=""
+                />
+
+                {/* next */}
+                <button
+                  onClick={() =>
+                    setPhotoIndex((i) => (i === photos.length - 1 ? 0 : i + 1))
+                  }
+                  className="absolute right-2 z-10 text-white text-3xl rounded-full bg-black/80 px-2 py-1 cursor-pointer"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          )}
+
+          {openVideo && videoUrl && (
+            <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+              <div className="relative max-w-[90vw] max-h-[90vh]">
+                <button
+                  className="absolute -top-10 right-0 z-10 text-white text-2xl"
+                  onClick={() => setOpenVideo(false)}
+                >
+                  ✕
+                </button>
+
+                <video
+                  src={videoUrl}
+                  controls
+                  autoPlay
+                  className="max-h-[90vh] max-w-[90vw] rounded-xl"
+                />
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="bg-[#F3EDFE] my-10">
+          <div className="mx-2 md:mx-24 max-w-6xl grid grid-cols-1 gap-14 lg:grid-cols-2">
+            {/* LEFT STACK */}
+            <div className="space-y-1">
+              {/* HOSTEL VIEW */}
+              <Maincard className="bg-[#F4F6F5] pb-5">
+                <SectionHeader title="Hostel View" />
+
+                <div className="md:px-5 pb-4 pt-3 space-y-5 md:space-y-8">
+                  {/* Description */}
                   <div className="space-y-1">
-                    <Label>Bedrooms and Toilets</Label>
-                    <InfoPill>
-                      <span className="text-xs py-1">
+                    <Label>Description</Label>
+
+                    <InfoPill className="rounded-4xl">
+                      <span className="text-xs py-1 leading-5">
+                        {" "}
                         {hostel && (
                           <>
-                            {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
-                            Bathroom (
-                            {Math.max(
-                              0,
-                              Number(hostel.bathrooms || 0) -
-                                Number(hostel.ensuite || 0),
-                            )}{" "}
-                            Shared, {hostel.ensuite} Ensuite)
+                            {hostel.units} unit
+                            {Number(hostel.units) > 1 ? "s" : ""} of “
+                            {hostel.space_type}”{" "}
+                            {hostel.space_type.toLowerCase().includes("flat") ||
+                            hostel.space_type.toLowerCase().includes("room")
+                              ? "(Furnished)"
+                              : ""}{" "}
+                            is available around {hostel.location} for{" "}
+                            <span className="font-extrabold">
+                              ₦{Number(hostel.rent || 0).toLocaleString()}
+                            </span>{" "}
+                            {hostel.duration}
                           </>
                         )}
                       </span>
                     </InfoPill>
                   </div>
-                ) : (
+                  {/* Bedrooms & Toilets (ENTIRE SPACE ONLY) */}{" "}
+                  {/* Preference (SHARED SPACE ONLY) */}
+                  {isEntire ? (
+                    <div className="space-y-1">
+                      <Label>Bedrooms and Toilets</Label>
+                      <InfoPill>
+                        <span className="text-xs py-1">
+                          {hostel && (
+                            <>
+                              {hostel.bedrooms} Bedroom : {hostel.bathrooms}{" "}
+                              Bathroom (
+                              {Math.max(
+                                0,
+                                Number(hostel.bathrooms || 0) -
+                                  Number(hostel.ensuite || 0),
+                              )}{" "}
+                              Shared, {hostel.ensuite} Ensuite)
+                            </>
+                          )}
+                        </span>
+                      </InfoPill>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <Label>Preference</Label>
+                      <InfoPill>
+                        <span className="text-xs py-1">
+                          {capitalize(hostel?.pref_gender)} :{" "}
+                          {capitalize(hostel?.pref_religion)} :{" "}
+                          {hostel?.pref_year} :{" "}
+                          {capitalize(hostel?.pref_faculty)}
+                        </span>
+                      </InfoPill>
+                    </div>
+                  )}
+                  {/* Security */}
                   <div className="space-y-1">
-                    <Label>Preference</Label>
+                    <Label>Security</Label>
                     <InfoPill>
                       <span className="text-xs py-1">
-                        {capitalize(hostel?.pref_gender)} :{" "}
-                        {capitalize(hostel?.pref_religion)} :{" "}
-                        {hostel?.pref_year} : {capitalize(hostel?.pref_faculty)}
+                        {" "}
+                        {parseList(hostel?.security).join(" : ")}
                       </span>
                     </InfoPill>
                   </div>
-                )}
-                {/* Security */}
-                <div className="space-y-1">
-                  <Label>Security</Label>
-                  <InfoPill>
-                    <span className="text-xs py-1">
-                      {" "}
-                      {parseList(hostel?.security).join(" : ")}
-                    </span>
-                  </InfoPill>
-                </div>
-                {/* Water */}
-                <div className="space-y-1">
-                  <Label>Water</Label>
-                  <InfoPill>
-                    <span className="text-xs py-1">
-                      {" "}
-                      {parseList(hostel?.water).join(" : ")}{" "}
-                    </span>
-                  </InfoPill>
-                </div>
-                {/* Grid pairs */}
-                <div className="space-y-5 md:space-y-5">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <Label>Power Supply</Label>
-                      <div>
-                        <StarRow value={Number(hostel?.power_supply || 0)} />
-                        <div className="mt-2 text-xs md:text-sm">
-                          Good supply
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <Label>Network Strength</Label>
-                      <div>
-                        <StarRow
-                          value={Number(hostel?.network_strength || 0)}
-                        />
-                        <div className="mt-2 text-xs md:text-sm">
-                          Network Coverage
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <Label>Compound</Label>
-                      <div>
-                        <StarRow value={Number(hostel?.compound || 0)} />
-                        <div className="mt-2 text-xs md:text-sm">
-                          Good &amp; Aesthetic
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <Label>Access Road</Label>
-                      <div>
-                        <StarRow value={Number(hostel?.access_road || 0)} />
-                        <div className="mt-2 text-xs md:text-sm">
-                          Good &amp; Accessibility
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-8 flex">
-                  {/* Left: Available block */}
-                  <div className="w-1/2 flex flex-col items-start">
-                    <div className="flex flex-col items-center">
-                      <span className="rounded-md bg-black text-white px-3 py-1 text-xs font-bold">
-                        AVAILABLE FROM
+                  {/* Water */}
+                  <div className="space-y-1">
+                    <Label>Water</Label>
+                    <InfoPill>
+                      <span className="text-xs py-1">
+                        {" "}
+                        {parseList(hostel?.water).join(" : ")}{" "}
                       </span>
-                      <span className="text-sm mt-1">
-                        {hostel?.availability_month || "--"}
-                      </span>
+                    </InfoPill>
+                  </div>
+                  {/* Grid pairs */}
+                  <div className="space-y-5 md:space-y-5">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <Label>Power Supply</Label>
+                        <div>
+                          <StarRow value={Number(hostel?.power_supply || 0)} />
+                          <div className="mt-2 text-xs md:text-sm">
+                            Good supply
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label>Network Strength</Label>
+                        <div>
+                          <StarRow
+                            value={Number(hostel?.network_strength || 0)}
+                          />
+                          <div className="mt-2 text-xs md:text-sm">
+                            Network Coverage
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <Label>Compound</Label>
+                        <div>
+                          <StarRow value={Number(hostel?.compound || 0)} />
+                          <div className="mt-2 text-xs md:text-sm">
+                            Good &amp; Aesthetic
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label>Access Road</Label>
+                        <div>
+                          <StarRow value={Number(hostel?.access_road || 0)} />
+                          <div className="mt-2 text-xs md:text-sm">
+                            Good &amp; Accessibility
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <div className="mt-8 flex">
+                    {/* Left: Available block */}
+                    <div className="w-1/2 flex flex-col items-start">
+                      <div className="flex flex-col items-center">
+                        <span className="rounded-md bg-black text-white px-3 py-1 text-xs font-bold">
+                          AVAILABLE FROM
+                        </span>
+                        <span className="text-sm mt-1">
+                          {hostel?.availability_month || "--"}
+                        </span>
+                      </div>
+                    </div>
 
-                  {/* Right: Amenities Link */}
-                  <div className="w-1/2 ml-5">
+                    {/* Right: Amenities Link */}
+                    <div className="w-1/2 ml-5">
+                      <button
+                        onClick={() => setOpenModal("amenities")}
+                        className="cursor-pointer text-xs md:text-sm text-[#0556F8] underline underline-offset-4"
+                      >
+                        See All Amenities &gt;&gt;
+                      </button>
+                    </div>
+                  </div>
+                  {/* View House Rules */}
+                  <div className="pt-2 w-full">
                     <button
-                      onClick={() => setOpenModal("amenities")}
-                      className="cursor-pointer text-xs md:text-sm text-[#0556F8] underline underline-offset-4"
+                      onClick={() => setOpenModal("rules")}
+                      className="cursor-pointer w-full rounded-full bg-[#FFFFFF] px-5 py-5 text-sm md:text-xl drop-shadow-lg"
                     >
-                      See All Amenities &gt;&gt;
+                      View House Rules
+                    </button>
+                  </div>
+                  <div
+                    className="mt-2 w-full border-t-4"
+                    style={{
+                      borderStyle: "dashed",
+                      borderImage:
+                        "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+                    }}
+                  />
+                  {/* Report / Share */}
+                  <div className="flex items-center justify-between mt-10 text-sm md:text-xl">
+                    <button className="inline-flex items-center gap-2 text-red-600  underline underline-offset-4">
+                      <FaExclamationTriangle />
+                      Report listing
+                    </button>
+                    <button className="inline-flex items-center gap-2 underline">
+                      SHARE <FaShareAlt />
                     </button>
                   </div>
                 </div>
-                {/* View House Rules */}
-                <div className="pt-2 w-full">
-                  <button
-                    onClick={() => setOpenModal("rules")}
-                    className="cursor-pointer w-full rounded-full bg-[#FFFFFF] px-5 py-5 text-sm md:text-xl drop-shadow-lg"
-                  >
-                    View House Rules
-                  </button>
-                </div>
-                <div
-                  className="mt-2 w-full border-t-4"
-                  style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-                  }}
-                />
-                {/* Report / Share */}
-                <div className="flex items-center justify-between mt-10 text-sm md:text-xl">
-                  <button className="inline-flex items-center gap-2 text-red-600  underline underline-offset-4">
-                    <FaExclamationTriangle />
-                    Report listing
-                  </button>
-                  <button className="inline-flex items-center gap-2 underline">
-                    SHARE <FaShareAlt />
-                  </button>
-                </div>
-              </div>
 
-              {openModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                  <div className="bg-white w-[90%] max-w-md rounded-xl p-5">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-semibold text-lg">
-                        {openModal === "amenities"
-                          ? "All Amenities"
-                          : "House Rules"}
-                      </h3>
+                {openModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="bg-white w-[90%] max-w-md rounded-xl p-5">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-semibold text-lg">
+                          {openModal === "amenities"
+                            ? "All Amenities"
+                            : "House Rules"}
+                        </h3>
 
-                      <button
-                        onClick={() => setOpenModal(null)}
-                        className="text-sm cursor-pointer"
-                      >
-                        Close
-                      </button>
-                    </div>
-
-                    <ul className="space-y-2 text-sm max-h-[300px] overflow-y-auto">
-                      {(openModal === "amenities"
-                        ? parseList(hostel?.all_feature)
-                        : parseList(hostel?.house_rules)
-                      ).map((item, index) => (
-                        <li key={index} className="pb-1">
-                          • {item}
-                        </li>
-                      ))}
-
-                      {(openModal === "amenities"
-                        ? parseList(hostel?.all_feature)
-                        : parseList(hostel?.house_rules)
-                      ).length === 0 && (
-                        <li className="text-gray-400">No data available</li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </Maincard>
-
-            {/* MAP */}
-            <Maincard className="bg-[#F4F6F5] mt-10 pb-5">
-              <SectionHeader title="Map" />
-              <div className="px-5 pb-5 pt-3">
-                <div className="h-107 relative w-full rounded-xl border-2 bg-[#EDEDED] grid place-items-center my-9">
-                  <img
-                    src={mapbanner}
-                    alt="Banner"
-                    className="absolute inset-0 h-full w-full object-cover opacity-50"
-                  />
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-black text-center">
-                    <h1 className="text-xl md:text-2xl font-semibold">
-                      Nothing to see yet...
-                    </h1>
-
-                    <p className="mt-3 text-xs md:text-sm">Coming Soon ...</p>
-                  </div>
-                </div>
-
-                {/* Book inspection */}
-                <div className="pt-2 w-full">
-                  <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 text-xl font-medium drop-shadow-lg">
-                    <FaMapMarkerAlt size={30} className="text-black" />
-                    <span className="text-sm md:text-lg">
-                      Check Proximity to your Uni{" "}
-                    </span>
-                  </button>
-                </div>
-
-                <div
-                  className="mt-2 w-full border-t-4"
-                  style={{
-                    borderStyle: "dashed",
-                    borderImage:
-                      "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
-                  }}
-                />
-              </div>
-            </Maincard>
-          </div>
-
-          {/* RIGHT STACK */}
-          <div className="space-y-4">
-            {/* HOST */}
-            <Maincard className="bg-[#CDBCEC] pb-5">
-              <SectionHeader title="Host" />
-
-              <div className="md:px-5 space-y-5 pb-5 pt-3">
-                {/* Host row */}
-                <Label className="my-0 ml-2 md:ml-8 py-2 ">Host</Label>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 bg-white rounded-xl border-3 px-2 py-3">
-                    <div className="place-items-center">
-                      {hostel?.uploader === "agent" ? (
-                        <HiOutlineUserCircle className="text-[16px] md:text-[25px]" />
-                      ) : (
-                        <TbUserSquare className="text-[16px] md:text-[25px]" />
-                      )}
-                    </div>
-
-                    <span className="font-semibold text-sm md:text-xl mr-5 md:mr-35">
-                      {hostel?.uploader?.toUpperCase?.() || "HOST"}
-                    </span>
-                  </div>
-
-                  {/* rating still static for now */}
-                  <button className="inline-flex items-center md:gap-1 text-xs font-semibold">
-                    <FaStar className="text-lg text-yellow-400" />
-                    <span className="underline ml-3">0 (0)</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  {/* Verification */}
-                  <div className="space-y-1">
-                    <Label className="ml-3 md:ml-8">Verification</Label>
-
-                    <InfoPill className="md:pl-8 md:px-base">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
-                          <FaShieldAlt />
-                          TIER {host?.tier ?? "-"}
-                        </span>
-
-                        <FaInfoCircle size={14} className="md:ml-auto" />
+                        <button
+                          onClick={() => setOpenModal(null)}
+                          className="text-sm cursor-pointer"
+                        >
+                          Close
+                        </button>
                       </div>
-                    </InfoPill>
-                  </div>
 
-                  {/* Listings */}
-                  <div className="space-y-1">
-                    <Label className="ml-3 md:ml-8">No. of Listings</Label>
+                      <ul className="space-y-2 text-sm max-h-[300px] overflow-y-auto">
+                        {(openModal === "amenities"
+                          ? parseList(hostel?.all_feature)
+                          : parseList(hostel?.house_rules)
+                        ).map((item, index) => (
+                          <li key={index} className="pb-1">
+                            • {item}
+                          </li>
+                        ))}
 
-                    <InfoPill className="md:pl-8 md:px-base">
-                      <div className="inline-flex items-center justify-between w-full">
-                        <span className="text-xs py-1">
-                          {host?.listings ?? 0}
-                        </span>
-
-                        <FaInfoCircle size={14} className="ml-auto" />
-                      </div>
-                    </InfoPill>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  {/* Joined */}
-                  <div className="space-y-1">
-                    <Label className="ml-3 md:ml-8">Joined</Label>
-
-                    <InfoPill className="md:pl-8 md:px-base">
-                      <span className="text-xs text-start">
-                        {timeAgo(host?.reg_time)} ago
-                      </span>
-                    </InfoPill>
-                  </div>
-
-                  {/* Last seen */}
-                  <div className="space-y-1">
-                    <Label className="ml-3 md:ml-8">Last Seen</Label>
-
-                    <InfoPill className="md:pl-8 md:px-base">
-                      <span className="text-xs">
-                        {timeAgo(host?.last_activity)} ago
-                      </span>
-                    </InfoPill>
-                  </div>
-                </div>
-              </div>
-            </Maincard>
-
-            {/* RENT */}
-            <Maincard className="bg-[#CDBCEC] mt-10 pb-5">
-              <SectionHeader title="Rent" />
-
-              <div className="md:px-5 pb-6 pt-3 space-y-4">
-                {/* Inspection Fee */}
-                <div className="space-y-1">
-                  <Label className="ml-8">Inspection Fee</Label>
-                  <InfoPill className="bg-white">
-                    <div className="inline-flex ml-2 items-center justify-between w-full">
-                      <span className="text-xs md:text-sm py-1">
-                        ₦{Number(hostel.price || 0).toLocaleString()}
-                      </span>
-                      <div className="relative inline-flex items-center">
-                        <span className="appearance-none bg-transparent text-xs md:text-sm focus:outline-none pr-6 cursor-pointer">
-                          {hostel.inspection}
-                        </span>
-                      </div>
+                        {(openModal === "amenities"
+                          ? parseList(hostel?.all_feature)
+                          : parseList(hostel?.house_rules)
+                        ).length === 0 && (
+                          <li className="text-gray-400">No data available</li>
+                        )}
+                      </ul>
                     </div>
-                  </InfoPill>
-                </div>
-
-                {/* Rent Breakdown */}
-                <div className="space-y-1">
-                  <Label className="ml-8">Rent Breakdown</Label>
-                  <div className="rounded-2xl bg-white mx-1 border-1 md:p-3">
-                    {[
-                      [
-                        "Rent",
-                        `₦${Number(hostel.rent || hostel.price || 0).toLocaleString()} (${hostel.duration})`,
-                      ],
-                      [
-                        "Caution",
-                        `₦${Number(hostel.caution_fee || 0).toLocaleString()}`,
-                      ],
-                      [
-                        "Service Charge",
-                        `₦${Number(hostel.service_charge || 0).toLocaleString()}`,
-                      ],
-                      [
-                        "Agreement & Legal",
-                        `₦${Number(hostel.agreement_fee || 0).toLocaleString()}`,
-                      ],
-                      [
-                        "Agency Fee",
-                        `₦${Number(hostel.agency_fee || 0).toLocaleString()}`,
-                      ],
-                    ].map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="flex items-center justify-between py-2 px-4 text-xs md:text-sm"
-                      >
-                        <span>{label}</span>
-                        <span className="inline-flex items-center gap-2 ">
-                          {value}{" "}
-                          <FaInfoCircle className="text-[16px] md:text-[25px]" />
-                        </span>
-                      </div>
-                    ))}
                   </div>
-                </div>
+                )}
+              </Maincard>
 
-                {/* Total Package */}
-                <div className="space-y-1">
-                  <Label className="ml-8">Total Package</Label>
-                  <InfoPill>
-                    <div className="inline-flex items-center justify-between w-full ml-2">
-                      <span className="text-lg py-1 font-bold">
-                        ₦
-                        {(
-                          Number(hostel.rent || hostel.price || 0) +
-                          Number(hostel.caution_fee || 0) +
-                          Number(hostel.service_charge || 0) +
-                          Number(hostel.agreement_fee || 0) +
-                          Number(hostel.agency_fee || 0)
-                        ).toLocaleString()}
-                      </span>
-                    </div>
-                  </InfoPill>
-                </div>
-
-                {/* Book Inspection */}
-                <div className="pt-2 w-full hidden">
-                  <button
-                    disabled={!agreed || booking}
-                    onClick={handleBookInspection}
-                    className={clsx(
-                      "w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
-                      agreed
-                        ? "bg-white cursor-pointer"
-                        : "bg-gray-300 cursor-not-allowed",
-                    )}
-                  >
-                    <FaCalendarAlt className="text-black text-[20px] md:text-[25px]" />
-                    <span className="text-lg md:text-2xl">
-                      {booking ? "Booking..." : "Book Inspection"}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Terms */}
-                <div className="w-full flex flex-col items-center text-center mt-2">
-                  <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-black"
-                      checked={agreed}
-                      onChange={(e) => setAgreed(e.target.checked)}
+              {/* MAP */}
+              <Maincard className="bg-[#F4F6F5] mt-10 pb-5">
+                <SectionHeader title="Map" />
+                <div className="px-5 pb-5 pt-3">
+                  <div className="h-107 relative w-full rounded-xl border-2 bg-[#EDEDED] grid place-items-center my-9">
+                    <img
+                      src={mapbanner}
+                      alt="Banner"
+                      className="absolute inset-0 h-full w-full object-cover opacity-50"
                     />
-                    <span>
-                      I agree to the{" "}
-                      <span className="underline font-semibold text-[#0556F8]">
-                        Terms
-                      </span>{" "}
-                      and{" "}
-                      <span className="underline font-semibold text-[#0556F8]">
-                        Privacy Policy
-                      </span>{" "}
-                      of Cribb
-                    </span>
-                  </label>
+                    {/* Content */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-black text-center">
+                      <h1 className="text-xl md:text-2xl font-semibold">
+                        Nothing to see yet...
+                      </h1>
+
+                      <p className="mt-3 text-xs md:text-sm">Coming Soon ...</p>
+                    </div>
+                  </div>
+
+                  {/* Book inspection */}
+                  <div className="pt-2 w-full">
+                    <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#FFFFFF] px-5 py-5 text-xl font-medium drop-shadow-lg">
+                      <FaMapMarkerAlt size={30} className="text-black" />
+                      <span className="text-sm md:text-lg">
+                        Check Proximity to your Uni{" "}
+                      </span>
+                    </button>
+                  </div>
+
+                  <div
+                    className="mt-2 w-full border-t-4"
+                    style={{
+                      borderStyle: "dashed",
+                      borderImage:
+                        "repeating-linear-gradient(to right, #0000004D 0, #0000004D 10px, transparent 6px, transparent 24px) 1",
+                    }}
+                  />
                 </div>
+              </Maincard>
+            </div>
 
-                {/* Connect */}
-                <div className="pt-2 w-full">
-                  <button
-                    disabled={!agreed}
-                    onClick={handleBookInspection}
-                    className={clsx(
-                      "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
-                      agreed
-                        ? "bg-black text-white"
-                        : "bg-gray-400 text-white cursor-not-allowed",
-                    )}
-                  >
-                    Connect
-                  </button>
+            {/* RIGHT STACK */}
+            <div className="space-y-4">
+              {/* HOST */}
+              <Maincard className="bg-[#CDBCEC] pb-5">
+                <SectionHeader title="Host" />
+
+                <div className="md:px-5 space-y-5 pb-5 pt-3">
+                  {/* Host row */}
+                  <Label className="my-0 ml-2 md:ml-8 py-2 ">Host</Label>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 bg-white rounded-xl border-3 px-2 py-3">
+                      <div className="place-items-center">
+                        {hostel?.uploader === "agent" ? (
+                          <HiOutlineUserCircle className="text-[16px] md:text-[25px]" />
+                        ) : (
+                          <TbUserSquare className="text-[16px] md:text-[25px]" />
+                        )}
+                      </div>
+
+                      <span className="font-semibold text-sm md:text-xl mr-5 md:mr-35">
+                        {hostel?.uploader?.toUpperCase?.() || "HOST"}
+                      </span>
+                    </div>
+
+                    {/* rating still static for now */}
+                    <button className="inline-flex items-center md:gap-1 text-xs font-semibold">
+                      <FaStar className="text-lg text-yellow-400" />
+                      <span className="underline ml-3">0 (0)</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Verification */}
+                    <div className="space-y-1">
+                      <Label className="ml-3 md:ml-8">Verification</Label>
+
+                      <InfoPill className="md:pl-8 md:px-base">
+                        <div className="inline-flex items-center justify-between w-full">
+                          <span className="text-xs inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
+                            <FaShieldAlt />
+                            TIER {host?.tier ?? "-"}
+                          </span>
+
+                          <FaInfoCircle size={14} className="md:ml-auto" />
+                        </div>
+                      </InfoPill>
+                    </div>
+
+                    {/* Listings */}
+                    <div className="space-y-1">
+                      <Label className="ml-3 md:ml-8">No. of Listings</Label>
+
+                      <InfoPill className="md:pl-8 md:px-base">
+                        <div className="inline-flex items-center justify-between w-full">
+                          <span className="text-xs py-1">
+                            {host?.listings ?? 0}
+                          </span>
+
+                          <FaInfoCircle size={14} className="ml-auto" />
+                        </div>
+                      </InfoPill>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Joined */}
+                    <div className="space-y-1">
+                      <Label className="ml-3 md:ml-8">Joined</Label>
+
+                      <InfoPill className="md:pl-8 md:px-base">
+                        <span className="text-xs text-start">
+                          {timeAgo(host?.reg_time)} ago
+                        </span>
+                      </InfoPill>
+                    </div>
+
+                    {/* Last seen */}
+                    <div className="space-y-1">
+                      <Label className="ml-3 md:ml-8">Last Seen</Label>
+
+                      <InfoPill className="md:pl-8 md:px-base">
+                        <span className="text-xs">
+                          {timeAgo(host?.last_activity)} ago
+                        </span>
+                      </InfoPill>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Maincard>
+              </Maincard>
 
-            {/* SAFETY TIPS (place this after the Rent card in the RIGHT STACK) */}
-            <Maincard className="bg-[#1C0B3D] mt-10 py-5">
-              <div className="px-5 pb-6 pt-5">
-                {/* Title */}
-                <h4 className="text-lg font-semibold text-[#FFA1A1] tracking-wide">
-                  SAFETY TIPS
-                </h4>
+              {/* RENT */}
+              <Maincard className="bg-[#CDBCEC] mt-10 pb-5">
+                <SectionHeader title="Rent" />
 
-                {/* subtle dashed divider like other cards */}
-                <div className="mt-3 h-px w-full border-t border-dashed border-black/20" />
+                <div className="md:px-5 pb-6 pt-3 space-y-4">
+                  {/* Inspection Fee */}
+                  <div className="space-y-1">
+                    <Label className="ml-8">Inspection Fee</Label>
+                    <InfoPill className="bg-white">
+                      <div className="inline-flex ml-2 items-center justify-between w-full">
+                        <span className="text-xs md:text-sm py-1">
+                          ₦{Number(hostel.price || 0).toLocaleString()}
+                        </span>
+                        <div className="relative inline-flex items-center">
+                          <span className="appearance-none bg-transparent text-xs md:text-sm focus:outline-none pr-6 cursor-pointer">
+                            {hostel.inspection}
+                          </span>
+                        </div>
+                      </div>
+                    </InfoPill>
+                  </div>
 
-                {/* content */}
-                <div className="mt-4 space-y-5 text-xs md:text-base text-white leading-relaxed">
-                  <p>It’s safer not to pay ahead for inspections.</p>
-                  <p>
-                    Ask friends or someone you trust to accompany you for
-                    inspection.
-                  </p>
-                  <p>
-                    Look around the apartment to ensure it meets your
-                    expectations.
-                  </p>
-                  <p>
-                    It’s advisable not to pay beforehand if they won’t let you
-                    move in immediately.
-                  </p>
-                  <p>
-                    Verify that the account details belong to the right property
-                    manager before payment.
-                  </p>
+                  {/* Rent Breakdown */}
+                  <div className="space-y-1">
+                    <Label className="ml-8">Rent Breakdown</Label>
+                    <div className="rounded-2xl bg-white mx-1 border-1 md:p-3">
+                      {[
+                        [
+                          "Rent",
+                          `₦${Number(hostel.rent || hostel.price || 0).toLocaleString()} (${hostel.duration})`,
+                        ],
+                        [
+                          "Caution",
+                          `₦${Number(hostel.caution_fee || 0).toLocaleString()}`,
+                        ],
+                        [
+                          "Service Charge",
+                          `₦${Number(hostel.service_charge || 0).toLocaleString()}`,
+                        ],
+                        [
+                          "Agreement & Legal",
+                          `₦${Number(hostel.agreement_fee || 0).toLocaleString()}`,
+                        ],
+                        [
+                          "Agency Fee",
+                          `₦${Number(hostel.agency_fee || 0).toLocaleString()}`,
+                        ],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="flex items-center justify-between py-2 px-4 text-xs md:text-sm"
+                        >
+                          <span>{label}</span>
+                          <span className="inline-flex items-center gap-2 ">
+                            {value}{" "}
+                            <FaInfoCircle className="text-[16px] md:text-[25px]" />
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Total Package */}
+                  <div className="space-y-1">
+                    <Label className="ml-8">Total Package</Label>
+                    <InfoPill>
+                      <div className="inline-flex items-center justify-between w-full ml-2">
+                        <span className="text-lg py-1 font-bold">
+                          ₦
+                          {(
+                            Number(hostel.rent || hostel.price || 0) +
+                            Number(hostel.caution_fee || 0) +
+                            Number(hostel.service_charge || 0) +
+                            Number(hostel.agreement_fee || 0) +
+                            Number(hostel.agency_fee || 0)
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                    </InfoPill>
+                  </div>
+
+                  {/* Book Inspection */}
+                  <div className="pt-2 w-full hidden">
+                    <button
+                      disabled={!agreed || booking}
+                      onClick={handleBookInspection}
+                      className={clsx(
+                        "w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                        agreed
+                          ? "bg-white cursor-pointer"
+                          : "bg-gray-300 cursor-not-allowed",
+                      )}
+                    >
+                      <FaCalendarAlt className="text-black text-[20px] md:text-[25px]" />
+                      <span className="text-lg md:text-2xl">
+                        {booking ? "Booking..." : "Book Inspection"}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Terms */}
+                  <div className="w-full flex flex-col items-center text-center mt-2">
+                    <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-black"
+                        checked={agreed}
+                        onChange={(e) => setAgreed(e.target.checked)}
+                      />
+                      <span>
+                        I agree to the{" "}
+                        <span className="underline font-semibold text-[#0556F8]">
+                          Terms
+                        </span>{" "}
+                        and{" "}
+                        <span className="underline font-semibold text-[#0556F8]">
+                          Privacy Policy
+                        </span>{" "}
+                        of Cribb
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Connect */}
+                  <div className="pt-2 w-full">
+                    <button
+                      disabled={!agreed}
+                      onClick={handleBookInspection}
+                      className={clsx(
+                        "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                        agreed
+                          ? "bg-black text-white"
+                          : "bg-gray-400 text-white cursor-not-allowed",
+                      )}
+                    >
+                      Connect
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </Maincard>
+              </Maincard>
+
+              {/* SAFETY TIPS (place this after the Rent card in the RIGHT STACK) */}
+              <Maincard className="bg-[#1C0B3D] mt-10 py-5">
+                <div className="px-5 pb-6 pt-5">
+                  {/* Title */}
+                  <h4 className="text-lg font-semibold text-[#FFA1A1] tracking-wide">
+                    SAFETY TIPS
+                  </h4>
+
+                  {/* subtle dashed divider like other cards */}
+                  <div className="mt-3 h-px w-full border-t border-dashed border-black/20" />
+
+                  {/* content */}
+                  <div className="mt-4 space-y-5 text-xs md:text-base text-white leading-relaxed">
+                    <p>It’s safer not to pay ahead for inspections.</p>
+                    <p>
+                      Ask friends or someone you trust to accompany you for
+                      inspection.
+                    </p>
+                    <p>
+                      Look around the apartment to ensure it meets your
+                      expectations.
+                    </p>
+                    <p>
+                      It’s advisable not to pay beforehand if they won’t let you
+                      move in immediately.
+                    </p>
+                    <p>
+                      Verify that the account details belong to the right
+                      property manager before payment.
+                    </p>
+                  </div>
+                </div>
+              </Maincard>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="bg-[#CDBCEC] my-20 rounded-4xl border-4">
-        <div className="w-full px-4 pb-16 pt-6">
-          <h1 className="font-semibold text-lg">OTHER HOSTELS</h1>
+        <section className="bg-[#CDBCEC] my-20 rounded-4xl border-4">
+          <div className="w-full px-4 pb-16 pt-6">
+            <h1 className="font-semibold text-lg">OTHER HOSTELS</h1>
 
-          <div className="flex justify-center mb-4">
-            <PaginatedCards data={otherCards} />
+            <div className="flex justify-center mb-4">
+              <PaginatedCards data={otherCards} />
+            </div>
+
+            <div className="flex justify-center">
+              <DfButton
+                className="font-[300] py-3 px-7 text-[16px]"
+                onClick={() => navigate("/studentlisting")}
+              >
+                VIEW LISTING
+              </DfButton>
+            </div>
           </div>
+        </section>
 
-          <div className="flex justify-center">
-            <DfButton
-              className="font-[300] py-3 px-7 text-[16px]"
-              onClick={() => navigate("/studentlisting")}
-            >
-              VIEW LISTING
-            </DfButton>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

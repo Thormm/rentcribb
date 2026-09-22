@@ -15,7 +15,6 @@ import { PiHouse } from "react-icons/pi";
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
-import { CgSandClock } from "react-icons/cg";
 
 function Maincard({
   className,
@@ -298,9 +297,6 @@ export default function Loginpage() {
     return "https://www.business.cribb.africa/businessrequests";
   };
 
-  const getWaitlistUrl = () => {
-    return "https://www.cribb.africa/waitlist";
-  };
 
   return (
     <>
@@ -544,30 +540,6 @@ export default function Loginpage() {
                 </div>
               </div>
 
-              {/* Waitlist */}
-              <div>
-                <div
-                  onClick={() => {
-                    window.location.href = getWaitlistUrl();
-                  }}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
-                >
-                  <CgSandClock className="text-black text-4xl ml-5" />
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Join Waitlist
-                  </span>
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    Be among the first to experience our products. Share pain
-                    points to help us build a soft life for Uni students.
-                  </span>
-                </div>
-              </div>
-
               <div className="text-sm font-semibold text-black text-center">
                 ----------------- OR -----------------
               </div>
@@ -648,30 +620,6 @@ export default function Loginpage() {
                     List entire or shared space and connect to students.
                     <br />
                     Explore rent requests and reply with your spaces.{" "}
-                  </span>
-                </div>
-              </div>
-
-              {/* Waitlist */}
-              <div>
-                <div
-                  onClick={() => {
-                    window.location.href = getWaitlistUrl();
-                  }}
-                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#FFFFFF]"
-                >
-                  <CgSandClock className="text-black text-4xl ml-5" />
-                  <span className="flex-1 text-black text-lg text-center font-medium">
-                    Join Waitlist
-                  </span>
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
-                    <FiArrowRight className="text-white text-2xl" />
-                  </div>
-                </div>
-                <div className="flex justify-center mt-1">
-                  <span className="inline-block text-xs p-2 rounded-2xl text-black bg-white">
-                    Be among the first to experience our products. <br /> Share
-                    pain points to help us build a soft life for Uni students.
                   </span>
                 </div>
               </div>

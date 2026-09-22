@@ -18,17 +18,16 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 
 export default function BusinessDash() {
-  const navigate = useNavigate(); // ✅ initialize router navigation
+  const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
 
+  // ✅ One-shot ?goto= — no localStorage, no persistence
   useEffect(() => {
     const goto = searchParams.get("goto");
-
     if (!goto) return;
 
     setActiveTab(goto);
-    localStorage.setItem("dashboard:tab", goto);
 
     // ✅ OPEN the correct section
     if (goto.startsWith("agent")) {
@@ -37,10 +36,11 @@ export default function BusinessDash() {
       setOpenSection("LANDLORD");
     }
 
-    // ✅ clean URL
+    // ✅ clean URL so refresh doesn't re-trigger
     navigate("/businessdash", { replace: true });
   }, []);
 
+  // ✅ Auth check
   useEffect(() => {
     const loginData = sessionStorage.getItem("login_data");
 
@@ -51,13 +51,11 @@ export default function BusinessDash() {
 
     try {
       const parsed = JSON.parse(loginData);
-
-      // ✅ Allow only merchant mode
       if (!parsed.mode || parsed.mode !== "merchant") {
         sessionStorage.removeItem("login_data");
         navigate("/login", { replace: true });
       }
-    } catch (error) {
+    } catch {
       sessionStorage.removeItem("login_data");
       navigate("/login", { replace: true });
     }
@@ -90,6 +88,7 @@ export default function BusinessDash() {
     };
   }, []);
 
+  // ✅ Sidebar open/close persistence (kept — not tab-related)
   useEffect(() => {
     if (isLarge) localStorage.setItem("sidebar:open", open ? "1" : "0");
   }, [open, isLarge]);
@@ -99,14 +98,6 @@ export default function BusinessDash() {
     const pref = localStorage.getItem("sidebar:open");
     if (pref !== null && window.innerWidth >= 1024) setOpen(pref === "1");
   }, []);
-
-  useEffect(() => {
-    const v = localStorage.getItem("dashboard:tab");
-    if (v) setActiveTab(v);
-  }, []);
-  useEffect(() => {
-    localStorage.setItem("dashboard:tab", activeTab);
-  }, [activeTab]);
 
   useEffect(() => {
     if (!isLarge) document.body.style.overflow = open ? "hidden" : "";
@@ -150,9 +141,7 @@ export default function BusinessDash() {
       <div className="h-screen w-screen overflow-hidden bg-neutral-950 text-neutral-100">
         {/* NAVBAR */}
         <nav className="flex items-center justify-between px-4 md:px-15 py-3 bg-black border-b border-neutral-800 sticky top-0 z-50">
-          {/* Left side: menu (mobile) + logo (desktop) */}
           <div className="flex items-center gap-3">
-            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setOpen((s) => !s)}
               className="lg:hidden p-2 rounded hover:bg-white/5 transition"
@@ -165,15 +154,16 @@ export default function BusinessDash() {
               )}
             </button>
 
-            {/* Desktop Logo */}
-            <div className="hidden lg:flex justify-start items-center gap-3 my-3">
+            <div
+              className="hidden lg:flex justify-start items-center gap-3 my-3"
+              onClick={() => navigate("/")}
+            >
               <img
                 src={logo}
                 alt="Cribb logo"
                 className="h-10 w-10 object-contain"
-                 onClick = {() => navigate("/")}
               />
-              <div className="flex flex-col"  onClick = {() => navigate("/")}>
+              <div className="flex flex-col">
                 <span className="text-3xl font-extrabold text-white leading-none">
                   Cribb
                 </span>
@@ -182,16 +172,17 @@ export default function BusinessDash() {
             </div>
           </div>
 
-          {/* Mobile Center Logo (hidden on lg) */}
           <div className="absolute left-1/2 transform -translate-x-1/2 lg:hidden my-3">
-            <div className="flex justify-start items-start gap-2">
+            <div
+              className="flex justify-start items-start gap-2"
+              onClick={() => navigate("/")}
+            >
               <img
                 src={logo}
                 alt="Cribb logo"
                 className="h-6 w-6 object-contain"
-                 onClick = {() => navigate("/")}
               />
-              <div className="flex flex-col items-end"  onClick = {() => navigate("/")}>
+              <div className="flex flex-col items-end">
                 <span className="text-xl font-semibold text-white leading-none">
                   Cribb
                 </span>
@@ -202,7 +193,6 @@ export default function BusinessDash() {
             </div>
           </div>
 
-          {/* Bell icon */}
           <div className="ml-auto">
             <button
               className="p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
@@ -215,7 +205,6 @@ export default function BusinessDash() {
 
         {/* BODY */}
         <div className="flex h-[calc(100vh-56px)] relative">
-          {/* Desktop Sidebar (compact, aligned width) */}
           <div className="hidden lg:block lg:w-56 lg:flex-shrink-0">
             <div className="h-full bg-[#0F0F0F] border-r border-neutral-800">
               <SidebarInner
@@ -228,19 +217,20 @@ export default function BusinessDash() {
             </div>
           </div>
 
-          {/* Mobile Sidebar */}
           <aside
             className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-[#0F0F0F] border-r border-neutral-800 lg:hidden ${
               open ? "translate-x-0" : "-translate-x-full"
             }`}
           >
             <div className="flex items-center justify-between px-3 h-14 border-b border-neutral-800">
-              <div className="flex items-center gap-2">
+              <div
+                className="flex items-center gap-2"
+                onClick={() => navigate("/")}
+              >
                 <img
                   src={logo}
                   alt="Cribb logo"
                   className="h-7 w-7 object-contain"
-                  onClick = {() => navigate("/")}
                 />
                 <div className="flex flex-col">
                   <span className="text-lg font-semibold text-white leading-none">
@@ -273,7 +263,6 @@ export default function BusinessDash() {
             </div>
           </aside>
 
-          {/* Mobile backdrop */}
           {open && (
             <div
               className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -282,7 +271,6 @@ export default function BusinessDash() {
             />
           )}
 
-          {/* Main content */}
           <main className="flex-1 pb-20 min-w-0 h-full overflow-auto bg-white text-black lg:ml-56 transition-all duration-300">
             {renderTab()}
           </main>

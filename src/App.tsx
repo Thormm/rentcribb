@@ -133,8 +133,6 @@ function Layout() {
     "/businesslisting",
     "/businessrequests",
     "/request",
-    "/hostelview",
-    "/sendroommaterequest",
     "/connected",
     "/explore",
   ];
