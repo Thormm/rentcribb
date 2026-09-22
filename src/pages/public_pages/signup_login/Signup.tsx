@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import Signup1 from "./Signup1";
 import Signup2 from "./Signup2";
 import Signup3 from "./Signup3";
@@ -11,7 +11,7 @@ import { HiOutlineUsers } from "react-icons/hi2";
 
 const Signup = () => {
   const location = useLocation();
-
+ const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"student" | "merchant">("student");
 
@@ -97,8 +97,9 @@ const Signup = () => {
             src={logo}
             alt="Cribb.Africa Logo"
             className="m-0 p-0 h-8 md:h-11"
+             onClick = {() => navigate("/")}
           />
-          <div className="flex flex-col items-end p-0 m-0">
+          <div className="flex flex-col items-end p-0 m-0"  onClick = {() => navigate("/")}>
             <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
               Cribb
             </span>

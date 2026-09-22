@@ -6,6 +6,7 @@ import Knowyou4 from "./Knowyou4";
 import Knowyou5 from "./Knowyou5";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
+import { useNavigate } from "react-router-dom";
 
 // ============================================================
 // 1. FORM DATA INTERFACE
@@ -145,7 +146,7 @@ const Knowyou: React.FC = () => {
   }, []);
 
   const goToStep = (stepNumber: number) => setStep(stepNumber);
-
+  const navigate = useNavigate();
   document.body.style.backgroundColor = "#F3EECE";
 
   return (
@@ -162,7 +163,7 @@ const Knowyou: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
+        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"  onClick = {() => navigate("/")}> 
           <img
             src={logo}
             alt="Cribb.Africa Logo"

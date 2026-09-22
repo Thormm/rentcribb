@@ -76,15 +76,17 @@ const Navbar = ({ setLoginModal }: NavbarProps) => {
             src={logo}
             alt="Cribb.Africa Logo"
             className="hidden md:flex m-0 p-0 h-8 md:h-8"
+            onClick = {() => navigate("/")}
           />
           <div className="rounded-full border bg-white flex md:hidden">
             <img
               src={logo}
-              alt="Nigeria Flag"
+              alt="Cribb.Africa Logo"
               className="h-8 md:h-12 object-contain p-2"
+               onClick = {() => navigate("/")}
             />
           </div>
-          <div className="hidden md:flex flex-col items-end p-0 m-0">
+          <div className="hidden md:flex flex-col items-end p-0 m-0"  onClick = {() => navigate("/")}>
             <span className="text-2xl p-0 m-0 md:text-3xl font-extrabold ">
               Cribb.Africa
             </span>

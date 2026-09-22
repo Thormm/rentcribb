@@ -173,6 +173,23 @@ export default function Loginpage() {
     return val.replace(/[^\d+]/g, "");
   };
 
+  // ✅ If already logged in (session present), auto-open the "What Next" modal
+  useEffect(() => {
+    const existing = sessionStorage.getItem("login_data");
+    if (!existing) return;
+
+    try {
+      const parsed = JSON.parse(existing);
+      if (!parsed?.user || !parsed?.mode) return;
+
+      // align UI mode with the stored session
+      setMode(parsed.mode === "merchant" ? "merchant" : "student");
+      setOpen(true);
+    } catch {
+      // malformed — ignore
+    }
+  }, []); // run once on mount
+
   const handleContinue = async () => {
     if (!username || !password || loading) return;
     setLoading(true);

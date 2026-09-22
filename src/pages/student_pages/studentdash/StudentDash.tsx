@@ -141,8 +141,9 @@ export default function BusinessDash() {
                 src={logo}
                 alt="Cribb logo"
                 className="h-10 w-10 object-contain"
+                 onClick = {() => navigate("/")}
               />
-              <div className="flex flex-col">
+              <div className="flex flex-col"  onClick = {() => navigate("/")}>
                 <span className="text-3xl font-extrabold text-white leading-none">
                   Cribb
                 </span>
@@ -157,8 +158,9 @@ export default function BusinessDash() {
                 src={logo}
                 alt="Cribb logo"
                 className="h-6 w-6 object-contain"
+                 onClick = {() => navigate("/")}
               />
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end"  onClick = {() => navigate("/")}>
                 <span className="text-xl font-semibold text-white leading-none">
                   Cribb
                 </span>
@@ -202,8 +204,9 @@ export default function BusinessDash() {
                   src={logo}
                   alt="Cribb logo"
                   className="h-7 w-7 object-contain"
+                   onClick = {() => navigate("/")}
                 />
-                <div className="flex flex-col">
+                <div className="flex flex-col"  onClick = {() => navigate("/")}>
                   <span className="text-lg font-semibold text-white leading-none">
                     Cribb
                   </span>

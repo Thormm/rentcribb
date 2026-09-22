@@ -375,7 +375,7 @@ const Sharedspace: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3">
+        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"  onClick = {() => navigate("/")}>
           <img
             src={logo}
             alt="Cribb.Africa Logo"

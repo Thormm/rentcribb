@@ -1,8 +1,10 @@
 import logo from "../../../../../src/assets/logo.png";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -15,7 +17,7 @@ const Navbar = () => {
         </div>
 
         {/* Center Logo */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2"  onClick = {() => navigate("/")}>
           <img src={logo} alt="Cribb.Africa Logo" className="h-10 w-auto" />
           <h1 className="text-3xl font-extrabold">Cribb.Africa</h1>
         </div>

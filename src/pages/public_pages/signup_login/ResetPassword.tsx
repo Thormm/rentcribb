@@ -284,8 +284,9 @@ export default function ResetPassword() {
             src={logo}
             alt="Cribb.Africa Logo"
             className="m-0 p-0 h-8 md:h-11"
+             onClick = {() => navigate("/")}
           />
-          <div className="flex flex-col items-end p-0 m-0">
+          <div className="flex flex-col items-end p-0 m-0"  onClick = {() => navigate("/")}>
             <span className="text-2xl p-0 m-0 md:text-4xl font-extrabold">
               Cribb
             </span>
