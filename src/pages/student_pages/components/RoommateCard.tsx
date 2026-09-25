@@ -3,22 +3,22 @@ import clsx from "clsx";
 import {
   MdOutlineMan4,
   MdOutlineWoman2,
-  MdOutlineChat,
-  MdPeople,
 } from "react-icons/md";
 import { CgCross } from "react-icons/cg";
 import {
   FaMosque,
   FaBook,
-  FaUtensils,
-  FaFilm,
-  FaMusic,
-  FaGamepad,
-  FaFutbol,
-  FaMoon,
   FaCat,
   FaDog,
+  FaGlassCheers,
 } from "react-icons/fa";
+import { IoFastFoodOutline } from "react-icons/io5";
+import { CgGames } from "react-icons/cg";
+import { GrRun } from "react-icons/gr";
+import { TbBedFilled } from "react-icons/tb";
+import { IoIosFilm } from "react-icons/io";
+import { BsChatSquareDotsFill } from "react-icons/bs";
+import { IoHeadsetSharp } from "react-icons/io5";
 
 // ---------- Types ----------
 export interface Roommate {
@@ -93,15 +93,15 @@ const featureColors: Record<string, string> = {
 
 // ---------- Feature icon mapping ----------
 const featureIcons: Record<string, React.ReactNode> = {
-  Games: <FaGamepad />,
-  Food: <FaUtensils />,
-  Exercise: <FaFutbol />,
+  Games: <CgGames />,
+  Food: <IoFastFoodOutline />,
+  Exercise: <GrRun />,
   Reading: <FaBook />,
-  Hangout: <MdPeople />,
-  Sleep: <FaMoon />,
-  Movies: <FaFilm />,
-  Chat: <MdOutlineChat />,
-  Music: <FaMusic />,
+  Hangout: <FaGlassCheers />,
+  Sleep: <TbBedFilled />,
+  Movies: <IoIosFilm />,
+  Chat: <BsChatSquareDotsFill />,
+  Music: <IoHeadsetSharp />,
 };
 
 // ---------- Pet Icon with red stroke ----------

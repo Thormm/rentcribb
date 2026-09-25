@@ -1,3 +1,4 @@
+import { useAlert } from "../../../App";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -17,7 +18,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CgClose } from "react-icons/cg";
 
 // ----------------------- Types -----------------------
-type RequestStatus = "pending" | "approved" | "declined" | "rejected";
+type RequestStatus = "pending" | "accepted" | "declined";
 
 interface RawRequest {
   id: number;
@@ -113,22 +114,19 @@ function Tabs({
   );
 }
 
-// ----------------------- Helpers -----------------------
-
 const actions = {
-  onPendingAction: (i: any) => console.log("Unsend:", i),
-  onViewInfo: (i: any) => console.log("View Info:", i),
-  onDecline: (i: any) => console.log("Delete:", i),
-  onReject: (i: any) => console.log("Decline:", i),
+  onUnsend: (i: EnrichedRequest) => console.log("Unsend:", i),
+  onViewInfo: (i: EnrichedRequest) => console.log("View Info:", i),
+  onDelete: (i: EnrichedRequest) => console.log("Delete:", i),
+  onDecline: (i: EnrichedRequest) => console.log("Decline:", i),
 };
 
 // Map a raw request status -> which modal action flags are true
 function getStatusFlags(status: RequestStatus) {
   return {
     pending: status === "pending",
-    approve: status === "approved",
+    accept: status === "accepted",
     decline: status === "declined",
-    reject: status === "rejected",
   };
 }
 
@@ -166,28 +164,33 @@ function buildCardFromUser(u: any): Roommate | null {
 function RequestCard({
   req,
   onAction,
+  actioning,
 }: {
   req: EnrichedRequest;
   onAction: (action: keyof typeof actions, req: EnrichedRequest) => void;
+  actioning?: number | null;
 }) {
   const [open, setOpen] = useState(false);
   const flags = getStatusFlags(req.status);
   const isSender = req.isSender;
   const navigate = useNavigate();
 
+  const busy = actioning === req.id;
+
   const toggle = () => setOpen((p) => !p);
 
   // Sender -> right justified; Receiver -> left justified
   const wrapperJustify = isSender ? "justify-end" : "justify-start";
-  const labelText = isSender ? "You replied ..." : "Someone requested ...";
+  const labelText = isSender ? "You requested ..." : "Someone requested ...";
 
   const handleAction = (key: keyof typeof actions) => (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (busy) return; // ignore taps while this card is in-flight
     onAction(key, req);
     setOpen(false);
   };
 
-  const canClick = !!req.card?.id && flags.pending;
+  const canClick = !!req.card?.id && flags.pending && !busy;
   const handleClick = canClick
     ? () =>
         navigate("/sendroommaterequest", {
@@ -243,7 +246,7 @@ function RequestCard({
                     </div>
                     <div className="border-t-2 border-dashed border-gray-400"></div>
                     <div className="flex flex-col">
-                      {/* PENDING */}
+                      {/* PENDING — status row (both roles) */}
                       {flags.pending && (
                         <div className="flex items-center justify-between p-2">
                           <span className="text-xs md:text-sm text-black">
@@ -252,20 +255,45 @@ function RequestCard({
                           <AiOutlineLoading3Quarters className="text-black w-4 h-4 md:h-6 md:w-6" />
                         </div>
                       )}
-                      {flags.pending && (
+
+                      {/* SENDER + PENDING -> Unsend */}
+                      {flags.pending && isSender && (
                         <div
-                          className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                          onClick={handleAction("onPendingAction")}
+                          className={clsx(
+                            "flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md",
+                            busy
+                              ? "opacity-60 cursor-not-allowed"
+                              : "cursor-pointer",
+                          )}
+                          onClick={handleAction("onUnsend")}
                         >
                           <span className="text-xs md:text-sm text-black">
-                            Unsend
+                            {busy ? "Unsending..." : "Unsend"}
                           </span>
                           <TbArrowBack className="text-black w-4 h-4 md:h-6 md:w-6" />
                         </div>
                       )}
 
-                      {/* APPROVED */}
-                      {flags.approve && (
+                      {/* RECEIVER + PENDING -> Decline */}
+                      {flags.pending && !isSender && (
+                        <div
+                          className={clsx(
+                            "flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md",
+                            busy
+                              ? "opacity-60 cursor-not-allowed"
+                              : "cursor-pointer",
+                          )}
+                          onClick={handleAction("onDecline")}
+                        >
+                          <span className="text-xs md:text-sm text-black">
+                            {busy ? "Declining..." : "Decline"}
+                          </span>
+                          <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
+                        </div>
+                      )}
+
+                      {/* ACCEPTED */}
+                      {flags.accept && (
                         <div className="flex items-center justify-between p-2">
                           <span className="text-xs md:text-sm text-black">
                             Accepted
@@ -273,7 +301,7 @@ function RequestCard({
                           <GrCheckmark className="w-5 h-5 md:h-6 md:w-6 p-1 rounded-full border-2 shadow-md" />
                         </div>
                       )}
-                      {flags.approve && (
+                      {flags.accept && (
                         <div
                           className="flex items-center justify-between bg-black p-2 rounded-md cursor-pointer"
                           onClick={handleAction("onViewInfo")}
@@ -285,7 +313,7 @@ function RequestCard({
                         </div>
                       )}
 
-                      {/* DECLINED */}
+                      {/* DECLINED — status row (both roles) */}
                       {flags.decline && (
                         <div className="flex items-center justify-between p-2">
                           <span className="text-xs md:text-sm text-black">
@@ -296,34 +324,18 @@ function RequestCard({
                       )}
                       {flags.decline && (
                         <div
-                          className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                          onClick={handleAction("onDecline")}
+                          className={clsx(
+                            "flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md",
+                            busy
+                              ? "opacity-60 cursor-not-allowed"
+                              : "cursor-pointer",
+                          )}
+                          onClick={handleAction("onDelete")}
                         >
                           <span className="text-xs md:text-sm text-black">
-                            Delete
+                            {busy ? "Deleting..." : "Delete"}
                           </span>
                           <MdDeleteForever className="text-black w-4 h-4 md:h-6 md:w-6" />
-                        </div>
-                      )}
-
-                      {/* REJECTED */}
-                      {flags.reject && (
-                        <div className="flex items-center justify-between p-2">
-                          <span className="text-xs md:text-sm text-black">
-                            Pending
-                          </span>
-                          <AiOutlineLoading3Quarters className="text-black w-4 h-4 md:h-6 md:w-6" />
-                        </div>
-                      )}
-                      {flags.reject && (
-                        <div
-                          className="flex items-center justify-between bg-[#FFA1A1] p-2 rounded-md cursor-pointer"
-                          onClick={handleAction("onReject")}
-                        >
-                          <span className="text-xs md:text-sm text-black">
-                            Decline
-                          </span>
-                          <TbCancel className="text-black w-4 h-4 md:h-6 md:w-6" />
                         </div>
                       )}
                     </div>
@@ -334,10 +346,7 @@ function RequestCard({
                 {flags.pending && (
                   <AiOutlineLoading3Quarters className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-white shadow-md" />
                 )}
-                {flags.reject && (
-                  <AiOutlineLoading3Quarters className="text-black w-10 h-10 md:w-11 md:h-11 p-3 rounded-full border-2 bg-white shadow-md" />
-                )}
-                {flags.approve && (
+                {flags.accept && (
                   <GrCheckmark className="w-10 h-10 md:w-11 md:h-11 p-3 rounded-full bg-[#D6FFC3] border-2 shadow-md" />
                 )}
                 {flags.decline && (
@@ -357,13 +366,16 @@ const Rommates = () => {
   const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
   const [activeTab, setActiveTab] = useState("Explore");
   const navigate = useNavigate();
+  const { showAlert } = useAlert(); // <-- ADD THIS
   const [hostel, setHostel] = React.useState<any>(null);
   const [toggling, setToggling] = useState(false);
   const [requests, setRequests] = useState<EnrichedRequest[]>([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
-
   const isVisible = String(hostel?.open ?? "").toLowerCase() === "yes";
   const myWhats = login?.user;
+  const [actioningId, setActioningId] = useState<number | null>(null);
+  const [otherHostels, setOtherHostels] = useState<Roommate[]>([]);
+  const [loadingOtherHostels, setLoadingOtherHostels] = useState(false);
 
   const roommateData: Roommate | null = useMemo(() => {
     if (!hostel) return null;
@@ -501,16 +513,85 @@ const Rommates = () => {
     }
   };
 
-  const handleRequestAction = (
+  const opFromAction: Record<
+    keyof typeof actions,
+    "unsend" | "decline" | "delete" | null
+  > = {
+    onUnsend: "unsend",
+    onDecline: "decline",
+    onDelete: "delete",
+    onViewInfo: null, // navigation only, no status change
+  };
+
+  // Human-readable labels for alerts
+  const opLabels: Record<"unsend" | "decline" | "delete", string> = {
+    unsend: "Request unsent",
+    decline: "Request declined",
+    delete: "Request removed from your list",
+  };
+
+  const handleRequestAction = async (
     actionKey: keyof typeof actions,
     req: EnrichedRequest,
   ) => {
-    // TODO: wire up to backend later
-    actions[actionKey](req);
-  };
+    const op = opFromAction[actionKey];
 
-  const [otherHostels, setOtherHostels] = useState<Roommate[]>([]);
-  const [loadingOtherHostels, setLoadingOtherHostels] = useState(false);
+    // Nothing to do (e.g. View Info) — bail silently
+    if (!op) return;
+
+    // Already busy on this card — ignore the extra tap
+    if (actioningId === req.id) return;
+
+    setActioningId(req.id);
+
+    // ---- 1. Optimistic UI update ----
+    const previous = requests;
+
+    if (op === "unsend" || op === "delete") {
+      // The row should disappear from this user's list
+      setRequests((prev) => prev.filter((r) => r.id !== req.id));
+    } else if (op === "decline") {
+      // The row stays but flips to declined
+      setRequests((prev) =>
+        prev.map((r) =>
+          r.id === req.id ? { ...r, status: "declined" as RequestStatus } : r,
+        ),
+      );
+    }
+
+    // ---- 2. Talk to the server ----
+    try {
+      const res = await fetch("https://www.cribb.africa/api_save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "roommate_request_action",
+          user: login?.user,
+          signup_key: login?.signup_key,
+          request_id: req.id,
+          op,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // ✅ Server accepted — UI already matches reality
+        showAlert(opLabels[op], "success", true);
+      } else {
+        // ❌ Server rejected — roll back and warn the user
+        setRequests(previous);
+        showAlert(data.reply || "Action failed", "warning");
+      }
+    } catch (err) {
+      // ⚠️ Network / parse failure — roll back and warn
+      setRequests(previous);
+      showAlert("Network error. Please try again.", "warning");
+    } finally {
+      // Either way, we're no longer busy
+      setActioningId(null);
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== "Match") return; // only fetch when Match tab is opened
@@ -679,6 +760,7 @@ const Rommates = () => {
                     key={req.id}
                     req={req}
                     onAction={handleRequestAction}
+                    actioning={actioningId}
                   />
                 ))}
 
