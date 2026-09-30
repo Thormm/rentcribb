@@ -46,26 +46,6 @@ const states = [
   { value: "rivers", label: "Rivers" },
 ];
 
-interface LiveSpace {
-  id: string;
-  space: "entirespace" | "sharedspace";
-  name: string;
-  type: string;
-  location: string;
-  price: number;
-  duration: string;
-  availability_month?: string;
-  power_supply?: number | string;
-  security?: number | string;
-
-  status: string;
-  active: string;
-  rating: number;
-  reviews: number;
-  tier: number;
-  bookmarks: number;
-  background: string;
-}
 
 async function getRepliesSpaces(
   responses: string[],
@@ -88,75 +68,7 @@ async function getRepliesSpaces(
   return data.groups || [];
 }
 
-async function getLiveSpaces(user: string): Promise<LiveSpace[]> {
-  const res = await fetch("https://www.cribb.africa/apigets.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "get_booked_spaces", user }),
-  });
 
-  const parsePhotos = (raw: any) => {
-    if (!raw) return [];
-    try {
-      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const data = await res.json();
-
-  const entire: LiveSpace[] = (data.entire_spaces ?? []).map((item: any) => ({
-    id: item.id,
-    space: "entirespace",
-    name: item.name,
-    type: item.type,
-    location: item.location,
-    price: Number(item.price),
-    duration: item.duration,
-    availability_month: item.availability_month,
-    power_supply: item.power_supply,
-    security: item.security,
-    status: item.status,
-    active: item.active,
-    rating: item.rating,
-    reviews: item.reviews,
-    tier: item.tier,
-    bookmarks: item.bookmarks,
-    background: item.background,
-    created_at: item.created_at,
-    // NEW:
-    photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
-    user: item.user,
-  }));
-
-  const shared: LiveSpace[] = (data.shared_spaces ?? []).map((item: any) => ({
-    id: item.id,
-    space: "sharedspace",
-    name: item.name,
-    type: item.type,
-    location: item.location,
-    price: Number(item.price),
-    duration: item.duration,
-    availability_month: item.availability_month,
-    power_supply: item.power_supply,
-    security: item.security,
-    status: item.status,
-    active: item.active,
-    rating: item.rating,
-    reviews: item.reviews,
-    tier: item.tier,
-    bookmarks: item.bookmarks,
-    background: item.background,
-    created_at: item.created_at,
-    // NEW:
-    photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
-    user: item.user,
-  }));
-
-  return [...entire, ...shared];
-}
 
 function RequestsCards({
   setShowFirst,
@@ -463,72 +375,6 @@ function RequestsCards({
   );
 }
 
-// ----------------------- Live: existing paginated cards (5 per page) -----------------------
-function BookedCards({ data }: { data: LiveSpace[] }) {
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 6;
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setPage(1);
-  }, [data]);
-
-  if (data.length === 0) {
-    return(
-      <Spaceholder />
-    )
-  }
-
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
-  const currentData = data.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
-
-  return (
-    <div>
-      <div className="pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center overflow-x-auto">
-          {currentData.map((card) => (
-            <div
-              key={`${card.space}-${card.id}`}
-              className="shrink-0 mt-0 px-0 justify-center flex"
-            >
-              <Card
-                item={card}
-                onView={() =>
-                  navigate("/hostelview", {
-                    state: { space: [card.id, card.space] },
-                  })
-                }
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => setPage(i + 1)}
-              className={clsx(
-                "px-3 py-1 rounded-md border",
-                page === i + 1
-                  ? "bg-[#FFA1A1] text-white border-[#FFA1A1]"
-                  : "bg-white text-black border-black",
-              )}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ----------------------- Paginated Cards -----------------------
 function RequestsResponses({
@@ -791,7 +637,7 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 // ----------------------- Tabs -----------------------
-const tabs = ["Booked", "Requests", "Host"];
+const tabs = ["Requests", "Host"];
 function Tabs({
   active,
   setActive,
@@ -1059,17 +905,11 @@ export default function Rent() {
   const [requestsCount, setRequestsCount] = useState(0);
   const isMaxReached = requestsCount >= 3;
   const [selectedItemDetails, setSelectedItemDetails] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("Booked");
+  const [activeTab, setActiveTab] = useState("Requests");
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
   const navigate = useNavigate();
-  const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-
-  const [cards, setCards] = useState<LiveSpace[]>([]);
-  useEffect(() => {
-    if (!login.user) return;
-    getLiveSpaces(login.user).then(setCards);
-  }, []);
+  
 
   return (
     <div className="bg-white md:py-10 mb-10">
@@ -1079,32 +919,6 @@ export default function Rent() {
 
           <div className="mt-10 rounded-3xl border-4 border-black p-1 md:p-5 bg-[#F4F6F5]">
             <Tabs active={activeTab} setActive={setActiveTab} />
-
-            {/* Booked Tab */}
-            {activeTab === "Booked" && (
-              <div className="p-2 md:p-5 mt-5 md:w-2/3">
-                <span className="text-sm md:text-md font-semibold text-black tracking-wide">
-                  --- ALL BOOKINGS ------------
-                </span>
-                <div className="md:overflow-x-auto md:min-w-160">
-                  <BookedCards data={cards} />
-                </div>
-                <button
-                  onClick={() => navigate("/request")}
-                  className="cursor-pointer w-full mt-10 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
-                >
-                  <BiComment className="w-8 h-8" />
-                  Post a Rent Requests
-                </button>
-                <button
-                  onClick={() => navigate("/studentlisting")}
-                  className="cursor-pointer w-full mt-5 flex items-center justify-center gap-3 rounded-full font-normal bg-black px-5 py-4 shadow-sm text-lg text-white"
-                >
-                  <MdOutlinePostAdd className="w-8 h-8" />
-                  View Other Listings
-                </button>
-              </div>
-            )}
 
             {/* Requests Tab */}
             {activeTab === "Requests" && (
