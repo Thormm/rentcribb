@@ -16,6 +16,72 @@ import { useAlert } from "../../../App";
 
 declare const PaystackPop: any;
 
+/* ─────────────────────────────────────────────────────────────────────
+   Origin snapshot helpers — local to this file, nothing shared.
+   A snapshot is { path: "/businessrequests?user=man", state: { id: 42 } }.
+   The caller writes it before navigating here via `rememberBusinessPlanOrigin`.
+   ───────────────────────────────────────────────────────────────────── */
+const RETURN_PATH_KEY = "businessplan_return_path";
+const RETURN_STATE_KEY = "businessplan_return_state";
+
+type OriginSnapshot = {
+  path: string;
+  state: any;
+};
+
+function rememberBusinessPlanOrigin(state: any = null) {
+  try {
+    sessionStorage.setItem(
+      RETURN_PATH_KEY,
+      window.location.pathname +
+        window.location.search +
+        window.location.hash,
+    );
+    if (state != null) {
+      sessionStorage.setItem(RETURN_STATE_KEY, JSON.stringify(state));
+    }
+  } catch (err) {
+    console.warn("[BusinessPlan] failed to store origin:", err);
+  }
+}
+
+/** Export the writer so any page can call it before navigating here. */
+export { rememberBusinessPlanOrigin };
+
+function readBusinessPlanOrigin(): OriginSnapshot | null {
+  const path = sessionStorage.getItem(RETURN_PATH_KEY);
+  if (!path) return null;
+
+  let state: any = null;
+  const rawState = sessionStorage.getItem(RETURN_STATE_KEY);
+  if (rawState) {
+    try {
+      state = JSON.parse(rawState);
+    } catch {
+      state = null;
+    }
+  }
+
+  return { path, state };
+}
+
+function clearBusinessPlanOrigin() {
+  sessionStorage.removeItem(RETURN_PATH_KEY);
+  sessionStorage.removeItem(RETURN_STATE_KEY);
+}
+
+function isAuthPath(p: string): boolean {
+  return (
+    p === "/login" ||
+    p === "/signup" ||
+    p.startsWith("/login?") ||
+    p.startsWith("/signup?") ||
+    p.includes("/forgotpassword")
+  );
+}
+
+/* ───────────────────────────── UI helpers ──────────────────────────── */
+
 function Maincard({
   className = "",
   children,
@@ -66,7 +132,8 @@ function Label({ children, className }: LabelProps) {
   );
 }
 
-// ✅ Pricing tables
+/* ───────────────────────────── Plans ──────────────────────────────── */
+
 const AgentPlans = {
   INSTANT: {
     price: "₦10,000",
@@ -139,6 +206,8 @@ const LandlordPlans = {
   },
 };
 
+/* ───────────────────────────── Component ──────────────────────────── */
+
 const BusinessPlan = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -150,10 +219,6 @@ const BusinessPlan = () => {
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
-
-  // Track where user came from
-  const previousLocationRef = useRef<string | null>(null);
-  const previousStateRef = useRef<any>(null);
 
   const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
   const current = currentPlans[activePlan];
@@ -169,73 +234,31 @@ const BusinessPlan = () => {
     }
   }, []);
 
-  // ─── 2. Read login_data + ?role= → set category/email/user ───────────
+  // ─── 2. Read ?role= → set category, fall back to stored role ─────────
   useEffect(() => {
-    const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     const params = new URLSearchParams(location.search);
-    const role = params.get("role"); // ?role=agent | ?role=landlord
+    const role = params.get("role");
 
     if (role === "agent") setCategory("Agent");
     else if (role === "landlord") setCategory("Landlord");
-    else if (data?.category) setCategory(data.category);
+    else {
+      const storedRole = sessionStorage.getItem("businessplan_active_role");
+      if (storedRole === "Agent" || storedRole === "Landlord") {
+        setCategory(storedRole);
+      }
+    }
 
+    const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
 
-  // ─── 3. Sync category back into sessionStorage.login_data ────────────
+  // ─── 3. Persist category so toggle survives reloads ──────────────────
   useEffect(() => {
-    try {
-      const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-      if (data?.category !== category) {
-        data.category = category;
-        sessionStorage.setItem("login_data", JSON.stringify(data));
-      }
-    } catch (err) {
-      console.warn("Failed to sync category to sessionStorage:", err);
-    }
+    sessionStorage.setItem("businessplan_active_role", category);
   }, [category]);
 
-  // ─── 4. ✅ Track real origin, resist role-toggle reload ─────────────
-  useEffect(() => {
-    // A. Explicit state always wins
-    if (location.state?.from) {
-      previousLocationRef.current = location.state.from;
-      previousStateRef.current = location.state.returnState ?? location.state;
-      sessionStorage.setItem("businessplan_return_to", location.state.from);
-      return;
-    }
-
-    // B. Keep the origin we already captured this session
-    const stored = sessionStorage.getItem("businessplan_return_to");
-    if (stored) {
-      previousLocationRef.current = stored;
-      return;
-    }
-
-    // C. Referrer — only if it's NOT the same pathname (not the toggle reload)
-    const ref = document.referrer;
-    if (ref && ref !== window.location.href) {
-      try {
-        const refUrl = new URL(ref);
-        const samePath =
-          refUrl.origin === window.location.origin &&
-          refUrl.pathname === window.location.pathname;
-
-        if (!samePath) {
-          previousLocationRef.current = ref;
-          sessionStorage.setItem("businessplan_return_to", ref);
-        }
-      } catch {
-        // Non-URL referrer — treat as external
-        previousLocationRef.current = ref;
-        sessionStorage.setItem("businessplan_return_to", ref);
-      }
-    }
-    // D. Nothing found → leave refs null; goBackToPrevious falls back
-  }, [location]);
-
-  // ─── 5. Restore last selected plan after a role-toggle refresh ───────
+  // ─── 4. Restore active plan after a manual refresh ───────────────────
   useEffect(() => {
     const saved = sessionStorage.getItem("businessplan_active_plan");
     if (saved && saved in currentPlans) {
@@ -244,59 +267,69 @@ const BusinessPlan = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
-  // ─── Helpers ─────────────────────────────────────────────────────────
+  // ─── 5. Back: snapshot → state.from → referrer → navigate(-1) ────────
   const goBackToPrevious = () => {
-    const backTo = previousLocationRef.current;
-    const backState = previousStateRef.current;
+    // 1. Snapshot written by the caller via rememberBusinessPlanOrigin(...)
+    const snapshot = readBusinessPlanOrigin();
+    clearBusinessPlanOrigin();
 
-    // ✅ Clear stored origin — we're leaving this flow
-    sessionStorage.removeItem("businessplan_return_to");
-
-    // A. External / absolute URL → hard redirect
-    if (backTo && /^https?:\/\//i.test(backTo)) {
-      window.location.href = backTo;
+    if (snapshot?.path) {
+      if (/^https?:\/\//i.test(snapshot.path)) {
+        window.location.href = snapshot.path;
+        return;
+      }
+      // ✅ State preserved verbatim — { id }, { from }, anything
+      navigate(snapshot.path, { state: snapshot.state ?? undefined });
       return;
     }
 
-    // B. Internal path → React Router navigate (state preserved)
-    if (backTo && backTo.startsWith("/")) {
-      navigate(backTo, { state: backState ?? undefined });
+    // 2. React Router state on this entry
+    const stateFrom = (location.state as any)?.from;
+    if (stateFrom) {
+      navigate(stateFrom, {
+        state: (location.state as any).returnState,
+      });
       return;
     }
 
-    // C. Nothing stored → fall back to browser history
+    // 3. Referrer — reject same path & auth pages
+    const ref = document.referrer;
+    if (ref && ref !== window.location.href) {
+      try {
+        const u = new URL(ref);
+        const samePath =
+          u.origin === window.location.origin &&
+          u.pathname === location.pathname;
+        if (!samePath && !isAuthPath(u.pathname)) {
+          navigate(u.pathname + u.search);
+          return;
+        }
+      } catch {
+        /* non-URL referrer, ignore */
+      }
+    }
+
+    // 4. Nothing → browser history
     navigate(-1);
   };
 
-  // ✅ Toggle role — preserve origin across the hard reload
+  // ─── 6. Toggle role — replace history (no new entry, no shuffle) ─────
   const toggleRole = () => {
     const nextRole = category === "Agent" ? "landlord" : "agent";
+    const nextCategory: "Agent" | "Landlord" =
+      nextRole === "landlord" ? "Landlord" : "Agent";
 
-    // Persist plan + category BEFORE the reload so nothing resets
     sessionStorage.setItem("businessplan_active_plan", activePlan);
-
-    // ✅ Make sure origin survives the hard reload
-    if (
-      !sessionStorage.getItem("businessplan_return_to") &&
-      previousLocationRef.current
-    ) {
-      sessionStorage.setItem(
-        "businessplan_return_to",
-        previousLocationRef.current,
-      );
-    }
-
-    try {
-      const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-      data.category = nextRole === "landlord" ? "Landlord" : "Agent";
-      sessionStorage.setItem("login_data", JSON.stringify(data));
-    } catch {
-      /* ignore malformed JSON */
-    }
+    sessionStorage.setItem("businessplan_active_role", nextCategory);
 
     const params = new URLSearchParams(location.search);
     params.set("role", nextRole);
-    window.location.href = `${location.pathname}?${params.toString()}`;
+
+    // replace: true → doesn't add a history entry, so the back
+    // button still points at the REAL origin (e.g. /businessrequests)
+    navigate(`${location.pathname}?${params.toString()}`, {
+      replace: true,
+    });
   };
 
   const extractAmount = (price: string) =>
