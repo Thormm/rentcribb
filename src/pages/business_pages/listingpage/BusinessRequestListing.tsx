@@ -571,7 +571,7 @@ export default function StudentListing() {
           true,
         );
 
-        navigate("/businessdash?goto=subscriptions");
+        navigate("/businessplan");
         return;
       }
 
