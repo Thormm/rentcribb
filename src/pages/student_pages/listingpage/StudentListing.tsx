@@ -229,7 +229,6 @@ async function getLiveSpaces(school: string): Promise<LiveSpace[]> {
     created_at: item.created_at,
     // NEW:
     photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
-    user: item.user,
   }));
 
   const shared: LiveSpace[] = (data.shared_spaces ?? []).map((item: any) => ({
@@ -253,7 +252,6 @@ async function getLiveSpaces(school: string): Promise<LiveSpace[]> {
     created_at: item.created_at,
     // NEW:
     photos: parsePhotos(item.photos), // e.g. ["photo_12_...jpg", ...]
-    user: item.user,
   }));
 
   return [...entire, ...shared];
