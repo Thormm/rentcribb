@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Info } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
