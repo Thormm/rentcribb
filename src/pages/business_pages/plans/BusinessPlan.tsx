@@ -196,22 +196,43 @@ const BusinessPlan = () => {
     }
   }, [category]);
 
-  // ─── 4. Track previous page for goBackToPrevious() ───────────────────
+  // ─── 4. ✅ Track real origin, resist role-toggle reload ─────────────
   useEffect(() => {
+    // A. Explicit state always wins
     if (location.state?.from) {
       previousLocationRef.current = location.state.from;
       previousStateRef.current = location.state.returnState ?? location.state;
+      sessionStorage.setItem("businessplan_return_to", location.state.from);
       return;
     }
 
+    // B. Keep the origin we already captured this session
+    const stored = sessionStorage.getItem("businessplan_return_to");
+    if (stored) {
+      previousLocationRef.current = stored;
+      return;
+    }
+
+    // C. Referrer — only if it's NOT the same pathname (not the toggle reload)
     const ref = document.referrer;
     if (ref && ref !== window.location.href) {
-      previousLocationRef.current = ref;
-      return;
-    }
+      try {
+        const refUrl = new URL(ref);
+        const samePath =
+          refUrl.origin === window.location.origin &&
+          refUrl.pathname === window.location.pathname;
 
-    const stored = sessionStorage.getItem("businessplan_return_to");
-    if (stored) previousLocationRef.current = stored;
+        if (!samePath) {
+          previousLocationRef.current = ref;
+          sessionStorage.setItem("businessplan_return_to", ref);
+        }
+      } catch {
+        // Non-URL referrer — treat as external
+        previousLocationRef.current = ref;
+        sessionStorage.setItem("businessplan_return_to", ref);
+      }
+    }
+    // D. Nothing found → leave refs null; goBackToPrevious falls back
   }, [location]);
 
   // ─── 5. Restore last selected plan after a role-toggle refresh ───────
@@ -227,6 +248,9 @@ const BusinessPlan = () => {
   const goBackToPrevious = () => {
     const backTo = previousLocationRef.current;
     const backState = previousStateRef.current;
+
+    // ✅ Clear stored origin — we're leaving this flow
+    sessionStorage.removeItem("businessplan_return_to");
 
     // A. External / absolute URL → hard redirect
     if (backTo && /^https?:\/\//i.test(backTo)) {
@@ -244,12 +268,24 @@ const BusinessPlan = () => {
     navigate(-1);
   };
 
-  // ✅ Switch role: flip ?role= param + hard reload so whole page updates
+  // ✅ Toggle role — preserve origin across the hard reload
   const toggleRole = () => {
     const nextRole = category === "Agent" ? "landlord" : "agent";
 
     // Persist plan + category BEFORE the reload so nothing resets
     sessionStorage.setItem("businessplan_active_plan", activePlan);
+
+    // ✅ Make sure origin survives the hard reload
+    if (
+      !sessionStorage.getItem("businessplan_return_to") &&
+      previousLocationRef.current
+    ) {
+      sessionStorage.setItem(
+        "businessplan_return_to",
+        previousLocationRef.current,
+      );
+    }
+
     try {
       const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
       data.category = nextRole === "landlord" ? "Landlord" : "Agent";
@@ -273,14 +309,14 @@ const BusinessPlan = () => {
     if (!userEmail) {
       showAlert(
         "Please provide your email address before proceeding.",
-        "warning"
+        "warning",
       );
       return;
     }
     if (typeof PaystackPop === "undefined") {
       showAlert(
         "Payment gateway not loaded yet. Please wait a moment.",
-        "warning"
+        "warning",
       );
       return;
     }
@@ -298,7 +334,7 @@ const BusinessPlan = () => {
         if (response?.status === "success" || response?.reference) {
           showAlert(
             "Successful Transaction Please continue to confirm transactions",
-            "success"
+            "success",
           );
 
           setTimeout(() => {
@@ -314,7 +350,7 @@ const BusinessPlan = () => {
   };
 
   return (
-    <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
+    <>
       {/* Navbar */}
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         {/* Left: Flag */}
@@ -370,165 +406,167 @@ const BusinessPlan = () => {
         </div>
       </nav>
 
-      {/* Header Section */}
-      <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
-        <div className="mx-auto w-full max-w-6xl px-4">
-          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
-            PRICING
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-4">
-            <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
-              {category === "Agent"
-                ? "Become an Agent on"
-                : "Become a Landlord on"}{" "}
-              <span className="text-[#C2C8DA]">Cribb</span>
-            </h1>
+      <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
+        {/* Header Section */}
+        <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
+          <div className="mx-auto w-full max-w-6xl px-4">
+            <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
+              PRICING
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-4">
+              <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
+                {category === "Agent"
+                  ? "Become an Agent on"
+                  : "Become a Landlord on"}{" "}
+                <span className="text-[#C2C8DA]">Cribb</span>
+              </h1>
 
-            {category === "Agent" && (
-              <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" />{" "}
-                AGENT
-              </span>
-            )}
-            {category === "Landlord" && (
-              <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-                <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
-              </span>
-            )}
+              {category === "Agent" && (
+                <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                  <HiOutlineUserCircle className="h-6 w-6 md:h-10 md:w-10" />{" "}
+                  AGENT
+                </span>
+              )}
+              {category === "Landlord" && (
+                <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                  <TbUserSquare className="h-6 w-6 md:h-10 md:w-10" /> LANDLORD
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Pricing Section */}
-      <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
-        <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
-          {/* Back button → previous page */}
-          <div
-            className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-            onClick={goBackToPrevious}
-          >
-            <IoIosArrowBack className="text-white text-2xl" />
-          </div>
-
-          <Maincard className="bg-[#F4F6F5] pb-5">
-            <SectionHeader
-              title="Plan"
-              caption="Simple, Transparent Plans based on your need"
-            />
-
+        {/* Pricing Section */}
+        <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
+          <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
+            {/* Back button → previous page */}
             <div
-              className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
-              style={{
-                borderStyle: "dashed",
-                borderColor: "#0000004D",
-                borderWidth: "1px",
-              }}
+              className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={goBackToPrevious}
             >
-              {Object.keys(currentPlans).map((plan) => {
-                const isActive = activePlan === plan;
-
-                return (
-                  <button
-                    key={plan}
-                    onClick={() =>
-                      setActivePlan(plan as keyof typeof currentPlans)
-                    }
-                    className={clsx(
-                      "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
-                      isActive
-                        ? "bg-black text-[#D6FFC3] border-black shadow-md"
-                        : "bg-white text-black border-gray-300 hover:bg-gray-100",
-                    )}
-                  >
-                    {plan === "INSTANT" && (
-                      <MdOutlineFlashOn className="text-md md:text-2xl" />
-                    )}
-                    {plan === "EXPLORE" && (
-                      <BiWorld className="text-md md:text-2xl" />
-                    )}
-                    {plan === "GO PRO" && (
-                      <MdDoubleArrow className="text-md md:text-2xl" />
-                    )}
-
-                    <span className="text-xs md:text-lg">{plan}</span>
-                  </button>
-                );
-              })}
+              <IoIosArrowBack className="text-white text-2xl" />
             </div>
 
-            {/* Plan Details */}
-            <div className="pt-5 pb-4 space-y-4">
-              <div className="space-y-1">
-                <Label>SERVICE AMOUNT</Label>
-                <InfoPill>
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="font-bold py-1">{current.price}</span>
-                    {current.discount > 0 && (
-                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
-                        <AiOutlineTag className="text-lg md:text-2xl" />
-                        <span className="text-xs md:text-sm">
-                          {current.discount}% - OFF
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                </InfoPill>
-
-                <div className="w-full flex justify-end mr-5 mt-2">
-                  <small className="bg-white p-2 rounded-lg text-xs md:text-md">
-                    {current.tag}
-                  </small>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <Label>FEATURES</Label>
-                <div className="rounded-2xl bg-white mx-1 border-1 p-3">
-                  {current.features.map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
-                    >
-                      <span>{label}</span>
-                      <span className="inline-flex text-xs md:text-base items-center gap-2">
-                        {value} <Info size={20} />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div
-                className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-                style={{
-                  borderStyle: "dashed",
-                  borderImage:
-                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                }}
+            <Maincard className="bg-[#F4F6F5] pb-5">
+              <SectionHeader
+                title="Plan"
+                caption="Simple, Transparent Plans based on your need"
               />
 
-              <div className="space-y-1">
-                <Label>EMAIL</Label>
-                <InfoPill className="bg-white">
-                  <input
-                    type="email"
-                    readOnly
-                    placeholder={loginEmail || "Enter your email"}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full outline-none text-md py-1"
-                  />
-                </InfoPill>
+              <div
+                className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+                style={{
+                  borderStyle: "dashed",
+                  borderColor: "#0000004D",
+                  borderWidth: "1px",
+                }}
+              >
+                {Object.keys(currentPlans).map((plan) => {
+                  const isActive = activePlan === plan;
+
+                  return (
+                    <button
+                      key={plan}
+                      onClick={() =>
+                        setActivePlan(plan as keyof typeof currentPlans)
+                      }
+                      className={clsx(
+                        "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
+                        isActive
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
+                      )}
+                    >
+                      {plan === "INSTANT" && (
+                        <MdOutlineFlashOn className="text-md md:text-2xl" />
+                      )}
+                      {plan === "EXPLORE" && (
+                        <BiWorld className="text-md md:text-2xl" />
+                      )}
+                      {plan === "GO PRO" && (
+                        <MdDoubleArrow className="text-md md:text-2xl" />
+                      )}
+
+                      <span className="text-xs md:text-lg">{plan}</span>
+                    </button>
+                  );
+                })}
               </div>
 
-              <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
-                <DfButton onClick={handlePaystack}>NEXT</DfButton>
+              {/* Plan Details */}
+              <div className="pt-5 pb-4 space-y-4">
+                <div className="space-y-1">
+                  <Label>SERVICE AMOUNT</Label>
+                  <InfoPill>
+                    <div className="inline-flex items-center justify-between w-full">
+                      <span className="font-bold py-1">{current.price}</span>
+                      {current.discount > 0 && (
+                        <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
+                          <AiOutlineTag className="text-lg md:text-2xl" />
+                          <span className="text-xs md:text-sm">
+                            {current.discount}% - OFF
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </InfoPill>
+
+                  <div className="w-full flex justify-end mr-5 mt-2">
+                    <small className="bg-white p-2 rounded-lg text-xs md:text-md">
+                      {current.tag}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label>FEATURES</Label>
+                  <div className="rounded-2xl bg-white mx-1 border-1 p-3">
+                    {current.features.map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
+                      >
+                        <span>{label}</span>
+                        <span className="inline-flex text-xs md:text-base items-center gap-2">
+                          {value} <Info size={20} />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  style={{
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                  }}
+                />
+
+                <div className="space-y-1">
+                  <Label>EMAIL</Label>
+                  <InfoPill className="bg-white">
+                    <input
+                      type="email"
+                      readOnly
+                      placeholder={loginEmail || "Enter your email"}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full outline-none text-md py-1"
+                    />
+                  </InfoPill>
+                </div>
+
+                <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
+                  <DfButton onClick={handlePaystack}>NEXT</DfButton>
+                </div>
               </div>
-            </div>
-          </Maincard>
-        </div>
-      </section>
-    </div>
+            </Maincard>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 
