@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useAlert } from "../../../App";
 import { MdDoubleArrow } from "react-icons/md";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import signbg from "../../../assets/signbg.png";
 import InfoPill from "../../../components/Pill";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiChevronDown } from "react-icons/fi";
 import { RiListView } from "react-icons/ri";
 import termsText from "../../../documents/terms.txt?raw";
 import privacyText from "../../../documents/privacy.txt?raw";
 import { FaTimes } from "react-icons/fa";
-import { FiChevronDown } from "react-icons/fi";
+import LGAS_DATA from "../../../components/localgovt.json";
 
 function Maincard({
   className,
@@ -87,49 +87,84 @@ export default function Signup4({ mode }: Signup4Props) {
   const [docType, setDocType] = useState<"terms" | "privacy" | null>(null);
   const [docText, setDocText] = useState("");
 
+  // ─── Modal state ───
+  const [showModal, setShowModal] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement | null>(null);
+
   const { showAlert } = useAlert();
 
-  // Static list of Nigerian states (you can expand this list)
-  const states = [
-    "Abia",
-    "Adamawa",
-    "Akwa Ibom",
-    "Anambra",
-    "Bauchi",
-    "Bayelsa",
-    "Benue",
-    "Borno",
-    "Cross River",
-    "Delta",
-    "Ebonyi",
-    "Edo",
-    "Ekiti",
-    "Enugu",
-    "Gombe",
-    "Imo",
-    "Jigawa",
-    "Kaduna",
-    "Kano",
-    "Katsina",
-    "Kebbi",
-    "Kogi",
-    "Kwara",
-    "Lagos",
-    "Nasarawa",
-    "Niger",
-    "Ogun",
-    "Ondo",
-    "Osun",
-    "Oyo",
-    "Plateau",
-    "Rivers",
-    "Sokoto",
-    "Taraba",
-    "Yobe",
-    "Zamfara",
-    "FCT",
-  ];
+  // ─── Derive states list from LGAS_DATA (defensive) ───
+  const statesAndLgas: { state: string; lgas: string[] }[] = useMemo(() => {
+    try {
+      const raw: any = (LGAS_DATA as any)?.default ?? LGAS_DATA;
+      if (!raw) return [];
 
+      // Case 1: already an array of { state, lgas }
+      if (Array.isArray(raw)) {
+        return raw
+          .filter(
+            (item: any) =>
+              item &&
+              typeof item.state === "string" &&
+              Array.isArray(item.lgas),
+          )
+          .map((item: any) => ({
+            state: item.state as string,
+            lgas: item.lgas as string[],
+          }));
+      }
+
+      // Case 2: object map { "Abia": [...], "Lagos": [...] }
+      if (typeof raw === "object") {
+        return Object.keys(raw)
+          .filter((s) => typeof s === "string")
+          .map((s) => ({
+            state: s,
+            lgas: Array.isArray((raw as any)[s]) ? (raw as any)[s] : [],
+          }));
+      }
+
+      return [];
+    } catch (e) {
+      console.error("Failed to parse LGAS_DATA:", e);
+      return [];
+    }
+  }, []);
+
+  // For merchant mode: only state names (no LGAs)
+  const stateNames = useMemo(
+    () =>
+      statesAndLgas
+        .map((s) => s?.state)
+        .filter((s): s is string => typeof s === "string"),
+    [statesAndLgas],
+  );
+
+  // ─── Filtered lists (fully defensive) ───
+  const searchLower = search.trim().toLowerCase();
+
+  const filteredInstitutes = useMemo(() => {
+    if (!Array.isArray(institutes)) return [];
+    return institutes.filter((inst) => {
+      const name = inst?.institution;
+      if (typeof name !== "string") return false;
+      return name.toLowerCase().includes(searchLower);
+    });
+  }, [institutes, searchLower]);
+
+  const filteredStates = useMemo(() => {
+    return stateNames.filter((s) => s.toLowerCase().includes(searchLower));
+  }, [stateNames, searchLower]);
+
+  // Focus search input when modal opens
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => searchRef.current?.focus(), 100);
+    }
+  }, [showModal]);
+
+  // Load institutes
   useEffect(() => {
     fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
@@ -139,10 +174,39 @@ export default function Signup4({ mode }: Signup4Props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        const parsed = data.map((item: string) => JSON.parse(item));
+        // Defensive parse: API may return array of JSON strings OR array of objects
+        if (!Array.isArray(data)) {
+          console.warn("getInstitutes: unexpected response", data);
+          setInstitutes([]);
+          return;
+        }
+        const parsed: Institute[] = data
+          .map((item: any) => {
+            if (typeof item === "string") {
+              try {
+                return JSON.parse(item);
+              } catch {
+                return null;
+              }
+            }
+            return item;
+          })
+          .filter(
+            (item: any): item is Institute =>
+              item &&
+              typeof item.institution === "string" &&
+              (typeof item.id === "number" || typeof item.id === "string"),
+          )
+          .map((item: any) => ({
+            id: Number(item.id),
+            institution: item.institution,
+          }));
         setInstitutes(parsed);
       })
-      .catch((err) => console.error("Failed to load institutions:", err));
+      .catch((err) => {
+        console.error("Failed to load institutions:", err);
+        setInstitutes([]);
+      });
   }, []);
 
   const openTerms = () => {
@@ -171,7 +235,7 @@ export default function Signup4({ mode }: Signup4Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          institution, // this may be institute id or state string
+          institution,
           fourthpage: true,
           signup_key,
           mode: mode,
@@ -199,6 +263,14 @@ export default function Signup4({ mode }: Signup4Props) {
       showAlert("Network error, try again.", "warning");
     }
   };
+
+  const openModal = () => {
+    setSearch("");
+    setShowModal(true);
+  };
+
+  const placeholderText =
+    mode === "student" ? "Select your Institution" : "Select your State";
 
   return (
     <section
@@ -235,31 +307,22 @@ export default function Signup4({ mode }: Signup4Props) {
                   ? "INSTITUTION"
                   : "PRINCIPAL PLACE OF BUSINESS"}
               </Label>
-              <InfoPill className={`relative flex items-center`}>
-                <select
-                  className="appearance-none w-full bg-transparent outline-none py-1 text-xs md:text-sm text-black"
+
+              {/* Modal trigger */}
+              <InfoPill
+                onClick={openModal}
+                className="relative flex items-center justify-between cursor-pointer bg-white"
+              >
+                <input
+                  type="text"
                   value={institution}
-                  onChange={(e) => setInstitution(e.target.value)}
-                >
-                  <option value="">
-                    {mode === "student"
-                      ? "Select your Institution"
-                      : "Select your State"}
-                  </option>
-                  {mode === "student"
-                    ? institutes.map((inst) => (
-                        <option key={inst.id} value={inst.institution}>
-                          {inst.institution}
-                        </option>
-                      ))
-                    : states.map((st) => (
-                        <option key={st} value={st}>
-                          {st}
-                        </option>
-                      ))}
-                </select>
-                <FiChevronDown className="pointer-events-none absolute right-8 text-gray-500" />
+                  placeholder={placeholderText}
+                  readOnly
+                  className="w-full text-xs md:text-sm outline-none py-1 text-black bg-transparent cursor-pointer"
+                />
+                <FiChevronDown className="pointer-events-none text-gray-500 shrink-0" />
               </InfoPill>
+
               <div className="w-full flex justify-center md:justify-end">
                 <span className="text-xs rounded-lg bg-white p-2 md:mr-6 text-[#5B5B5B]">
                   {mode === "student"
@@ -330,11 +393,126 @@ export default function Signup4({ mode }: Signup4Props) {
         </Maincard>
       </div>
 
+      {/* ─── Searchable Modal ─── */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">
+                {mode === "student" ? "Select Institution" : "Select State"}
+              </h3>
+              <button
+                className="text-sm text-gray-600"
+                onClick={() => {
+                  setShowModal(false);
+                  setSearch("");
+                }}
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Search bar */}
+            <div className="mb-3">
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={
+                  mode === "student"
+                    ? "Search institution..."
+                    : "Search state..."
+                }
+                className="w-full px-3 py-2 border rounded-lg text-sm outline-none"
+              />
+            </div>
+
+            {/* Options */}
+            <div className="max-h-64 overflow-y-auto space-y-1 pb-4">
+              {mode === "student" &&
+                filteredInstitutes.map((inst) => {
+                  const isSelected = institution === inst.institution;
+                  return (
+                    <label
+                      key={inst.id}
+                      className={`flex items-center gap-3 text-sm cursor-pointer py-2 px-2 rounded-md ${
+                        isSelected ? "bg-gray-100" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        checked={isSelected}
+                        onChange={() => {
+                          setInstitution(inst.institution);
+                          setShowModal(false);
+                          setSearch("");
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span>{inst.institution}</span>
+                    </label>
+                  );
+                })}
+
+              {mode === "merchant" &&
+                filteredStates.map((s) => {
+                  const isSelected = institution === s;
+                  return (
+                    <label
+                      key={s}
+                      className={`flex items-center gap-3 text-sm cursor-pointer py-2 px-2 rounded-md ${
+                        isSelected ? "bg-gray-100" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        checked={isSelected}
+                        onChange={() => {
+                          setInstitution(s);
+                          setShowModal(false);
+                          setSearch("");
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span>{s}</span>
+                    </label>
+                  );
+                })}
+
+              {/* Empty states */}
+              {mode === "student" && filteredInstitutes.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-3">
+                  No institution found
+                </p>
+              )}
+              {mode === "merchant" && filteredStates.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-3">
+                  No state found
+                </p>
+              )}
+            </div>
+
+            {/* Done button */}
+            <div className="mt-4">
+              <button
+                className="w-full py-2 rounded-lg bg-black text-white"
+                onClick={() => {
+                  setShowModal(false);
+                  setSearch("");
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {terms_privacy && (
         <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
-          {/* Modal Box */}
           <div className="relative mx-5 md:mx-auto my-10 md:w-2/5 bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
-            {/* Close */}
             <div
               className="absolute -top-3 border-2 border-white -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={() => setTerms_privacy(false)}
@@ -342,7 +520,6 @@ export default function Signup4({ mode }: Signup4Props) {
               <FaTimes className="text-white text-2xl" />
             </div>
 
-            {/* Header */}
             <h2 className="text-2xl mt-5 font-medium text-center text-black">
               {docType === "terms" ? "Terms of Use" : "Privacy Policy"}
             </h2>
@@ -356,7 +533,6 @@ export default function Signup4({ mode }: Signup4Props) {
               }}
             />
 
-            {/* Pills */}
             <div className="space-y-4 max-h-[60vh] overflow-y-auto text-sm text-black whitespace-pre-wrap">
               {docText}
             </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Info } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
@@ -10,8 +10,9 @@ import { DfButton } from "../../../components/Pill";
 import InfoPill from "../../../components/Pill";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineTag } from "react-icons/ai";
+import { useAlert } from "../../../App";
 
 declare const PaystackPop: any;
 
@@ -140,6 +141,9 @@ const LandlordPlans = {
 
 const BusinessPlan = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { showAlert } = useAlert();
+
   const [category, setCategory] = useState<"Agent" | "Landlord">("Agent");
   const [activePlan, setActivePlan] =
     useState<keyof typeof AgentPlans>("INSTANT");
@@ -147,7 +151,14 @@ const BusinessPlan = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
 
-  // ✅ Load Paystack once
+  // Track where user came from
+  const previousLocationRef = useRef<string | null>(null);
+  const previousStateRef = useRef<any>(null);
+
+  const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
+  const current = currentPlans[activePlan];
+
+  // ─── 1. Load Paystack once ───────────────────────────────────────────
   useEffect(() => {
     const src = "https://js.paystack.co/v1/inline.js";
     if (!document.querySelector(`script[src="${src}"]`)) {
@@ -158,29 +169,99 @@ const BusinessPlan = () => {
     }
   }, []);
 
-  // ✅ Fetch session data and set category/email/user
+  // ─── 2. Read login_data + ?role= → set category/email/user ───────────
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-
-    // ✅ Get role from URL
     const params = new URLSearchParams(location.search);
-    const role = params.get("role"); // e.g. ?role=agent or ?role=landlord
+    const role = params.get("role"); // ?role=agent | ?role=landlord
 
-    if (role === "agent") {
-      setCategory("Agent");
-    } else if (role === "landlord") {
-      setCategory("Landlord");
-    } else if (data?.category) {
-      // fallback to session data if no URL param
-      setCategory(data.category);
-    }
+    if (role === "agent") setCategory("Agent");
+    else if (role === "landlord") setCategory("Landlord");
+    else if (data?.category) setCategory(data.category);
 
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
 
-  const currentPlans = category === "Agent" ? AgentPlans : LandlordPlans;
-  const current = currentPlans[activePlan];
+  // ─── 3. Sync category back into sessionStorage.login_data ────────────
+  useEffect(() => {
+    try {
+      const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      if (data?.category !== category) {
+        data.category = category;
+        sessionStorage.setItem("login_data", JSON.stringify(data));
+      }
+    } catch (err) {
+      console.warn("Failed to sync category to sessionStorage:", err);
+    }
+  }, [category]);
+
+  // ─── 4. Track previous page for goBackToPrevious() ───────────────────
+  useEffect(() => {
+    if (location.state?.from) {
+      previousLocationRef.current = location.state.from;
+      previousStateRef.current = location.state.returnState ?? location.state;
+      return;
+    }
+
+    const ref = document.referrer;
+    if (ref && ref !== window.location.href) {
+      previousLocationRef.current = ref;
+      return;
+    }
+
+    const stored = sessionStorage.getItem("businessplan_return_to");
+    if (stored) previousLocationRef.current = stored;
+  }, [location]);
+
+  // ─── 5. Restore last selected plan after a role-toggle refresh ───────
+  useEffect(() => {
+    const saved = sessionStorage.getItem("businessplan_active_plan");
+    if (saved && saved in currentPlans) {
+      setActivePlan(saved as keyof typeof currentPlans);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
+
+  // ─── Helpers ─────────────────────────────────────────────────────────
+  const goBackToPrevious = () => {
+    const backTo = previousLocationRef.current;
+    const backState = previousStateRef.current;
+
+    // A. External / absolute URL → hard redirect
+    if (backTo && /^https?:\/\//i.test(backTo)) {
+      window.location.href = backTo;
+      return;
+    }
+
+    // B. Internal path → React Router navigate (state preserved)
+    if (backTo && backTo.startsWith("/")) {
+      navigate(backTo, { state: backState ?? undefined });
+      return;
+    }
+
+    // C. Nothing stored → fall back to browser history
+    navigate(-1);
+  };
+
+  // ✅ Switch role: flip ?role= param + hard reload so whole page updates
+  const toggleRole = () => {
+    const nextRole = category === "Agent" ? "landlord" : "agent";
+
+    // Persist plan + category BEFORE the reload so nothing resets
+    sessionStorage.setItem("businessplan_active_plan", activePlan);
+    try {
+      const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+      data.category = nextRole === "landlord" ? "Landlord" : "Agent";
+      sessionStorage.setItem("login_data", JSON.stringify(data));
+    } catch {
+      /* ignore malformed JSON */
+    }
+
+    const params = new URLSearchParams(location.search);
+    params.set("role", nextRole);
+    window.location.href = `${location.pathname}?${params.toString()}`;
+  };
 
   const extractAmount = (price: string) =>
     parseInt(price.replace(/[^\d]/g, ""), 10);
@@ -190,15 +271,20 @@ const BusinessPlan = () => {
     const userEmail = email || loginEmail;
 
     if (!userEmail) {
-      alert("Please provide your email address before proceeding.");
+      showAlert(
+        "Please provide your email address before proceeding.",
+        "warning"
+      );
       return;
     }
     if (typeof PaystackPop === "undefined") {
-      alert("Payment gateway not loaded yet. Please wait a moment.");
+      showAlert(
+        "Payment gateway not loaded yet. Please wait a moment.",
+        "warning"
+      );
       return;
     }
 
-    // ✅ Use new reference format
     const random = Math.random().toString(36).substring(2, 10);
     const ref = `cribb_Rent_${extractAmount(current.price)}_${user}_${random}`;
 
@@ -207,10 +293,20 @@ const BusinessPlan = () => {
       email: userEmail,
       amount,
       ref,
-      onClose: () => alert("Payment window closed."),
+      onClose: () => showAlert("Payment window closed.", "info"),
       callback: (response: any) => {
-        alert("Payment successful! Reference: " + response.reference);
-        navigate("/businessrequests");
+        if (response?.status === "success" || response?.reference) {
+          showAlert(
+            "Successful Transaction Please continue to confirm transactions",
+            "success"
+          );
+
+          setTimeout(() => {
+            goBackToPrevious();
+          }, 500);
+        } else {
+          showAlert("Transaction was not completed.", "warning");
+        }
       },
     });
 
@@ -220,7 +316,8 @@ const BusinessPlan = () => {
   return (
     <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
       {/* Navbar */}
-      <nav className="w-full sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+      <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
+        {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
           <div className="rounded-full bg-black">
             <img
@@ -231,7 +328,11 @@ const BusinessPlan = () => {
           </div>
         </div>
 
-        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"  onClick = {() => navigate("/")}>
+        {/* Center: Logo */}
+        <div
+          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <img
             src={logo}
             alt="Cribb.Africa Logo"
@@ -247,8 +348,26 @@ const BusinessPlan = () => {
           </div>
         </div>
 
-        {/* Removed toggle button */}
-        <div></div>
+        {/* Right: Role toggle */}
+        <div className="flex justify-end md:justify-center items-center gap-2">
+          <div className="md:hidden rounded-full bg-black p-2 shrink-0">
+            <img
+              src={nigeriaflag}
+              alt="Nigeria Flag"
+              className="h-4 md:h-8 object-contain"
+            />
+          </div>
+          <button
+            onClick={toggleRole}
+            className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
+          >
+            <span className="text-[8px] md:text-[15px] underline">
+              {category === "Agent"
+                ? "PRICING FOR /LANDLORD >>"
+                : "PRICING FOR /AGENT >>"}
+            </span>
+          </button>
+        </div>
       </nav>
 
       {/* Header Section */}
@@ -283,12 +402,14 @@ const BusinessPlan = () => {
       {/* Pricing Section */}
       <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
         <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
+          {/* Back button → previous page */}
           <div
             className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-            onClick={() => navigate("/businessdash?goto=subscriptions")}
+            onClick={goBackToPrevious}
           >
             <IoIosArrowBack className="text-white text-2xl" />
           </div>
+
           <Maincard className="bg-[#F4F6F5] pb-5">
             <SectionHeader
               title="Plan"
@@ -319,7 +440,6 @@ const BusinessPlan = () => {
                         : "bg-white text-black border-gray-300 hover:bg-gray-100",
                     )}
                   >
-                    {/* ICONS */}
                     {plan === "INSTANT" && (
                       <MdOutlineFlashOn className="text-md md:text-2xl" />
                     )}
@@ -330,7 +450,6 @@ const BusinessPlan = () => {
                       <MdDoubleArrow className="text-md md:text-2xl" />
                     )}
 
-                    {/* TEXT */}
                     <span className="text-xs md:text-lg">{plan}</span>
                   </button>
                 );
@@ -406,24 +525,6 @@ const BusinessPlan = () => {
                 <DfButton onClick={handlePaystack}>NEXT</DfButton>
               </div>
             </div>
-
-            {/*  <div
-              className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
-            
-            <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
-              <span
-                className="text-[#0556F8] cursor-pointer shadow rounded-md bg-white py-1 px-2"
-                onClick={() => navigate("/businessdash?goto=subscriptions")}
-              >
-                Continue to Dashboard{" "}
-              </span>
-            </div>*/}
           </Maincard>
         </div>
       </section>

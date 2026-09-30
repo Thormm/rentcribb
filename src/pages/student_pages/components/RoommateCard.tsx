@@ -1,24 +1,18 @@
 import React from "react";
 import clsx from "clsx";
+import { IoManOutline, IoWomanOutline, IoFastFoodOutline, IoHeadsetSharp } from "react-icons/io5";
+import { CgCross, CgGames } from "react-icons/cg";
 import {
-  MdOutlineMan4,
-  MdOutlineWoman2,
-} from "react-icons/md";
-import { CgCross } from "react-icons/cg";
-import {
-  FaMosque,
   FaBook,
   FaCat,
   FaDog,
   FaGlassCheers,
 } from "react-icons/fa";
-import { IoFastFoodOutline } from "react-icons/io5";
-import { CgGames } from "react-icons/cg";
 import { GrRun } from "react-icons/gr";
 import { TbBedFilled } from "react-icons/tb";
 import { IoIosFilm } from "react-icons/io";
 import { BsChatSquareDotsFill } from "react-icons/bs";
-import { IoHeadsetSharp } from "react-icons/io5";
+import { LuMoonStar } from "react-icons/lu";
 
 // ---------- Types ----------
 export interface Roommate {
@@ -80,15 +74,15 @@ const getDurationShort = (duration: string): string => {
 
 // ---------- Feature color mapping (HEX codes) ----------
 const featureColors: Record<string, string> = {
-  Games: "#3B82F6", // blue
-  Food: "#22C55E", // green
-  Exercise: "#EAB308", // yellow
-  Reading: "#A855F7", // purple
-  Hangout: "#EC4899", // pink
-  Sleep: "#6366F1", // indigo
-  Movies: "#EF4444", // red
-  Chat: "#14B8A6", // teal
-  Music: "#F97316", // orange
+  Games: "#E9C3FF", // light purple
+  Food: "#FFC267", // light orange
+  Exercise: "#D6FFC3", // light green
+  Reading: "#FFEEB4", // light yellow
+  Hangout: "#FFA9A9", // light red
+  Sleep: "#9E9E9E", // gray
+  Movies: "#D7ECF2", // light blue
+  Chat: "#56B9A7", // teal
+  Music: "#FFFDCA", // light cream
 };
 
 // ---------- Feature icon mapping ----------
@@ -126,9 +120,9 @@ const PetIcon = ({
 const GenderIcon = ({ gender }: { gender: string }) => (
   <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center mt-2 shrink-0">
     {gender === "male" ? (
-      <MdOutlineMan4 className="text-xl md:text-3xl" />
+      <IoManOutline className="text-xl md:text-3xl" />
     ) : (
-      <MdOutlineWoman2 className="text-xl md:text-3xl" />
+      <IoWomanOutline className="text-xl md:text-3xl" />
     )}
   </div>
 );
@@ -138,7 +132,7 @@ const ReligionIcon = ({ religion }: { religion: string }) => (
     {religion === "christian" ? (
       <CgCross className="text-2xl md:text-4xl" />
     ) : religion === "muslim" ? (
-      <FaMosque className="text-lg md:text-2xl" />
+      <LuMoonStar className="text-lg md:text-2xl" />
     ) : null}
   </div>
 );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Info } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
@@ -8,12 +8,15 @@ import { DfButton } from "../../../components/Pill";
 import InfoPill from "../../../components/Pill";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // ✅ CHANGED
 import { AiOutlineTag } from "react-icons/ai";
 import { HiOutlineUsers } from "react-icons/hi";
 import { PiHouse } from "react-icons/pi";
+import { useAlert } from "../../../App";
 
 declare const PaystackPop: any;
+
+
 
 function Maincard({
   className = "",
@@ -104,11 +107,17 @@ const RoommatePlans = {
 
 const RoommatePlan = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ CHANGED
+  const { showAlert } = useAlert();
   const [activePlan, setActivePlan] =
     useState<keyof typeof RoommatePlans>("INSTANT");
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
+
+  // ✅ CHANGED: track where user came from
+  const previousLocationRef = useRef<string | null>(null);
+  const previousStateRef = useRef<any>(null);
 
   // ✅ Load Paystack once
   useEffect(() => {
@@ -124,10 +133,51 @@ const RoommatePlan = () => {
   // ✅ Fetch session data and set Roommate/email/user
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
+
+  // ✅ CHANGED: figure out the previous page on mount
+  useEffect(() => {
+    // 1. Explicit state passed via navigate("/roommateplan", { state: { from: "/studentdash?user=man" } })
+    if (location.state?.from) {
+      previousLocationRef.current = location.state.from;
+      previousStateRef.current = location.state.returnState ?? location.state;
+      return;
+    }
+
+    // 2. Browser referrer (works for absolute URLs / subdomains)
+    const ref = document.referrer;
+    if (ref && ref !== window.location.href) {
+      previousLocationRef.current = ref;
+      return;
+    }
+
+    // 3. Fallback: sessionStorage set by the page that linked here
+    const stored = sessionStorage.getItem("roommateplan_return_to");
+    if (stored) previousLocationRef.current = stored;
+  }, [location]);
+
+  // ✅ CHANGED: single reusable "go back to previous page" helper
+  const goBackToPrevious = () => {
+    const backTo = previousLocationRef.current;
+    const backState = previousStateRef.current;
+
+    // A. External / absolute URL → hard redirect
+    if (backTo && /^https?:\/\//i.test(backTo)) {
+      window.location.href = backTo;
+      return;
+    }
+
+    // B. Internal path → React Router navigate (state preserved)
+    if (backTo && backTo.startsWith("/")) {
+      navigate(backTo, { state: backState ?? undefined });
+      return;
+    }
+
+    // C. Nothing stored → fall back to browser history
+    navigate(-1);
+  };
 
   const current = RoommatePlans[activePlan];
 
@@ -139,27 +189,39 @@ const RoommatePlan = () => {
     const userEmail = email || loginEmail;
 
     if (!userEmail) {
-      alert("Please provide your email address before proceeding.");
+      showAlert("Please provide your email address before proceeding.", "warning");
       return;
     }
     if (typeof PaystackPop === "undefined") {
-      alert("Payment gateway not loaded yet. Please wait a moment.");
+      showAlert("Payment gateway not loaded yet. Please wait a moment.", "warning");
       return;
     }
 
     // ✅ Use new reference format
     const random = Math.random().toString(36).substring(2, 10);
-    const ref = `cribb_Roommate_${extractAmount(current.price)}_${user}_${random}`
+    const ref = `cribb_Roommate_${extractAmount(current.price)}_${user}_${random}`;
 
     const handler = PaystackPop.setup({
       key: "pk_live_e7e226db6e7b774d5fc940646959c622a606e546",
       email: userEmail,
       amount,
       ref,
-      onClose: () => alert("Payment window closed."),
+      onClose: () => showAlert("Payment window closed.", "info"),
+
+      // ✅ CHANGED: success → show alert + return to previous page
       callback: (response: any) => {
-        alert("Payment successful! Reference: " + response.reference);
-        navigate("/getstudentplans");
+        if (response?.status === "success" || response?.reference) {
+          showAlert(
+            "Successful Transaction Please continue to confirm transactions",
+            "success"
+          );
+
+          setTimeout(() => {
+            goBackToPrevious();
+          }, 500);
+        } else {
+          showAlert("Transaction was not completed.", "warning");
+        }
       },
     });
 
@@ -167,8 +229,7 @@ const RoommatePlan = () => {
   };
 
   return (
-
-<>
+    <>
       <nav className="sticky top-0 grid grid-cols-[1fr_auto] md:grid-cols-3 items-center px-4 md:px-6 py-3 md:py-4 shadow-sm bg-white z-50 border-b">
         {/* Left: Flag */}
         <div className="hidden md:flex justify-center">
@@ -182,7 +243,10 @@ const RoommatePlan = () => {
         </div>
 
         {/* Center: Logo */}
-        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"  onClick = {() => navigate("/")}>
+        <div
+          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"
+          onClick={() => navigate("/")}
+        >
           <img
             src={logo}
             alt="Cribb.Africa Logo"
@@ -219,180 +283,158 @@ const RoommatePlan = () => {
         </div>
       </nav>
 
-    <div className="bg-[#F3EECE] pb-10 min-h-screen place-items-center">
-      
+      <div className="bg-[#F3EECE] pb-10 min-h-screen place-items-center">
+        {/* Header Section */}
+        <div className="w-full  bg-[#3A2A05] md:pb-8 pt-8 text-white shadow">
+          <div className="mx-auto w-full max-w-6xl px-4">
+            <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
+              PRICING
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-4">
+              <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
+                Connect Directly to{" "}
+                <span className="text-[#C2C8DA]">Roommates</span>
+              </h1>
 
-      {/* Header Section */}
-      <div className="w-full  bg-[#3A2A05] md:pb-8 pt-8 text-white shadow">
-        <div className="mx-auto w-full max-w-6xl px-4">
-          <div className="text-sm md:text-lg font-semibold text-[#FFA1A1]">
-            PRICING
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-4">
-            <h1 className="text-lg md:text-4xl my-4 font-extrabold ">
-              Connect Directly to{" "}
-              <span className="text-[#C2C8DA]">Roommates</span>
-            </h1>
-
-            <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
-              <HiOutlineUsers className="h-6 w-6 md:h-10 md:w-10" /> ROOMMATE
-            </span>
+              <span className="w-50 justify-center inline-flex items-center gap-2 rounded-lg border-2 px-1 py-2 md:px-3 md:py-4 md:text-lg font-md text-white backdrop-blur-md ring-1 ring-white/25 hover:bg-white/15">
+                <HiOutlineUsers className="h-6 w-6 md:h-10 md:w-10" /> ROOMMATE
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Pricing Section */}
-      <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
-        <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
-          <div
-            className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-            onClick={() => navigate("/studentdash?goto=subscriptions")}
-          >
-            <IoIosArrowBack className="text-white text-2xl" />
-          </div>
-          <Maincard className="bg-[#F4F6F5] pb-5">
-            <SectionHeader
-              title="Plan"
-              caption="Simple, Transparent Plans based on your need"
-            />
-
+        {/* Pricing Section */}
+        <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
+          <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
+            {/* ✅ CHANGED: back button now returns to previous page */}
             <div
-              className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
-              style={{
-                borderStyle: "dashed",
-                borderColor: "#0000004D",
-                borderWidth: "1px",
-              }}
+              className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={goBackToPrevious}
             >
-              {Object.keys(RoommatePlans).map((plan) => {
-                const isActive = activePlan === plan;
-
-                return (
-                  <button
-                    key={plan}
-                    onClick={() =>
-                      setActivePlan(plan as keyof typeof RoommatePlans)
-                    }
-                    className={clsx(
-                      "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
-                      isActive
-                        ? "bg-black text-[#D6FFC3] border-black shadow-md"
-                        : "bg-white text-black border-gray-300 hover:bg-gray-100",
-                    )}
-                  >
-                    {/* ICONS */}
-                    {plan === "INSTANT" && (
-                      <MdOutlineFlashOn className="text-md md:text-2xl" />
-                    )}
-                    {plan === "EXPLORE" && (
-                      <BiWorld className="text-md md:text-2xl" />
-                    )}
-                    {plan === "GO PRO" && (
-                      <MdDoubleArrow className="text-md md:text-2xl" />
-                    )}
-
-                    {/* TEXT */}
-                    <span className="text-xs md:text-lg">{plan}</span>
-                  </button>
-                );
-              })}
+              <IoIosArrowBack className="text-white text-2xl" />
             </div>
 
-            {/* Plan Details */}
-            <div className="pt-5 pb-4 space-y-4">
-              <div className="space-y-1">
-                <Label>SERVICE AMOUNT</Label>
-                <InfoPill>
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="font-bold py-1">{current.price}</span>
-                    {current.discount > 0 && (
-                      <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
-                        <AiOutlineTag className="text-lg md:text-2xl" />
-                        <span className="text-xs md:text-sm">
-                          {current.discount}% - OFF
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                </InfoPill>
-
-                <div className="w-full flex justify-end mr-5 mt-2">
-                  <small className="bg-white p-2 rounded-lg text-xs md:text-md">
-                    {current.tag}
-                  </small>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <Label>FEATURES</Label>
-                <div className="rounded-2xl bg-white mx-1 border-1 p-3">
-                  {current.features.map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
-                    >
-                      <span>{label}</span>
-                      <span className="inline-flex text-xs md:text-base items-center gap-2">
-                        {value} <Info size={20} />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div
-                className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
-                style={{
-                  borderStyle: "dashed",
-                  borderImage:
-                    "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-                }}
+            <Maincard className="bg-[#F4F6F5] pb-5">
+              <SectionHeader
+                title="Plan"
+                caption="Simple, Transparent Plans based on your need"
               />
 
-              <div className="space-y-1">
-                <Label>EMAIL</Label>
-                <InfoPill className="bg-white">
-                  <input
-                    type="email"
-                    readOnly
-                    placeholder={loginEmail || "Enter your email"}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full outline-none text-md py-1"
-                  />
-                </InfoPill>
-              </div>
-
-              <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
-                <DfButton onClick={handlePaystack}>NEXT</DfButton>
-              </div>
-            </div>
-
-            {/*  <div
-              className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
-            
-            <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
-              <span
-                className="text-[#0556F8] cursor-pointer shadow rounded-md bg-white py-1 px-2"
-                onClick={() => navigate("/businessdash?goto=subscriptions")}
+              <div
+                className="grid grid-cols-3 gap-4 mt-3 md:mt-5 bg-white p-3 rounded-lg"
+                style={{
+                  borderStyle: "dashed",
+                  borderColor: "#0000004D",
+                  borderWidth: "1px",
+                }}
               >
-                Continue to Dashboard{" "}
-              </span>
-            </div>*/}
-          </Maincard>
-        </div>
-      </section>
-    </div>
-      </>
+                {Object.keys(RoommatePlans).map((plan) => {
+                  const isActive = activePlan === plan;
+
+                  return (
+                    <button
+                      key={plan}
+                      onClick={() =>
+                        setActivePlan(plan as keyof typeof RoommatePlans)
+                      }
+                      className={clsx(
+                        "flex items-center justify-center gap-2 rounded-lg md:px-3 py-2 font-semibold transition-colors duration-200 border",
+                        isActive
+                          ? "bg-black text-[#D6FFC3] border-black shadow-md"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100",
+                      )}
+                    >
+                      {plan === "INSTANT" && (
+                        <MdOutlineFlashOn className="text-md md:text-2xl" />
+                      )}
+                      {plan === "EXPLORE" && (
+                        <BiWorld className="text-md md:text-2xl" />
+                      )}
+                      {plan === "GO PRO" && (
+                        <MdDoubleArrow className="text-md md:text-2xl" />
+                      )}
+
+                      <span className="text-xs md:text-lg">{plan}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Plan Details */}
+              <div className="pt-5 pb-4 space-y-4">
+                <div className="space-y-1">
+                  <Label>SERVICE AMOUNT</Label>
+                  <InfoPill>
+                    <div className="inline-flex items-center justify-between w-full">
+                      <span className="font-bold py-1">{current.price}</span>
+                      {current.discount > 0 && (
+                        <span className="flex items-center font-semibold gap-2 bg-[#FFA9A9] p-2 rounded-lg md:rounded-2xl">
+                          <AiOutlineTag className="text-lg md:text-2xl" />
+                          <span className="text-xs md:text-sm">
+                            {current.discount}% - OFF
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </InfoPill>
+
+                  <div className="w-full flex justify-end mr-5 mt-2">
+                    <small className="bg-white p-2 rounded-lg text-xs md:text-md">
+                      {current.tag}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label>FEATURES</Label>
+                  <div className="rounded-2xl bg-white mx-1 border-1 p-3">
+                    {current.features.map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="flex items-center text-xs justify-between py-2 px-2 md:text-base"
+                      >
+                        <span>{label}</span>
+                        <span className="inline-flex text-xs md:text-base items-center gap-2">
+                          {value} <Info size={20} />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  className="mt-1 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  style={{
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                  }}
+                />
+
+                <div className="space-y-1">
+                  <Label>EMAIL</Label>
+                  <InfoPill className="bg-white">
+                    <input
+                      type="email"
+                      readOnly
+                      placeholder={loginEmail || "Enter your email"}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full outline-none text-md py-1"
+                    />
+                  </InfoPill>
+                </div>
+
+                <div className="pt-2 w-full flex justify-center mt-10 cursor-pointer">
+                  <DfButton onClick={handlePaystack}>NEXT</DfButton>
+                </div>
+              </div>
+            </Maincard>
+          </div>
+        </section>
+      </div>
+    </>
   );
-
-
 };
 
 export default RoommatePlan;

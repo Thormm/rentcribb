@@ -5,7 +5,8 @@ import InfoPill from "../../../components/Pill";
 import { BsClipboard2Minus } from "react-icons/bs";
 import { IoChevronBack } from "react-icons/io5";
 import { MdOutlineAttachEmail } from "react-icons/md";
-import { FaSms } from "react-icons/fa";
+import { FaSms, FaTimes } from "react-icons/fa";
+import { FiArrowRight } from "react-icons/fi";
 
 function Maincard({
   className,
@@ -71,7 +72,7 @@ interface Signup2Props {
 export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
   const [otp, setOtp] = useState("");
   const [showEmail, setShowEmail] = useState(true);
-
+  const [open, setOpen] = useState(true);
   const [codeSent, setCodeSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
@@ -434,6 +435,91 @@ export default function Signup2({ mode, onNext, onBack }: Signup2Props) {
           </Maincard>
         )}
       </div>
+
+      {/* OTP BOX */}
+      {open && (
+        <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+          <div className="relative mx-2 md:mx-auto my-10 md:w-[500px] bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+            <div
+              className="border-2 border-white absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+              onClick={() => setOpen(false)}
+            >
+              <FaTimes className="text-white text-2xl" />
+            </div>
+
+            <h2 className="text-3xl mt-5 font-medium text-center text-black">
+              Get OTP
+            </h2>
+            <p className="text-sm text-black text-center mt-5">
+              Chill, Let’s verify your account ASAP!
+            </p>
+
+            <div
+              className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+
+            <div className="space-y-6">
+              {/* Reply */}
+              <div>
+                <div
+                  onClick={() => {
+                    setShowEmail(true);
+                    setOpen(false);
+                    handleSendEmail();
+                  }}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#BCDFFE]"
+                >
+                  <MdOutlineAttachEmail className="text-black text-4xl ml-5" />
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Send Code on Email
+                  </span>
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-sm font-semibold text-black text-center">
+                ----------------- OR -----------------
+              </div>
+
+              {/* Dashboard */}
+              <div>
+                <div
+                  onClick={() => {
+                    setShowEmail(false);
+                    setOpen(false);
+                    handleSendSMS();
+                  }}
+                  className="cursor-pointer relative flex border-[1px] pl-3 py-2 border-[black] items-center pr-2 rounded-full bg-[#D6FFC3]"
+                >
+                  <FaSms className="text-black text-4xl ml-5" />
+                  <span className="flex-1 text-black text-lg text-center font-medium">
+                    Send Code on SMS
+                  </span>
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+                    <FiArrowRight className="text-white text-2xl" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+              style={{
+                borderStyle: "dashed",
+                borderImage:
+                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+              }}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

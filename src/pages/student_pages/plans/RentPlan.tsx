@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Info } from "lucide-react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
 import { BiWorld } from "react-icons/bi";
 import clsx from "clsx";
+
+import { useAlert } from "../../../App";
 import { DfButton } from "../../../components/Pill";
 import InfoPill from "../../../components/Pill";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // ✅ CHANGED: added useLocation
 import { AiOutlineTag } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { HiOutlineUsers } from "react-icons/hi";
@@ -104,11 +106,16 @@ const RentPlans = {
 
 const RentPlan = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ CHANGED
   const [activePlan, setActivePlan] =
-    useState<keyof typeof RentPlans>("INSTANT");
+  useState<keyof typeof RentPlans>("INSTANT");
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
+  const { showAlert } = useAlert();
+  // ✅ CHANGED: track where the user came from so we can return there
+  const previousLocationRef = useRef<string | null>(null);
+  const previousStateRef = useRef<any>(null);
 
   // ✅ Load Paystack once
   useEffect(() => {
@@ -124,10 +131,51 @@ const RentPlan = () => {
   // ✅ Fetch session data and set Rent/email/user
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
-
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
+
+  // ✅ CHANGED: figure out the previous page on mount
+  useEffect(() => {
+    // 1. Explicit state passed via navigate("/rentplan", { state: { from: "/studentdash?user=man" } })
+    if (location.state?.from) {
+      previousLocationRef.current = location.state.from;
+      previousStateRef.current = location.state.returnState ?? location.state;
+      return;
+    }
+
+    // 2. Browser referrer (works for full URLs / subdomains)
+    const ref = document.referrer;
+    if (ref && ref !== window.location.href) {
+      previousLocationRef.current = ref;
+      return;
+    }
+
+    // 3. Fallback: sessionStorage set by the page that linked here
+    const stored = sessionStorage.getItem("rentplan_return_to");
+    if (stored) previousLocationRef.current = stored;
+  }, [location]);
+
+  // ✅ CHANGED: single reusable "go back to previous page" helper
+  const goBackToPrevious = () => {
+    const backTo = previousLocationRef.current;
+    const backState = previousStateRef.current;
+
+    // A. External / absolute URL → hard redirect (subdomains, other sites)
+    if (backTo && /^https?:\/\//i.test(backTo)) {
+      window.location.href = backTo;
+      return;
+    }
+
+    // B. Internal path → React Router navigate (state preserved)
+    if (backTo && backTo.startsWith("/")) {
+      navigate(backTo, { state: backState ?? undefined });
+      return;
+    }
+
+    // C. Nothing stored → fall back to browser history
+    navigate(-1);
+  };
 
   const current = RentPlans[activePlan];
 
@@ -139,11 +187,11 @@ const RentPlan = () => {
     const userEmail = email || loginEmail;
 
     if (!userEmail) {
-      alert("Please provide your email address before proceeding.");
+      showAlert("Please provide your email address before proceeding.", "warning");
       return;
     }
     if (typeof PaystackPop === "undefined") {
-      alert("Payment gateway not loaded yet. Please wait a moment.");
+      showAlert("Payment gateway not loaded yet. Please wait a moment.", "warning");
       return;
     }
 
@@ -156,10 +204,23 @@ const RentPlan = () => {
       email: userEmail,
       amount,
       ref,
-      onClose: () => alert("Payment window closed."),
+      onClose: () => showAlert("Payment window closed.", "info"),
+
+      // ✅ CHANGED: on success → show alert + return to previous page
       callback: (response: any) => {
-        alert("Payment successful! Reference: " + response.reference);
-        navigate("/studentplan");
+        if (response?.status === "success" || response?.reference) {
+          showAlert(
+            "Successful Transaction Please continue to confirm transactions",
+            "success"
+          );
+
+          // small delay so the toast is visible before navigation
+          setTimeout(() => {
+            goBackToPrevious();
+          }, 500);
+        } else {
+          showAlert("Transaction was not completed.", "warning");
+        }
       },
     });
 
@@ -181,7 +242,10 @@ const RentPlan = () => {
         </div>
 
         {/* Center: Logo */}
-        <div className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"  onClick = {() => navigate("/")}>
+        <div
+          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"
+          onClick={() => navigate("/")}
+        >
           <img
             src={logo}
             alt="Cribb.Africa Logo"
@@ -219,8 +283,6 @@ const RentPlan = () => {
       </nav>
 
       <div className="bg-[#F3EDFE] pb-10 min-h-screen place-items-center">
-        {/* Navbar */}
-
         {/* Header Section */}
         <div className="w-full  bg-[#1C0B3D] md:pb-8 pt-8 text-white shadow">
           <div className="mx-auto w-full max-w-6xl px-4">
@@ -243,12 +305,14 @@ const RentPlan = () => {
         {/* Pricing Section */}
         <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
           <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
+            {/* ✅ CHANGED: back button now returns to previous page */}
             <div
               className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
-              onClick={() => navigate("/studentdash?goto=subscriptions")}
+              onClick={goBackToPrevious}
             >
               <IoIosArrowBack className="text-white text-2xl" />
             </div>
+
             <Maincard className="bg-[#F4F6F5] pb-5">
               <SectionHeader
                 title="Plan"
@@ -279,7 +343,6 @@ const RentPlan = () => {
                           : "bg-white text-black border-gray-300 hover:bg-gray-100",
                       )}
                     >
-                      {/* ICONS */}
                       {plan === "INSTANT" && (
                         <MdOutlineFlashOn className="text-md md:text-2xl" />
                       )}
@@ -290,7 +353,6 @@ const RentPlan = () => {
                         <MdDoubleArrow className="text-md md:text-2xl" />
                       )}
 
-                      {/* TEXT */}
                       <span className="text-xs md:text-lg">{plan}</span>
                     </button>
                   );
@@ -366,24 +428,6 @@ const RentPlan = () => {
                   <DfButton onClick={handlePaystack}>NEXT</DfButton>
                 </div>
               </div>
-
-              {/*  <div
-              className="mt-1 mb-5 mx-5 md:w-95 border-t-4 md:mx-auto text-[#0000004D]"
-              style={{
-                borderStyle: "dashed",
-                borderImage:
-                  "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
-              }}
-            />
-            
-            <div className="w-full flex text-xs md:text-sm md:pt-5 justify-end px-5">
-              <span
-                className="text-[#0556F8] cursor-pointer shadow rounded-md bg-white py-1 px-2"
-                onClick={() => navigate("/businessdash?goto=subscriptions")}
-              >
-                Continue to Dashboard{" "}
-              </span>
-            </div>*/}
             </Maincard>
           </div>
         </section>
