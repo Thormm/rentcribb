@@ -4,18 +4,77 @@ import { IoIosArrowBack } from "react-icons/io";
 import { MdDoubleArrow, MdOutlineFlashOn } from "react-icons/md";
 import { BiWorld } from "react-icons/bi";
 import clsx from "clsx";
-
-import { useAlert } from "../../../App";
 import { DfButton } from "../../../components/Pill";
 import InfoPill from "../../../components/Pill";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
-import { useNavigate, useLocation } from "react-router-dom"; // ✅ CHANGED: added useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineTag } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
 import { HiOutlineUsers } from "react-icons/hi";
+import { useAlert } from "../../../App";
 
 declare const PaystackPop: any;
+
+/* ─────────────────────────────────────────────────────────────────────
+   Local origin-snapshot helpers — keyed to /rentplan.
+   Caller writes it before navigating here via `rememberRentPlanOrigin`.
+   ───────────────────────────────────────────────────────────────────── */
+const RETURN_PATH_KEY = "rentplan_return_path";
+const RETURN_STATE_KEY = "rentplan_return_state";
+
+type OriginSnapshot = { path: string; state: any };
+
+function rememberRentPlanOrigin(state: any = null) {
+  try {
+    sessionStorage.setItem(
+      RETURN_PATH_KEY,
+      window.location.pathname +
+        window.location.search +
+        window.location.hash,
+    );
+    if (state != null) {
+      sessionStorage.setItem(RETURN_STATE_KEY, JSON.stringify(state));
+    }
+  } catch (err) {
+    console.warn("[RentPlan] failed to store origin:", err);
+  }
+}
+
+export { rememberRentPlanOrigin };
+
+function readRentPlanOrigin(): OriginSnapshot | null {
+  const path = sessionStorage.getItem(RETURN_PATH_KEY);
+  if (!path) return null;
+
+  let state: any = null;
+  const rawState = sessionStorage.getItem(RETURN_STATE_KEY);
+  if (rawState) {
+    try {
+      state = JSON.parse(rawState);
+    } catch {
+      state = null;
+    }
+  }
+  return { path, state };
+}
+
+function clearRentPlanOrigin() {
+  sessionStorage.removeItem(RETURN_PATH_KEY);
+  sessionStorage.removeItem(RETURN_STATE_KEY);
+}
+
+function isAuthPath(p: string): boolean {
+  return (
+    p === "/login" ||
+    p === "/signup" ||
+    p.startsWith("/login?") ||
+    p.startsWith("/signup?") ||
+    p.includes("/forgotpassword")
+  );
+}
+
+/* ───────────────────────────── UI helpers ──────────────────────────── */
 
 function Maincard({
   className = "",
@@ -67,7 +126,8 @@ function Label({ children, className }: LabelProps) {
   );
 }
 
-// ✅ Pricing tables
+/* ───────────────────────────── Plans ─────────────────────────────── */
+
 const RentPlans = {
   INSTANT: {
     price: "₦5,000",
@@ -104,20 +164,20 @@ const RentPlans = {
   },
 };
 
+/* ───────────────────────────── Component ─────────────────────────── */
+
 const RentPlan = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ CHANGED
+  const location = useLocation();
+  const { showAlert } = useAlert();
+
   const [activePlan, setActivePlan] =
-  useState<keyof typeof RentPlans>("INSTANT");
+    useState<keyof typeof RentPlans>("INSTANT");
   const [email, setEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [user, setUser] = useState("");
-  const { showAlert } = useAlert();
-  // ✅ CHANGED: track where the user came from so we can return there
-  const previousLocationRef = useRef<string | null>(null);
-  const previousStateRef = useRef<any>(null);
 
-  // ✅ Load Paystack once
+  // ─── 1. Load Paystack once ───────────────────────────────────────────
   useEffect(() => {
     const src = "https://js.paystack.co/v1/inline.js";
     if (!document.querySelector(`script[src="${src}"]`)) {
@@ -128,52 +188,55 @@ const RentPlan = () => {
     }
   }, []);
 
-  // ✅ Fetch session data and set Rent/email/user
+  // ─── 2. Read login_data → email/user ─────────────────────────────────
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem("login_data") || "{}");
     if (data?.email) setLoginEmail(data.email);
     if (data?.user) setUser(data.user);
   }, [location.search]);
 
-  // ✅ CHANGED: figure out the previous page on mount
-  useEffect(() => {
-    // 1. Explicit state passed via navigate("/rentplan", { state: { from: "/studentdash?user=man" } })
-    if (location.state?.from) {
-      previousLocationRef.current = location.state.from;
-      previousStateRef.current = location.state.returnState ?? location.state;
+  // ─── 3. Back: snapshot → state.from → referrer → navigate(-1) ────────
+  const goBackToPrevious = () => {
+    // 1. Snapshot written by the caller via rememberRentPlanOrigin(...)
+    const snapshot = readRentPlanOrigin();
+    clearRentPlanOrigin();
+
+    if (snapshot?.path) {
+      if (/^https?:\/\//i.test(snapshot.path)) {
+        window.location.href = snapshot.path;
+        return;
+      }
+      navigate(snapshot.path, { state: snapshot.state ?? undefined });
       return;
     }
 
-    // 2. Browser referrer (works for full URLs / subdomains)
+    // 2. React Router state on this entry
+    const stateFrom = (location.state as any)?.from;
+    if (stateFrom) {
+      navigate(stateFrom, {
+        state: (location.state as any).returnState,
+      });
+      return;
+    }
+
+    // 3. Referrer — reject same path & auth pages
     const ref = document.referrer;
     if (ref && ref !== window.location.href) {
-      previousLocationRef.current = ref;
-      return;
+      try {
+        const u = new URL(ref);
+        const samePath =
+          u.origin === window.location.origin &&
+          u.pathname === location.pathname;
+        if (!samePath && !isAuthPath(u.pathname)) {
+          navigate(u.pathname + u.search);
+          return;
+        }
+      } catch {
+        /* non-URL referrer, ignore */
+      }
     }
 
-    // 3. Fallback: sessionStorage set by the page that linked here
-    const stored = sessionStorage.getItem("rentplan_return_to");
-    if (stored) previousLocationRef.current = stored;
-  }, [location]);
-
-  // ✅ CHANGED: single reusable "go back to previous page" helper
-  const goBackToPrevious = () => {
-    const backTo = previousLocationRef.current;
-    const backState = previousStateRef.current;
-
-    // A. External / absolute URL → hard redirect (subdomains, other sites)
-    if (backTo && /^https?:\/\//i.test(backTo)) {
-      window.location.href = backTo;
-      return;
-    }
-
-    // B. Internal path → React Router navigate (state preserved)
-    if (backTo && backTo.startsWith("/")) {
-      navigate(backTo, { state: backState ?? undefined });
-      return;
-    }
-
-    // C. Nothing stored → fall back to browser history
+    // 4. Nothing → browser history
     navigate(-1);
   };
 
@@ -187,15 +250,20 @@ const RentPlan = () => {
     const userEmail = email || loginEmail;
 
     if (!userEmail) {
-      showAlert("Please provide your email address before proceeding.", "warning");
+      showAlert(
+        "Please provide your email address before proceeding.",
+        "warning",
+      );
       return;
     }
     if (typeof PaystackPop === "undefined") {
-      showAlert("Payment gateway not loaded yet. Please wait a moment.", "warning");
+      showAlert(
+        "Payment gateway not loaded yet. Please wait a moment.",
+        "warning",
+      );
       return;
     }
 
-    // ✅ Use new reference format
     const random = Math.random().toString(36).substring(2, 10);
     const ref = `cribb_Rent_${extractAmount(current.price)}_${user}_${random}`;
 
@@ -205,16 +273,13 @@ const RentPlan = () => {
       amount,
       ref,
       onClose: () => showAlert("Payment window closed.", "info"),
-
-      // ✅ CHANGED: on success → show alert + return to previous page
       callback: (response: any) => {
         if (response?.status === "success" || response?.reference) {
           showAlert(
             "Successful Transaction Please continue to confirm transactions",
-            "success"
+            "success",
           );
 
-          // small delay so the toast is visible before navigation
           setTimeout(() => {
             goBackToPrevious();
           }, 500);
@@ -243,7 +308,7 @@ const RentPlan = () => {
 
         {/* Center: Logo */}
         <div
-          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3"
+          className="flex justify-start md:justify-center items-start gap-1 col-span-1 md:px-3 cursor-pointer"
           onClick={() => navigate("/")}
         >
           <img
@@ -261,7 +326,7 @@ const RentPlan = () => {
           </div>
         </div>
 
-        {/* Right: Toggle Button */}
+        {/* Right: Toggle to /roommateplan — replace: true so no shuffle */}
         <div className="flex justify-end md:justify-center items-center gap-2">
           <div className="md:hidden rounded-full bg-black p-2 shrink-0">
             <img
@@ -271,7 +336,7 @@ const RentPlan = () => {
             />
           </div>
           <button
-            onClick={() => navigate("/roommateplan")}
+            onClick={() => navigate("/roommateplan", { replace: true })}
             className="px-3 cursor-pointer md:px-5 py-2 md:py-3 bg-black flex items-center gap-2 text-white rounded-lg shadow-md whitespace-nowrap"
           >
             <HiOutlineUsers className="text-xs md:text-2xl" />
@@ -305,7 +370,7 @@ const RentPlan = () => {
         {/* Pricing Section */}
         <section className=" justify-center w-full px-4 md:w-[1200px] my-10 md:my-20 flex">
           <div className="relative justify-center w-full md:w-1/2 grid grid-cols-1">
-            {/* ✅ CHANGED: back button now returns to previous page */}
+            {/* Back button → previous page */}
             <div
               className="border-2 border-black absolute -top-3 -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
               onClick={goBackToPrevious}
