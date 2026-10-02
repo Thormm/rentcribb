@@ -10,6 +10,7 @@ import {
   FaCalendarAlt,
   FaShieldAlt,
   FaMapMarkerAlt,
+  FaTimes,
 } from "react-icons/fa";
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { TbUserSquare } from "react-icons/tb";
@@ -24,6 +25,8 @@ import { IoIosArrowBack } from "react-icons/io";
 import mapbanner from "../../../assets/mapbanner.png";
 import logo from "../../../assets/logo.png";
 import nigeriaflag from "../../../assets/nigeriaflag.png";
+import termsText from "../../../documents/terms.txt?raw";
+import privacyText from "../../../documents/privacy.txt?raw";
 
 interface LiveSpace {
   id: string;
@@ -263,7 +266,20 @@ export default function Hostelview() {
   const [agreed, setAgreed] = useState(false);
   const [booking, setBooking] = useState(false);
   const { showAlert } = useAlert();
+  const [terms_privacy, setTerms_privacy] = useState(false); // Controls modal visibility
+  const [docType, setDocType] = useState<"terms" | "privacy" | null>(null); // Which doc is shown
+  const [docText, setDocText] = useState(""); // The actual text content
+  const openTerms = () => {
+    setDocType("terms");
+    setDocText(termsText);
+    setTerms_privacy(true);
+  };
 
+  const openPrivacy = () => {
+    setDocType("privacy");
+    setDocText(privacyText);
+    setTerms_privacy(true);
+  };
   const handleBookInspection = async () => {
     if (!agreed) return;
 
@@ -991,7 +1007,7 @@ export default function Hostelview() {
                         <div className="inline-flex items-center justify-between w-full">
                           <span className="text-xs inline-flex items-center gap-2 rounded px-2 md:px-3 py-1 bg-black text-white">
                             <FaShieldAlt />
-                            TIER {host?.tier ?? "-"}
+                            TIER 1
                           </span>
 
                           <FaInfoCircle size={14} className="md:ml-auto" />
@@ -1143,40 +1159,69 @@ export default function Hostelview() {
 
                   {/* Terms */}
                   <div className="w-full flex flex-col items-center text-center mt-2">
-                    <label className="mt-2 flex items-center justify-center gap-2 text-sm text-center">
+                    <div className="flex items-center justify-center gap-2 mt-2">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-black"
                         checked={agreed}
                         onChange={(e) => setAgreed(e.target.checked)}
+                        id="agreeTerms"
+                        className="w-4 h-4 accent-black"
                       />
-                      <span>
+                      <label
+                        htmlFor="agreeTerms"
+                        className="text-sm md:text-md"
+                      >
                         I agree to the{" "}
-                        <span className="underline font-semibold text-[#0556F8]">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openTerms();
+                          }}
+                          className="underline font-semibold text-[#0556F8] cursor-pointer"
+                        >
                           Terms
-                        </span>{" "}
+                        </button>{" "}
                         and{" "}
-                        <span className="underline font-semibold text-[#0556F8]">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openPrivacy();
+                          }}
+                          className="underline font-semibold text-[#0556F8] cursor-pointer"
+                        >
                           Privacy Policy
-                        </span>{" "}
+                        </button>{" "}
                         of Cribb
-                      </span>
-                    </label>
+                      </label>
+                    </div>
                   </div>
 
                   {/* Connect */}
                   <div className="pt-2 w-full">
                     <button
-                      disabled={!agreed}
+                      disabled={!agreed || booking}
                       onClick={handleBookInspection}
                       className={clsx(
-                        "cursor-pointer text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
-                        agreed
-                          ? "bg-black text-white"
-                          : "bg-gray-400 text-white cursor-not-allowed",
+                        "text-lg md:text-2xl w-full flex items-center justify-center gap-2 rounded-full px-5 py-5 font-medium drop-shadow-lg",
+                        booking
+                          ? "bg-black text-white cursor-wait"
+                          : agreed
+                            ? "bg-black text-white cursor-pointer"
+                            : "bg-gray-400 text-white cursor-not-allowed",
                       )}
                     >
-                      Connect
+                      {booking ? (
+                        <>
+                          <AiOutlineLoading3Quarters className="animate-spin text-2xl md:text-3xl" />
+                          Connecting…
+                        </>
+                      ) : (
+                        "Connect"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1236,6 +1281,45 @@ export default function Hostelview() {
               </DfButton>
             </div>
           </div>
+
+          {terms_privacy && (
+            <div className="fixed inset-0 bg-black/90 z-50 scrollbar-hide overflow-y-scroll no-scrollbar">
+              <div className="relative mx-5 md:mx-auto my-10 md:w-2/5 bg-[#F4F6F5] border-3 rounded-4xl border-black p-6">
+                <div
+                  className="absolute -top-3 border-2 border-white -left-3 w-12 h-12 rounded-full bg-black flex items-center justify-center cursor-pointer"
+                  onClick={() => setTerms_privacy(false)}
+                >
+                  <FaTimes className="text-white text-2xl" />
+                </div>
+
+                <h2 className="text-2xl mt-5 font-medium text-center text-black">
+                  {docType === "terms" ? "Terms of Use" : "Privacy Policy"}
+                </h2>
+
+                <div
+                  className="mt-1 mb-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  style={{
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                  }}
+                />
+
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto text-sm text-black whitespace-pre-wrap">
+                  {docText}
+                </div>
+
+                <div
+                  className="mt-5 md:w-95 border-t-4 mx-auto text-[#0000004D]"
+                  style={{
+                    borderStyle: "dashed",
+                    borderImage:
+                      "repeating-linear-gradient(to right, currentColor 0, currentColor 10px, transparent 6px, transparent 24px) 1",
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </section>
 
         <Footer />

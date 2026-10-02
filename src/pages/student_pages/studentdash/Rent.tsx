@@ -4,7 +4,11 @@ import clsx from "clsx";
 import { BsQuestionCircle } from "react-icons/bs";
 import InfoPill from "../../../components/Pill";
 import { useNavigate } from "react-router-dom";
-import { MdOutlinePostAdd, MdLightbulbOutline } from "react-icons/md";
+import {
+  MdOutlinePostAdd,
+  MdLightbulbOutline,
+  MdOutlineAttachEmail,
+} from "react-icons/md";
 import { BiComment } from "react-icons/bi";
 import Card from "../../../components/Cards";
 import { HiOutlineUserCircle } from "react-icons/hi";
@@ -18,7 +22,6 @@ import { RiInformationLine, RiWhatsappLine } from "react-icons/ri";
 import { LuPencil } from "react-icons/lu";
 import { CgClose } from "react-icons/cg";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { HiOutlineMail } from "react-icons/hi";
 import { MdOutlineCall } from "react-icons/md";
 import { FiCopy } from "react-icons/fi";
 import Spaceholder from "../../../components/Spaceholder";
@@ -46,7 +49,6 @@ const states = [
   { value: "rivers", label: "Rivers" },
 ];
 
-
 async function getRepliesSpaces(
   responses: string[],
   declined: string[] = [],
@@ -67,8 +69,6 @@ async function getRepliesSpaces(
 
   return data.groups || [];
 }
-
-
 
 function RequestsCards({
   setShowFirst,
@@ -158,10 +158,8 @@ function RequestsCards({
       .finally(() => setLoading(false));
   }, []);
 
-  if(draftItems.length === 0){
-    return(
-      <Spaceholder />
-    )
+  if (draftItems.length === 0) {
+    return <Spaceholder />;
   }
 
   const itemsPerPage = 10;
@@ -374,7 +372,6 @@ function RequestsCards({
     </div>
   );
 }
-
 
 // ----------------------- Paginated Cards -----------------------
 function RequestsResponses({
@@ -677,6 +674,8 @@ interface DraftItem {
   whatsapp: string;
   status: string;
   space_name: string;
+  uploader: string;
+  created: string;
 }
 
 // ----------------------- Paginated Drafts -----------------------
@@ -709,12 +708,14 @@ function PaginatedHost() {
 
         const data = await res.json();
         setDraftItems(
-          data.map((b: any) => ({
-            id: b.id,
+          data.map((b: any, i: number) => ({
+            id: i + 1, // 👈 1, 2, 3, ...
             name: b.name ?? "Unknown",
             email: b.email ?? "",
             call: b.call ?? "",
             whatsapp: b.whatsapp ?? "",
+            uploader: b.uploader ?? "",
+            created: b.created ?? "",
           })),
         );
       } catch (err) {
@@ -726,9 +727,7 @@ function PaginatedHost() {
   }, []);
 
   if (draftItems.length === 0) {
-    return(
-      <Spaceholder />
-    )
+    return <Spaceholder />;
   }
 
   const totalPages = Math.ceil(draftItems.length / itemsPerPage);
@@ -754,32 +753,26 @@ function PaginatedHost() {
         }}
       >
         {currentData.map((item) => (
-          <div
-            key={item.id}
-            className="flex gap-6 items-center"
-          >
+          <div key={item.id} className="flex gap-6 items-center">
             <div className="grid  w-full">
               {/* Left card */}
-              <div
-                className={clsx(
-                  "flex-1 border-black rounded-4xl border shadow-sm",
-                  "min-h-[40px] md:min-h-[60px] flex flex-col justify-center self-center cursor-pointer", // <--- add self-start
-                )}
-              >
+              <div className="flex-1 border-black rounded-4xl border px-6 py-4 shadow-sm relative">
                 {/* Header row */}
-                <div className="grid grid-cols-[auto_1fr_auto] items-center min-w-[250px] px-3 py-3 gap-3">
-                  <div className="flex justify-center">
+                <div className="flex items-center">
+                  <div className="w-6 h-6 flex items-center justify-center text-black">
                     <HiOutlineUserCircle className="w-7 h-7 text-black" />
                   </div>
 
-                  <div className="truncate justify-center text-center items-center text-xs md:text-sm text-black">
-                    {item.name?.length > 20
-                      ? item.name.slice(0, 20) + "…"
-                      : item.name}
+                  <div className="flex flex-grow items-center gap-5 px-4">
+                    <span className="text-xs md:text-sm text-black font-normal truncate">
+                      {item.name?.length > 20
+                        ? item.name.slice(0, 20) + "…"
+                        : item.name}
+                    </span>
                   </div>
 
-                  <span
-                    className="flex justify-center cursor-pointer"
+                  <button
+                    className="w-6 h-6 flex items-center justify-center"
                     onClick={() =>
                       setExpandedLeft((prev) => ({
                         ...prev,
@@ -792,22 +785,23 @@ function PaginatedHost() {
                     ) : (
                       <IoIosArrowDown className="w-7 h-7 text-black" />
                     )}
-                  </span>
+                  </button>
                 </div>
 
                 {/* Row 2 icons */}
                 {expandedLeft[item.id] && (
-                  <div className="flex items-center text-black justify-between mt-4 px-4 md:px-6">
-                    <div className="flex gap-2 md:gap-3">
+                  <div className="flex items-center text-black justify-between mt-3 md:px-8">
+                    <span className="text-xs">{item.created}</span>
+
+                    <div className="flex gap-1 md:gap-3">
                       <div
                         className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
                         onClick={() =>
                           (window.location.href = `mailto:${item.email}`)
                         }
                       >
-                        <HiOutlineMail className="w-4 h-4" />
+                        <MdOutlineAttachEmail className="w-4 h-4" />
                       </div>
-
                       <div
                         className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
                         onClick={() =>
@@ -816,7 +810,6 @@ function PaginatedHost() {
                       >
                         <MdOutlineCall className="w-4 h-4" />
                       </div>
-
                       <div
                         className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
                         onClick={() =>
@@ -828,14 +821,22 @@ function PaginatedHost() {
                       >
                         <RiWhatsappLine className="w-4 h-4" />
                       </div>
+                      <div
+                        className="w-8 h-8 rounded-full bg-black shadow flex items-center justify-center cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/connected?uploader=${item.whatsapp}&&type=${item.uploader}`)
+                        }
+                      >
+                        <FaArrowRight className="w-4 h-4 text-white" />
+                      </div>
                     </div>
                   </div>
                 )}
 
-                {/* Expanded contact info */}
+                {/* Expanded Section with Copy */}
                 {expandedLeft[item.id] && (
-                  <div className="m-4 bg-white rounded-xl border p-4 md:p-6 text-black shadow-sm">
-                    <div className="space-y-4">
+                  <div className="mt-4 bg-white rounded-xl border p-2 md:p-4 md:px-8 text-black shadow-sm">
+                    <div className="space-y-3">
                       {[
                         { label: "Email", value: item.email },
                         { label: "Call no.", value: item.call },
@@ -848,19 +849,23 @@ function PaginatedHost() {
                           <span className="text-xs md:text-base font-semibold">
                             {field.label}
                           </span>
-                          <div className="flex items-center pl-4">
+
+                          <div className="flex items-center gap-2">
                             <span className="text-xs md:text-base truncate">
-                              {field.value?.length > 14
-                                ? field.value.slice(0, 14) + "…"
-                                : field.value}
+                              {" "}
+                              {field.value?.length > 15
+                                ? field.value.slice(0, 15) + "…"
+                                : field.value}{" "}
                             </span>
                             <FiCopy
-                              className="w-4 h-4 cursor-pointer"
+                              className="w-4 h-4 cursor-pointer hover:text-black transition"
                               onClick={() =>
                                 handleCopy(field.label, field.value)
                               }
                             />
                           </div>
+
+                          {/* Modal / small alert */}
                           {copiedField === field.label && (
                             <div className="absolute -top-6 right-0 bg-black text-white text-xs px-2 py-1 rounded shadow-md">
                               Copied!
@@ -909,7 +914,6 @@ export default function Rent() {
   const [stateValue, setStateValue] = useState("");
   const [showFirst, setShowFirst] = useState(true); // default: first section visible
   const navigate = useNavigate();
-  
 
   return (
     <div className="bg-white md:py-10 mb-10">

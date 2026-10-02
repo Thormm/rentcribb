@@ -10,9 +10,9 @@ import {
   FaUser,
   FaClipboardList,
 } from "react-icons/fa";
-import { HiOutlineMail, HiOutlineUserCircle } from "react-icons/hi";
+import { HiOutlineUserCircle } from "react-icons/hi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { MdOutlineCall } from "react-icons/md";
+import { MdOutlineCall, MdOutlineAttachEmail } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
 import { FiCopy } from "react-icons/fi";
 import { useLocation } from "react-router-dom";
@@ -210,7 +210,7 @@ export default function Hostelview() {
   };
 
   return (
-    <div className="bg-[#F3EDFE]">
+    <div>
       <section className="my-10">
         <div className="px-0 md:px-25 mx-2 grid grid-cols-1 gap-14 md:grid-cols-2">
           {/* LEFT STACK */}
@@ -409,7 +409,7 @@ export default function Hostelview() {
                                 (window.location.href = `mailto:${mockItem.email}`)
                               }
                             >
-                              <HiOutlineMail className="w-4 h-4" />
+                              <MdOutlineAttachEmail className="w-4 h-4" />
                             </div>
                             <div
                               className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center cursor-pointer"
