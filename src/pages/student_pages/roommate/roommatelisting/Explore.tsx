@@ -513,7 +513,7 @@ export default function Explore() {
         </div>
       </section>
 
-      <Footer bgColor="#3A2A05" iconBgColor="#EBD96B" />
+      <Footer bgColor="#3A2A05" />
     </div>
   );
 }

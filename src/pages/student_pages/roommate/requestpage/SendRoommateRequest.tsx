@@ -1104,7 +1104,7 @@ export default function SendRoommateRequest() {
             </div>
           </div>
         )}
-        <Footer bgColor="#3A2A05" iconBgColor="#EBD96B" />
+        <Footer bgColor="#3A2A05" />
       </div>
     </>
   );
