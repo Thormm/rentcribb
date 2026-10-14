@@ -14,7 +14,7 @@ import {
 
 import Navbar from "./components/Navbar";
 import AlertBox from "./components/AlertBox";
-
+import NotFoundPage from "./components/NotFoundPage";
 import publicRoutes from "./routes/PublicRoute";
 import studentRoutes from "./routes/StudentRoute";
 import businessRoutes from "./routes/BusinessRoute";
@@ -169,6 +169,8 @@ export default function App() {
       {
         element: <Layout />,
         children: routes,
+
+        errorElement: <NotFoundPage />,
       },
     ]);
     setRouter(newRouter);
