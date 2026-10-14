@@ -117,13 +117,10 @@ const Overview = () => {
   const [activeTab, setActiveTab] = useState("Profile");
   const [feedback, setFeedback] = useState("");
   const [isSending, setIsSending] = useState(false);
-
   const [showStateModal, setShowStateModal] = useState(false);
-
   // Controls read-only + save button visibility
   const [isProfileLocked, setIsProfileLocked] = useState(false);
   const [isKinLocked, setIsKinLocked] = useState(false);
-
   // profile states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -136,16 +133,16 @@ const Overview = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [institution, setInstitution] = useState<any | null>(null);
   const [localImageFile, setLocalImageFile] = useState<File | null>(null);
-
   // next of kin
   const [kinFirst, setKinFirst] = useState("");
   const [kinLast, setKinLast] = useState("");
   const [kinCall, setKinCall] = useState("");
   const [kinWhats, setKinWhats] = useState("");
   const [kinEmail, setKinEmail] = useState("");
-
   const [stateSearch, setStateSearch] = useState("");
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingKin, setIsSavingKin] = useState(false);
 
   useEffect(() => {
     if (showStateModal) {
@@ -287,9 +284,9 @@ const Overview = () => {
 
   // Save profile (including optional image)
   const saveProfile = async () => {
+    if (isSavingProfile) return;
     if (!validateProfile()) return;
 
-    // ✅ Block saving if no profile image
     if (!localImageFile && !profileImage) {
       alert("Please upload a profile image before saving.");
       return;
@@ -299,7 +296,6 @@ const Overview = () => {
     const user = login?.user || "";
     const signup_key = login?.signup_key || "";
 
-    // Use FormData if image present (multipart)
     const form = new FormData();
     form.append("action", "overviewupdate_profile_student");
     form.append("user", user);
@@ -312,10 +308,10 @@ const Overview = () => {
       form.append("profile_image", localImageFile);
     }
 
+    setIsSavingProfile(true);
     try {
       const res = await fetch(SAVE_URL, {
         method: "POST",
-        // NO content-type header with FormData
         body: form,
       });
       const data = await res.json();
@@ -325,7 +321,7 @@ const Overview = () => {
           setProfileImage(data.profile_image);
         }
         setLocalImageFile(null);
-        setIsProfileLocked(true); // 🔒 lock fields after saving
+        setIsProfileLocked(true);
       } else {
         alert(data.message || "Failed to save profile. Try again.");
       }
@@ -333,11 +329,14 @@ const Overview = () => {
     } catch (err) {
       console.error("Save profile error:", err);
       alert("Network error while saving profile.");
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
   // Save next of kin (separate action)
   const saveNextOfKin = async () => {
+    if (isSavingKin) return;
     if (!validateKin()) return;
 
     const login = getLoginData();
@@ -355,18 +354,17 @@ const Overview = () => {
       kin_email: kinEmail,
     };
 
+    setIsSavingKin(true);
     try {
       const res = await fetch(SAVE_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success) {
         alert(data.message || "Next of kin saved.");
-        setIsKinLocked(true); // 🔒 lock kin fields after saving
+        setIsKinLocked(true);
       } else {
         alert(data.message || "Failed to save next of kin.");
       }
@@ -374,6 +372,8 @@ const Overview = () => {
     } catch (err) {
       console.error("Save kin error:", err);
       alert("Network error while saving next of kin.");
+    } finally {
+      setIsSavingKin(false);
     }
   };
 
@@ -381,10 +381,7 @@ const Overview = () => {
   const handleSave = () => {
     if (activeTab === "Profile") saveProfile();
     else if (activeTab === "Next of Kin") saveNextOfKin();
-    else {
-      // Keep Feedback and Verify ID unchanged behaviour - fallback
-      console.log("Save requested on tab:", activeTab);
-    }
+    else console.log("Save requested on tab:", activeTab);
   };
 
   const handleSendFeedback = async () => {
@@ -634,9 +631,10 @@ const Overview = () => {
                   <div className="flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="cursor-pointer py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg"
+                      disabled={isSavingProfile}
+                      className="cursor-pointer py-3 text-md px-4 text-white font-medium bg-black shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      SAVE CHANGES
+                      {isSavingProfile ? "SAVING..." : "SAVE CHANGES"}
                     </button>
                   </div>
                 )}
@@ -766,9 +764,10 @@ const Overview = () => {
                   <div className="mt-10 mb-2 flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
+                      disabled={isSavingKin}
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      SAVE CHANGES
+                      {isSavingKin ? "SAVING..." : "SAVE CHANGES"}
                     </button>
                   </div>
                 )}
@@ -900,7 +899,7 @@ const Overview = () => {
                   <button
                     onClick={handleSendFeedback}
                     disabled={isSending}
-                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
+                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {isSending ? "SENDING..." : "SEND"}
                   </button>

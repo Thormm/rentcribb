@@ -148,6 +148,10 @@ const Overview = () => {
   const [stateSearch, setStateSearch] = useState("");
   const searchRef = useRef<HTMLInputElement | null>(null);
 
+  // === loading states for save buttons ===
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingKin, setIsSavingKin] = useState(false);
+
   useEffect(() => {
     if (showStateModal) {
       setTimeout(() => searchRef.current?.focus(), 100);
@@ -308,6 +312,7 @@ const Overview = () => {
 
   // Save profile (including optional image)
   const saveProfile = async () => {
+    if (isSavingProfile) return;
     if (!validateProfile()) return;
 
     // ✅ Block saving if no profile image
@@ -333,6 +338,7 @@ const Overview = () => {
       form.append("profile_image", localImageFile);
     }
 
+    setIsSavingProfile(true);
     try {
       const res = await fetch(SAVE_URL, {
         method: "POST",
@@ -354,11 +360,14 @@ const Overview = () => {
     } catch (err) {
       console.error("Save profile error:", err);
       showAlert("Network error while saving profile.", "warning");
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
   // Save next of kin (separate action)
   const saveNextOfKin = async () => {
+    if (isSavingKin) return;
     if (!validateKin()) return;
 
     const login = getLoginData();
@@ -376,6 +385,7 @@ const Overview = () => {
       kin_email: kinEmail,
     };
 
+    setIsSavingKin(true);
     try {
       const res = await fetch(SAVE_URL, {
         method: "POST",
@@ -395,6 +405,8 @@ const Overview = () => {
     } catch (err) {
       console.error("Save kin error:", err);
       showAlert("Network error while saving next of kin.", "warning");
+    } finally {
+      setIsSavingKin(false);
     }
   };
 
@@ -637,9 +649,10 @@ const Overview = () => {
                   <div className="flex justify-center mb-3">
                     <button
                       onClick={handleSave}
-                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
+                      disabled={isSavingProfile}
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      SAVE CHANGES
+                      {isSavingProfile ? "SAVING..." : "SAVE CHANGES"}
                     </button>
                   </div>
                 )}
@@ -769,9 +782,10 @@ const Overview = () => {
                   <div className="mt-10 mb-2 flex justify-center">
                     <button
                       onClick={handleSave}
-                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
+                      disabled={isSavingKin}
+                      className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      SAVE CHANGES
+                      {isSavingKin ? "SAVING..." : "SAVE CHANGES"}
                     </button>
                   </div>
                 )}
@@ -900,7 +914,7 @@ const Overview = () => {
                   <button
                     onClick={handleSendFeedback}
                     disabled={isSending}
-                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg"
+                    className="text-white bg-black cursor-pointer py-2 px-3 md:py-3 md:px-6 text-sm md:text-md font-medium shadow-lg rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {isSending ? "SENDING..." : "SEND"}
                   </button>
