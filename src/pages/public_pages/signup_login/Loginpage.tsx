@@ -15,6 +15,7 @@ import { PiHouse } from "react-icons/pi";
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Maincard({
   className,
@@ -86,18 +87,31 @@ function InputField({
   value: string;
   onChange: (val: string) => void;
 }) {
+  const [show, setShow] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <div className="space-y-1">
       <Label className="ml-6">{label}</Label>
       <InfoPill className="bg-white border border-black">
         <div className="inline-flex items-center justify-between w-full">
           <input
-            type={type}
+            type={isPassword && show ? "text" : type}
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="w-full appearance-none bg-transparent text-xs md:text-sm outline-none"
           />
+          {isPassword && (
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              className="ml-2 text-black shrink-0"
+              aria-label={show ? "Hide password" : "Show password"}
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          )}
         </div>
       </InfoPill>
     </div>
@@ -235,15 +249,15 @@ export default function Loginpage() {
               whats: data.whats,
             }),
           );
-          alert("Continue Registration");
+          showAlert("Continue Registration", "success");
           window.location.href = "/signup";
         }
       } else {
-        alert(data.message || "Login failed");
+        showAlert(data.message || "Login failed", "warning");
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Something went wrong. Try again.");
+      showAlert("Something went wrong. Try again.", "warning");
     } finally {
       setLoading(false);
     }

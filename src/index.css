@@ -27,3 +27,9 @@ body {
 aside::-webkit-scrollbar {
   display: none;
 }
+
+/* Hide native browser password reveal (Edge/IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
