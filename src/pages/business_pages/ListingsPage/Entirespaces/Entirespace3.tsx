@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import imageCompression from "browser-image-compression";
 import type { ChangeEvent } from "react";
 import imgright from "../../../../assets/list3.png";
 import { DfButton } from "../../../../components/Pill";
@@ -133,6 +134,23 @@ export default function Entirespace3({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
+  /* ----------------- Image compression helper ----------------- */
+  const compressImage = async (file: File): Promise<File> => {
+    if (!file.type.startsWith("image/")) return file;
+
+    const out = await imageCompression(file, {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1600,
+      useWebWorker: true,
+      fileType: "image/webp",
+      initialQuality: 0.82,
+    });
+
+    return new File([out], file.name.replace(/\.[^.]+$/, "") + ".webp", {
+      type: "image/webp",
+    });
+  };
+
   // fetch institutes
   useEffect(() => {
     fetch("https://www.cribb.africa/apigets.php", {
@@ -173,7 +191,7 @@ export default function Entirespace3({
     .filter(Boolean);
 
   /* ----------------- File select handler ----------------- */
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (!files) return;
 
@@ -185,20 +203,20 @@ export default function Entirespace3({
         return;
       }
 
-      // Replace photos with newly selected File objects
-      setFormData((prev: any) => ({ ...prev, photos: selected }));
-
-      // Simulated quick progress for selection feedback
-      setPhotoUploadProgress(0);
-      let p = 0;
-      const t = setInterval(() => {
-        p += 20;
-        setPhotoUploadProgress(Math.min(100, p));
-        if (p >= 100) {
-          clearInterval(t);
-          setTimeout(() => setPhotoUploadProgress(0), 700);
-        }
-      }, 120);
+      setPhotoUploadProgress(1);
+      try {
+        const compressed = await Promise.all(
+          selected.map((f) => compressImage(f)),
+        );
+        setFormData((prev: any) => ({ ...prev, photos: compressed }));
+      } catch (err) {
+        console.error("Image compression failed:", err);
+        // fall back to raw files so user isn't blocked
+        setFormData((prev: any) => ({ ...prev, photos: selected }));
+      } finally {
+        setPhotoUploadProgress(0);
+      }
+      return;
     }
 
     if (name === "video") {
@@ -220,20 +238,11 @@ export default function Entirespace3({
         }
 
         setFormData((prev: any) => ({ ...prev, video: file }));
-
         setVideoUploadProgress(0);
-        let p = 0;
-        const t = setInterval(() => {
-          p += 25;
-          setVideoUploadProgress(Math.min(100, p));
-          if (p >= 100) {
-            clearInterval(t);
-            setTimeout(() => setVideoUploadProgress(0), 700);
-          }
-        }, 140);
       };
 
       videoEl.onerror = () => {
+        URL.revokeObjectURL(url);
         alert("Unable to read video. Try another file.");
       };
     }
@@ -241,7 +250,9 @@ export default function Entirespace3({
 
   /* ----------------- Submit (XHR for progress) ----------------- */
   const handleSubmit = async () => {
-    const selectedUniversities = JSON.parse(formData.target_university || "[]");
+    const selectedUniversities = JSON.parse(
+      formData.target_university || "[]",
+    );
 
     if (
       selectedUniversities.length === 0 ||
@@ -302,9 +313,6 @@ export default function Entirespace3({
                 setStatusMessage("Saved successfully!");
                 setUploadProgress(100);
 
-                // If backend returned final filenames, convert to URLs and store
-                // backend response keys used by the patched PHP:
-                // resp.photos_final (array of filenames) and resp.video_final (filename)
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
                   const base = `https://www.cribb.africa/uploads/entire_spaces/${user}`;
                   const urls = resp.photos_final.map((fn: string) =>
@@ -323,9 +331,7 @@ export default function Entirespace3({
                     (resp.video_final.startsWith("http://") ||
                       resp.video_final.startsWith("https://"))
                       ? resp.video_final
-                      : resp.video_final
-                        ? `${base}/${resp.video_final}`
-                        : null;
+                      : `${base}/${resp.video_final}`;
                   setFormData((prev: any) => ({ ...prev, video: vUrl }));
                 }
 
@@ -338,7 +344,7 @@ export default function Entirespace3({
               } else {
                 reject(resp?.message || "Upload failed");
               }
-            } catch (err) {
+            } catch {
               reject("Invalid server response");
             }
           }
@@ -533,9 +539,11 @@ export default function Entirespace3({
                       <span className="text-xs text-gray-500">
                         {formData.photos?.length
                           ? `Photos (${formData.photos.length})`
-                          : "Add Photo"}{photoUploadProgress > 0 &&
+                          : "Add Photo"}
+                        {photoUploadProgress > 0 &&
                           photoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
+                              {" "}
                               {photoUploadProgress}%
                             </span>
                           )}
@@ -567,7 +575,8 @@ export default function Entirespace3({
                     <div className="flex items-center gap-3 py-1">
                       <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
                       <span className="text-xs text-gray-500">
-                        {formData.video ? "Video (1)" : "Add Video"} {videoUploadProgress > 0 &&
+                        {formData.video ? "Video (1)" : "Add Video"}{" "}
+                        {videoUploadProgress > 0 &&
                           videoUploadProgress < 100 && (
                             <span className="text-xs text-[#2b8a3e]">
                               {videoUploadProgress}%
