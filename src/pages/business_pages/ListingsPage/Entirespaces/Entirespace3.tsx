@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { IoCameraOutline } from "react-icons/io5";
 import { AiOutlineVideoCameraAdd } from "react-icons/ai";
 import { PiHouse } from "react-icons/pi";
+import { useAlert } from "../../../../App";
 
 function Maincard({
   className = "",
@@ -111,7 +112,7 @@ const ALL_FEATURES = [
 ];
 
 /* ---------- Constants ---------- */
-const MAX_VIDEO_BYTES = 60 * 1024 * 1024; // 60 MB
+const MAX_VIDEO_BYTES = 200 * 1024 * 1024; // 200 MB
 const PHOTO_COUNT = 5;
 const RETRIES = 3;
 const MULTIPART_CHUNK = 5 * 1024 * 1024; // 5 MB per part
@@ -180,7 +181,7 @@ export default function Entirespace3({
   const [showAllFeaturesModal, setShowAllFeaturesModal] = useState(false);
   const [showSpecialFeatureModal, setShowSpecialFeatureModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
+  const { showAlert } = useAlert();
   const [photoUploadProgress, setPhotoUploadProgress] = useState<number>(0);
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -472,7 +473,7 @@ export default function Entirespace3({
       setPhotoUploadProgress(0);
     } catch (err) {
       console.error(err);
-      alert("Photo upload failed. Please try again.");
+      showAlert("Photo upload failed. Please try again.", "warning");
       setPhotoUploadProgress(0);
     } finally {
       setPhotosBusy(false);
@@ -502,7 +503,7 @@ export default function Entirespace3({
       setVideoUploadProgress(0);
     } catch (err) {
       console.error(err);
-      alert("Video upload failed. Please try again.");
+      showAlert("Video upload failed. Please try again.", "warning");
       setVideoUploadProgress(0);
     } finally {
       setVideoBusy(false);
@@ -519,8 +520,9 @@ export default function Entirespace3({
     if (name === "photos") {
       const selected = Array.from(files);
       if (selected.length !== PHOTO_COUNT) {
-        alert(
+        showAlert(
           `You must select exactly ${PHOTO_COUNT} photos at once. You selected ${selected.length}.`,
+          "info", true
         );
         inputEl.value = "";
         return;
@@ -533,10 +535,11 @@ export default function Entirespace3({
       const file = files[0];
       if (!file) return;
       if (file.size > MAX_VIDEO_BYTES) {
-        alert(
+        showAlert(
           `Video is too large (${(file.size / 1024 / 1024).toFixed(
             1,
           )} MB). Max ${MAX_VIDEO_BYTES / 1024 / 1024} MB.`,
+          "info", true
         );
         inputEl.value = "";
         return;
@@ -548,7 +551,7 @@ export default function Entirespace3({
       v.onloadedmetadata = () => {
         URL.revokeObjectURL(url);
         if (v.duration > 120) {
-          alert("Video must not exceed 2 minutes (120 seconds).");
+          showAlert("Video must not exceed 2 minutes (120 seconds).", "info", true);
           inputEl.value = "";
           return;
         }
@@ -556,7 +559,7 @@ export default function Entirespace3({
       };
       v.onerror = () => {
         URL.revokeObjectURL(url);
-        alert("Unable to read video. Try another file.");
+        showAlert("Unable to read video. Try another file.", "info", true);
         inputEl.value = "";
       };
     }
@@ -663,7 +666,7 @@ export default function Entirespace3({
       console.error(err);
       setLoading(false);
       setUploadProgress(0);
-      alert(typeof err === "string" ? err : err?.message || "Save failed");
+      showAlert(typeof err === "string" ? err : err?.message || "Save failed", "warning");
     }
   };
 
@@ -815,7 +818,7 @@ export default function Entirespace3({
                   </div>
                   <div className="flex justify-center mt-1 mx-2 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
-                      select exactly 5 photos at once
+                      add a sum of 5 photos that shows overall view of the space features
                     </span>
                   </div>
                 </div>
@@ -846,7 +849,7 @@ export default function Entirespace3({
                   </div>
                   <div className="flex justify-center mt-1 mx-2 md:mx-5">
                     <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
-                      2 min max, 60 MB max, resumable
+                      add a 2mins video that shows detailed & quick overall view of the space.
                     </span>
                   </div>
                 </div>
