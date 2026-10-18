@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import imageCompression from "browser-image-compression";
 import type { ChangeEvent } from "react";
 import imgright from "../../../../assets/list3.png";
 import { DfButton } from "../../../../components/Pill";
@@ -66,7 +67,6 @@ interface Institute {
   institution: string;
 }
 
-/* ---------- features list ---------- */
 const ALL_FEATURES = [
   "Parking Space",
   "Fenced",
@@ -110,6 +110,60 @@ const ALL_FEATURES = [
   "Fridge",
 ];
 
+/* ---------- Constants ---------- */
+const MAX_VIDEO_BYTES = 60 * 1024 * 1024; // 60 MB
+const PHOTO_COUNT = 5;
+const RETRIES = 3;
+const MULTIPART_CHUNK = 5 * 1024 * 1024; // 5 MB per part
+const API_CLOUD = "https://www.cribb.africa/cloud_r2_api.php"; // all R2 actions
+const API_SAVE = "https://www.cribb.africa/api_save.php"; // shared_space3
+
+/* ---------- Worker pool for compression ---------- */
+const compressPool = async (
+  files: File[],
+  concurrency = 3,
+  onEach?: (done: number) => void,
+): Promise<File[]> => {
+  const results: File[] = new Array(files.length);
+  let idx = 0;
+  let done = 0;
+
+  const worker = async () => {
+    while (true) {
+      const i = idx++;
+      if (i >= files.length) return;
+      const file = files[i];
+      try {
+        if (!file.type.startsWith("image/")) {
+          results[i] = file;
+        } else {
+          const out = await imageCompression(file, {
+            maxSizeMB: 0.15,
+            maxWidthOrHeight: 1280,
+            useWebWorker: true,
+            fileType: "image/webp",
+            initialQuality: 0.72,
+          });
+          results[i] = new File(
+            [out],
+            file.name.replace(/\.[^.]+$/, "") + ".webp",
+            { type: "image/webp" },
+          );
+        }
+      } catch {
+        results[i] = file;
+      }
+      done++;
+      onEach?.(done);
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, files.length) }, worker),
+  );
+  return results;
+};
+
 export default function Sharedspace3({
   formData,
   setFormData,
@@ -127,13 +181,14 @@ export default function Sharedspace3({
   const [showSpecialFeatureModal, setShowSpecialFeatureModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  // upload progress states
   const [photoUploadProgress, setPhotoUploadProgress] = useState<number>(0);
   const [videoUploadProgress, setVideoUploadProgress] = useState<number>(0);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
-  // fetch institutes
+  const [photosBusy, setPhotosBusy] = useState(false);
+  const [videoBusy, setVideoBusy] = useState(false);
+
   useEffect(() => {
     fetch("https://www.cribb.africa/apigets.php", {
       method: "POST",
@@ -154,100 +209,379 @@ export default function Sharedspace3({
   }, []);
 
   /* ----------------- Helpers ----------------- */
+  const getSrc = (p: any) =>
+    !p ? null : p instanceof File ? URL.createObjectURL(p) : p;
 
-  // get preview src for File or URL string
-  const getSrc = (p: any) => {
-    if (!p) return null;
-    return p instanceof File ? URL.createObjectURL(p) : p;
-  };
-
-  // truncate helper
-  const truncateText = (text: string, maxLength: number = 20) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
+  const truncateText = (text: string, maxLength: number = 20) =>
+    !text
+      ? ""
+      : text.length > maxLength
+        ? text.slice(0, maxLength) + "..."
+        : text;
 
   const selectedFeatures = (formData.all_feature || "")
     .split(",")
     .map((s: string) => s.trim())
     .filter(Boolean);
 
+  /* ----------------- R2 helpers (all go to cloud_api.php) ----------------- */
+  const deleteFromR2 = async (urls: string[]) => {
+    const clean = urls.filter(
+      (u) => typeof u === "string" && /^https?:\/\//.test(u),
+    );
+    if (!clean.length) return;
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    const fd = new URLSearchParams({
+      action: "delete_r2_objects",
+      user: login?.user || "",
+      signup_key: login?.signup_key || "",
+      urls: JSON.stringify(clean),
+    });
+    try {
+      await fetch(API_CLOUD, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: fd.toString(),
+        credentials: "include",
+      });
+    } catch (err) {
+      console.warn("R2 delete failed:", err);
+    }
+  };
+
+  const presignBatch = async (
+    items: { filename: string; content_type: string }[],
+    folder = "shared_spaces",
+  ): Promise<{ upload_url: string; public_url: string; key: string }[]> => {
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+    const fd = new URLSearchParams({
+      action: "get_r2_presigned_batch",
+      user: login?.user || "",
+      signup_key: login?.signup_key || "",
+      folder,
+      items: JSON.stringify(items),
+    });
+    const resp = await fetch(API_CLOUD, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: fd.toString(),
+      credentials: "include",
+    }).then((r) => r.json());
+    if (!resp.success) throw new Error(resp.message || "Presign batch failed");
+    return resp.urls;
+  };
+
+  /* PUT with retry (used for photo chunks AND video parts) */
+  const putWithRetry = (
+    url: string,
+    blob: Blob,
+    contentType?: string,
+  ): Promise<string> => {
+    const attempt = (n: number): Promise<string> =>
+      new Promise<string>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", url);
+        if (contentType) xhr.setRequestHeader("Content-Type", contentType);
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const etag = xhr.getResponseHeader("ETag") || "";
+            resolve(etag.replace(/"/g, ""));
+          } else if (n < RETRIES) {
+            setTimeout(() => attempt(n + 1).then(resolve, reject), 400 * n);
+          } else {
+            reject(new Error("PUT failed: " + xhr.status));
+          }
+        };
+        xhr.onerror = () => {
+          if (n < RETRIES)
+            setTimeout(() => attempt(n + 1).then(resolve, reject), 400 * n);
+          else reject(new Error("Network error during PUT"));
+        };
+        xhr.send(blob);
+      });
+    return attempt(1);
+  };
+
+  /* ------------- MULTIPART RESUME for VIDEO ------------- */
+  const uploadVideoMultipart = async (
+    file: File,
+    onProgress: (p: number) => void,
+    folder = "shared_spaces",
+  ): Promise<string> => {
+    const login = JSON.parse(sessionStorage.getItem("login_data") || "{}");
+
+    // 1) start multipart upload
+    const startFd = new URLSearchParams({
+      action: "r2_multipart_start",
+      user: login?.user || "",
+      signup_key: login?.signup_key || "",
+      folder,
+      filename: file.name,
+      content_type: file.type || "application/octet-stream",
+    });
+
+    const startResp = await fetch(API_CLOUD, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: startFd.toString(),
+      credentials: "include",
+    }).then((r) => r.json());
+
+    if (!startResp.success)
+      throw new Error(startResp.message || "Multipart start failed");
+
+    const uploadKey: string = startResp.key;
+    const uploadId: string = startResp.upload_id;
+    const finalPublicUrl: string = startResp.public_url;
+
+    // 2) upload each chunk
+    const totalParts = Math.ceil(file.size / MULTIPART_CHUNK);
+    const completed: { PartNumber: number; ETag: string }[] = [];
+
+    try {
+      for (let i = 0; i < totalParts; i++) {
+        const partNumber = i + 1;
+        const byteStart = i * MULTIPART_CHUNK;
+        const byteEnd = Math.min(byteStart + MULTIPART_CHUNK, file.size);
+        const chunk = file.slice(byteStart, byteEnd);
+
+        const presignFd = new URLSearchParams({
+          action: "r2_multipart_presign_parts",
+          user: login?.user || "",
+          signup_key: login?.signup_key || "",
+          key: uploadKey,
+          upload_id: uploadId,
+          parts: JSON.stringify([partNumber]),
+        });
+        const presign = await fetch(API_CLOUD, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: presignFd.toString(),
+          credentials: "include",
+        }).then((r) => r.json());
+
+        if (!presign.success)
+          throw new Error(presign.message || "Presign part failed");
+
+        const url = presign.parts[0].upload_url as string;
+        const etag = await putWithRetry(url, chunk, file.type);
+        completed.push({ PartNumber: partNumber, ETag: etag });
+
+        onProgress(Math.round(((i + 1) / totalParts) * 100));
+      }
+    } catch (err) {
+      // abort to avoid orphaned parts
+      try {
+        const abortFd = new URLSearchParams({
+          action: "r2_multipart_abort",
+          user: login?.user || "",
+          signup_key: login?.signup_key || "",
+          key: uploadKey,
+          upload_id: uploadId,
+        });
+        await fetch(API_CLOUD, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: abortFd.toString(),
+          credentials: "include",
+        });
+      } catch {
+        /* ignore */
+      }
+      throw err;
+    }
+
+    // 3) complete
+    const completeFd = new URLSearchParams({
+      action: "r2_multipart_complete",
+      user: login?.user || "",
+      signup_key: login?.signup_key || "",
+      key: uploadKey,
+      upload_id: uploadId,
+      parts: JSON.stringify(completed),
+    });
+    const complete = await fetch(API_CLOUD, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: completeFd.toString(),
+      credentials: "include",
+    }).then((r) => r.json());
+
+    if (!complete.success)
+      throw new Error(complete.message || "Multipart complete failed");
+
+    return finalPublicUrl;
+  };
+
+  /* ----------------- Photo workflow ----------------- */
+  const processPhotos = async (
+    selected: File[],
+    inputEl: HTMLInputElement,
+  ) => {
+    setPhotosBusy(true);
+    setPhotoUploadProgress(1);
+    const oldUrls = (formData.photos || []).filter(
+      (p: any) => typeof p === "string" && /^https?:\/\//.test(p),
+    );
+    try {
+      const compressed = await compressPool(selected, 3, (done) => {
+        setPhotoUploadProgress(
+          Math.max(1, Math.round((done / selected.length) * 30)),
+        );
+      });
+
+      const items = compressed.map((f) => ({
+        filename: f.name,
+        content_type: f.type || "application/octet-stream",
+      }));
+      const presigned = await presignBatch(items, "shared_spaces");
+
+      const perFile: number[] = new Array(compressed.length).fill(0);
+      await Promise.all(
+        compressed.map(
+          (f, i) =>
+            new Promise<void>((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+              xhr.open("PUT", presigned[i].upload_url);
+              xhr.setRequestHeader(
+                "Content-Type",
+                f.type || "application/octet-stream",
+              );
+              xhr.upload.onprogress = (e) => {
+                if (!e.lengthComputable) return;
+                perFile[i] = Math.round((e.loaded / e.total) * 100);
+                const avg =
+                  perFile.reduce((a, b) => a + b, 0) / perFile.length;
+                setPhotoUploadProgress(
+                  Math.max(31, Math.min(99, 30 + Math.round(avg * 0.7))),
+                );
+              };
+              xhr.onload = () =>
+                xhr.status >= 200 && xhr.status < 300
+                  ? resolve()
+                  : reject(new Error("PUT " + xhr.status));
+              xhr.onerror = () => reject(new Error("Network error"));
+              xhr.send(f);
+            }),
+        ),
+      );
+
+      const newUrls = presigned.map((p) => p.public_url);
+      setFormData((prev: any) => ({ ...prev, photos: newUrls }));
+      if (oldUrls.length) await deleteFromR2(oldUrls);
+      setPhotoUploadProgress(0);
+    } catch (err) {
+      console.error(err);
+      alert("Photo upload failed. Please try again.");
+      setPhotoUploadProgress(0);
+    } finally {
+      setPhotosBusy(false);
+      inputEl.value = "";
+    }
+  };
+
+  /* ----------------- Video workflow ----------------- */
+  const processVideo = async (file: File, inputEl: HTMLInputElement) => {
+    setVideoBusy(true);
+    setVideoUploadProgress(1);
+    const oldVideo = formData.video;
+    try {
+      const publicUrl = await uploadVideoMultipart(
+        file,
+        setVideoUploadProgress,
+        "shared_spaces",
+      );
+      setFormData((prev: any) => ({ ...prev, video: publicUrl }));
+      if (
+        oldVideo &&
+        typeof oldVideo === "string" &&
+        /^https?:\/\//.test(oldVideo)
+      ) {
+        await deleteFromR2([oldVideo]);
+      }
+      setVideoUploadProgress(0);
+    } catch (err) {
+      console.error(err);
+      alert("Video upload failed. Please try again.");
+      setVideoUploadProgress(0);
+    } finally {
+      setVideoBusy(false);
+      inputEl.value = "";
+    }
+  };
+
   /* ----------------- File select handler ----------------- */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
+    const inputEl = e.target;
     if (!files) return;
 
     if (name === "photos") {
       const selected = Array.from(files);
-
-      if (selected.length > 5) {
-        alert("You can upload a maximum of 5 photos. Please select up to 5.");
+      if (selected.length !== PHOTO_COUNT) {
+        alert(
+          `You must select exactly ${PHOTO_COUNT} photos at once. You selected ${selected.length}.`,
+        );
+        inputEl.value = "";
         return;
       }
-
-      // Replace photos with newly selected File objects
-      setFormData((prev: any) => ({ ...prev, photos: selected }));
-
-      // Simulated quick progress for selection feedback
-      setPhotoUploadProgress(0);
-      let p = 0;
-      const t = setInterval(() => {
-        p += 20;
-        setPhotoUploadProgress(Math.min(100, p));
-        if (p >= 100) {
-          clearInterval(t);
-          setTimeout(() => setPhotoUploadProgress(0), 700);
-        }
-      }, 120);
+      void processPhotos(selected, inputEl);
+      return;
     }
 
     if (name === "video") {
       const file = files[0];
       if (!file) return;
-
+      if (file.size > MAX_VIDEO_BYTES) {
+        alert(
+          `Video is too large (${(file.size / 1024 / 1024).toFixed(
+            1,
+          )} MB). Max ${MAX_VIDEO_BYTES / 1024 / 1024} MB.`,
+        );
+        inputEl.value = "";
+        return;
+      }
       const url = URL.createObjectURL(file);
-      const videoEl = document.createElement("video");
-      videoEl.preload = "metadata";
-      videoEl.src = url;
-      videoEl.onloadedmetadata = () => {
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.src = url;
+      v.onloadedmetadata = () => {
         URL.revokeObjectURL(url);
-        const duration = videoEl.duration;
-        if (duration > 120) {
-          alert(
-            "Video must not exceed 2 minutes (120 seconds). Please choose a shorter video.",
-          );
+        if (v.duration > 120) {
+          alert("Video must not exceed 2 minutes (120 seconds).");
+          inputEl.value = "";
           return;
         }
-
-        setFormData((prev: any) => ({ ...prev, video: file }));
-
-        setVideoUploadProgress(0);
-        let p = 0;
-        const t = setInterval(() => {
-          p += 25;
-          setVideoUploadProgress(Math.min(100, p));
-          if (p >= 100) {
-            clearInterval(t);
-            setTimeout(() => setVideoUploadProgress(0), 700);
-          }
-        }, 140);
+        void processVideo(file, inputEl);
       };
-
-      videoEl.onerror = () => {
+      v.onerror = () => {
+        URL.revokeObjectURL(url);
         alert("Unable to read video. Try another file.");
+        inputEl.value = "";
       };
     }
   };
 
-  /* ----------------- Submit (XHR for progress) ----------------- */
+  /* ----------------- Submit (api_save.php only) ----------------- */
   const handleSubmit = async () => {
     const selectedUniversities = JSON.parse(formData.target_university || "[]");
+    const photoCount = (formData.photos || []).filter(
+      (p: any) => typeof p === "string" && /^https?:\/\//.test(p),
+    ).length;
 
     if (
       selectedUniversities.length === 0 ||
-      (!(formData.photos && formData.photos.length > 0) && !formData.video)
+      photoCount !== 5 ||
+      !formData.video
     ) {
-      setStatusMessage("Please complete all required fields");
+      setStatusMessage(
+        "Please select exactly 5 photos, 1 video and at least 1 university",
+      );
+      setTimeout(() => setStatusMessage(null), 2500);
+      return;
+    }
+    if (photosBusy || videoBusy) {
+      setStatusMessage("Please wait for uploads to finish");
       setTimeout(() => setStatusMessage(null), 2000);
       return;
     }
@@ -270,82 +604,56 @@ export default function Sharedspace3({
       data.append("special_feature", formData.special_feature || "");
       data.append("target_university", formData.target_university || "");
 
-      // Append only File objects (do not append URL strings)
-      (formData.photos || []).forEach((p: any) => {
-        if (p instanceof File) {
-          data.append("photos[]", p);
-        }
-      });
-
-      if (formData.video instanceof File) {
-        data.append("video", formData.video);
+      const photoUrls = (formData.photos || []).filter(
+        (p: any) => typeof p === "string" && /^https?:\/\//.test(p),
+      );
+      data.append("photos_r2", JSON.stringify(photoUrls));
+      if (
+        formData.video &&
+        typeof formData.video === "string" &&
+        /^https?:\/\//.test(formData.video)
+      ) {
+        data.append("video_r2", formData.video);
       }
 
-      // XHR for upload progress
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://www.cribb.africa/api_save.php");
-
+        xhr.open("POST", API_SAVE);
         xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            setUploadProgress(percent);
-          }
+          if (e.lengthComputable)
+            setUploadProgress(Math.round((e.loaded / e.total) * 100));
         };
-
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4) {
             try {
               const resp = JSON.parse(xhr.responseText || "{}");
-
               if (xhr.status >= 200 && xhr.status < 300 && resp.success) {
                 setStatusMessage("Saved successfully!");
                 setUploadProgress(100);
-
-                // If backend returned final filenames, convert to URLs and store
-                // backend response keys used by the patched PHP:
-                // resp.photos_final (array of filenames) and resp.video_final (filename)
                 if (resp.photos_final && Array.isArray(resp.photos_final)) {
-                  const base = `https://www.cribb.africa/uploads/shared_spaces/${user}`;
-                  const urls = resp.photos_final.map((fn: string) =>
-                    fn &&
-                    (fn.startsWith("http://") || fn.startsWith("https://"))
-                      ? fn
-                      : `${base}/${fn}`,
-                  );
-                  setFormData((prev: any) => ({ ...prev, photos: urls }));
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    photos: resp.photos_final,
+                  }));
                 }
-
                 if (resp.video_final) {
-                  const base = `https://www.cribb.africa/uploads/shared_spaces/${user}`;
-                  const vUrl =
-                    resp.video_final &&
-                    (resp.video_final.startsWith("http://") ||
-                      resp.video_final.startsWith("https://"))
-                      ? resp.video_final
-                      : resp.video_final
-                        ? `${base}/${resp.video_final}`
-                        : null;
-                  setFormData((prev: any) => ({ ...prev, video: vUrl }));
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    video: resp.video_final,
+                  }));
                 }
-
                 setTimeout(() => {
                   setStatusMessage(null);
-                  if (onNext) onNext();
-                }, 900);
-
+                  onNext?.();
+                }, 700);
                 resolve();
-              } else {
-                reject(resp?.message || "Upload failed");
-              }
-            } catch (err) {
+              } else reject(resp?.message || "Save failed");
+            } catch {
               reject("Invalid server response");
             }
           }
         };
-
-        xhr.onerror = () => reject("Network error during upload");
-
+        xhr.onerror = () => reject("Network error during save");
         xhr.send(data);
       });
 
@@ -355,7 +663,7 @@ export default function Sharedspace3({
       console.error(err);
       setLoading(false);
       setUploadProgress(0);
-      alert(typeof err === "string" ? err : err?.message || "Upload failed");
+      alert(typeof err === "string" ? err : err?.message || "Save failed");
     }
   };
 
@@ -385,14 +693,12 @@ export default function Sharedspace3({
 
   const filteredInstitutes = React.useMemo(() => {
     if (!userSchoolState) return institutes;
-
     return institutes.filter((inst) =>
       (inst?.institution || "").toLowerCase().includes(`(${userSchoolState})`),
     );
   }, [institutes, userSchoolState]);
 
   const [showUniversityModal, setShowUniversityModal] = useState(false);
-
   const normalize = (str: string) => str.replace(/\s+/g, " ").trim();
 
   let selectedUniversities: string[] = [];
@@ -404,7 +710,6 @@ export default function Sharedspace3({
 
   const toggleUniversity = (uni: string) => {
     const normalizedUni = normalize(uni);
-
     setFormData((prev: any) => {
       let current: string[] = [];
       try {
@@ -412,18 +717,10 @@ export default function Sharedspace3({
       } catch {
         current = [];
       }
-
-      let next: string[];
-      if (current.includes(normalizedUni)) {
-        next = current.filter((u) => u !== normalizedUni);
-      } else {
-        next = [...current, normalizedUni];
-      }
-
-      return {
-        ...prev,
-        target_university: JSON.stringify(next), // <-- store as string
-      };
+      const next = current.includes(normalizedUni)
+        ? current.filter((u) => u !== normalizedUni)
+        : [...current, normalizedUni];
+      return { ...prev, target_university: JSON.stringify(next) };
     });
   };
 
@@ -435,23 +732,34 @@ export default function Sharedspace3({
     }));
   };
 
-  const clearAllUniversities = () => {
+  const clearAllUniversities = () =>
     setFormData((prev: any) => ({
       ...prev,
       target_university: JSON.stringify([]),
     }));
-  };
+
+  const photoLabel = photosBusy
+    ? `Photos (${photoUploadProgress || 1}%)`
+    : formData.photos?.length
+      ? `Photos (${formData.photos.length}/5)`
+      : "Add 5 Photos";
+
+  const videoLabel = videoBusy
+    ? `Video (${videoUploadProgress || 1}%)`
+    : formData.video
+      ? "Video (1)"
+      : "Add Video";
 
   return (
-    <section className="mx-1 md:mx-0 md:px-10  flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
+    <section className="mx-1 md:mx-0 md:px-10 flex flex-col gap-4 justify-center items-center py-10 bg-[#F3EDFE]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_55%] w-full">
         <div></div>
         <div className="min-w-0 flex items-center justify-center">
           <div className="flex gap-2 flex-wrap justify-center max-w-full">
-            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
-            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
-            <a className="w-15 h-2 border-2 box-border flex items-center justify-center"></a>
-            <a className="w-15 h-2 bg-[#3A3A3A] flex items-center justify-center"></a>
+            <a className="w-15 h-2 bg-[#3A3A3A]"></a>
+            <a className="w-15 h-2 bg-[#3A3A3A]"></a>
+            <a className="w-15 h-2 border-2"></a>
+            <a className="w-15 h-2 bg-[#3A3A3A]"></a>
           </div>
         </div>
       </div>
@@ -460,19 +768,17 @@ export default function Sharedspace3({
         <div className="-mb-35 md:mb-0 mx-2 md:ml-20 md:-mr-10 relative">
           <img
             src={imgright}
-            alt="Traveler with suitcase"
-            className="h-full w-full object-cover"
+            alt=""
+            className="h-full w-full object-cover rounded-tl-4xl rounded-bl-4xl"
           />
-
           <button
             onClick={onBack}
-            className="cursor-pointer absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
+            className="absolute top-5 right-5 md:right-25 w-11 h-11 border-2 border-white flex items-center justify-center rounded-full bg-[#202020] text-white shadow-lg"
           >
             <IoIosArrowBack size={14} />
           </button>
         </div>
 
-        {/* Right Stack */}
         <div className="space-y-1 md:mr-20 md:-ml-10 z-2">
           <Maincard className="bg-[#F4F6F5] pb-5 md:pb-8 md:px-10">
             <SectionHeader
@@ -482,7 +788,70 @@ export default function Sharedspace3({
 
             <div className="md:px-5 pb-4 pt-3 space-y-4 mt-5 mb:mt-0">
               <div className="grid grid-cols-2 gap-6">
-                {/* All Features */}
+                {/* PHOTOS */}
+                <div className="space-y-1">
+                  <Label>Hostel Photo</Label>
+                  <div
+                    className={clsx(
+                      "w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 shadow-sm relative cursor-pointer",
+                      photosBusy && "opacity-70 cursor-wait",
+                    )}
+                  >
+                    <div className="flex items-center gap-3 py-1">
+                      <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
+                      <span className="text-xs text-gray-500">
+                        {photoLabel}
+                      </span>
+                      <input
+                        type="file"
+                        name="photos"
+                        multiple
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        disabled={photosBusy}
+                        className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
+                    <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
+                      select exactly 5 photos at once
+                    </span>
+                  </div>
+                </div>
+
+                {/* VIDEO */}
+                <div className="space-y-1">
+                  <Label>Hostel Video</Label>
+                  <div
+                    className={clsx(
+                      "w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 shadow-sm relative cursor-pointer",
+                      videoBusy && "opacity-70 cursor-wait",
+                    )}
+                  >
+                    <div className="flex items-center gap-3 py-1">
+                      <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
+                      <span className="text-xs text-gray-500">
+                        {videoLabel}
+                      </span>
+                      <input
+                        type="file"
+                        name="video"
+                        accept="video/*"
+                        onChange={handleFileChange}
+                        disabled={videoBusy}
+                        className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
+                    <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
+                      2 min max, 60 MB max, resumable
+                    </span>
+                  </div>
+                </div>
+
+                {/* FEATURES */}
                 <div
                   className="space-y-1"
                   onClick={() => setShowAllFeaturesModal(true)}
@@ -495,15 +864,14 @@ export default function Sharedspace3({
                           formData.all_feature || "Select Features",
                         )}
                         readOnly
-                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
-                        placeholder="Select house rules"
+                        className="w-full bg-transparent text-xs outline-none py-1 cursor-pointer text-gray-500"
                       />
                       <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
 
-                {/* Special Feature */}
+                {/* SPECIAL */}
                 <div
                   className="space-y-1"
                   onClick={() => setShowSpecialFeatureModal(true)}
@@ -516,85 +884,14 @@ export default function Sharedspace3({
                           formData.special_feature || "Select Special Feature",
                         )}
                         readOnly
-                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
-                        placeholder="Select house rules"
+                        className="w-full bg-transparent text-xs outline-none py-1 cursor-pointer text-gray-500"
                       />
                       <IoIosArrowDown className="ml-2" />
                     </div>
                   </InfoPill>
                 </div>
-
-                {/* Photo */}
-                <div className="space-y-1">
-                  <Label>Hostel Photo</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
-                    <div className="flex items-center py-1 gap-3">
-                      <IoCameraOutline className="w-6 h-6 md:w-8 md:h-8" />
-                      <span className="text-xs text-gray-500">
-                        {formData.photos?.length
-                          ? `Photos (${formData.photos.length})`
-                          : "Add Photo"}{photoUploadProgress > 0 &&
-                          photoUploadProgress < 100 && (
-                            <span className="text-xs text-[#2b8a3e]">
-                              {photoUploadProgress}%
-                            </span>
-                          )}
-                      </span>
-
-                      <input
-                        type="file"
-                        name="photos"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
-                    <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
-                      add a sum of 5 photos that shows overall view of the space
-                      features.
-                    </span>
-                  </div>
-                </div>
-
-                {/* Video */}
-                <div className="space-y-1">
-                  <Label>Hostel Video</Label>
-                  <div className="w-full bg-white rounded-full border-[1.5px] pl-5 md:px-4 py-3 text-[15px] text-[#222] shadow-sm relative cursor-pointer">
-                    <div className="flex items-center py-1 gap-3">
-                      <AiOutlineVideoCameraAdd className="w-6 h-6 md:w-8 md:h-8" />
-                      <span className="text-xs text-gray-500">
-                        {formData.video ? "Video (1)" : "Add Video"} {videoUploadProgress > 0 &&
-                          videoUploadProgress < 100 && (
-                            <span className="text-xs text-[#2b8a3e]">
-                              {videoUploadProgress}%
-                            </span>
-                          )}
-                      </span>
-
-                      <input
-                        type="file"
-                        name="video"
-                        accept="video/*"
-                        onChange={handleFileChange}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-1 mx-2 md:mx-5">
-                    <span className="inline-block text-xs p-2 rounded-2xl text-[#7F7F7F] bg-white">
-                      add a 2mins videos that shows detailed & quick overall
-                      view of the space.
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              {/* Target University */}
               <div className="grid grid-cols-1 gap-6">
                 <div
                   className="space-y-1"
@@ -610,8 +907,7 @@ export default function Sharedspace3({
                             : "Select Target Universities",
                         )}
                         readOnly
-                        className="w-full appearance-none bg-transparent text-xs leading-5 outline-none py-1 cursor-pointer text-gray-500"
-                        placeholder="Select house rules"
+                        className="w-full bg-transparent text-xs outline-none py-1 cursor-pointer text-gray-500"
                       />
                       <IoIosArrowDown className="ml-2" />
                     </div>
@@ -628,10 +924,9 @@ export default function Sharedspace3({
                 }}
               />
 
-              {/* PREVIEW BUTTON */}
               <button
                 onClick={() => setShowPreviewModal(true)}
-                className="w-full my-8 flex items-center justify-center gap-3 rounded-full font-normal bg-white px-5 py-4 shadow-sm text-lg text-black"
+                className="w-full my-8 flex items-center justify-center gap-3 rounded-full bg-white px-5 py-4 shadow-sm text-lg text-black"
               >
                 <PiHouse className="w-8 h-8" /> Preview Space
               </button>
@@ -657,7 +952,6 @@ export default function Sharedspace3({
               <h3 className="text-lg font-semibold">
                 Select Target Universities
               </h3>
-
               <button
                 className="text-sm text-gray-600"
                 onClick={() => setShowUniversityModal(false)}
@@ -665,7 +959,6 @@ export default function Sharedspace3({
                 Close
               </button>
             </div>
-
             <div className="flex gap-3 mb-3">
               <button
                 className="text-xs px-3 py-1 bg-black text-white rounded"
@@ -673,7 +966,6 @@ export default function Sharedspace3({
               >
                 Select All
               </button>
-
               <button
                 className="text-xs px-3 py-1 bg-gray-200 rounded"
                 onClick={clearAllUniversities}
@@ -681,7 +973,6 @@ export default function Sharedspace3({
                 Clear All
               </button>
             </div>
-
             <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
               {filteredInstitutes.map((inst) => (
                 <label
@@ -696,12 +987,10 @@ export default function Sharedspace3({
                     onChange={() => toggleUniversity(inst.institution)}
                     className="w-4 h-4"
                   />
-
                   <span>{inst.institution}</span>
                 </label>
               ))}
             </div>
-
             <div className="mt-4">
               <button
                 className="w-full py-2 rounded-lg bg-black text-white"
@@ -714,7 +1003,6 @@ export default function Sharedspace3({
         </div>
       )}
 
-      {/* ALL FEATURES MODAL */}
       {showAllFeaturesModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
@@ -727,7 +1015,6 @@ export default function Sharedspace3({
                 Close
               </button>
             </div>
-
             <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
               {ALL_FEATURES.map((feat) => (
                 <label
@@ -746,7 +1033,6 @@ export default function Sharedspace3({
                 </label>
               ))}
             </div>
-
             <div className="mt-4">
               <button
                 className="w-full py-2 rounded-lg bg-black text-white"
@@ -759,7 +1045,6 @@ export default function Sharedspace3({
         </div>
       )}
 
-      {/* SPECIAL FEATURE MODAL */}
       {showSpecialFeatureModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-11/12 md:w-2/5 bg-white rounded-xl p-5">
@@ -772,12 +1057,11 @@ export default function Sharedspace3({
                 Close
               </button>
             </div>
-
             <div className="max-h-64 overflow-y-auto space-y-2 pb-4">
               <label className="flex items-center gap-3 text-sm cursor-pointer">
                 <input
                   type="radio"
-                  name="specialFeature"
+                  name="sf"
                   checked={
                     formData.special_feature === "None" ||
                     !formData.special_feature
@@ -789,7 +1073,6 @@ export default function Sharedspace3({
                 />
                 <span>None</span>
               </label>
-
               {selectedFeatures.map((feat: string) => (
                 <label
                   key={feat}
@@ -797,7 +1080,7 @@ export default function Sharedspace3({
                 >
                   <input
                     type="radio"
-                    name="specialFeature"
+                    name="sf"
                     checked={formData.special_feature === feat}
                     onChange={() =>
                       setFormData({ ...formData, special_feature: feat })
@@ -808,7 +1091,6 @@ export default function Sharedspace3({
                 </label>
               ))}
             </div>
-
             <div className="mt-4">
               <button
                 className="w-full py-2 rounded-lg bg-black text-white"
@@ -821,7 +1103,6 @@ export default function Sharedspace3({
         </div>
       )}
 
-      {/* PREVIEW MODAL */}
       {showPreviewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl md:w-3/5 max-h-[90vh] overflow-y-auto p-6">
@@ -834,23 +1115,22 @@ export default function Sharedspace3({
                 Close
               </button>
             </div>
-
             <div className="mb-4">
               <h4 className="font-semibold">All Features</h4>
               <p className="text-sm text-gray-700">
                 {formData.all_feature || "None selected"}
               </p>
             </div>
-
             <div className="mb-4">
               <h4 className="font-semibold">Special Feature</h4>
               <p className="text-sm text-gray-700">
                 {formData.special_feature || "None"}
               </p>
             </div>
-
             <div className="mb-4">
-              <h4 className="font-semibold">Photos</h4>
+              <h4 className="font-semibold">
+                Photos ({formData.photos?.length || 0}/5)
+              </h4>
               <div className="grid grid-cols-3 gap-3 mt-2">
                 {formData.photos && formData.photos.length > 0 ? (
                   formData.photos.map((p: any, i: number) => {
@@ -869,7 +1149,6 @@ export default function Sharedspace3({
                 )}
               </div>
             </div>
-
             <div className="mb-6">
               <h4 className="font-semibold">Video</h4>
               <div className="mt-2">
@@ -884,20 +1163,16 @@ export default function Sharedspace3({
                 )}
               </div>
             </div>
-
-            <div className="mt-4">
-              <button
-                className="w-full py-2 rounded-lg bg-black text-white"
-                onClick={() => setShowPreviewModal(false)}
-              >
-                Close
-              </button>
-            </div>
+            <button
+              className="w-full py-2 rounded-lg bg-black text-white"
+              onClick={() => setShowPreviewModal(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
 
-      {/* STATUS MODAL */}
       {statusMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl p-6 w-72 text-center shadow-lg">
