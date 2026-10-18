@@ -51,9 +51,10 @@ export const useDomain = () => {
 
 const getSubdomain = (): Subdomain => {
   const host = window.location.hostname.toLowerCase();
+  const labels = host.split(".");
 
-  if (/(^|\.)student\./.test(host)) return "student";
-  if (/(^|\.)business\./.test(host)) return "business";
+  if (labels.includes("student")) return "student";
+  if (labels.includes("business")) return "business";
 
   return "public";
 };

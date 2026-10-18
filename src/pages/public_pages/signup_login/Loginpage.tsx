@@ -124,14 +124,18 @@ export default function Loginpage() {
   const { showAlert } = useAlert();
 
   // Determine mode based on domain
+
   const getModeFromDomain = (): "student" | "merchant" => {
-    const hostname = window.location.hostname;
-    if (hostname.includes("student.cribb.africa")) {
-      return "student";
-    } else if (hostname.includes("business.cribb.africa")) {
+    const labels = window.location.hostname.toLowerCase().split(".");
+
+    if (labels.includes("business")) {
       return "merchant";
     }
-    // Default to student for unknown domains
+
+    if (labels.includes("student")) {
+      return "student";
+    }
+
     return "student";
   };
 
