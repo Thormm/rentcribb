@@ -11,14 +11,21 @@ function IconBtn({
   children,
   label,
   bgColor = "#CDBCEC",
+  href,
+  onClick,
 }: {
   children: React.ReactNode;
   label: string;
   bgColor?: string;
+  href?: string;
+  onClick?: () => void;
 }) {
   return (
     <a
-      href="#"
+      href={href ?? "#"}
+      onClick={onClick}
+      target={href ? "_blank" : undefined}
+      rel={href ? "noopener noreferrer" : undefined}
       aria-label={label}
       className="rounded-full text-black p-2"
       style={{ backgroundColor: bgColor }}
@@ -42,6 +49,10 @@ const Footer = ({ bgColor = "#000000" }: FooterProps) => {
     setDocType(type);
     setTerms_privacy(true);
   };
+
+  const whatsappMessage = encodeURIComponent(
+    "Hello Cribb Africa, I'd like to know more!"
+  );
 
   return (
     <>
@@ -169,13 +180,27 @@ const Footer = ({ bgColor = "#000000" }: FooterProps) => {
               </span>
 
               <div className="flex items-center gap-3 mt-4">
-                <IconBtn label="Twitter / X" bgColor="#BCD2EC">
+                <IconBtn
+                  label="Twitter / X"
+                  bgColor="#BCD2EC"
+                  href="https://x.com/CribbAfrica"
+                >
                   <FaXTwitter className="w-5 h-5" />
                 </IconBtn>
-                <IconBtn label="Instagram" bgColor="#D7CAEE">
+
+                <IconBtn
+                  label="Instagram"
+                  bgColor="#D7CAEE"
+                  href="https://www.instagram.com/cribbafrica"
+                >
                   <FaInstagram className="w-5 h-5" />
                 </IconBtn>
-                <IconBtn label="WhatsApp" bgColor="#DBEDD2">
+
+                <IconBtn
+                  label="WhatsApp"
+                  bgColor="#DBEDD2"
+                  href={`https://wa.me/2349028311876?text=${whatsappMessage}`}
+                >
                   <FaWhatsapp className="w-5 h-5" />
                 </IconBtn>
               </div>
